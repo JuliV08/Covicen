@@ -1,7 +1,13 @@
 // Parallax 2.5D con mapa de profundidad (WebGL 2, cae a WebGL 1). Solo desktop con hover y sin reduced-motion; si algo falla, queda la foto.
 // El canvas arranca con EXACTAMENTE el encuadre de la foto (cover, zoom 1): así el fundido de uno a otro es invisible.
 const VS = 'attribute vec2 p;varying vec2 v;void main(){v=vec2(p.x*0.5+0.5,0.5-p.y*0.5);gl_Position=vec4(p,0.,1.);}';
-const FS = `precision mediump float;varying vec2 v;uniform sampler2D img;uniform sampler2D dep;uniform vec2 esc;uniform vec2 vp;uniform vec2 desp;uniform float zoom;
+// highp: con mediump (16 bits en muchas GPUs de Windows vía ANGLE) las UV se cuantizan y la foto se ve pixelada.
+const FS = `#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+varying vec2 v;uniform sampler2D img;uniform sampler2D dep;uniform vec2 esc;uniform vec2 vp;uniform vec2 desp;uniform float zoom;
 void main(){vec2 uv=(v-0.5)*esc+0.5;uv=(uv-vp)/zoom+vp;float d=texture2D(dep,uv).r;gl_FragColor=texture2D(img,uv+desp*d);}`;
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -34,12 +40,14 @@ const montar = (raiz: HTMLElement) => {
     const envoltura = es2 ? gl.MIRRORED_REPEAT : gl.CLAMP_TO_EDGE;
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, envoltura);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, envoltura);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, es2 ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, fuente);
+    if (es2) gl.generateMipmap(gl.TEXTURE_2D);
   };
 
-  const iniciar = (dep: HTMLImageElement) => {
+  // `foto` es la imagen a resolución completa (data-textura), no el candidato responsive que eligió el <img>.
+  const iniciar = (foto: HTMLImageElement, dep: HTMLImageElement) => {
     const prog = gl.createProgram()!;
     gl.attachShader(prog, shader(gl.VERTEX_SHADER, VS));
     gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, FS));
@@ -52,7 +60,7 @@ const montar = (raiz: HTMLElement) => {
     const p = gl.getAttribLocation(prog, 'p');
     gl.enableVertexAttribArray(p);
     gl.vertexAttribPointer(p, 2, gl.FLOAT, false, 0, 0);
-    textura(0, img);
+    textura(0, foto);
     textura(1, dep);
     gl.uniform1i(gl.getUniformLocation(prog, 'img'), 0);
     gl.uniform1i(gl.getUniformLocation(prog, 'dep'), 1);
@@ -60,7 +68,7 @@ const montar = (raiz: HTMLElement) => {
     const uEsc = gl.getUniformLocation(prog, 'esc');
     const uDesp = gl.getUniformLocation(prog, 'desp');
     const uZoom = gl.getUniformLocation(prog, 'zoom');
-    const aspectoImg = img.naturalWidth / img.naturalHeight;
+    const aspectoImg = foto.naturalWidth / foto.naturalHeight;
 
     const redimensionar = () => {
       const dpr = Math.min(devicePixelRatio || 1, 1.5);
@@ -105,13 +113,18 @@ const montar = (raiz: HTMLElement) => {
     requestAnimationFrame(cuadro);
   };
 
+  // Se cargan la foto a resolución completa y el mapa; cuando están las dos, arranca.
+  const foto = new Image();
   const dep = new Image();
-  dep.onload = () => {
-    const arrancar = () => { try { iniciar(dep); } catch { raiz.classList.remove('activo', 'webgl'); } };
-    if (img.complete && img.naturalWidth) arrancar();
-    else img.addEventListener('load', arrancar, { once: true });
+  let pendientes = 2;
+  const listo = () => {
+    if (--pendientes > 0) return;
+    try { iniciar(foto, dep); } catch { raiz.classList.remove('activo', 'webgl'); }
   };
-  dep.onerror = () => raiz.classList.remove('webgl');
+  const fallo = () => raiz.classList.remove('activo', 'webgl');
+  foto.onload = listo; dep.onload = listo;
+  foto.onerror = fallo; dep.onerror = fallo;
+  foto.src = raiz.dataset.textura || img.currentSrc || img.src;
   dep.src = urlDep;
 };
 

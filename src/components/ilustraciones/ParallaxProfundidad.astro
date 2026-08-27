@@ -2,7 +2,7 @@
 // Parallax 2.5D: la foto como poster (<img>) y, en desktop con WebGL, un <canvas> que la desplaza según un mapa de
 // profundidad (avance lento automático + mouse + scroll). Sin WebGL, sin hover o con reduced-motion: queda la foto con
 // un dolly CSS centrado en el punto de fuga. El mapa se genera con scripts/generar-profundidad.py.
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import { imagenAtmosfera } from '@/lib/atmosfera';
 interface Props { nombre: string; profundidad: string; alt?: string; brillo?: number; vp?: [number, number] }
 const { nombre, profundidad, alt = '', brillo = 0.62, vp = [0.78, 0.595] } = Astro.props;
@@ -10,9 +10,11 @@ const imagen = imagenAtmosfera(nombre);
 const mapa = imagenAtmosfera(profundidad);
 // En desarrollo Astro codifica la imagen bajo demanda: WebP tarda milisegundos, AVIF segundos. En build, AVIF.
 const formato = import.meta.env.DEV ? 'webp' : 'avif';
+// Textura para WebGL a resolución completa (el <img> responsive puede haber elegido un candidato más chico).
+const textura = imagen ? await getImage({ src: imagen, width: imagen.width, format: formato, quality: 70 }) : undefined;
 ---
 {imagen && (
-  <div class="parallax-2d absolute inset-0" data-parallax data-profundidad={mapa?.src} data-vp={`${vp[0]},${vp[1]}`} style={`--brillo: ${brillo}; --vpx: ${vp[0] * 100}%; --vpy: ${vp[1] * 100}%`}>
+  <div class="parallax-2d absolute inset-0" data-parallax data-profundidad={mapa?.src} data-textura={textura?.src} data-vp={`${vp[0]},${vp[1]}`} style={`--brillo: ${brillo}; --vpx: ${vp[0] * 100}%; --vpy: ${vp[1] * 100}%`}>
     <Image src={imagen} {alt} widths={[640, 1024, 1600, 2400]} sizes="100vw" format={formato} quality={55} loading="eager" fetchpriority="high" decoding="async" class="parallax-2d-img" />
     <canvas class="parallax-2d-canvas" aria-hidden="true"></canvas>
   </div>
