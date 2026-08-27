@@ -54,6 +54,14 @@ Probá en el teléfono también (misma red: `pnpm dev --host` y la IP que imprim
 ## Qué NO está (por diseño, v1)
 Estado de rutas en vivo, oficina virtual, ticketing, portal de proveedores, canal ético anónimo, modo claro, dominio, número de emergencias/WhatsApp/mails, valores de categorías salvo auto, CUIT/razón social, imágenes fotográficas (opcionales: `docs/marca/prompts-imagenes.md`).
 
+## Decisiones tomadas en la revisión independiente
+La lane de revisión (subagente aparte, con `web-design-guidelines` y `page-cro`) encontró 4 hallazgos altos, 16 medios y ~15 bajos; se corrigieron todos salvo estos, que son decisiones y quedan a tu criterio:
+- **Filas del tarifario sin valor**: se muestran las cinco con guion y "a confirmar" (honestidad ante todo). Si de cara a la venta preferís ocultarlas, es un `filter` en `TablaTarifas.astro`.
+- **Índices de sección `01`, `02`…** sin el total (`01 / 09`): los índices no son consecutivos entre páginas, así que el denominador mentiría. Se dejó solo el número.
+- **`Boton` sin `href` renderiza un `<button>` sin handler**: es la API para islas futuras; hoy ningún llamador lo usa.
+- **Formulario con `novalidate` y `method="get"` sin JS**: sin JS el envío abre WhatsApp solo con el asunto (lo asume el spec §10).
+- **Links "Fuente oficial" de Ley 27.742 y Decreto 97/2025**: no tenemos el enlace puntual al aviso del BO; se cita la norma sin link antes que enlazar la portada.
+
 ## Cómo cargar lo que falta (sin tocar componentes)
 - Teléfono, WhatsApp, mails, redes → `src/content/contacto.json`.
 - Valores por categoría, vigencia, origen "homologada" → `src/content/tarifario.json`.
