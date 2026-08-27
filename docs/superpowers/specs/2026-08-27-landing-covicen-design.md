@@ -291,7 +291,9 @@ La landing tiene que **diferenciarse por completo, en calidad, de las webs de au
 
 ### Sistema de movimiento
 
-Reglas: **CSS primero; JS vanilla solo como fallback o pegamento (< 2 KB gz en total)**. GSAP y Motion no se instalan en v1 (quedan documentados en el skill `gsap-framer-scroll-animation` para pinning complejo o scroll horizontal, que no hay). Tokens de movimiento en `tokens.css`: duraciones (`120ms` micro, `240ms` UI, `600ms` entrada, `900ms` narrativa), easings (`ease-out-quart` para entradas, `ease-in-out-cubic` para scrub) y un solo `stagger` (`60ms`). `@media (prefers-reduced-motion: reduce)` apaga todo lo no esencial y deja los cambios de estado instantáneos.
+> **Revisión de Juli (2026-08-27, primera mirada):** los reveals atados al scroll (scrub) se sentían muertos y el hilo de ruta fijo se leía como una segunda scrollbar. Se cambió a: entradas de sección **de una sola vez** (IntersectionObserver + transición CSS, todos los navegadores), scrollbar nativa estilizada con los tokens en vez del hilo, y **movimiento ambiente** (marcas viales fluyendo, luz que recorre la ruta, faros en el hero, balizas latiendo, spotlight que sigue al cursor, contadores por JS, segundos en la cuenta regresiva). El presupuesto de JS de animación subió a 3 KB gz (`tests/presupuesto.test.ts`). Scroll-driven queda para lo que es scrub de verdad: dibujo del mapa, parallax, header, barra de progreso.
+
+Reglas: **CSS primero; JS vanilla solo como disparador o pegamento (< 3 KB gz para animación)**. GSAP y Motion no se instalan en v1 (quedan documentados en el skill `gsap-framer-scroll-animation` para pinning complejo o scroll horizontal, que no hay). Tokens de movimiento en `tokens.css`: duraciones (`120ms` micro, `240ms` UI, `600ms` entrada, `900ms` narrativa), easings (`ease-out-quart` para entradas, `ease-in-out-cubic` para scrub) y un solo `stagger` (`60ms`). `@media (prefers-reduced-motion: reduce)` apaga todo lo no esencial y deja los cambios de estado instantáneos.
 
 | Patrón | Dónde | Técnica | Fallback |
 |---|---|---|---|

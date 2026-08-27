@@ -11,10 +11,11 @@ interface Props { empresa: Empresa }
 const { empresa } = Astro.props;
 const c = empresa.concesion;
 ---
-<section class="plano relative isolate overflow-hidden" style="min-height: calc(100dvh - var(--alto-header))">
-  <div class="absolute inset-0 -z-20" aria-hidden="true"><ImagenAtmosfera nombre="hero-ruta-nocturna" alt="" prioridad /></div>
-  <HeroRuta class="-z-10 opacity-90 parallax" />
-  <div class="absolute inset-0 -z-10 bg-gradient-to-r from-fondo via-fondo/90 to-fondo/30" aria-hidden="true"></div>
+<section class="hero plano relative isolate overflow-hidden" style="min-height: calc(100dvh - var(--alto-header))" data-spotlight>
+  <div class="ken-burns absolute inset-0 -z-20" aria-hidden="true"><ImagenAtmosfera nombre="hero-ruta-nocturna" alt="" prioridad /></div>
+  <HeroRuta class="-z-10 parallax" />
+  <div class="absolute inset-0 -z-10 bg-gradient-to-r from-fondo via-fondo/85 to-fondo/20" aria-hidden="true"></div>
+  <div class="hero-luz absolute inset-0 -z-10" aria-hidden="true"></div>
   <div class="entrada contenedor flex min-h-[calc(100dvh-var(--alto-header))] flex-col justify-center py-20">
     <div style="--i: 0"><Eyebrow>Concesionaria del Tramo Centro · {c.rutas.join(' · ')}</Eyebrow></div>
     <h1 class="mt-6 max-w-4xl" style="--i: 1">Las rutas del centro del país tienen quién responda.</h1>
@@ -29,3 +30,8 @@ const c = empresa.concesion;
   </div>
 </section>
 <script src="../../scripts/cuenta-regresiva.ts"></script>
+<style>
+  /* Luz suave que sigue al cursor (spotlight.ts setea --mx/--my en la sección). */
+  .hero { --mx: 70%; --my: 40%; }
+  .hero-luz { background: radial-gradient(640px circle at var(--mx) var(--my), rgb(104 188 225 / 0.09), transparent 62%); transition: opacity var(--dur-entrada); }
+</style>

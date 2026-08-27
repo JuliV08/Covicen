@@ -3,15 +3,17 @@
 **URL local:** `pnpm dev` → http://localhost:4321/ (con `.env` copiado de `.env.example` y `PUBLIC_BASE_PATH=/`; sin `.env` también anda, con base `/`).
 **URL de Pages:** `https://<cuenta>.github.io/covicen/` después del primer push a `main` con Pages habilitado (Settings → Pages → Source: GitHub Actions; con cuenta Free el repo tiene que ser público).
 
-Probá en el teléfono también (misma red: `pnpm dev --host` y la IP que imprime). Chrome/Edge/Safari tienen scroll-driven animations; **Firefox estable no** (junio 2026): ahí las animaciones de scroll usan el fallback (reveal por IntersectionObserver, hilo de ruta oculto, mojones fijos) y tiene que verse igual de terminado.
+Probá en el teléfono también (misma red: `pnpm dev --host` y la IP que imprime). Las entradas de sección, contadores, spotlight y ambiente funcionan en todos los navegadores; lo único atado a scroll-driven animations (Chrome/Edge/Safari; **Firefox estable no**, junio 2026) es el dibujo del mapa al scrollear, el parallax del hero, el fondo del header y la barra de progreso mobile: en Firefox aparecen ya dibujados o fijos. Si el sistema tiene "Efectos de animación" apagados (Windows) o "Reducir movimiento", todo queda estático a propósito.
 
 ## Home `/`
-- Hero: la ruta se dibuja sola al cargar (~1 s); eyebrow, título, texto, botones y cuenta regresiva entran escalonados con un desenfoque leve. La cuenta regresiva cambia a "Inicio de operación en N d · HH h · MM min" y se actualiza cada minuto.
-- Al scrollear: el header gana fondo translúcido y borde; en desktop, el hilo luminoso del margen izquierdo baja con el scroll; en mobile, la barra fina bajo el header crece. El fondo del hero tiene parallax leve.
-- Accesos rápidos (se superponen al final del hero): cuatro cards; la de Emergencias es amarilla; hover eleva, extiende los esquineros y agrega sombra.
+- Hero: la calzada en perspectiva se dibuja al cargar (~1 s) y después queda viva: marcas amarillas fluyendo hacia el horizonte, una luz recorriendo cada borde, faros blancos que vienen y rojos que se van. Una luz suave sigue al cursor. Eyebrow, título, texto, botones y cuenta regresiva entran escalonados con desenfoque. La cuenta regresiva corre por segundos.
+- Al scrollear: el header gana fondo translúcido y borde; cada sección **entra una sola vez** (28 px + fade, cards escalonadas de a 90 ms); el fondo del hero tiene parallax leve. La scrollbar es la nativa, estilizada con los tokens (pulgar azul sobre pista navy); en mobile hay una barra fina de progreso bajo el header.
+- Accesos rápidos (se superponen al final del hero): cuatro cards de igual altura; la de Emergencias es amarilla; hover eleva, extiende los esquineros y agrega sombra.
+- Cards (servicios, novedades, obras): misma altura en cada fila, "Ver más" alineado al pie, y un *spotlight* celeste que sigue al cursor sobre la card.
 - Tarifa: `$ 1.399` grande, `$ 1.693` con IVA, etiqueta "Tarifa ofertada", vigencia en texto, tope de licitación y link al Boletín Oficial.
-- Mapa: las tres rutas se dibujan con el scroll (glow celeste + marcas amarillas); las seis balizas amarillas se encienden en secuencia; hover/foco en una baliza agranda el halo y muestra el nombre.
-- Mojones (681 km, 3 rutas, 6 peajes): en Chrome cuentan de 0 al valor al entrar en pantalla; en Firefox aparecen fijos.
+- Mapa: las tres rutas se dibujan con el scroll (glow celeste); las marcas amarillas fluyen, una luz blanca recorre cada ruta y las seis balizas laten; hover en una baliza agranda el halo y muestra el nombre. Debajo, la leyenda con los peajes por ruta.
+- Mojones (681 km, 3 rutas, 6 peajes, 20 años): cuentan de 0 al valor al entrar en pantalla (en todos los navegadores).
+- FAQ corto: dos columnas, título fijo a la izquierda y preguntas a la derecha.
 - Obras: cuatro cards + el hueco "Estado de rutas — Próximamente" (sticky en desktop) con botón a Emergencias.
 - Servicios (fondo con grilla de plano), Novedades (3 últimas), Consorcio (2 mojones + lista), FAQ corto (5 preguntas con `<details>`, chevron rota, apertura animada), CTA de contacto.
 - Barra de emergencias fija abajo en mobile (< 640 px) con "número a confirmar"; en ≥ 640 px el CTA amarillo está en el header.

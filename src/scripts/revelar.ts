@@ -1,7 +1,6 @@
-// Fallback para navegadores sin scroll-driven animations (Firefox estable, jun-2026).
-// Donde hay soporte, no hace nada: el CSS se encarga.
+// Entradas de sección: agrega .visible la primera vez que el bloque entra en pantalla (todos los navegadores).
+// Las entradas son de una sola vez a propósito: un reveal atado al scroll termina antes de que el ojo lo registre.
 const iniciar = () => {
-  if (CSS.supports('animation-timeline: view()')) return;
   const nodos = document.querySelectorAll<HTMLElement>('.revelar:not(.visible), .escalonar:not(.visible)');
   if (!nodos.length) return;
   const io = new IntersectionObserver(
@@ -13,7 +12,7 @@ const iniciar = () => {
         }
       }
     },
-    { rootMargin: '0px 0px -10% 0px' },
+    { rootMargin: '0px 0px -12% 0px', threshold: 0.1 },
   );
   nodos.forEach((n) => io.observe(n));
 };

@@ -1,22 +1,55 @@
 ---
-// Geometría abstracta del hero: bandas de asfalto en perspectiva, el hilo luminoso y las marcas viales. Se dibuja al cargar.
+// La ruta, de noche: calzada en perspectiva hacia un punto de fuga, bordes luminosos, marcas que fluyen y faros que recorren.
+// Todo vector + CSS. Se dibuja al cargar y después queda viva (suave, lenta, sin show de luces).
 interface Props { class?: string }
 const { class: clase = '' } = Astro.props;
+// Punto de fuga y calzada (viewBox 1600×900). Las curvas suavizan la perspectiva.
+const VP = { x: 1180, y: 330 };
+const izq = `M 260 900 C 560 740, 900 560, ${VP.x} ${VP.y}`;
+const der = `M 1360 900 C 1320 700, 1260 520, ${VP.x} ${VP.y}`;
+const centro = `M 800 900 C 940 720, 1080 520, ${VP.x} ${VP.y}`;
+const carrilIzq = `M 540 900 C 760 720, 990 540, ${VP.x} ${VP.y}`;
+const carrilDer = `M 1080 900 C 1150 720, 1180 520, ${VP.x} ${VP.y}`;
 ---
-<svg viewBox="0 0 900 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true" class:list={['hero-ruta', clase]}>
+<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" class:list={['hero-ruta', clase]}>
   <defs>
-    <linearGradient id="hr-asfalto" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16304E" stop-opacity="0"></stop><stop offset="1" stop-color="#16304E"></stop></linearGradient>
-    <linearGradient id="hr-luz" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#68BCE1" stop-opacity="0"></stop><stop offset=".6" stop-color="#68BCE1"></stop><stop offset="1" stop-color="#8FCDE8"></stop></linearGradient>
-    <filter id="hr-glow" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="6"></feGaussianBlur></filter>
+    <linearGradient id="hr-asfalto" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#16304E" stop-opacity="0.9"></stop><stop offset="1" stop-color="#16304E" stop-opacity="0"></stop></linearGradient>
+    <linearGradient id="hr-borde" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#68BCE1" stop-opacity="0.9"></stop><stop offset="1" stop-color="#68BCE1" stop-opacity="0"></stop></linearGradient>
+    <radialGradient id="hr-horizonte" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#68BCE1" stop-opacity="0.35"></stop><stop offset="1" stop-color="#68BCE1" stop-opacity="0"></stop></radialGradient>
+    <filter id="hr-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8"></feGaussianBlur></filter>
+    <filter id="hr-glow-fino" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"></feGaussianBlur></filter>
   </defs>
-  <path d="M-50 640 C 200 420, 420 300, 640 160 L 760 160 C 560 320, 380 460, 240 640 Z" fill="url(#hr-asfalto)" opacity="0.9"></path>
-  <path d="M240 640 C 380 460, 560 320, 760 160 L 880 160 C 720 340, 600 480, 520 640 Z" fill="#10203A" opacity="0.8"></path>
-  <path d="M-50 640 C 200 420, 420 300, 640 160" fill="none" stroke="url(#hr-luz)" stroke-width="10" filter="url(#hr-glow)" opacity="0.7" pathLength="1000" class="dibujar al-cargar"></path>
-  <path d="M-50 640 C 200 420, 420 300, 640 160" fill="none" stroke="url(#hr-luz)" stroke-width="2.5" pathLength="1000" class="dibujar al-cargar"></path>
-  <path d="M240 640 C 380 460, 560 320, 760 160" fill="none" stroke="#F0C419" stroke-width="3" stroke-dasharray="28 36" opacity="0.85" pathLength="1000" class="dibujar al-cargar marcas"></path>
-  <line x1="0" y1="160" x2="900" y2="160" stroke="rgb(255 255 255 / 0.08)"></line>
+
+  <!-- horizonte y resplandor del punto de fuga -->
+  <line x1="0" y1={VP.y} x2="1600" y2={VP.y} stroke="rgb(255 255 255 / 0.06)"></line>
+  <ellipse cx={VP.x} cy={VP.y} rx="420" ry="120" fill="url(#hr-horizonte)" class="aparece"></ellipse>
+
+  <!-- calzada -->
+  <path d={`${izq} L ${VP.x} ${VP.y} C 1260 520, 1320 700, 1360 900 Z`} fill="url(#hr-asfalto)" class="aparece"></path>
+
+  <!-- bordes luminosos: se dibujan, y una luz los recorre -->
+  <path d={izq} fill="none" stroke="url(#hr-borde)" stroke-width="14" filter="url(#hr-glow)" opacity="0.6" pathLength="1000" class="dibujar al-cargar"></path>
+  <path d={izq} fill="none" stroke="url(#hr-borde)" stroke-width="2.5" pathLength="1000" class="dibujar al-cargar"></path>
+  <path d={der} fill="none" stroke="url(#hr-borde)" stroke-width="10" filter="url(#hr-glow)" opacity="0.5" pathLength="1000" class="dibujar al-cargar"></path>
+  <path d={der} fill="none" stroke="url(#hr-borde)" stroke-width="2" pathLength="1000" class="dibujar al-cargar"></path>
+  <path d={izq} fill="none" stroke="#E8EEF5" stroke-width="3" stroke-linecap="round" pathLength="1000" filter="url(#hr-glow-fino)" class="luz-viaja" style="--i: 0"></path>
+  <path d={der} fill="none" stroke="#E8EEF5" stroke-width="2.5" stroke-linecap="round" pathLength="1000" filter="url(#hr-glow-fino)" class="luz-viaja" style="--i: 1"></path>
+
+  <!-- marcas viales: doble línea central fluyendo hacia el horizonte -->
+  <path d={centro} fill="none" stroke="#F0C419" stroke-width="3" stroke-dasharray="22 30" opacity="0.85" pathLength="1000" class="marcas-vivas aparece"></path>
+  <path d={carrilIzq} fill="none" stroke="#E8EEF5" stroke-width="1.5" stroke-dasharray="14 40" opacity="0.28" pathLength="1000" class="marcas-vivas aparece"></path>
+  <path d={carrilDer} fill="none" stroke="#E8EEF5" stroke-width="1.5" stroke-dasharray="14 40" opacity="0.28" pathLength="1000" class="marcas-vivas aparece"></path>
+
+  <!-- faros: blancos vienen (izquierda), rojos se van (derecha) -->
+  <circle r="5" fill="#E8EEF5" filter="url(#hr-glow-fino)" class="faro faro-viene" style={`offset-path: path('${carrilIzq}'); --faro-dur: 9s; --faro-delay: 1s`}></circle>
+  <circle r="4" fill="#E8EEF5" filter="url(#hr-glow-fino)" class="faro faro-viene" style={`offset-path: path('${carrilIzq}'); --faro-dur: 9s; --faro-delay: 5.5s`}></circle>
+  <circle r="4" fill="#FF8A80" filter="url(#hr-glow-fino)" class="faro faro-va" style={`offset-path: path('${carrilDer}'); --faro-dur: 11s; --faro-delay: 2.5s`}></circle>
+  <circle r="3" fill="#FF8A80" filter="url(#hr-glow-fino)" class="faro faro-va" style={`offset-path: path('${carrilDer}'); --faro-dur: 11s; --faro-delay: 8s`}></circle>
 </svg>
 <style>
   .hero-ruta { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-  .marcas { animation-delay: 700ms; }
+  /* Los que vienen recorren el path al revés (del horizonte hacia la cámara) y crecen. */
+  .faro-viene { animation-direction: reverse; }
+  .faro-va { animation-name: recorrer-va; }
+  @keyframes recorrer-va { from { offset-distance: 0%; opacity: 0; transform: scale(1.4); } 8% { opacity: 1; } 92% { opacity: 0.7; } to { offset-distance: 100%; opacity: 0; transform: scale(0.4); } }
 </style>

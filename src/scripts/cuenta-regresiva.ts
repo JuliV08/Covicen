@@ -17,10 +17,11 @@ const iniciar = () => {
     const dias = Math.floor(resta / 86_400_000);
     const horas = Math.floor((resta % 86_400_000) / 3_600_000);
     const minutos = Math.floor((resta % 3_600_000) / 60_000);
-    texto.innerHTML = `Inicio de operación en <strong class="tabular-nums text-texto">${dias} d · ${pad(horas)} h · ${pad(minutos)} min</strong>`;
+    const segundos = Math.floor((resta % 60_000) / 1000);
+    texto.innerHTML = `Inicio de operación en <strong class="tabular-nums text-texto">${dias} d · ${pad(horas)} h · ${pad(minutos)} min · ${pad(segundos)} s</strong>`;
   };
   pintar();
-  const id = window.setInterval(pintar, 60_000);
+  const id = window.setInterval(pintar, 1000);
   document.addEventListener('astro:before-swap', () => window.clearInterval(id), { once: true });
 };
 document.addEventListener('astro:page-load', iniciar);

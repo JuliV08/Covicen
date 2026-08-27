@@ -1,16 +1,12 @@
 ---
 interface Props { valor: number | string; unidad?: string; etiqueta: string; animar?: boolean; class?: string }
 const { valor, unidad, etiqueta, animar = false, class: clase = '' } = Astro.props;
-const entero = typeof valor === 'number' && Number.isInteger(valor);
-const anima = animar && entero;
+// Solo enteros cuentan (contador.ts); el HTML siempre trae el número real para SEO, lectores y sin JS.
+const anima = animar && typeof valor === 'number' && Number.isInteger(valor);
 ---
 <div class:list={['mojon relative', clase]}>
   <p class="flex items-baseline gap-2 font-extrabold leading-none tracking-[var(--tracking-titulo)] text-texto" style="font-size: clamp(2.75rem, 2rem + 3.5vw, 5.5rem)">
-    {anima ? (
-      <span class="relative inline-block"><span class="mojon-contador tabular-nums" aria-hidden="true" style={`--meta: ${valor}`}></span><span class="mojon-texto">{valor}</span></span>
-    ) : (
-      <span class="tabular-nums">{valor}</span>
-    )}
+    <span class="tabular-nums" data-contador={anima ? valor : undefined}>{valor}</span>
     {unidad && <span class="text-[0.4em] font-medium text-texto-2">{unidad}</span>}
   </p>
   <p class="eyebrow mt-2">{etiqueta}</p>

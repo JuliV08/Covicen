@@ -31,7 +31,7 @@ describe('Mojon', () => {
   it('mantiene el número como texto accesible aunque anime', async () => {
     const html = await render(Mojon, { valor: 681, unidad: 'km', etiqueta: 'de rutas', animar: true });
     expect(html).toContain('>681<');
-    expect(html).toContain('style="--meta: 681"');
+    expect(html).toContain('data-contador="681"');
   });
 });
 
