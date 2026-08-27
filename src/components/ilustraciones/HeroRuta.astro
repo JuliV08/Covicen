@@ -1,15 +1,27 @@
 ---
-// La ruta, de noche: calzada en perspectiva hacia un punto de fuga, bordes luminosos, marcas que fluyen y faros que recorren.
-// Todo vector + CSS. Se dibuja al cargar y después queda viva (suave, lenta, sin show de luces).
-interface Props { class?: string }
-const { class: clase = '' } = Astro.props;
-// Punto de fuga y calzada (viewBox 1600×900). Las curvas suavizan la perspectiva.
+// La ruta, de noche. Dos variantes:
+//  - "vector": calzada en perspectiva dibujada con SVG (sin foto).
+//  - "foto": solo luces sobre la fotografía real `hero-ruta-nocturna` (16:9). Los paths siguen la geometría de ESA foto;
+//    como foto y SVG comparten relación de aspecto y recorte centrado (object-fit: cover ≡ xMidYMid slice), quedan alineados.
+// Todo vector + CSS. Suave, lento, sin show de luces.
+interface Props { class?: string; variante?: 'vector' | 'foto' }
+const { class: clase = '', variante = 'vector' } = Astro.props;
+
+// Variante vector (viewBox 1600×900): punto de fuga y calzada.
 const VP = { x: 1180, y: 330 };
 const izq = `M 260 900 C 560 740, 900 560, ${VP.x} ${VP.y}`;
 const der = `M 1360 900 C 1320 700, 1260 520, ${VP.x} ${VP.y}`;
 const centro = `M 800 900 C 940 720, 1080 520, ${VP.x} ${VP.y}`;
 const carrilIzq = `M 540 900 C 760 720, 990 540, ${VP.x} ${VP.y}`;
 const carrilDer = `M 1080 900 C 1150 720, 1180 520, ${VP.x} ${VP.y}`;
+
+// Variante foto: geometría medida sobre hero-ruta-nocturna.jpg (punto de fuga ≈ 78 % / 59 %).
+const F = { x: 1250, y: 535 };
+const fotoMediana = `M 0 795 L ${F.x} ${F.y}`;          // línea amarilla del cantero
+const fotoBorde = `M 943 900 L ${F.x} ${F.y}`;          // línea blanca del borde derecho
+const fotoCarrilIzq = `M 85 900 L ${F.x} ${F.y}`;       // centro del carril izquierdo (se alejan)
+const fotoCarrilDer = `M 757 900 L ${F.x} ${F.y}`;      // centro del carril derecho (se alejan)
+const fotoContrario = `M ${F.x} ${F.y} L -80 690`;      // calzada opuesta, detrás del cantero (vienen)
 ---
 <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" class:list={['hero-ruta', clase]}>
   <defs>
@@ -20,36 +32,47 @@ const carrilDer = `M 1080 900 C 1150 720, 1180 520, ${VP.x} ${VP.y}`;
     <filter id="hr-glow-fino" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"></feGaussianBlur></filter>
   </defs>
 
-  <!-- horizonte y resplandor del punto de fuga -->
-  <line x1="0" y1={VP.y} x2="1600" y2={VP.y} stroke="rgb(255 255 255 / 0.06)"></line>
-  <ellipse cx={VP.x} cy={VP.y} rx="420" ry="120" fill="url(#hr-horizonte)" class="aparece"></ellipse>
+  {variante === 'vector' && (
+    <g>
+      <line x1="0" y1={VP.y} x2="1600" y2={VP.y} stroke="rgb(255 255 255 / 0.06)"></line>
+      <ellipse cx={VP.x} cy={VP.y} rx="420" ry="120" fill="url(#hr-horizonte)" class="aparece"></ellipse>
+      <path d={`${izq} L ${VP.x} ${VP.y} C 1260 520, 1320 700, 1360 900 Z`} fill="url(#hr-asfalto)" class="aparece"></path>
+      <path d={izq} fill="none" stroke="url(#hr-borde)" stroke-width="14" filter="url(#hr-glow)" opacity="0.6" pathLength="1000" class="dibujar al-cargar"></path>
+      <path d={izq} fill="none" stroke="url(#hr-borde)" stroke-width="2.5" pathLength="1000" class="dibujar al-cargar"></path>
+      <path d={der} fill="none" stroke="url(#hr-borde)" stroke-width="10" filter="url(#hr-glow)" opacity="0.5" pathLength="1000" class="dibujar al-cargar"></path>
+      <path d={der} fill="none" stroke="url(#hr-borde)" stroke-width="2" pathLength="1000" class="dibujar al-cargar"></path>
+      <path d={izq} fill="none" stroke="#E8EEF5" stroke-width="3" stroke-linecap="round" pathLength="1000" filter="url(#hr-glow-fino)" class="luz-viaja" style="--i: 0"></path>
+      <path d={der} fill="none" stroke="#E8EEF5" stroke-width="2.5" stroke-linecap="round" pathLength="1000" filter="url(#hr-glow-fino)" class="luz-viaja" style="--i: 1"></path>
+      <path d={centro} fill="none" stroke="#F0C419" stroke-width="3" stroke-dasharray="22 30" opacity="0.85" pathLength="1000" class="marcas-vivas aparece"></path>
+      <path d={carrilIzq} fill="none" stroke="#E8EEF5" stroke-width="1.5" stroke-dasharray="14 40" opacity="0.28" pathLength="1000" class="marcas-vivas aparece"></path>
+      <path d={carrilDer} fill="none" stroke="#E8EEF5" stroke-width="1.5" stroke-dasharray="14 40" opacity="0.28" pathLength="1000" class="marcas-vivas aparece"></path>
+      <circle r="5" fill="#E8EEF5" filter="url(#hr-glow-fino)" class="faro faro-viene" style={`offset-path: path('${carrilIzq}'); --faro-dur: 9s; --faro-delay: 1s`}></circle>
+      <circle r="4" fill="#E8EEF5" filter="url(#hr-glow-fino)" class="faro faro-viene" style={`offset-path: path('${carrilIzq}'); --faro-dur: 9s; --faro-delay: 5.5s`}></circle>
+      <circle r="4" fill="#FF8A80" filter="url(#hr-glow-fino)" class="faro faro-va" style={`offset-path: path('${carrilDer}'); --faro-dur: 11s; --faro-delay: 2.5s`}></circle>
+      <circle r="3" fill="#FF8A80" filter="url(#hr-glow-fino)" class="faro faro-va" style={`offset-path: path('${carrilDer}'); --faro-dur: 11s; --faro-delay: 8s`}></circle>
+    </g>
+  )}
 
-  <!-- calzada -->
-  <path d={`${izq} L ${VP.x} ${VP.y} C 1260 520, 1320 700, 1360 900 Z`} fill="url(#hr-asfalto)" class="aparece"></path>
-
-  <!-- bordes luminosos: se dibujan, y una luz los recorre -->
-  <path d={izq} fill="none" stroke="url(#hr-borde)" stroke-width="14" filter="url(#hr-glow)" opacity="0.6" pathLength="1000" class="dibujar al-cargar"></path>
-  <path d={izq} fill="none" stroke="url(#hr-borde)" stroke-width="2.5" pathLength="1000" class="dibujar al-cargar"></path>
-  <path d={der} fill="none" stroke="url(#hr-borde)" stroke-width="10" filter="url(#hr-glow)" opacity="0.5" pathLength="1000" class="dibujar al-cargar"></path>
-  <path d={der} fill="none" stroke="url(#hr-borde)" stroke-width="2" pathLength="1000" class="dibujar al-cargar"></path>
-  <path d={izq} fill="none" stroke="#E8EEF5" stroke-width="3" stroke-linecap="round" pathLength="1000" filter="url(#hr-glow-fino)" class="luz-viaja" style="--i: 0"></path>
-  <path d={der} fill="none" stroke="#E8EEF5" stroke-width="2.5" stroke-linecap="round" pathLength="1000" filter="url(#hr-glow-fino)" class="luz-viaja" style="--i: 1"></path>
-
-  <!-- marcas viales: doble línea central fluyendo hacia el horizonte -->
-  <path d={centro} fill="none" stroke="#F0C419" stroke-width="3" stroke-dasharray="22 30" opacity="0.85" pathLength="1000" class="marcas-vivas aparece"></path>
-  <path d={carrilIzq} fill="none" stroke="#E8EEF5" stroke-width="1.5" stroke-dasharray="14 40" opacity="0.28" pathLength="1000" class="marcas-vivas aparece"></path>
-  <path d={carrilDer} fill="none" stroke="#E8EEF5" stroke-width="1.5" stroke-dasharray="14 40" opacity="0.28" pathLength="1000" class="marcas-vivas aparece"></path>
-
-  <!-- faros: blancos vienen (izquierda), rojos se van (derecha) -->
-  <circle r="5" fill="#E8EEF5" filter="url(#hr-glow-fino)" class="faro faro-viene" style={`offset-path: path('${carrilIzq}'); --faro-dur: 9s; --faro-delay: 1s`}></circle>
-  <circle r="4" fill="#E8EEF5" filter="url(#hr-glow-fino)" class="faro faro-viene" style={`offset-path: path('${carrilIzq}'); --faro-dur: 9s; --faro-delay: 5.5s`}></circle>
-  <circle r="4" fill="#FF8A80" filter="url(#hr-glow-fino)" class="faro faro-va" style={`offset-path: path('${carrilDer}'); --faro-dur: 11s; --faro-delay: 2.5s`}></circle>
-  <circle r="3" fill="#FF8A80" filter="url(#hr-glow-fino)" class="faro faro-va" style={`offset-path: path('${carrilDer}'); --faro-dur: 11s; --faro-delay: 8s`}></circle>
+  {variante === 'foto' && (
+    <g>
+      <!-- luz que recorre la línea amarilla del cantero y el borde derecho, como el reflejo de un auto que pasa -->
+      <path d={fotoMediana} fill="none" stroke="#F0C419" stroke-width="4" stroke-linecap="round" pathLength="1000" filter="url(#hr-glow-fino)" opacity="0.8" class="luz-viaja aparece" style="--i: 0"></path>
+      <path d={fotoBorde} fill="none" stroke="#E8EEF5" stroke-width="3" stroke-linecap="round" pathLength="1000" filter="url(#hr-glow-fino)" opacity="0.7" class="luz-viaja aparece" style="--i: 1"></path>
+      <!-- luces traseras que se alejan por los dos carriles -->
+      <circle r="4" fill="#FF8A80" filter="url(#hr-glow-fino)" class="faro faro-va" style={`offset-path: path('${fotoCarrilDer}'); --faro-dur: 12s; --faro-delay: 1s`}></circle>
+      <circle r="3.5" fill="#FF8A80" filter="url(#hr-glow-fino)" class="faro faro-va" style={`offset-path: path('${fotoCarrilIzq}'); --faro-dur: 13s; --faro-delay: 6s`}></circle>
+      <!-- faros que vienen por la calzada opuesta, detrás del guardarraíl -->
+      <circle r="4" fill="#E8EEF5" filter="url(#hr-glow-fino)" class="faro faro-viene-foto" style={`offset-path: path('${fotoContrario}'); --faro-dur: 8s; --faro-delay: 3s`}></circle>
+      <circle r="3" fill="#E8EEF5" filter="url(#hr-glow-fino)" class="faro faro-viene-foto" style={`offset-path: path('${fotoContrario}'); --faro-dur: 8s; --faro-delay: 7.5s`}></circle>
+    </g>
+  )}
 </svg>
 <style>
   .hero-ruta { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
   /* Los que vienen recorren el path al revés (del horizonte hacia la cámara) y crecen. */
   .faro-viene { animation-direction: reverse; }
   .faro-va { animation-name: recorrer-va; }
+  .faro-viene-foto { animation-name: recorrer-viene; }
   @keyframes recorrer-va { from { offset-distance: 0%; opacity: 0; transform: scale(1.4); } 8% { opacity: 1; } 92% { opacity: 0.7; } to { offset-distance: 100%; opacity: 0; transform: scale(0.4); } }
+  @keyframes recorrer-viene { from { offset-distance: 0%; opacity: 0; transform: scale(0.4); } 10% { opacity: 0.9; } 90% { opacity: 1; } to { offset-distance: 100%; opacity: 0; transform: scale(1.6); } }
 </style>

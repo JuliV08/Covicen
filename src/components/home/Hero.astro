@@ -6,15 +6,24 @@ import ImagenAtmosfera from '@/components/ilustraciones/ImagenAtmosfera.astro';
 import Boton from '@/components/ui/Boton.astro';
 import Eyebrow from '@/components/ui/Eyebrow.astro';
 import type { Empresa } from '@/lib/datos/esquemas';
+import { imagenAtmosfera } from '@/lib/atmosfera';
 import { fechaLarga, numero } from '@/lib/formato';
 interface Props { empresa: Empresa }
 const { empresa } = Astro.props;
 const c = empresa.concesion;
+// Con foto, las luces siguen la geometría de la foto y se mueven con ella (mismo wrapper: parallax + Ken Burns).
+const hayFoto = imagenAtmosfera('hero-ruta-nocturna') !== undefined;
 ---
 <section class="hero plano relative isolate overflow-hidden" style="min-height: calc(100dvh - var(--alto-header))" data-spotlight>
-  <div class="ken-burns absolute inset-0 -z-20" aria-hidden="true"><ImagenAtmosfera nombre="hero-ruta-nocturna" alt="" prioridad /></div>
-  <HeroRuta class="-z-10 parallax" />
-  <div class="absolute inset-0 -z-10 bg-gradient-to-r from-fondo via-fondo/85 to-fondo/20" aria-hidden="true"></div>
+  {hayFoto ? (
+    <div class="ken-burns parallax absolute inset-0 -z-20" aria-hidden="true">
+      <ImagenAtmosfera nombre="hero-ruta-nocturna" alt="" prioridad sizes="100vw" />
+      <HeroRuta variante="foto" />
+    </div>
+  ) : (
+    <HeroRuta class="-z-10 parallax" />
+  )}
+  <div class:list={['absolute inset-0 -z-10 bg-gradient-to-r from-fondo', hayFoto ? 'via-fondo/70 to-fondo/10' : 'via-fondo/85 to-fondo/20']} aria-hidden="true"></div>
   <div class="hero-luz absolute inset-0 -z-10" aria-hidden="true"></div>
   <div class="entrada contenedor flex min-h-[calc(100dvh-var(--alto-header))] flex-col justify-center py-20">
     <div style="--i: 0"><Eyebrow>Concesionaria del Tramo Centro · {c.rutas.join(' · ')}</Eyebrow></div>

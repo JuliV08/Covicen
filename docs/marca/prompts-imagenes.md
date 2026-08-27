@@ -9,7 +9,11 @@ Reglas comunes (pegar al final de cada prompt):
 
 ## 1. `hero-ruta-nocturna` — 16:9, 2400×1350
 
-Aerial night view of a straight two-lane national highway in the flat Argentine Pampas (Córdoba–Santa Fe region), seen from a slight elevation, receding to the horizon. Long exposure: red and white vehicle light trails along the road, cool blue-cyan street lighting at a single overpass in the mid-distance, the rest of the landscape in deep navy darkness under a clear night sky. Fresh asphalt with crisp yellow dashed center line catching the light. Mood: calm, precise, infrastructural. Composition: road enters from bottom-right and exits top-center; leave the upper-left third nearly black for headline text.
+> Iteración 2 (2026-08-27) — **es la que está en uso** (`src/assets/atmosfera/hero-ruta-nocturna.jpg`, 1672×941, JPG q90). La primera versión trajo light trails, un puente con rampas sin sentido y un cartel con texto inventado: los tres quedan prohibidos abajo. Ojo: las luces animadas del hero (`HeroRuta.astro`, variante `foto`) están medidas sobre esta foto; si se regenera, hay que remedir el punto de fuga y las líneas.
+
+Night photograph of a straight, divided four-lane highway (two lanes per direction, low concrete median barrier with a steel guardrail) crossing the flat Argentine Pampas, seen from about three metres above the pavement on the right shoulder, receding in one-point perspective to a low horizon. Fresh dark asphalt; crisp white dashed lane lines; a continuous yellow edge line along the median; small reflective road studs catching the light. The road is lit only by moonlight and a faint cyan glow on the horizon; no street lamps. Two vehicles far in the distance as small, sharp points of light (white headlights on the left carriageway, red tail lights on the right), motionless. Flat dark fields on both sides, a wire fence, a thin line of distant trees; clear sky with a few stars, deep navy fading to black at the top. Composition: the road enters from the bottom-right corner and vanishes at the upper-centre-right; the upper-left third of the frame is empty dark sky for headline text.
+
+Strict exclusions: no long exposure, no light trails or motion streaks of any kind; no bridge, overpass, ramp or interchange; no signs, no text, no letters, no numbers; no lamp posts; no buildings; no people; no vehicles in the foreground. Photorealistic, single exposure, tripod, 35 mm, natural grain, no HDR.
 
 ## 2. `obras-nocturnas` — 21:9, 2520×1080
 

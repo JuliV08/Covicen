@@ -17,7 +17,8 @@ Cerradas en el brainstorming del **2026-08-27** con Juli. Fuente completa: `docs
 
 ## Cosas que aprendimos construyendo (durables)
 
-- **pnpm no expone dependencias transitivas**: si `astro.config.mjs` importa de `vite` (`loadEnv`), `vite` va declarado como devDependency.
+- **pnpm no expone dependencias transitivas**: si `astro.config.mjs` importa de `vite` (`loadEnv`), `vite` va declarado como devDependency. Lo mismo con **`sharp`**: Astro 6+ no lo trae y `astro:assets` lo exige para procesar imágenes (`MissingSharp` en build).
+- **Fotos + vector alineados**: si la foto y el SVG comparten relación de aspecto y recorte centrado (`object-fit: cover` ≡ `preserveAspectRatio="xMidYMid slice"`), las coordenadas del viewBox mapean proporcionalmente a la foto en cualquier viewport. Así las luces del hero siguen los carriles de la foto real.
 - **Los scripts de `src/scripts/*.ts` terminan con `export {}`**: sin `import`/`export`, TypeScript los trata como scripts globales y las `const` chocan entre archivos.
 - **`import.meta.env` con acceso estático**: desde Astro 6 los valores se inlinean; un acceso dinámico por clave queda `undefined`.
 - **Zod 4 en Astro 6+**: `z.url()`, `z.email()`, `z.iso.datetime()`; las versiones `.string().url()` están deprecadas.
