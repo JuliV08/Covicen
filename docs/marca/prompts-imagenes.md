@@ -1,0 +1,31 @@
+# Prompts de imágenes atmosféricas — Covicen
+
+Las imágenes son opcionales: el sitio se ve terminado sin ellas. Cuando existan, se guardan en
+`src/assets/atmosfera/<nombre>.jpg` (o `.png` / `.webp`) y el build las optimiza a AVIF en tres anchos. Peso objetivo del original: ≤ 2 MB, lado mayor 2400 px. El componente `ImagenAtmosfera` las oscurece (`brightness(0.55)`) y desatura un poco para que el texto siempre gane.
+
+Reglas comunes (pegar al final de cada prompt):
+
+> No text, no logos, no watermarks, no people's faces, no readable license plates. Photorealistic, editorial documentary style, shot on a full-frame camera, 35mm lens, long exposure where noted. Color palette anchored in deep navy (#0B1526, #16304E), cool cyan highlights (#68BCE1) and a single warm accent of road-marking yellow (#F0C419). Low overall brightness: the image will sit under UI text, so keep the upper-left quadrant dark and uncluttered. No HDR look, no oversaturation, subtle film grain acceptable.
+
+## 1. `hero-ruta-nocturna` — 16:9, 2400×1350
+
+Aerial night view of a straight two-lane national highway in the flat Argentine Pampas (Córdoba–Santa Fe region), seen from a slight elevation, receding to the horizon. Long exposure: red and white vehicle light trails along the road, cool blue-cyan street lighting at a single overpass in the mid-distance, the rest of the landscape in deep navy darkness under a clear night sky. Fresh asphalt with crisp yellow dashed center line catching the light. Mood: calm, precise, infrastructural. Composition: road enters from bottom-right and exits top-center; leave the upper-left third nearly black for headline text.
+
+## 2. `obras-nocturnas` — 21:9, 2520×1080
+
+Night road-works scene on a highway shoulder: a compact asphalt paver and a roller under portable LED work lights, yellow-and-black barrier boards and orange cones in the foreground receding into darkness, wet asphalt reflecting cyan light. Workers only as distant silhouettes in high-visibility vests, no faces. Wide cinematic crop, horizon low, sky deep navy. Mood: work in progress, controlled, safe.
+
+## 3. `consorcio` — 4:3, 2000×1500 (opcional, Quiénes somos)
+
+Dusk photograph of a concrete bridge deck over a rural highway under construction, formwork and rebar in the foreground, a single tower crane against a navy-blue evening sky with the last cyan light on the horizon. No text or signage. Mood: serious engineering, long-term.
+
+## 4. Portadas de novedades — 3:2, 1800×1200 (opcional, una por post)
+
+- `novedad-adjudicacion`: Close-up of an official document on a dark desk, out of focus, with a fountain pen; only cool light from a window. No readable text.
+- `novedad-5-de-octubre`: A toll gantry (free-flow, no barriers) over a highway at blue hour, cameras and antennas visible, one lane lit by cyan light, yellow lane markings sharp in the foreground.
+
+## Cómo enchufarlas
+
+1. Guardar el archivo con el nombre exacto en `src/assets/atmosfera/`.
+2. `pnpm build`: Astro genera los AVIF. Nada más que hacer: `Hero` y `Obras` ya tienen el slot.
+3. Si una imagen no convence, borrarla: el layout vuelve al fondo vectorial sin tocar código.

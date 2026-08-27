@@ -1,0 +1,16 @@
+---
+// Imagen fotográfica opcional. Si no existe src/assets/atmosfera/<nombre>.*, no renderiza nada: el layout ya está terminado sin foto.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props { nombre: string; alt: string; class?: string; sizes?: string; widths?: number[]; prioridad?: boolean }
+const { nombre, alt, class: clase = '', sizes = '100vw', widths = [640, 1024, 1600], prioridad = false } = Astro.props;
+const todas = import.meta.glob<{ default: ImageMetadata }>('/src/assets/atmosfera/*.{jpg,jpeg,png,webp,avif}', { eager: true });
+const entrada = Object.entries(todas).find(([ruta]) => ruta.replace(/^.*\//, '').replace(/\.[^.]+$/, '') === nombre);
+const imagen = entrada?.[1].default;
+---
+{imagen && (
+  <Image src={imagen} {alt} {widths} {sizes} format="avif" quality={55} loading={prioridad ? 'eager' : 'lazy'} decoding="async" class:list={['imagen-atmosfera', clase]} />
+)}
+<style>
+  .imagen-atmosfera { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85) brightness(0.55); }
+</style>

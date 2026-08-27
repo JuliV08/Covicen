@@ -2,6 +2,7 @@
 import { ArrowRight } from '@lucide/astro';
 import CuentaRegresiva from '@/components/CuentaRegresiva.astro';
 import HeroRuta from '@/components/ilustraciones/HeroRuta.astro';
+import ImagenAtmosfera from '@/components/ilustraciones/ImagenAtmosfera.astro';
 import Boton from '@/components/ui/Boton.astro';
 import Eyebrow from '@/components/ui/Eyebrow.astro';
 import type { Empresa } from '@/lib/datos/esquemas';
@@ -11,6 +12,7 @@ const { empresa } = Astro.props;
 const c = empresa.concesion;
 ---
 <section class="plano relative isolate overflow-hidden" style="min-height: calc(100dvh - var(--alto-header))">
+  <div class="absolute inset-0 -z-20" aria-hidden="true"><ImagenAtmosfera nombre="hero-ruta-nocturna" alt="" prioridad /></div>
   <HeroRuta class="-z-10 opacity-90 parallax" />
   <div class="absolute inset-0 -z-10 bg-gradient-to-r from-fondo via-fondo/90 to-fondo/30" aria-hidden="true"></div>
   <div class="entrada contenedor flex min-h-[calc(100dvh-var(--alto-header))] flex-col justify-center py-20">

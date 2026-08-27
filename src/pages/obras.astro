@@ -1,6 +1,7 @@
 ---
 import Base from '@/layouts/Base.astro';
 import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
+import ImagenAtmosfera from '@/components/ilustraciones/ImagenAtmosfera.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import Senal from '@/components/ui/Senal.astro';
 import { datos } from '@/lib/datos';
@@ -10,6 +11,8 @@ const estados = { planificada: 'Planificada', 'en-ejecucion': 'En ejecución', t
 ---
 <Base titulo="Obras y avance" descripcion="Obras de Covicen en el Tramo Centro: plan de contingencia, rehabilitación de pavimento, señalización e iluminación, cobro electrónico. El peaje pleno se aplica cuando Vialidad Nacional verifica la transitabilidad óptima." migas={[{ nombre: 'Obras', href: '/obras' }]}>
   <Seccion nivel="h1" eyebrow="Obras y avance" titulo="Primero las obras. Después, el peaje pleno." intro="El contrato exige alcanzar condiciones de transitabilidad óptima antes de aplicar la tarifa ofertada. Vialidad Nacional lo verifica con indicadores objetivos." class="pt-10">
+    <!-- Sin espacios adentro: `empty:hidden` depende de que no haya nodos de texto cuando no hay imagen. -->
+    <div class="revelar mb-12 aspect-[21/9] w-full overflow-hidden rounded-md border border-borde bg-fondo-2 empty:hidden"><ImagenAtmosfera nombre="obras-nocturnas" alt="Zona de obra nocturna en autopista, con balizamiento amarillo" sizes="(min-width: 80rem) 80rem, 100vw" /></div>
     <ol class="escalonar relative grid gap-6 border-l border-borde pl-8">
       {obras.map((o, i) => (
         <li class="relative" style={`--i: ${i}`}>
