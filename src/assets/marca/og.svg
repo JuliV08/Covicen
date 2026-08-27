@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="139" y1="139" x2="885" y2="885">
+      <stop offset="0" stop-color="#68BCE1"/><stop offset=".4" stop-color="#4A92BA"/><stop offset=".75" stop-color="#2C688F"/><stop offset="1" stop-color="#1E4870"/>
+    </linearGradient>
+    <pattern id="plano" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" fill="none" stroke="#ffffff" stroke-opacity=".05"/>
+    </pattern>
+    <linearGradient id="hilo" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#68BCE1" stop-opacity="0"/><stop offset=".5" stop-color="#68BCE1"/><stop offset="1" stop-color="#68BCE1" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#0B1526"/>
+  <rect width="1200" height="630" fill="url(#plano)"/>
+  <path d="M-20 470 C 300 420, 500 520, 820 440 S 1150 380, 1220 410" fill="none" stroke="url(#hilo)" stroke-width="3"/>
+  <path d="M-20 470 C 300 420, 500 520, 820 440 S 1150 380, 1220 410" fill="none" stroke="#F0C419" stroke-width="2" stroke-dasharray="14 22" opacity=".7"/>
+  <g transform="translate(96 150) scale(0.24)">ISOTIPO</g>
+  <text x="330" y="240" font-family="Archivo" font-weight="800" font-size="96" fill="#E8EEF5" letter-spacing="2">COVICEN</text>
+  <text x="334" y="292" font-family="Archivo" font-weight="400" font-size="26" fill="#A9C4D8" letter-spacing="6">CORREDOR VIAL DEL CENTRO</text>
+  <text x="96" y="560" font-family="Archivo" font-weight="400" font-size="28" fill="#A9C4D8">Tramo Centro · RN 9 · RN 19 · RN 34 · 681 km · Córdoba y Santa Fe</text>
+</svg>

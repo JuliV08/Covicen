@@ -1,0 +1,18 @@
+---
+import Isotipo from './Isotipo.astro';
+import { ruta } from '@/lib/rutas';
+
+interface Props { conDescriptor?: boolean; class?: string }
+const { conDescriptor = false, class: clase = '' } = Astro.props;
+---
+<a href={ruta('/')} aria-label="Covicen, inicio" class:list={['logotipo inline-flex items-center gap-3 text-texto no-underline', clase]}>
+  <Isotipo size={36} class="shrink-0" />
+  <span class="flex flex-col leading-none">
+    <span class="font-extrabold text-[1.25rem] tracking-[0.02em]">COVICEN</span>
+    {conDescriptor && <span class="eyebrow mt-1 text-[0.6rem]">Corredor Vial del Centro</span>}
+  </span>
+</a>
+<style>
+  .logotipo :global(svg) { transition: transform var(--dur-ui) var(--ease-salida); }
+  .logotipo:hover :global(svg), .logotipo:focus-visible :global(svg) { transform: rotate(-4deg) scale(1.04); }
+</style>

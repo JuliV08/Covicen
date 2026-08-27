@@ -1,0 +1,36 @@
+---
+import { ISOTIPO_D, ISOTIPO_VIEWBOX } from '@/assets/marca/isotipo-path';
+
+interface Props {
+  variante?: 'degradado' | 'tinta';
+  size?: number;
+  class?: string;
+  /** Si el isotipo es la única señal, pasá un título y deja de ser decorativo. */
+  titulo?: string;
+}
+const { variante = 'degradado', size = 32, class: clase = '', titulo } = Astro.props;
+// id único por instancia: dos isotipos en la misma página no comparten gradiente
+const id = `iso-${Math.random().toString(36).slice(2, 8)}`;
+---
+<svg
+  viewBox={ISOTIPO_VIEWBOX}
+  width={size}
+  height={size}
+  class={clase}
+  aria-hidden={titulo ? undefined : 'true'}
+  role={titulo ? 'img' : undefined}
+  focusable="false"
+>
+  {titulo && <title>{titulo}</title>}
+  {variante === 'degradado' && (
+    <defs>
+      <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="139" y1="139" x2="885" y2="885">
+        <stop offset="0" stop-color="#68BCE1"></stop>
+        <stop offset=".4" stop-color="#4A92BA"></stop>
+        <stop offset=".75" stop-color="#2C688F"></stop>
+        <stop offset="1" stop-color="#1E4870"></stop>
+      </linearGradient>
+    </defs>
+  )}
+  <path d={ISOTIPO_D} fill={variante === 'degradado' ? `url(#${id})` : 'currentColor'} fill-rule="evenodd"></path>
+</svg>
