@@ -2,7 +2,7 @@
 import { ArrowRight } from '@lucide/astro';
 import CuentaRegresiva from '@/components/CuentaRegresiva.astro';
 import HeroRuta from '@/components/ilustraciones/HeroRuta.astro';
-import ImagenAtmosfera from '@/components/ilustraciones/ImagenAtmosfera.astro';
+import ParallaxProfundidad from '@/components/ilustraciones/ParallaxProfundidad.astro';
 import Boton from '@/components/ui/Boton.astro';
 import Eyebrow from '@/components/ui/Eyebrow.astro';
 import type { Empresa } from '@/lib/datos/esquemas';
@@ -11,14 +11,14 @@ import { fechaLarga, numero } from '@/lib/formato';
 interface Props { empresa: Empresa }
 const { empresa } = Astro.props;
 const c = empresa.concesion;
-// Con foto, las luces siguen la geometría de la foto y se mueven con ella (mismo wrapper: parallax + Ken Burns).
+// Con foto: parallax 2.5D con mapa de profundidad (WebGL en desktop; en mobile, la foto con un dolly lento).
+// Sin foto: la calzada vectorial en perspectiva. Luces sintéticas sobre la foto se veían como glitch: fuera.
 const hayFoto = imagenAtmosfera('hero-ruta-nocturna') !== undefined;
 ---
 <section class="hero plano relative isolate overflow-hidden" style="min-height: calc(100dvh - var(--alto-header))" data-spotlight>
   {hayFoto ? (
-    <div class="ken-burns parallax absolute inset-0 -z-20" aria-hidden="true">
-      <ImagenAtmosfera nombre="hero-ruta-nocturna" alt="" prioridad sizes="100vw" />
-      <HeroRuta variante="foto" />
+    <div class="parallax absolute inset-0 -z-20" aria-hidden="true">
+      <ParallaxProfundidad nombre="hero-ruta-nocturna" profundidad="hero-ruta-nocturna.profundidad" vp={[0.78, 0.595]} />
     </div>
   ) : (
     <HeroRuta class="-z-10 parallax" />
