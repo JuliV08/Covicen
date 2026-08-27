@@ -130,6 +130,8 @@ pnpm add -D @astrojs/check@^0.9 typescript@^5 vitest@^4 vite@^8 linkedom@^0.18 @
 ```
 Expected: sin errores de peer deps. Si `@astrojs/check` se queja de TypeScript, confirmá que quedó `typescript` 5.x (`pnpm ls typescript`), no 7.x. `vite` va declarado explícitamente porque `astro.config.mjs` importa `loadEnv` de ahí y pnpm no expone dependencias transitivas.
 
+> **Nota posterior (ejecución):** `@astrojs/react`, `react`, `react-dom` y sus `@types` se sacaron en la Task 16 porque la integración emite ~60 KB gz de runtime de cliente aunque no haya islas. No los instales; `integrations: [sitemap()]`.
+
 - [ ] **Step 4: `astro.config.mjs`**
 
 ```js
