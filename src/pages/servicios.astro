@@ -5,8 +5,8 @@ import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 ---
 <Base titulo="Servicios al usuario" descripcion="Servicios de Covicen para quienes circulan por el Tramo Centro: emergencias y auxilio en ruta, seguridad vial, medios de pago y TelePASE." migas={[{ nombre: 'Servicios', href: '/servicios' }]}>
-  <Seccion nivel="h1" eyebrow="Servicios" titulo="Lo que cubre el peaje." intro="Además de mantener la ruta, el contrato obliga a prestar servicios al usuario. Estos son los que arrancan con la operación." class="pt-10 pb-0" />
-  <Servicios />
+  <Seccion nivel="h1" eyebrow="Servicios" titulo="Servicios al usuario." intro="Además de mantener la ruta, el contrato obliga a prestar servicios al usuario. Estos son los que arrancan con la operación." class="pt-10 pb-0" />
+  <Servicios indice="01" id="desde-el-inicio" eyebrow="Desde el inicio" titulo="Lo que cubre el peaje." />
   <Seccion indice="02" eyebrow="Más adelante" titulo="Lo que se suma cuando existan los sistemas.">
     <div class="grid gap-4 md:grid-cols-2">
       <HuecoCapacidad capacidad="oficinaVirtual" titulo="Oficina virtual" descripcion="Consulta y pago de facturas de TelePASE y trámites en línea." alternativaHref="/medios-de-pago" alternativaTexto="Ver medios de pago" />

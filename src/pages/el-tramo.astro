@@ -8,7 +8,7 @@ import { datos } from '@/lib/datos';
 import { numero } from '@/lib/formato';
 const tramo = await datos.tramo();
 const paneles = [
-  { valor: Math.round(tramo.km), unidad: 'km', etiqueta: 'de rutas nacionales', texto: `Desde Rosario hasta Pilar por la autopista, y hacia San Francisco, Rafaela y Santa Fe. ${numero(tramo.km, 2)} km bajo una misma concesión.` },
+  { valor: Math.floor(tramo.km), unidad: 'km', etiqueta: 'de rutas nacionales', texto: `Desde Rosario hasta Pilar por la autopista, y hacia San Francisco, Rafaela y Santa Fe. ${numero(tramo.km, 2)} km bajo una misma concesión.` },
   { valor: tramo.rutas.length, unidad: 'rutas', etiqueta: 'RN 9, RN 19 y RN 34', texto: tramo.rutas.map((r) => `${r.nombre}: ${r.desde} → ${r.hasta}${r.km ? ` (${r.km} km)` : ''}.`).join(' ') },
   { valor: tramo.provincias.length, unidad: 'provincias', etiqueta: tramo.provincias.join(' y '), texto: 'El límite provincial queda a la altura de Leones, sobre la autopista.' },
   { valor: tramo.cabinas.length, unidad: 'peajes', etiqueta: `${tramo.cabinas.filter((c) => c.situacion === 'existente').length} existentes y ${tramo.cabinas.filter((c) => c.situacion === 'nueva').length} nuevos`, texto: 'Las estaciones nuevas nacen con cobro electrónico y Free Flow.' },

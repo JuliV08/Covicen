@@ -11,7 +11,7 @@ const c = e.concesion;
 <Base titulo="Quiénes somos" descripcion="Covicen es la concesionaria del Tramo Centro de la Red Federal de Concesiones, integrada por AFEMA S.A., Pablo Federico e Hijos S.A. y Guido Mogetta S.A. Concesión a 20 años, adjudicada por Resolución 1379/2026." migas={[{ nombre: 'Quiénes somos', href: '/quienes-somos' }]}>
   <Seccion nivel="h1" eyebrow="Quiénes somos" titulo="Una concesionaria nueva para un tramo que ya existe." intro={`Covicen (${e.descriptor}) es la sociedad que integran las tres empresas adjudicatarias del Tramo Centro. ${e.enFormacion ? 'La sociedad está en formación: los datos registrales se publican cuando se complete la inscripción.' : ''}`} class="pt-10">
     <div class="escalonar grid gap-10 sm:grid-cols-3">
-      <div style="--i: 0"><Mojon valor={Math.round(c.km)} unidad="km" etiqueta="de rutas nacionales" animar /></div>
+      <div style="--i: 0"><Mojon valor={Math.floor(c.km)} unidad="km" etiqueta="de rutas nacionales" animar /></div>
       <div style="--i: 1"><Mojon valor={c.plazoAnios} unidad="años" etiqueta={`de concesión${c.prorrogaAnios ? ` (+${c.prorrogaAnios} prorrogables)` : ''}`} animar /></div>
       <div style="--i: 2"><Mojon valor={c.tramosEtapa} etiqueta="tramos en la Etapa III; el nuestro ofertó la tarifa más baja" animar /></div>
     </div>
