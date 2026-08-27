@@ -28,13 +28,8 @@ const url = absoluta(`/novedades/${slug}`);
       <h1 class="mt-4">{novedad.titulo}</h1>
       <p class="mt-6 text-xl text-texto-2">{novedad.resumen}</p>
     </header>
-    <div class="prose-covicen revelar mt-12 max-w-prose text-lg text-texto-2" data-base={config.base}><Content /></div>
+    <!-- Los links internos del Markdown se escriben relativos (../../obras/): funcionan con y sin base, sin JS. -->
+    <div class="prose-covicen revelar mt-12 max-w-prose text-lg text-texto-2"><Content /></div>
     <div class="revelar mt-12"><Boton href="/novedades" variante="secundario">Todas las novedades</Boton></div>
   </article>
 </Base>
-<script>
-  // Los links del Markdown se escriben desde la raíz (/obras/). Si el sitio corre con base, se les antepone.
-  const contenedor = document.querySelector<HTMLElement>('[data-base]');
-  const base = contenedor?.dataset.base ?? '/';
-  if (contenedor && base !== '/') contenedor.querySelectorAll<HTMLAnchorElement>('a[href^="/"]').forEach((a) => { a.setAttribute('href', base.replace(/\/$/, '') + a.getAttribute('href')); });
-</script>

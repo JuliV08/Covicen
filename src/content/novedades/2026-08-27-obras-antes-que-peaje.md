@@ -16,4 +16,4 @@ Una de las reglas centrales del contrato es simple: **no se cobra la tarifa ofer
 
 ## Cómo vamos a informar
 
-La página de [Obras](/obras/) muestra cada frente con su estado. Cuando entre en servicio el centro de operaciones, se suma el estado de las rutas en tiempo real. Hasta entonces, las novedades de obra se publican acá.
+La página de [Obras](../../obras/) muestra cada frente con su estado. Cuando entre en servicio el centro de operaciones, se suma el estado de las rutas en tiempo real. Hasta entonces, las novedades de obra se publican acá.
