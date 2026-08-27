@@ -71,15 +71,35 @@ La adjudicación salió el lunes 2026-08-24 y la sociedad está **en formación*
 
 > Ojo: **CVSA es estatal y tiene 8 años de sistemas atrás.** Su IA es el techo, no el piso. Covicen día 1 es otra cosa (ver [[Arquitectura de informacion de la landing]]).
 
-## Paleta extraída del logo
+## Marca: el PDF es un manual completo (corregido 2026-08-27)
 
-`Logo Covicen 2.pdf` está **vectorizado** (sin texto extraíble), A4, 3 páginas. Los colores que aparecen son claramente una escala de marca dominada por **azules profundos / petróleo**:
+`docs/marca/Logo Covicen 2.pdf` **no es un logo suelto: es el manual de marca "Covicen Marca 9b1"**, 8 páginas, generado con Claude Design el 19/08/2026 (cinco días antes de la adjudicación). Juli confirmó que es **la marca aprobada**. Trae:
 
-- Oscuros: `#17293C` `#16354F` `#1D3D5C` `#1E4870` · Medios: `#2C688F` `#4A92BA` `#4E9BC4` · Claros: `#68BCE1` `#8FC4E0` `#A9C4D8` `#BCD7E8`
-- Grises fríos: `#4A5A68` `#7B8794` `#8B96A2` `#93A0AC` `#9AA5B0` `#AAB4BE` `#C9D2D8`
-- Acentos sueltos (¿estados? ¿íconos?): verde `#2F8F4E`, naranja `#CF5322`, violeta `#7A3F9D`
+- **Paleta oficial** (texto extraíble): degradado del isotipo Celeste `#68BCE1` → Azul medio `#4A92BA` → Azul `#2C688F` → Azul profundo `#1E4870`. Apoyo: Gris texto `#5A6472`, **Amarillo vial `#F0C419`**, Gris fondo `#EEF1F4`.
+- **Tipografía: Archivo** — ExtraBold 800 titulares, Medium 500 tracking 0.15em en el descriptor, Regular 400 en textos.
+- Lockups "COVICEN SA" + descriptor "CORREDOR VIAL DEL CENTRO" (en la web va **sin "SA"** hasta la inscripción), favicon, papelería, señalética de obra, variantes técnicas (una tinta, negativo, marca de agua).
+- El violeta y el verde de la primera extracción están en la página de **"Usos incorrectos"**: no son marca. El naranja es un cono de obra.
+- El copy de muestra del manual ("más de 900 km", "RN 36") es placeholder anterior a la adjudicación: **no es fuente**.
 
-**Confirmar contra el logo real antes de fijar tokens.** Los acentos pueden ser incidentales del PDF y no marca.
+Tokens derivados: ver [[Sistema de diseno]].
+
+## Cabinas del Tramo Centro (prensa, 24-25/08/2026)
+
+| Estación | Ruta | Situación | Fuente |
+|---|---|---|---|
+| Carcarañá | RN 9 | existente, sigue | El Litoral |
+| James Craik | RN 9 | existente, sigue | La Capital |
+| Leones | RN 9 | **nueva** | La Capital |
+| Franck | RN 19 | existente, sigue | El Litoral |
+| San Francisco (km 120) | RN 19 | **nueva** | El Litoral |
+| Totoras (km 60) | RN 34 | **nueva** | El Litoral |
+| San Vicente | RN 34 | **deja de operar** | El Litoral |
+
+Datos adicionales de prensa: RN 9 = 363 km desde Circunvalación (viaducto Che Guevara) hasta Pilar; RN 19 ≈ 130 km; RN 34 ≈ 188 km; tope de licitación $3.200 + IVA; oferta $1.399 + IVA ($1.693 con IVA); concesión 20 años prorrogables 10; inversión inicial estimada ~USD 150.000/km; consorcio de tres empresas cordobesas. Las estaciones nuevas nacen con Free Flow. Todo está cargado en `src/content/tramo.json` con la URL de cada fuente.
+
+- [El Litoral — nuevos peajes Tramo Centro](https://www.ellitoral.com/politica/peajes-santafe-rutanacional11-vialidadnacional-tramocentro-llambicampbell-rutanacional34-totoras-chacosantafe-resolucion1379-franck-vera-rutanacional9_0_g0HSrixqTt.html)
+- [La Capital — un grupo cordobés cobrará el peaje](https://www.lacapital.com.ar/la-ciudad/un-grupo-cordobes-cobrara-el-peaje-la-autopista-rosario-cordoba-n10277073.html)
+- [La Capital — peaje nuevo en Leones](https://www.lacapital.com.ar/la-autopista-cordoba-sumara-otro-peaje-la-altura-leones-n10260956.html)
 
 ## Fuentes
 

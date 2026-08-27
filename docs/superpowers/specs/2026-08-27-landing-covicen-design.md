@@ -39,7 +39,7 @@ Dos audiencias mandan sobre el diseño, en este orden:
 
 - `astro` 7.2.x, `@astrojs/react` 6.x, `@astrojs/sitemap` 3.x
 - `tailwindcss` 4.3.x vía `@tailwindcss/vite` (tokens en `@theme`)
-- `react` / `react-dom` 19.2.x (solo para islas; en v1 pueden ser cero)
+- ~~`react` / `react-dom`~~ **No se instalan en v1** (decisión tomada en la construcción: `@astrojs/react` emite ~60 KB gz de runtime aunque no haya islas, el doble del presupuesto). Cuando haga falta una isla: `pnpm astro add react`.
 - `lucide-react` 1.34.x — **única** librería de íconos. Astro renderiza componentes React a HTML estático sin hidratar, así que sirve en `.astro` y en islas.
 - `@fontsource-variable/archivo` 5.x — Archivo self-hosted, subset latin. Sin requests a Google Fonts.
 - `zod` (viene con Astro para los schemas).
