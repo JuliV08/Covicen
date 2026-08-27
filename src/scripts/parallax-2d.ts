@@ -1,4 +1,5 @@
-// Parallax 2.5D con mapa de profundidad (WebGL 1). Solo desktop con hover y sin reduced-motion; si algo falla, queda la foto.
+// Parallax 2.5D con mapa de profundidad (WebGL 2, cae a WebGL 1). Solo desktop con hover y sin reduced-motion; si algo falla, queda la foto.
+// El canvas arranca con EXACTAMENTE el encuadre de la foto (cover, zoom 1): así el fundido de uno a otro es invisible.
 const VS = 'attribute vec2 p;varying vec2 v;void main(){v=vec2(p.x*0.5+0.5,0.5-p.y*0.5);gl_Position=vec4(p,0.,1.);}';
 const FS = `precision mediump float;varying vec2 v;uniform sampler2D img;uniform sampler2D dep;uniform vec2 esc;uniform vec2 vp;uniform vec2 desp;uniform float zoom;
 void main(){vec2 uv=(v-0.5)*esc+0.5;uv=(uv-vp)/zoom+vp;float d=texture2D(dep,uv).r;gl_FragColor=texture2D(img,uv+desp*d);}`;
@@ -10,8 +11,12 @@ const montar = (raiz: HTMLElement) => {
   const canvas = raiz.querySelector<HTMLCanvasElement>('canvas');
   const urlDep = raiz.dataset.profundidad;
   if (!img || !canvas || !urlDep) return;
-  const gl = canvas.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' });
+  const opciones = { antialias: false, alpha: false, powerPreference: 'low-power' as const };
+  const gl = (canvas.getContext('webgl2', opciones) ?? canvas.getContext('webgl', opciones)) as WebGLRenderingContext | null;
   if (!gl) return;
+  const es2 = gl instanceof WebGL2RenderingContext;
+  // Desde ya: la foto no anima (el canvas va a tomar el control con el mismo encuadre).
+  raiz.classList.add('webgl');
   const [vpx, vpy] = (raiz.dataset.vp ?? '0.78,0.595').split(',').map(Number);
 
   const shader = (tipo: number, src: string) => {
@@ -25,8 +30,10 @@ const montar = (raiz: HTMLElement) => {
     const t = gl.createTexture();
     gl.activeTexture(gl.TEXTURE0 + unidad);
     gl.bindTexture(gl.TEXTURE_2D, t);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    // WebGL2 admite espejar texturas de cualquier tamaño: el desplazamiento en los bordes no muestra nada raro.
+    const envoltura = es2 ? gl.MIRRORED_REPEAT : gl.CLAMP_TO_EDGE;
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, envoltura);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, envoltura);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, fuente);
@@ -61,22 +68,21 @@ const montar = (raiz: HTMLElement) => {
       canvas.height = Math.round(canvas.clientHeight * dpr);
       gl.viewport(0, 0, canvas.width, canvas.height);
       const aspectoCv = canvas.width / canvas.height;
-      // cover: la imagen cubre el canvas manteniendo su aspecto (como object-fit: cover)
+      // cover exacto, igual que object-fit: cover de la foto de abajo
       const esc = aspectoCv > aspectoImg ? [1, aspectoImg / aspectoCv] : [aspectoCv / aspectoImg, 1];
-      gl.uniform2f(uEsc, esc[0]! * 0.96, esc[1]! * 0.96); // 4 % de sobreescaneo para que el desplazamiento no muestre bordes
+      gl.uniform2f(uEsc, esc[0]!, esc[1]!);
     };
     redimensionar();
     addEventListener('resize', redimensionar, { passive: true });
 
     // objetivo (mouse + scroll + deriva) → actual (suavizado)
     let mx = 0, my = 0, sy = 0, ax = 0, ay = 0, visible = true, animando = false;
-    raiz.parentElement?.parentElement?.addEventListener('pointermove', (e) => {
+    raiz.closest('section')?.addEventListener('pointermove', (e) => {
       const r = raiz.getBoundingClientRect();
       mx = (e.clientX - r.left) / r.width - 0.5;
       my = (e.clientY - r.top) / r.height - 0.5;
     }, { passive: true });
     addEventListener('scroll', () => { sy = Math.min(1, scrollY / Math.max(1, raiz.clientHeight)); }, { passive: true });
-    new IntersectionObserver(([en]) => { visible = !!en?.isIntersecting; if (visible && !animando) requestAnimationFrame(cuadro); }).observe(raiz);
 
     const cuadro = (t: number) => {
       animando = true;
@@ -84,22 +90,28 @@ const montar = (raiz: HTMLElement) => {
       const deriva = Math.sin(t / 9000) * 0.012;
       ax = lerp(ax, mx * 0.03 + deriva, 0.04);
       ay = lerp(ay, my * 0.02 + sy * 0.03 + Math.sin(t / 7000) * 0.005, 0.04);
-      const zoom = 1.04 + (1 - Math.cos(t / 13000)) * 0.05; // dolly lento 1.04 → 1.14
+      const zoom = 1 + (1 - Math.cos(t / 13000)) * 0.05; // dolly lento 1.00 → 1.10, arranca igual que la foto
       gl.uniform2f(uDesp, ax, ay);
       gl.uniform1f(uZoom, zoom);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       requestAnimationFrame(cuadro);
     };
+    new IntersectionObserver(([en]) => { visible = !!en?.isIntersecting; if (visible && !animando) requestAnimationFrame(cuadro); }).observe(raiz);
+    // Primer cuadro dibujado ANTES de mostrar el canvas: nunca se ve vacío.
+    gl.uniform2f(uDesp, 0, 0);
+    gl.uniform1f(uZoom, 1);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     raiz.classList.add('activo');
     requestAnimationFrame(cuadro);
   };
 
   const dep = new Image();
   dep.onload = () => {
-    const arrancar = () => { try { iniciar(dep); } catch { raiz.classList.remove('activo'); } };
+    const arrancar = () => { try { iniciar(dep); } catch { raiz.classList.remove('activo', 'webgl'); } };
     if (img.complete && img.naturalWidth) arrancar();
     else img.addEventListener('load', arrancar, { once: true });
   };
+  dep.onerror = () => raiz.classList.remove('webgl');
   dep.src = urlDep;
 };
 
