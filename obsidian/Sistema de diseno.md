@@ -39,6 +39,13 @@ CSS primero, JS solo como fallback (`src/scripts/revelar.ts`, IntersectionObserv
 
 `prefers-reduced-motion`: todo apagado.
 
+## Componentes de superficie (segunda pasada, 2026-08-27)
+
+- **`.tarjeta`** (`src/styles/tarjetas.css`): un solo elemento con gradiente interior en `padding-box` y gradiente animado celeste→azul en `border-box` (`background-position` 0→100→0, 7 s; 3,5 s en hover) más glow. Variantes `.tarjeta-vial` (amarillo, emergencias), `.tarjeta-hueco`, `.tarjeta-panel`. Reemplazó a los esquineros. Adaptación propia de la referencia "Binaural Glow Feature Card" de 21st.dev que pidió Juli (excepción explícita a su regla).
+- **Flip de tarifa** (`home/TarifaDestacada.astro` + `scripts/flip.ts`): `perspective` + `rotateY(180deg)` en 700 ms; dorso con ítems escalonados y CTA. En táctil, un toque gira.
+- **Grilla cinética** (`ilustraciones/GrillaCinetica.astro` + `scripts/grilla-cinetica.ts`): canvas por sección, nodos cada 55 px atraídos al puntero (radio 260, fuerza 24), ondas al clic; dibuja solo cuando está visible y hay movimiento; estática en táctil/reduced-motion. Va en toda `Seccion` con `fondo="fondo-2"|"plano"`.
+- **Divisor** (`ui/Divisor.astro`): hairline con ornamento (isotipo en una tinta) entre el hero y el contenido.
+
 ## Assets propios
 
 Isotipo vectorial extraído del PDF (`scripts/extraer-isotipo.py` → `src/assets/marca/isotipo.svg` + `isotipo-path.ts`), mapa esquemático del tramo (`MapaTramo.astro`, coordenadas en `tramo.json`), ilustración del hero (`HeroRuta.astro`), familia de íconos de categoría de vehículo (`IconoVehiculo.astro`), imagen OG generada en build con resvg y las TTF de Archivo (`scripts/generar-og.ts`). Imágenes fotográficas opcionales: `docs/marca/prompts-imagenes.md`.
