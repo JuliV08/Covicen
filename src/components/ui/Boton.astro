@@ -28,10 +28,10 @@ const puntos = variante === 'primario' ? Array.from({ length: 10 }, (_, i) => i)
 <style>
   .btn {
     position: relative; display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: 0.7rem 1.35rem;
-    border-radius: 12px; font-weight: 600; text-decoration: none; cursor: pointer;
+    border-radius: 12px; font-weight: 600; text-decoration: none; cursor: pointer; white-space: nowrap;
     transition: transform var(--dur-ui) var(--ease-salida), box-shadow var(--dur-ui) var(--ease-salida), background var(--dur-ui), border-color var(--dur-ui), color var(--dur-micro);
   }
-  .btn-interior { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 0.5rem; }
+  .btn-interior { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
   .btn :global(svg) { transition: transform var(--dur-ui) var(--ease-salida); }
   .btn:hover :global(svg) { transform: translateX(2px); }
   .btn:active { transform: translateY(0) !important; }
