@@ -1,6 +1,7 @@
 ---
 import { ExternalLink } from '@lucide/astro';
 import Base from '@/layouts/Base.astro';
+import ImagenAtmosfera from '@/components/ilustraciones/ImagenAtmosfera.astro';
 import Mojon from '@/components/ui/Mojon.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
@@ -17,6 +18,8 @@ const c = e.concesion;
     </div>
   </Seccion>
   <Seccion indice="01" eyebrow="El consorcio" titulo="Tres empresas de construcción vial." fondo="fondo-2">
+    <!-- Foto opcional (src/assets/atmosfera/consorcio.jpg): tablero de puente en construcción al anochecer. Sin archivo, el marco no se renderiza. -->
+    <div class="revelar tarjeta mb-6 aspect-[21/9] w-full overflow-hidden p-0 empty:hidden"><div class="h-full w-full overflow-hidden rounded-[calc(var(--tarjeta-radio)-1.5px)]"><ImagenAtmosfera nombre="consorcio" alt="Tablero de un puente en construcción sobre la autopista, con una grúa torre al anochecer" sizes="(min-width: 80rem) 80rem, 100vw" brillo={0.8} /></div></div>
     <ul class="escalonar grid gap-4 md:grid-cols-3">{e.consorcio.map((s, i) => <li class="tarjeta p-6" style={`--i: ${i}`}><h3 class="text-xl">{s.nombre}</h3><p class="mt-2 text-texto-2">{s.descripcion}</p></li>)}</ul>
   </Seccion>
   <Seccion indice="02" eyebrow="La concesión" titulo="Qué asumimos.">

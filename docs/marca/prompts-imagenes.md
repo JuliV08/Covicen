@@ -15,11 +15,11 @@ Night photograph of a straight, divided four-lane highway (two lanes per directi
 
 Strict exclusions: no long exposure, no light trails or motion streaks of any kind; no bridge, overpass, ramp or interchange; no signs, no text, no letters, no numbers; no lamp posts; no buildings; no people; no vehicles in the foreground. Photorealistic, single exposure, tripod, 35 mm, natural grain, no HDR.
 
-## 2. `obras-nocturnas` — 21:9, 2520×1080
+## 2. `obras-nocturnas` — 21:9, 2520×1080 — **en uso** (`/obras/`, marco arriba de la línea de tiempo; 1916×821)
 
 Night road-works scene on a highway shoulder: a compact asphalt paver and a roller under portable LED work lights, yellow-and-black barrier boards and orange cones in the foreground receding into darkness, wet asphalt reflecting cyan light. Workers only as distant silhouettes in high-visibility vests, no faces. Wide cinematic crop, horizon low, sky deep navy. Mood: work in progress, controlled, safe.
 
-## 3. `consorcio` — 4:3, 2000×1500 (opcional, Quiénes somos)
+## 3. `consorcio` — 4:3, 2000×1500 — **en uso** (fondo del panel "Quiénes somos" en la Home y marco en `/quienes-somos/`; 1448×1086)
 
 Dusk photograph of a concrete bridge deck over a rural highway under construction, formwork and rebar in the foreground, a single tower crane against a navy-blue evening sky with the last cyan light on the horizon. No text or signage. Mood: serious engineering, long-term.
 
