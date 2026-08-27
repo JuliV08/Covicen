@@ -1,0 +1,40 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Boton from '@/components/ui/Boton.astro';
+import { datos } from '@/lib/datos';
+import { fechaLarga } from '@/lib/formato';
+import { absoluta } from '@/lib/rutas';
+import { jsonLdArticulo } from '@/lib/seo';
+import { config } from '@/lib/config';
+
+export async function getStaticPaths() {
+  const entradas = await getCollection('novedades');
+  return entradas.map((e) => ({ params: { slug: e.id } }));
+}
+const { slug } = Astro.params;
+const novedad = await datos.novedad(slug!);
+// getStaticPaths garantiza que existe; si no, es un bug de build y tiene que romper.
+if (!novedad) throw new Error(`Novedad inexistente: ${slug}`);
+// El cuerpo Markdown lo renderiza Astro; la página es la raíz de composición y puede tocar astro:content.
+const entrada = (await getCollection('novedades')).find((e) => e.id === slug)!;
+const { Content } = await render(entrada);
+const url = absoluta(`/novedades/${slug}`);
+---
+<Base titulo={novedad.titulo} descripcion={novedad.resumen} tipo="article" jsonLd={[jsonLdArticulo(novedad, url, `${config.sitio}${config.base}`)]} migas={[{ nombre: 'Novedades', href: '/novedades' }, { nombre: novedad.titulo, href: `/novedades/${slug}` }]}>
+  <article class="contenedor py-12">
+    <header class="revelar max-w-3xl">
+      <p class="eyebrow"><time datetime={novedad.fecha}>{fechaLarga(novedad.fecha)}</time>{novedad.etiquetas.length > 0 && ` · ${novedad.etiquetas.join(' · ')}`}</p>
+      <h1 class="mt-4">{novedad.titulo}</h1>
+      <p class="mt-6 text-xl text-texto-2">{novedad.resumen}</p>
+    </header>
+    <div class="prose-covicen revelar mt-12 max-w-prose text-lg text-texto-2" data-base={config.base}><Content /></div>
+    <div class="revelar mt-12"><Boton href="/novedades" variante="secundario">Todas las novedades</Boton></div>
+  </article>
+</Base>
+<script>
+  // Los links del Markdown se escriben desde la raíz (/obras/). Si el sitio corre con base, se les antepone.
+  const contenedor = document.querySelector<HTMLElement>('[data-base]');
+  const base = contenedor?.dataset.base ?? '/';
+  if (contenedor && base !== '/') contenedor.querySelectorAll<HTMLAnchorElement>('a[href^="/"]').forEach((a) => { a.setAttribute('href', base.replace(/\/$/, '') + a.getAttribute('href')); });
+</script>
