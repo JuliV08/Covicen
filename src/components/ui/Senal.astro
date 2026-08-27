@@ -1,0 +1,5 @@
+---
+interface Props { variante?: 'vial' | 'frio'; class?: string }
+const { variante = 'vial', class: clase = '' } = Astro.props;
+---
+<span class:list={['senal inline-flex items-center gap-1.5 rounded-sm px-2 py-1 text-[0.7rem] font-extrabold uppercase tracking-[0.12em]', variante === 'vial' ? 'bg-vial text-fondo' : 'border border-borde-fuerte bg-superficie-2 text-texto', clase]}><slot /></span>

@@ -1,0 +1,36 @@
+---
+import { ruta } from '@/lib/rutas';
+interface Props {
+  href?: string;
+  variante?: 'primario' | 'secundario' | 'vial';
+  class?: string;
+  externo?: boolean;
+  ariaLabel?: string;
+}
+const { href, variante = 'primario', class: clase = '', externo = false, ariaLabel } = Astro.props;
+const esInterno = href !== undefined && href.startsWith('/');
+const destino = href === undefined ? undefined : esInterno ? ruta(href) : href;
+const clases = ['btn', `btn-${variante}`, clase];
+---
+{destino ? (
+  <a href={destino} class:list={clases} aria-label={ariaLabel} rel={externo ? 'noopener noreferrer' : undefined} target={externo ? '_blank' : undefined}><slot /><slot name="icono" /></a>
+) : (
+  <button type="button" class:list={clases} aria-label={ariaLabel}><slot /><slot name="icono" /></button>
+)}
+<style>
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 2.75rem; padding: 0.7rem 1.25rem;
+    border-radius: var(--radius-md); font-weight: 600; text-decoration: none; cursor: pointer;
+    transition: transform var(--dur-ui) var(--ease-salida), box-shadow var(--dur-ui) var(--ease-salida), background var(--dur-ui), border-color var(--dur-ui), color var(--dur-micro);
+  }
+  .btn :global(svg) { transition: transform var(--dur-ui) var(--ease-salida); }
+  .btn:hover :global(svg) { transform: translateX(2px); }
+  .btn:active { transform: translateY(0) !important; box-shadow: none !important; }
+  .btn-primario { background: var(--color-acento); color: var(--color-fondo); }
+  .btn-primario:hover { transform: translateY(-1px); box-shadow: 0 10px 28px -10px var(--color-glow); background: var(--color-acento-hover); }
+  .btn-secundario { border: 1px solid var(--color-borde); color: var(--color-texto); background: transparent; }
+  .btn-secundario:hover { border-color: var(--color-borde-fuerte); background: var(--color-superficie); }
+  .btn-vial { background: var(--color-vial); color: var(--color-fondo); }
+  .btn-vial:hover { transform: translateY(-1px); box-shadow: 0 10px 28px -8px rgb(240 196 25 / 0.45); }
+  .btn-vial:focus-visible { outline-color: var(--color-vial); }
+</style>

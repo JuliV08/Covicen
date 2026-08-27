@@ -1,0 +1,31 @@
+---
+import Eyebrow from './Eyebrow.astro';
+interface Props {
+  id?: string;
+  indice?: string;
+  eyebrow?: string;
+  titulo?: string;
+  intro?: string;
+  fondo?: 'fondo' | 'fondo-2' | 'plano';
+  class?: string;
+  nivel?: 'h1' | 'h2';
+}
+const { id, indice, eyebrow, titulo, intro, fondo = 'fondo', class: clase = '', nivel = 'h2' } = Astro.props;
+const Titulo = nivel;
+const fondos = { fondo: 'bg-fondo', 'fondo-2': 'bg-fondo-2', plano: 'bg-fondo-2 plano' };
+---
+<section id={id} class:list={['py-20 md:py-28', fondos[fondo], clase]}>
+  <div class="contenedor">
+    {(indice || eyebrow || titulo) && (
+      <header class="revelar mb-12 grid gap-4 md:grid-cols-[auto_1fr] md:gap-10">
+        {indice && <span class="eyebrow tabular-nums text-texto-3 md:pt-2">{indice}</span>}
+        <div class="max-w-3xl">
+          {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+          {titulo && <Titulo class="mt-3">{titulo}</Titulo>}
+          {intro && <p class="mt-4 text-lg text-texto-2">{intro}</p>}
+        </div>
+      </header>
+    )}
+    <slot />
+  </div>
+</section>

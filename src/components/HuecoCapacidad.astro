@@ -1,0 +1,27 @@
+---
+import { Clock } from '@lucide/astro';
+import Boton from '@/components/ui/Boton.astro';
+import Senal from '@/components/ui/Senal.astro';
+import { capacidades, type Capacidad } from '@/lib/datos/capacidades';
+interface Props {
+  capacidad: Capacidad;
+  titulo: string;
+  descripcion: string;
+  alternativaHref?: string;
+  alternativaTexto?: string;
+  class?: string;
+}
+const { capacidad, titulo, descripcion, alternativaHref, alternativaTexto, class: clase = '' } = Astro.props;
+const activa: boolean = capacidades[capacidad];
+---
+{!activa && (
+  <div class:list={['hueco esquineros relative rounded-md border border-dashed border-borde-fuerte bg-fondo-2/60 p-6', clase]} data-capacidad={capacidad}>
+    <div class="flex items-center gap-3"><Senal variante="frio"><Clock size={12} aria-hidden="true" /> Próximamente</Senal></div>
+    <h3 class="mt-4">{titulo}</h3>
+    <p class="mt-2 text-texto-2">{descripcion}</p>
+    {alternativaHref && alternativaTexto && (
+      <div class="mt-5"><Boton href={alternativaHref} variante="secundario">{alternativaTexto}</Boton></div>
+    )}
+  </div>
+)}
+{activa && <slot />}

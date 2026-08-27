@@ -1,1 +1,68 @@
-/* Sistema de movimiento: se completa en la Task 8. */
+/* Sistema de movimiento "La ruta, de noche". CSS primero; JS solo como fallback (src/scripts/revelar.ts).
+   Reglas: cada movimiento orienta, jerarquiza o confirma. Nada se anima porque sí. */
+
+/* --- Reveal de sección (scrub con view()) + stagger por --i --- */
+@keyframes revelar { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@supports (animation-timeline: view()) {
+  .revelar { animation: revelar var(--ease-salida) both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
+  .escalonar > * {
+    animation: revelar var(--ease-salida) both; animation-timeline: view();
+    animation-range: entry calc(var(--i, 0) * 6%) entry calc(35% + var(--i, 0) * 6%);
+  }
+}
+@supports not (animation-timeline: view()) {
+  .revelar, .escalonar > * {
+    opacity: 0; transform: translateY(18px);
+    transition: opacity var(--dur-entrada) var(--ease-salida), transform var(--dur-entrada) var(--ease-salida);
+    transition-delay: calc(var(--i, 0) * var(--stagger));
+  }
+  .revelar.visible, .escalonar.visible > * { opacity: 1; transform: none; }
+}
+
+/* --- Coreografía de entrada (hero): no depende del scroll --- */
+@keyframes entrar { from { opacity: 0; transform: translateY(14px); filter: blur(4px); } to { opacity: 1; transform: none; filter: blur(0); } }
+.entrada > * { animation: entrar var(--dur-entrada) var(--ease-salida) both; animation-delay: calc(120ms + var(--i, 0) * var(--stagger)); }
+
+/* --- Dibujar ruta: paths con pathLength="1000" --- */
+.dibujar { stroke-dasharray: 1000; stroke-dashoffset: 1000; }
+@keyframes dibujar { to { stroke-dashoffset: 0; } }
+.dibujar.al-cargar { animation: dibujar var(--dur-narrativa) var(--ease-suave) 300ms both; }
+@supports (animation-timeline: view()) {
+  .dibujar.al-scroll { animation: dibujar linear both; animation-timeline: view(); animation-range: entry 10% cover 55%; }
+}
+@supports not (animation-timeline: view()) { .dibujar.al-scroll { stroke-dashoffset: 0; } }
+
+/* --- Balizas (cabinas) que se encienden en secuencia --- */
+@keyframes encender { from { opacity: 0; transform: scale(0.4); } 60% { opacity: 1; transform: scale(1.25); } to { opacity: 1; transform: scale(1); } }
+.baliza { transform-box: fill-box; transform-origin: center; }
+@supports (animation-timeline: view()) {
+  .baliza { animation: encender var(--ease-salida) both; animation-timeline: view(); animation-range: entry calc(30% + var(--i, 0) * 5%) entry calc(50% + var(--i, 0) * 5%); }
+}
+.baliza.al-cargar { animation: encender var(--dur-ui) var(--ease-salida) calc(900ms + var(--i, 0) * 120ms) both; animation-timeline: auto; }
+
+/* --- Mojón: contador con @property (solo enteros; el texto real queda para lectores y fallback) --- */
+@property --n { syntax: '<integer>'; initial-value: 0; inherits: false; }
+@keyframes contar { from { --n: 0; } to { --n: var(--meta); } }
+@supports (animation-timeline: view()) and (counter-set: n 1) {
+  .mojon-contador { counter-set: n var(--n); animation: contar linear both; animation-timeline: view(); animation-range: entry 20% entry 70%; }
+  .mojon-contador::before { content: counter(n); }
+  .mojon-contador + .mojon-texto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+
+/* --- Parallax leve (fondo del hero): 12% de desplazamiento en la primera pantalla --- */
+@keyframes parallax { to { transform: translateY(12%); } }
+@supports (animation-timeline: scroll()) {
+  .parallax { animation: parallax linear both; animation-timeline: scroll(root); animation-range: 0 100vh; }
+}
+
+/* --- Transiciones de página (ClientRouter): fade + 8px, header excluido con transition:animate="none" --- */
+::view-transition-old(root) { animation: salir var(--dur-ui) var(--ease-suave) both; }
+::view-transition-new(root) { animation: llegar var(--dur-ui) var(--ease-salida) both; }
+@keyframes salir { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes llegar { from { opacity: 0; transform: translateY(8px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .revelar, .escalonar > *, .entrada > *, .baliza, .mojon-contador, .parallax { animation: none !important; opacity: 1 !important; transform: none !important; filter: none !important; }
+  .dibujar { stroke-dashoffset: 0 !important; animation: none !important; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}
