@@ -62,7 +62,10 @@
 @keyframes llegar { from { opacity: 0; transform: translateY(8px); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .revelar, .escalonar > *, .entrada > *, .baliza, .mojon-contador, .parallax { animation: none !important; opacity: 1 !important; transform: none !important; filter: none !important; }
+  .revelar, .escalonar > *, .entrada > *, .baliza, .parallax { animation: none !important; opacity: 1 !important; transform: none !important; filter: none !important; }
   .dibujar { stroke-dashoffset: 0 !important; animation: none !important; }
+  /* Sin animación el contador quedaría en 0: se oculta y se muestra el número real. */
+  .mojon-contador { display: none !important; }
+  .mojon-contador + .mojon-texto { position: static !important; width: auto !important; height: auto !important; overflow: visible !important; clip: auto !important; }
   ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
 }

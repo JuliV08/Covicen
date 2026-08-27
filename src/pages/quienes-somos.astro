@@ -13,7 +13,7 @@ const c = e.concesion;
     <div class="escalonar grid gap-10 sm:grid-cols-3">
       <div style="--i: 0"><Mojon valor={Math.floor(c.km)} unidad="km" etiqueta="de rutas nacionales" animar /></div>
       <div style="--i: 1"><Mojon valor={c.plazoAnios} unidad="años" etiqueta={`de concesión${c.prorrogaAnios ? ` (+${c.prorrogaAnios} prorrogables)` : ''}`} animar /></div>
-      <div style="--i: 2"><Mojon valor={c.tramosEtapa} etiqueta="tramos en la Etapa III; el nuestro ofertó la tarifa más baja" animar /></div>
+      <div style="--i: 2"><Mojon valor={c.tramosEtapa} etiqueta="tramos en la Etapa III" animar /></div>
     </div>
   </Seccion>
   <Seccion indice="01" eyebrow="El consorcio" titulo="Tres empresas de construcción vial." fondo="fondo-2">

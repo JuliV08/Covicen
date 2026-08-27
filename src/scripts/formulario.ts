@@ -12,7 +12,7 @@ const iniciar = () => {
         campo.setAttribute('aria-invalid', ok ? 'false' : 'true');
         if (error) {
           error.textContent = ok ? '' : mensajeDe(campo.validity);
-          error.classList.toggle('hidden', ok);
+          error.hidden = ok;
         }
         if (!ok) valido = false;
       });

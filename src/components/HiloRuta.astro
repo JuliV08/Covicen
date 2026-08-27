@@ -4,13 +4,14 @@
 <div class="hilo hidden lg:block" aria-hidden="true"><div class="hilo-luz"></div></div>
 <div class="hilo-mobile lg:hidden" aria-hidden="true"></div>
 <style>
-  .hilo { position: fixed; left: 1.25rem; top: calc(var(--alto-header) + 1rem); bottom: 1.25rem; width: 2px; background: var(--color-borde); z-index: 30; }
+  /* En el margen del contenedor (no encima del contenido) y sin interceptar el puntero. */
+  .hilo { position: fixed; left: max(1.25rem, calc((100vw - var(--ancho-max)) / 2 - 1.5rem)); top: calc(var(--alto-header) + 1rem); bottom: 1.25rem; width: 2px; background: var(--color-borde); z-index: 30; pointer-events: none; }
   .hilo-luz {
     position: absolute; left: -1px; top: 0; width: 4px; height: 6rem; border-radius: 2px;
     background: linear-gradient(to bottom, transparent, var(--color-acento), transparent);
     box-shadow: 0 0 12px var(--color-glow);
   }
-  .hilo-mobile { position: fixed; left: 0; top: var(--alto-header); height: 2px; width: 100%; background: var(--color-acento); transform-origin: left; transform: scaleX(0); z-index: 30; }
+  .hilo-mobile { position: fixed; left: 0; top: var(--alto-header); height: 2px; width: 100%; background: var(--color-acento); transform-origin: left; transform: scaleX(0); z-index: 30; pointer-events: none; }
   @supports (animation-timeline: scroll()) {
     .hilo-luz { animation: bajar linear both; animation-timeline: scroll(root); }
     .hilo-mobile { animation: crecer linear both; animation-timeline: scroll(root); }

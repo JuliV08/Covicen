@@ -1,7 +1,9 @@
 ---
 import type { Tramo } from '@/lib/datos/esquemas';
-interface Props { tramo: Tramo; modo?: 'scroll' | 'cargar'; class?: string; interactivo?: boolean }
-const { tramo, modo = 'scroll', class: clase = '', interactivo = true } = Astro.props;
+interface Props { tramo: Tramo; modo?: 'scroll' | 'cargar'; class?: string }
+const { tramo, modo = 'scroll', class: clase = '' } = Astro.props;
+// Las cabinas, agrupadas por ruta, para la leyenda: en mobile los nombres del SVG no se leen.
+const cabinasPorRuta = tramo.rutas.map((r) => ({ ruta: r.nombre, cabinas: tramo.cabinas.filter((c) => c.ruta === r.nombre) })).filter((g) => g.cabinas.length > 0);
 
 const porSlug = new Map(tramo.ciudades.map((c) => [c.slug, c]));
 const ciudad = (s: string) => {
@@ -45,7 +47,7 @@ const descripcion = `Mapa esquemático del Tramo Centro: ${tramo.rutas.map((r) =
       </g>
     ))}
     {tramo.cabinas.map((cab, i) => (
-      <g class={claseBaliza} style={`--i: ${i}`} data-estado={cab.estado} data-situacion={cab.situacion} tabindex={interactivo ? 0 : undefined}>
+      <g class={claseBaliza} style={`--i: ${i}`} data-estado={cab.estado} data-situacion={cab.situacion}>
         <title>{`Peaje ${cab.nombre} · ${cab.ruta}${cab.km !== null ? ` km ${cab.km}` : ''} · ${cab.situacion === 'nueva' ? 'estación nueva' : 'estación existente'}`}</title>
         <circle cx={cab.mapa.x} cy={cab.mapa.y} r="14" fill="var(--color-vial)" opacity="0.18" class="baliza-halo"></circle>
         <circle cx={cab.mapa.x} cy={cab.mapa.y} r="6" fill="var(--color-vial)" stroke="var(--color-fondo)" stroke-width="2"></circle>
@@ -53,10 +55,18 @@ const descripcion = `Mapa esquemático del Tramo Centro: ${tramo.rutas.map((r) =
       </g>
     ))}
   </svg>
-  <figcaption class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-texto-2">
-    <span class="inline-flex items-center gap-2"><span class="inline-block h-0.5 w-6 bg-acento" aria-hidden="true"></span> Rutas del tramo</span>
-    <span class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full bg-vial" aria-hidden="true"></span> Estación de peaje</span>
-    <span class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full border-2 border-acento" aria-hidden="true"></span> Ciudad</span>
+  <figcaption class="mt-4 text-sm text-texto-2">
+    <div class="flex flex-wrap gap-x-6 gap-y-2">
+      <span class="inline-flex items-center gap-2"><span class="inline-block h-0.5 w-6 bg-acento" aria-hidden="true"></span> Rutas del tramo</span>
+      <span class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full bg-vial" aria-hidden="true"></span> Estación de peaje</span>
+      <span class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full border-2 border-acento" aria-hidden="true"></span> Ciudad</span>
+    </div>
+    <p class="mt-3">
+      <span class="text-texto">Peajes:</span>
+      {cabinasPorRuta.map((g, i) => (
+        <span>{i > 0 && ' · '}<span class="font-semibold text-vial">{g.ruta}</span> {g.cabinas.map((c) => `${c.nombre}${c.situacion === 'nueva' ? ' (nueva)' : ''}`).join(', ')}</span>
+      ))}
+    </p>
   </figcaption>
 </figure>
 <style>
@@ -64,9 +74,10 @@ const descripcion = `Mapa esquemático del Tramo Centro: ${tramo.rutas.map((r) =
   .ruta-etiqueta { font-size: 13px; font-weight: 800; letter-spacing: 0.12em; fill: var(--color-acento); }
   .ciudad-etiqueta { font-size: 15px; font-weight: 600; fill: var(--color-texto); }
   .cabina-etiqueta { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; fill: var(--color-vial); opacity: 0; transition: opacity var(--dur-ui) var(--ease-salida); }
-  .baliza { cursor: default; outline: none; }
-  .baliza:hover .cabina-etiqueta, .baliza:focus-visible .cabina-etiqueta { opacity: 1; }
+  /* Las balizas no reciben foco: el SVG es una imagen (role="img") y los nombres van en la leyenda. */
+  .baliza { cursor: default; }
+  .baliza:hover .cabina-etiqueta { opacity: 1; }
   .baliza-halo { transition: transform var(--dur-ui) var(--ease-salida), opacity var(--dur-ui); transform-box: fill-box; transform-origin: center; }
-  .baliza:hover .baliza-halo, .baliza:focus-visible .baliza-halo { transform: scale(1.4); opacity: 0.35; }
+  .baliza:hover .baliza-halo { transform: scale(1.4); opacity: 0.35; }
   @media (min-width: 48rem) { .cabina-etiqueta { opacity: 0.9; } }
 </style>

@@ -14,24 +14,32 @@ interface Props { asunto: string; whatsapp: string | null; email: string | null;
 const { asunto, whatsapp, email, campos, textoBoton = 'Enviar por WhatsApp' } = Astro.props;
 const action = whatsapp ? enlaceWhatsapp(whatsapp, `Asunto: ${asunto}`) : email ? `mailto:${email}?subject=${encodeURIComponent(asunto)}` : '#';
 const canal = whatsapp ? 'whatsapp' : email ? 'email' : 'a-confirmar';
+// Sin canal cargado, el formulario no puede enviar: se avisa ANTES de los campos y se deshabilitan.
+const deshabilitado = canal === 'a-confirmar';
 ---
 <form class="formulario grid gap-5" data-formulario data-asunto={asunto} data-whatsapp={whatsapp ?? ''} data-email={email ?? ''} data-canal={canal} action={action} method="get" target="_blank" novalidate>
-  {campos.map((c) => (
-    <div class="grid gap-2">
-      <label for={`campo-${c.nombre}`} class="text-sm font-semibold text-texto">{c.etiqueta}{c.requerido && <span class="text-vial" aria-hidden="true"> *</span>}</label>
-      {c.tipo === 'textarea' ? (
-        <textarea id={`campo-${c.nombre}`} name={c.nombre} rows="5" required={c.requerido} placeholder={c.placeholder} class="campo"></textarea>
-      ) : c.tipo === 'select' ? (
-        <select id={`campo-${c.nombre}`} name={c.nombre} required={c.requerido} class="campo">{(c.opciones ?? []).map((o) => <option value={o}>{o}</option>)}</select>
-      ) : (
-        <input id={`campo-${c.nombre}`} name={c.nombre} type={c.tipo ?? 'text'} required={c.requerido} placeholder={c.placeholder} class="campo" autocomplete={c.tipo === 'email' ? 'email' : c.tipo === 'tel' ? 'tel' : c.nombre === 'nombre' ? 'name' : 'off'} />
-      )}
-      <p class="error hidden text-sm text-error" data-error-de={c.nombre} aria-live="polite"></p>
-    </div>
-  ))}
-  {canal === 'a-confirmar' ? (
-    <p class="rounded-md border border-dashed border-borde-fuerte p-4 text-sm text-texto-2">El canal de contacto se habilita antes del inicio de la operación. Mientras tanto, guardá esta página.</p>
-  ) : (
+  {deshabilitado && (
+    <p class="rounded-md border border-dashed border-borde-fuerte p-4 text-sm text-texto-2" role="status">
+      El canal de contacto se habilita antes del inicio de la operación: este formulario todavía no envía. Mientras tanto, guardá esta página.
+    </p>
+  )}
+  <fieldset class="m-0 grid min-w-0 gap-5 border-0 p-0 disabled:opacity-60" disabled={deshabilitado}>
+    <legend class="sr-only">{asunto}</legend>
+    {campos.map((c) => (
+      <div class="grid gap-2">
+        <label for={`campo-${c.nombre}`} class="text-sm font-semibold text-texto">{c.etiqueta}{c.requerido && <span class="text-vial" aria-hidden="true"> *</span>}</label>
+        {c.tipo === 'textarea' ? (
+          <textarea id={`campo-${c.nombre}`} name={c.nombre} rows="5" required={c.requerido} placeholder={c.placeholder} class="campo" aria-describedby={`error-${c.nombre}`}></textarea>
+        ) : c.tipo === 'select' ? (
+          <select id={`campo-${c.nombre}`} name={c.nombre} required={c.requerido} class="campo" aria-describedby={`error-${c.nombre}`}>{(c.opciones ?? []).map((o) => <option value={o}>{o}</option>)}</select>
+        ) : (
+          <input id={`campo-${c.nombre}`} name={c.nombre} type={c.tipo ?? 'text'} required={c.requerido} placeholder={c.placeholder} class="campo" aria-describedby={`error-${c.nombre}`} autocomplete={c.tipo === 'email' ? 'email' : c.tipo === 'tel' ? 'tel' : c.nombre === 'nombre' ? 'name' : 'off'} />
+        )}
+        <p id={`error-${c.nombre}`} class="text-sm text-error" data-error-de={c.nombre} aria-live="polite" hidden></p>
+      </div>
+    ))}
+  </fieldset>
+  {!deshabilitado && (
     <div class="flex flex-wrap items-center gap-4">
       <button type="submit" class="btn-enviar inline-flex min-h-11 items-center gap-2 rounded-md bg-acento px-5 py-3 font-semibold text-fondo transition hover:-translate-y-px hover:bg-acento-hover hover:shadow-[0_10px_28px_-10px_var(--color-glow)]">
         {canal === 'whatsapp' ? <MessageCircle size={18} aria-hidden="true" /> : <Mail size={18} aria-hidden="true" />} {canal === 'whatsapp' ? textoBoton : 'Enviar por correo'}
@@ -48,4 +56,5 @@ const canal = whatsapp ? 'whatsapp' : email ? 'email' : 'a-confirmar';
   .campo:focus { outline: none; border-color: var(--color-acento); box-shadow: 0 0 0 3px var(--color-glow); }
   .campo[aria-invalid="true"] { border-color: var(--color-error); }
   .campo::placeholder { color: var(--color-texto-3); }
+  fieldset:disabled .campo { cursor: not-allowed; }
 </style>

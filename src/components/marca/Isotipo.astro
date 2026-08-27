@@ -9,14 +9,14 @@ interface Props {
   titulo?: string;
 }
 const { variante = 'degradado', size = 32, class: clase = '', titulo } = Astro.props;
-// id único por instancia: dos isotipos en la misma página no comparten gradiente
-const id = `iso-${Math.random().toString(36).slice(2, 8)}`;
+// id único por instancia (dos isotipos en la misma página no comparten gradiente), determinista entre builds.
+const id = `iso-${size}-${variante}-${(globalThis as { __isotipos?: number }).__isotipos = ((globalThis as { __isotipos?: number }).__isotipos ?? 0) + 1}`;
 ---
 <svg
   viewBox={ISOTIPO_VIEWBOX}
   width={size}
   height={size}
-  class={clase}
+  class={clase || undefined}
   aria-hidden={titulo ? undefined : 'true'}
   role={titulo ? 'img' : undefined}
   focusable="false"

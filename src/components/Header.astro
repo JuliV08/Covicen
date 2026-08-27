@@ -38,7 +38,7 @@ const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
         ))}
         <li>
           <details class="desplegable relative" data-desplegable>
-            <summary class:list={['nav-item flex cursor-pointer list-none items-center gap-1', { 'is-activo': nosotrosActivo }]} aria-haspopup="true">
+            <summary class:list={['nav-item flex cursor-pointer list-none items-center gap-1', { 'is-activo': nosotrosActivo }]}>
               Nosotros <ChevronDown size={16} aria-hidden="true" class="chevron" />
             </summary>
             <ul class="absolute right-0 top-full mt-2 w-64 rounded-md border border-borde bg-superficie-2 p-2 shadow-2xl">
@@ -101,7 +101,7 @@ const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
   }
 
   .nav-item {
-    position: relative; display: inline-block; padding: 0.5rem 0.75rem; border-radius: var(--radius-sm);
+    position: relative; display: inline-block; padding: 0.7rem 0.75rem; border-radius: var(--radius-sm);
     color: var(--color-texto-2); font-weight: 500; text-decoration: none;
     transition: color var(--dur-micro) var(--ease-salida);
   }
@@ -111,7 +111,7 @@ const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
     transition: transform var(--dur-ui) var(--ease-salida);
   }
   .nav-item:hover, .nav-item:focus-visible, .nav-item[aria-current="page"], .nav-item.is-activo { color: var(--color-texto); }
-  .nav-item:hover::after, .nav-item[aria-current="page"]::after, .nav-item.is-activo::after { transform: scaleX(1); }
+  .nav-item:hover::after, .nav-item:focus-visible::after, .nav-item[aria-current="page"]::after, .nav-item.is-activo::after { transform: scaleX(1); }
   .desplegable summary::-webkit-details-marker { display: none; }
   .desplegable .chevron { transition: transform var(--dur-ui) var(--ease-salida); }
   .desplegable[open] .chevron { transform: rotate(180deg); }
@@ -130,7 +130,7 @@ const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
 
   .menu-mobile {
     inset: unset; top: 0; right: 0; height: 100dvh; width: min(100%, 22rem); margin: 0; border: 0; border-left: 1px solid var(--color-borde);
-    background: var(--color-fondo-2); color: var(--color-texto); translate: 100% 0;
+    background: var(--color-fondo-2); color: var(--color-texto); translate: 100% 0; overflow-y: auto; overscroll-behavior: contain;
     transition: translate var(--dur-ui) var(--ease-salida), display var(--dur-ui) allow-discrete, overlay var(--dur-ui) allow-discrete;
   }
   .menu-mobile:popover-open { translate: 0 0; }

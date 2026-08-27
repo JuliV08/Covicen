@@ -6,7 +6,7 @@ const { preguntas, class: clase = '' } = Astro.props;
 ---
 <div class:list={['faq escalonar divide-y divide-borde border-y border-borde', clase]}>
   {preguntas.map((p, i) => (
-    <details class="faq-item group" id={p.slug} style={`--i: ${i}`}>
+    <details class="faq-item group scroll-mt-28" id={p.slug} style={`--i: ${i}`}>
       <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-left font-semibold text-texto transition-colors hover:text-acento-hover">
         <span>{p.pregunta}</span>
         <ChevronDown size={20} aria-hidden="true" class="chevron shrink-0 text-texto-2" />
@@ -15,6 +15,17 @@ const { preguntas, class: clase = '' } = Astro.props;
     </details>
   ))}
 </div>
+<script>
+  // Un link a /preguntas-frecuentes/#slug abre la pregunta en vez de dejarla cerrada.
+  const abrirPorHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (!id) return;
+    const d = document.getElementById(id);
+    if (d instanceof HTMLDetailsElement) d.open = true;
+  };
+  document.addEventListener('astro:page-load', abrirPorHash);
+  window.addEventListener('hashchange', abrirPorHash);
+</script>
 <style>
   .faq-item summary::-webkit-details-marker { display: none; }
   .faq-item:hover { background: linear-gradient(to right, var(--color-superficie), transparent); }

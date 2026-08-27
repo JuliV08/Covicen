@@ -1,13 +1,36 @@
 ---
 import Base from '@/layouts/Base.astro';
 import TablaTarifas from '@/components/TablaTarifas.astro';
+import IconoVehiculo from '@/components/ilustraciones/IconoVehiculo.astro';
 import Seccion from '@/components/ui/Seccion.astro';
+import Senal from '@/components/ui/Senal.astro';
 import Boton from '@/components/ui/Boton.astro';
 import { datos } from '@/lib/datos';
+import { conIva, fechaLarga, moneda } from '@/lib/formato';
+import { ruta } from '@/lib/rutas';
 const [tarifario, empresa] = await Promise.all([datos.tarifario(), datos.empresa()]);
+const auto = tarifario.tarifas.find((t) => t.categoria === 'cat-2');
+if (!auto || auto.montoSinIva === null) throw new Error('tarifas: falta la tarifa de auto');
+const sinIva = auto.montoSinIva;
 ---
 <Base titulo="Tarifas" descripcion="Tarifa del peaje del Tramo Centro (RN 9, RN 19 y RN 34): $1.399 más IVA por auto, la más baja de la Red Federal de Concesiones. Categorías, vigencia y fuente oficial." migas={[{ nombre: 'Tarifas', href: '/tarifas' }]}>
-  <Seccion nivel="h1" eyebrow="Tarifas" titulo="Cuánto cuesta el peaje." intro={`Tarifa ofertada por Covicen en la adjudicación del Tramo Centro: ${empresa.concesion.tarifaOfertadaSinIva.toLocaleString('es-AR')} pesos más IVA por auto. Tope de la licitación: ${empresa.concesion.tarifaTopeSinIva.toLocaleString('es-AR')} pesos.`} class="pt-10">
+  <Seccion nivel="h1" eyebrow="Tarifas" titulo="Cuánto cuesta el peaje." intro={`Tarifa ofertada por Covicen en la adjudicación del Tramo Centro. Tope de la licitación: ${moneda(empresa.concesion.tarifaTopeSinIva)} más IVA; Covicen ofertó la más baja de los ${empresa.concesion.tramosEtapa} tramos.`} class="pt-10">
+    <!-- El dato que busca quien llega acá, primero y grande; la objeción número uno ("¿desde cuándo?"), al lado. -->
+    <div class="revelar mb-12 grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
+      <div class="rounded-md border border-borde bg-superficie/50 p-8">
+        <div class="flex items-center gap-3 text-texto-2"><IconoVehiculo categoria="cat-2" size={32} /> <span>{auto.nombre} · {auto.descripcion}</span></div>
+        <p class="mt-5 flex flex-wrap items-baseline gap-x-3">
+          <span class="font-extrabold leading-none tracking-[var(--tracking-titulo)] text-texto" style="font-size: clamp(3rem, 2rem + 5vw, 6rem)">{moneda(sinIva)}</span>
+          <span class="text-lg text-texto-2">+ IVA</span>
+        </p>
+        <p class="mt-3 text-texto-2"><strong class="text-texto">{moneda(conIva(sinIva, tarifario.alicuotaIva))}</strong> con IVA incluido.</p>
+      </div>
+      <div class="flex flex-col gap-3">
+        <div><Senal>{tarifario.vigencia.desde ? 'Vigente' : 'Todavía no se cobra'}</Senal></div>
+        <p class="text-texto-2">{tarifario.vigencia.desde ? `Vigente desde el ${fechaLarga(tarifario.vigencia.desde)}.` : tarifario.vigencia.descripcion}</p>
+        <p class="text-sm text-texto-2">La fecha de habilitación del cobro se publica en esta página y en <a href={ruta('/novedades')} class="link-crece">Novedades</a>.</p>
+      </div>
+    </div>
     <TablaTarifas {tarifario} />
     <div class="revelar mt-12 flex flex-wrap gap-3">
       <Boton href="/medios-de-pago" variante="secundario">Cómo pagar</Boton>

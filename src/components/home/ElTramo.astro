@@ -15,7 +15,7 @@ const { tramo } = Astro.props;
       <div style="--i: 0"><Mojon valor={Math.floor(tramo.km)} unidad="km" etiqueta="de rutas nacionales" animar /></div>
       <div style="--i: 1"><Mojon valor={tramo.rutas.length} etiqueta="rutas: RN 9, RN 19 y RN 34" animar /></div>
       <div style="--i: 2"><Mojon valor={tramo.cabinas.length} etiqueta="estaciones de peaje" animar /></div>
-      <div style="--i: 3"><Boton href="/el-tramo" variante="secundario">Ver el tramo en detalle <ArrowRight size={18} aria-hidden="true" slot="icono" /></Boton></div>
+      <div style="--i: 3"><Boton href="/el-tramo" variante="secundario">Ver el tramo en detalle <ArrowRight size={18} aria-hidden="true" /></Boton></div>
     </div>
   </div>
 </Seccion>

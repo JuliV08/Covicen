@@ -29,17 +29,17 @@ const aConfirmar = (v: string | null) => v ?? 'a confirmar';
       <nav aria-label={c.titulo}>
         <h2 class="eyebrow mb-4 text-texto">{c.titulo}</h2>
         <ul class="flex flex-col gap-2">
-          {c.links.map(([n, h]) => <li><a href={ruta(h)} class="link-crece text-texto-2 hover:text-texto">{n}</a></li>)}
+          {c.links.map(([n, h]) => <li><a href={ruta(h)} class="link-crece inline-block py-1 text-texto-2 hover:text-texto">{n}</a></li>)}
         </ul>
       </nav>
     ))}
     <div>
       <h2 class="eyebrow mb-4 text-texto">Contacto</h2>
       <ul class="flex flex-col gap-2 text-texto-2">
-        <li>{contacto.whatsapp.numero ? <a href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen')} class="link-crece" rel="noopener">WhatsApp</a> : <span>WhatsApp · a confirmar</span>}</li>
-        <li>{contacto.email.general ? <a href={`mailto:${contacto.email.general}`} class="link-crece">{contacto.email.general}</a> : <span>Correo · a confirmar</span>}</li>
-        <li><a href={ruta('/contacto')} class="link-crece">Formulario de contacto</a></li>
-        <li><a href={ruta('/proveedores')} class="link-crece">Proveedores</a></li>
+        <li>{contacto.whatsapp.numero ? <a href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen')} class="link-crece inline-block py-1" target="_blank" rel="noopener">WhatsApp</a> : <span class="inline-block py-1">WhatsApp · a confirmar</span>}</li>
+        <li>{contacto.email.general ? <a href={`mailto:${contacto.email.general}`} class="link-crece inline-block py-1">{contacto.email.general}</a> : <span class="inline-block py-1">Correo · a confirmar</span>}</li>
+        <li><a href={ruta('/contacto')} class="link-crece inline-block py-1">Formulario de contacto</a></li>
+        <li><a href={ruta('/proveedores')} class="link-crece inline-block py-1">Proveedores</a></li>
       </ul>
       <h2 class="eyebrow mb-3 mt-8 text-texto">Datos registrales</h2>
       <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm text-texto-3">

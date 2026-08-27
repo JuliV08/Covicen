@@ -4,18 +4,27 @@ import Base from '@/layouts/Base.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
 const e = await datos.empresa();
-const marco: Array<[string, string, string]> = [
-  ['Ley 27.742 (Bases)', 'Declaró a Corredores Viales S.A. sujeta a privatización y habilitó el nuevo régimen de concesiones.', 'https://www.boletinoficial.gob.ar/'],
-  ['Decreto 97/2025', 'Autorizó la privatización total de Corredores Viales y la Red Federal de Concesiones.', 'https://www.boletinoficial.gob.ar/'],
-  [e.concesion.adjudicacion.resolucion, 'Adjudicó los ocho tramos de la Etapa III, entre ellos el Tramo Centro a Covicen.', e.concesion.adjudicacion.url],
-  ['Red Federal de Concesiones', 'Programa de Vialidad Nacional: más de 9.000 km en 16 corredores, inversión privada sin subsidios.', 'https://www.argentina.gob.ar/transporte/vialidad-nacional/red-federal-de-concesiones'],
+// url: null = no tenemos el enlace puntual al aviso; se cita la norma sin prometer una fuente que no lleva a ella.
+const marco: Array<{ titulo: string; descripcion: string; url: string | null }> = [
+  { titulo: 'Ley 27.742 (Bases)', descripcion: 'Declaró a Corredores Viales S.A. sujeta a privatización y habilitó el nuevo régimen de concesiones.', url: null },
+  { titulo: 'Decreto 97/2025', descripcion: 'Autorizó la privatización total de Corredores Viales y la Red Federal de Concesiones.', url: null },
+  { titulo: e.concesion.adjudicacion.resolucion, descripcion: 'Adjudicó los ocho tramos de la Etapa III, entre ellos el Tramo Centro a Covicen.', url: e.concesion.adjudicacion.url },
+  { titulo: 'Red Federal de Concesiones', descripcion: 'Programa de Vialidad Nacional: más de 9.000 km en 16 corredores, inversión privada sin subsidios.', url: 'https://www.argentina.gob.ar/transporte/vialidad-nacional/red-federal-de-concesiones' },
 ];
 ---
 <Base titulo="Transparencia" descripcion="Marco legal de la concesión del Tramo Centro, control de Vialidad Nacional y acceso a las fuentes oficiales. Covicen publica lo que puede verificarse." migas={[{ nombre: 'Transparencia', href: '/transparencia' }]}>
-  <Seccion nivel="h1" eyebrow="Transparencia" titulo="Lo que se puede verificar, con la fuente al lado." intro="Vialidad Nacional supervisa la concesión con indicadores objetivos. Este sitio publica el marco legal, las tarifas con vigencia y el avance de obras, siempre con enlace a la fuente." class="pt-10">
+  <Seccion nivel="h1" eyebrow="Transparencia" titulo="Lo que se puede verificar, con la fuente al lado." intro="Vialidad Nacional supervisa la concesión con indicadores objetivos. Este sitio publica el marco legal, las tarifas con vigencia y el avance de obras, con enlace a la fuente cuando existe una publicación oficial en línea." class="pt-10">
     <ol class="escalonar grid gap-4 md:grid-cols-2">
-      {marco.map(([t, d, u], i) => (
-        <li class="esquineros rounded-md border border-borde bg-superficie/40 p-6" style={`--i: ${i}`}><h2 class="text-xl">{t}</h2><p class="mt-2 text-texto-2">{d}</p><a href={u} rel="noopener noreferrer" target="_blank" class="link-crece mt-4 inline-flex items-center gap-1 text-sm">Fuente oficial <ExternalLink size={14} aria-hidden="true" /></a></li>
+      {marco.map((m, i) => (
+        <li class="esquineros rounded-md border border-borde bg-superficie/40 p-6" style={`--i: ${i}`}>
+          <h2 class="text-xl">{m.titulo}</h2>
+          <p class="mt-2 text-texto-2">{m.descripcion}</p>
+          {m.url ? (
+            <a href={m.url} rel="noopener noreferrer" target="_blank" class="link-crece mt-4 inline-flex items-center gap-1 text-sm" aria-label={`Fuente oficial: ${m.titulo} (se abre en otra pestaña)`}>Fuente oficial <ExternalLink size={14} aria-hidden="true" /></a>
+          ) : (
+            <p class="mt-4 text-xs text-texto-3">Publicada en el Boletín Oficial de la República Argentina.</p>
+          )}
+        </li>
       ))}
     </ol>
     <div class="revelar mt-12 rounded-md border border-borde p-6 text-texto-2">

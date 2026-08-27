@@ -15,7 +15,7 @@ const estados = { planificada: 'Planificada', 'en-ejecucion': 'En ejecución', t
     <div class="revelar mb-12 aspect-[21/9] w-full overflow-hidden rounded-md border border-borde bg-fondo-2 empty:hidden"><ImagenAtmosfera nombre="obras-nocturnas" alt="Zona de obra nocturna en autopista, con balizamiento amarillo" sizes="(min-width: 80rem) 80rem, 100vw" /></div>
     <ol class="escalonar relative grid gap-6 border-l border-borde pl-8">
       {obras.map((o, i) => (
-        <li class="relative" style={`--i: ${i}`}>
+        <li id={o.slug} class="relative scroll-mt-28" style={`--i: ${i}`}>
           <span class="absolute -left-[2.45rem] top-1 h-4 w-4 rounded-full border-2 border-acento bg-fondo" aria-hidden="true"></span>
           <div class="esquineros rounded-md border border-borde bg-superficie/40 p-6">
             <div class="flex flex-wrap items-center gap-3"><span class="eyebrow">{o.tipo} · {o.ruta}</span><Senal variante={o.estado === 'en-ejecucion' ? 'vial' : 'frio'}>{estados[o.estado]}</Senal></div>

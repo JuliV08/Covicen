@@ -29,7 +29,7 @@ const sinIva = auto.montoSinIva;
     <div class="flex flex-col gap-5">
       <p class="text-texto-2">Tope de la licitación: <span class="tabular-nums text-texto">{moneda(empresa.concesion.tarifaTopeSinIva)} + IVA</span>. Oferta de Covicen: <span class="tabular-nums text-texto">{moneda(sinIva)} + IVA</span>. Adjudicado el {fechaCorta(empresa.concesion.adjudicacion.fecha)} por {empresa.concesion.adjudicacion.resolucion}.</p>
       <a href={empresa.concesion.adjudicacion.url} rel="noopener noreferrer" target="_blank" class="link-crece inline-flex items-center gap-1 self-start text-sm">Ver la resolución en el Boletín Oficial <ExternalLink size={14} aria-hidden="true" /></a>
-      <div><Boton href="/tarifas" variante="secundario">Tarifario completo por categoría <ArrowRight size={18} aria-hidden="true" slot="icono" /></Boton></div>
+      <div><Boton href="/tarifas" variante="secundario">Tarifario completo por categoría <ArrowRight size={18} aria-hidden="true" /></Boton></div>
       <p class="text-xs text-texto-3">Publicado el {fechaCorta(tarifario.publicadoEl)}. {tarifario.avisos[2]}</p>
     </div>
   </div>

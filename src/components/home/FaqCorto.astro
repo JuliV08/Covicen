@@ -10,6 +10,6 @@ const { preguntas } = Astro.props;
 <Seccion id="faq" indice="07" eyebrow="Preguntas frecuentes" titulo="Lo que más se pregunta.">
   <div class="max-w-3xl">
     <Faq preguntas={preguntas.filter((p) => p.enHome)} />
-    <div class="mt-8"><Boton href="/preguntas-frecuentes" variante="secundario">Todas las preguntas <ArrowRight size={18} aria-hidden="true" slot="icono" /></Boton></div>
+    <div class="mt-8"><Boton href="/preguntas-frecuentes" variante="secundario">Todas las preguntas <ArrowRight size={18} aria-hidden="true" /></Boton></div>
   </div>
 </Seccion>

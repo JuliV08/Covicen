@@ -7,7 +7,7 @@
   "enFormacion": true,
   "consorcio": [
     { "nombre": "AFEMA S.A.", "descripcion": "Constructora vial con base en Córdoba." },
-    { "nombre": "Pablo Federico e Hijos S.A.", "descripcion": "Construcción y obras de hormigón, 25 años de trayectoria." },
+    { "nombre": "Pablo Federico e Hijos S.A.", "descripcion": "Construcción y obras de hormigón." },
     { "nombre": "Guido Mogetta S.A.", "descripcion": "Construcción, obra pública, transporte y minería." }
   ],
   "concesion": {

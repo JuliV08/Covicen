@@ -22,7 +22,7 @@ const c = empresa.concesion;
       Covicen es la nueva concesionaria del Tramo Centro de la Red Federal de Concesiones: <strong class="text-texto">{numero(c.km, 2)} km</strong> sobre {c.rutas.join(', ')}, entre {c.provincias.join(' y ')}. Operación desde el <strong class="text-texto">{fechaLarga(c.inicioOperacion)}</strong>, con la tarifa más baja de los {c.tramosEtapa} tramos adjudicados.
     </p>
     <div class="mt-10 flex flex-wrap items-center gap-4" style="--i: 3">
-      <Boton href="/tarifas">Ver tarifas <ArrowRight size={18} aria-hidden="true" slot="icono" /></Boton>
+      <Boton href="/tarifas">Ver tarifas <ArrowRight size={18} aria-hidden="true" /></Boton>
       <Boton href="/el-tramo" variante="secundario">Conocer el tramo</Boton>
     </div>
     <div class="mt-10" style="--i: 4"><CuentaRegresiva fecha={c.inicioOperacion} /></div>

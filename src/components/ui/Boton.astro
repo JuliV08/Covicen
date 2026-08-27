@@ -13,9 +13,9 @@ const destino = href === undefined ? undefined : esInterno ? ruta(href) : href;
 const clases = ['btn', `btn-${variante}`, clase];
 ---
 {destino ? (
-  <a href={destino} class:list={clases} aria-label={ariaLabel} rel={externo ? 'noopener noreferrer' : undefined} target={externo ? '_blank' : undefined}><slot /><slot name="icono" /></a>
+  <a href={destino} class:list={clases} aria-label={ariaLabel} rel={externo ? 'noopener noreferrer' : undefined} target={externo ? '_blank' : undefined}><slot /></a>
 ) : (
-  <button type="button" class:list={clases} aria-label={ariaLabel}><slot /><slot name="icono" /></button>
+  <button type="button" class:list={clases} aria-label={ariaLabel}><slot /></button>
 )}
 <style>
   .btn {

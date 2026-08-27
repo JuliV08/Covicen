@@ -29,6 +29,7 @@
   p { text-wrap: pretty; }
   a { @apply text-acento; transition: color var(--dur-micro) var(--ease-salida); }
   a:hover { @apply text-acento-hover; }
+  a, button, summary, [role="button"] { touch-action: manipulation; }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -54,7 +55,9 @@
   }
   .esquineros::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
   .esquineros::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
-  .esquineros:hover::before, .esquineros:hover::after { width: 1.25rem; height: 1.25rem; border-color: var(--color-acento); }
+  /* El hover de los esquineros solo en lo que se puede clickear: en un panel estático sería un falso afordance. */
+  a.esquineros:hover::before, a.esquineros:hover::after, a.esquineros:focus-visible::before, a.esquineros:focus-visible::after,
+  button.esquineros:hover::before, button.esquineros:hover::after { width: 1.25rem; height: 1.25rem; border-color: var(--color-acento); }
   /* link con subrayado que crece desde la izquierda */
   .link-crece {
     background-image: linear-gradient(currentColor, currentColor);

@@ -15,7 +15,7 @@ const medios = [
   <Seccion nivel="h1" eyebrow="Medios de pago" titulo="Cómo pagar el peaje." intro="Con dispositivo, en efectivo o sin frenar." class="pt-10">
     <ul class="escalonar grid gap-4 md:grid-cols-3">{medios.map((m, i) => <li style={`--i: ${i}`}><Card><h2 class="text-xl">{m.titulo}</h2><p class="mt-2 text-texto-2">{m.texto}</p></Card></li>)}</ul>
     <div class="revelar mt-8 flex flex-wrap gap-3">
-      <Boton href="https://www.telepase.com.ar/" variante="secundario" externo>Gestionar TelePASE <ExternalLink size={16} aria-hidden="true" slot="icono" /></Boton>
+      <Boton href="https://www.telepase.com.ar/" variante="secundario" externo>Gestionar TelePASE <ExternalLink size={16} aria-hidden="true" /></Boton>
       <Boton href="/tarifas" variante="secundario">Ver tarifas</Boton>
     </div>
     <div class="mt-12"><HuecoCapacidad capacidad="oficinaVirtual" titulo="Pagá tu factura en línea" descripcion="Consulta y pago de facturas cuando esté operativo el sistema de facturación." alternativaHref="/contacto" alternativaTexto="Consultar por WhatsApp" /></div>
