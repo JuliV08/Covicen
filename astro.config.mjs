@@ -2,7 +2,6 @@
 import { defineConfig } from 'astro/config';
 import { loadEnv } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
-import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 
 // .env no se carga en la config: hay que leerlo a mano.
@@ -16,6 +15,8 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   build: { format: 'directory' },
-  integrations: [react(), sitemap()],
+  // Sin @astrojs/react en v1: su entrypoint de cliente pesa ~60 KB gz aunque no haya islas.
+  // Cuando haga falta una isla interactiva: `pnpm astro add react`.
+  integrations: [sitemap()],
   vite: { plugins: [tailwindcss()] },
 });
