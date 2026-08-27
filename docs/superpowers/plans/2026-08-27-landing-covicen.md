@@ -1272,7 +1272,7 @@ Commit (si autorizado): `feat(contenido): datos verificados del Tramo Centro y f
 import { describe, expect, it } from 'vitest';
 import { conIva, fechaCorta, fechaLarga, moneda, numero } from '@/lib/formato';
 
-const sinNbsp = (s: string) => s.replace(/ /g, ' ');
+const sinNbsp = (s: string) => s.replace(/[  ]/g, ' ');
 
 describe('formato es-AR', () => {
   it('moneda sin decimales con punto de miles', () => expect(sinNbsp(moneda(1399))).toBe('$ 1.399'));
@@ -2767,7 +2767,7 @@ describe('Hero', () => {
 });
 describe('TarifaDestacada', () => {
   it('muestra la tarifa con y sin IVA, el origen y la vigencia', async () => {
-    const html = (await render(TarifaDestacada, { tarifario: await fuenteLocalJson.tarifario(), empresa: await fuenteLocalJson.empresa() })).replace(/ /g, ' ');
+    const html = (await render(TarifaDestacada, { tarifario: await fuenteLocalJson.tarifario(), empresa: await fuenteLocalJson.empresa() })).replace(/[  ]/g, ' ');
     expect(html).toContain('$ 1.399');
     expect(html).toContain('$ 1.693');
     expect(html).toContain('Vigencia');
@@ -3205,7 +3205,7 @@ import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
 describe('TablaTarifas', () => {
   it('tabla accesible con vigencia visible, 6 filas y "a confirmar" donde no hay valor', async () => {
     const c = await AstroContainer.create();
-    const html = (await c.renderToString(TablaTarifas, { props: { tarifario: await fuenteLocalJson.tarifario() } })).replace(/ /g, ' ');
+    const html = (await c.renderToString(TablaTarifas, { props: { tarifario: await fuenteLocalJson.tarifario() } })).replace(/[  ]/g, ' ');
     expect(html).toContain('<caption');
     expect(html).toContain('scope="col"');
     expect(html.match(/<tr class="fila/g)?.length).toBe(6);

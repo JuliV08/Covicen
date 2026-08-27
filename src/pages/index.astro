@@ -1,6 +1,36 @@
 ---
 import Base from '@/layouts/Base.astro';
+import AccesosRapidos from '@/components/home/AccesosRapidos.astro';
+import Consorcio from '@/components/home/Consorcio.astro';
+import ContactoCta from '@/components/home/ContactoCta.astro';
+import ElTramo from '@/components/home/ElTramo.astro';
+import FaqCorto from '@/components/home/FaqCorto.astro';
+import Hero from '@/components/home/Hero.astro';
+import NovedadesRecientes from '@/components/home/NovedadesRecientes.astro';
+import ObrasYEstado from '@/components/home/ObrasYEstado.astro';
+import Servicios from '@/components/home/Servicios.astro';
+import TarifaDestacada from '@/components/home/TarifaDestacada.astro';
+import { datos } from '@/lib/datos';
+
+const [empresa, contacto, tramo, tarifario, obras, novedades, faq] = await Promise.all([
+  datos.empresa(),
+  datos.contacto(),
+  datos.tramo(),
+  datos.tarifario(),
+  datos.obras(),
+  datos.novedades(),
+  datos.faq(),
+]);
 ---
-<Base titulo="Inicio" descripcion="Covicen, concesionaria del Tramo Centro de la Red Federal de Concesiones: RN 9, RN 19 y RN 34 en Córdoba y Santa Fe.">
-  <section class="contenedor py-24"><h1>Covicen</h1></section>
+<Base titulo="Inicio" descripcion="Covicen, concesionaria del Tramo Centro de la Red Federal de Concesiones: 681 km sobre RN 9, RN 19 y RN 34 en Córdoba y Santa Fe. Tarifas, peajes, emergencias y obras.">
+  <Hero {empresa} />
+  <AccesosRapidos {contacto} />
+  <TarifaDestacada {tarifario} {empresa} />
+  <ElTramo {tramo} />
+  <ObrasYEstado {obras} />
+  <Servicios />
+  <NovedadesRecientes {novedades} />
+  <Consorcio {empresa} />
+  <FaqCorto preguntas={faq} />
+  <ContactoCta {contacto} />
 </Base>

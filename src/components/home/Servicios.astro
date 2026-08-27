@@ -1,0 +1,23 @@
+---
+import { CreditCard, LifeBuoy, ShieldCheck } from '@lucide/astro';
+import Card from '@/components/ui/Card.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+const servicios = [
+  { Icono: LifeBuoy, titulo: 'Emergencias y auxilio en ruta', texto: 'Asistencia mecánica y de emergencias en todo el tramo, con un número visible en cada página de este sitio.', href: '/emergencias' },
+  { Icono: ShieldCheck, titulo: 'Seguridad vial', texto: 'Móviles de seguridad, señalización renovada y consejos para manejar mejor en RN 9, 19 y 34.', href: '/seguridad-vial' },
+  { Icono: CreditCard, titulo: 'Medios de pago', texto: 'TelePASE en todas las estaciones, efectivo en cabina y Free Flow en las estaciones nuevas.', href: '/medios-de-pago' },
+];
+---
+<Seccion id="servicios" indice="04" eyebrow="Servicios al usuario" titulo="Lo que cubre el peaje." fondo="plano">
+  <ul class="escalonar grid gap-4 md:grid-cols-3">
+    {servicios.map(({ Icono, ...s }, i) => (
+      <li style={`--i: ${i}`}>
+        <Card href={s.href}>
+          <Icono size={28} aria-hidden="true" class="text-acento" />
+          <h3 class="mt-4 text-xl">{s.titulo}</h3>
+          <p class="mt-2 text-texto-2">{s.texto}</p>
+        </Card>
+      </li>
+    ))}
+  </ul>
+</Seccion>

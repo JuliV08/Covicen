@@ -1,0 +1,21 @@
+---
+import { ArrowRight } from '@lucide/astro';
+import MapaTramo from '@/components/ilustraciones/MapaTramo.astro';
+import Boton from '@/components/ui/Boton.astro';
+import Mojon from '@/components/ui/Mojon.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import type { Tramo } from '@/lib/datos/esquemas';
+interface Props { tramo: Tramo }
+const { tramo } = Astro.props;
+---
+<Seccion id="tramo" indice="02" eyebrow="El tramo" titulo="Tres rutas, dos provincias, un corredor." intro={`${tramo.rutas.map((r) => `${r.nombre} (${r.descripcion})`).join(', ')}. Las estaciones de peaje, en amarillo.`} fondo="fondo-2">
+  <div class="grid gap-12 lg:grid-cols-[2fr_1fr] lg:items-center">
+    <div class="revelar"><MapaTramo {tramo} modo="scroll" /></div>
+    <div class="escalonar flex flex-col gap-10">
+      <div style="--i: 0"><Mojon valor={Math.round(tramo.km)} unidad="km" etiqueta="de rutas nacionales" animar /></div>
+      <div style="--i: 1"><Mojon valor={tramo.rutas.length} etiqueta="rutas: RN 9, RN 19 y RN 34" animar /></div>
+      <div style="--i: 2"><Mojon valor={tramo.cabinas.length} etiqueta="estaciones de peaje" animar /></div>
+      <div style="--i: 3"><Boton href="/el-tramo" variante="secundario">Ver el tramo en detalle <ArrowRight size={18} aria-hidden="true" slot="icono" /></Boton></div>
+    </div>
+  </div>
+</Seccion>

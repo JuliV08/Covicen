@@ -1,0 +1,15 @@
+---
+import { ArrowRight } from '@lucide/astro';
+import Faq from '@/components/Faq.astro';
+import Boton from '@/components/ui/Boton.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import type { Pregunta } from '@/lib/datos/esquemas';
+interface Props { preguntas: Pregunta[] }
+const { preguntas } = Astro.props;
+---
+<Seccion id="faq" indice="07" eyebrow="Preguntas frecuentes" titulo="Lo que más se pregunta.">
+  <div class="max-w-3xl">
+    <Faq preguntas={preguntas.filter((p) => p.enHome)} />
+    <div class="mt-8"><Boton href="/preguntas-frecuentes" variante="secundario">Todas las preguntas <ArrowRight size={18} aria-hidden="true" slot="icono" /></Boton></div>
+  </div>
+</Seccion>

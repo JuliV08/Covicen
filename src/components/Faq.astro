@@ -1,0 +1,32 @@
+---
+import { ChevronDown } from '@lucide/astro';
+import type { Pregunta } from '@/lib/datos/esquemas';
+interface Props { preguntas: Pregunta[]; class?: string }
+const { preguntas, class: clase = '' } = Astro.props;
+---
+<div class:list={['faq escalonar divide-y divide-borde border-y border-borde', clase]}>
+  {preguntas.map((p, i) => (
+    <details class="faq-item group" id={p.slug} style={`--i: ${i}`}>
+      <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-left font-semibold text-texto transition-colors hover:text-acento-hover">
+        <span>{p.pregunta}</span>
+        <ChevronDown size={20} aria-hidden="true" class="chevron shrink-0 text-texto-2" />
+      </summary>
+      <div class="faq-cuerpo"><p class="max-w-prose pb-6 text-texto-2">{p.respuesta}</p></div>
+    </details>
+  ))}
+</div>
+<style>
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item:hover { background: linear-gradient(to right, var(--color-superficie), transparent); }
+  .chevron { transition: transform var(--dur-ui) var(--ease-salida); }
+  .faq-item[open] .chevron { transform: rotate(180deg); }
+  .faq-cuerpo { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--dur-ui) var(--ease-salida); }
+  .faq-cuerpo > p { overflow: hidden; }
+  .faq-item[open] .faq-cuerpo { grid-template-rows: 1fr; }
+  @supports (interpolate-size: allow-keywords) {
+    .faq-item { interpolate-size: allow-keywords; }
+    .faq-item::details-content { block-size: 0; overflow: hidden; transition: block-size var(--dur-ui) var(--ease-salida), content-visibility var(--dur-ui) allow-discrete; }
+    .faq-item[open]::details-content { block-size: auto; }
+    .faq-cuerpo { display: block; }
+  }
+</style>

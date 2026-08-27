@@ -1,0 +1,22 @@
+---
+import Card from '@/components/ui/Card.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import type { Novedad } from '@/lib/datos/esquemas';
+import { fechaLarga } from '@/lib/formato';
+interface Props { novedades: Novedad[] }
+const { novedades } = Astro.props;
+---
+{novedades.length > 0 && (
+  <Seccion id="novedades" indice="05" eyebrow="Novedades" titulo="Lo último.">
+    <ul class="escalonar grid gap-4 md:grid-cols-3">
+      {novedades.slice(0, 3).map((n, i) => (
+        <li style={`--i: ${i}`}>
+          <Card href={`/novedades/${n.slug}`} etiqueta={fechaLarga(n.fecha)}>
+            <h3 class="text-xl">{n.titulo}</h3>
+            <p class="mt-2 text-texto-2">{n.resumen}</p>
+          </Card>
+        </li>
+      ))}
+    </ul>
+  </Seccion>
+)}

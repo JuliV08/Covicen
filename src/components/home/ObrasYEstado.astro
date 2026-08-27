@@ -1,0 +1,27 @@
+---
+import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
+import Card from '@/components/ui/Card.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import Senal from '@/components/ui/Senal.astro';
+import type { Obra } from '@/lib/datos/esquemas';
+interface Props { obras: Obra[] }
+const { obras } = Astro.props;
+const estados = { planificada: 'Planificada', 'en-ejecucion': 'En ejecución', terminada: 'Terminada' } as const;
+---
+<Seccion id="obras" indice="03" eyebrow="Obras y estado" titulo="Primero las obras. Después, el peaje pleno." intro="El contrato no permite cobrar la tarifa ofertada hasta alcanzar la transitabilidad óptima que verifica Vialidad Nacional. Acá se sigue el avance.">
+  <div class="grid gap-8 lg:grid-cols-[1fr_1fr]">
+    <ul class="escalonar grid gap-3">
+      {obras.map((o, i) => (
+        <li style={`--i: ${i}`}>
+          <Card href="/obras" etiqueta={o.tipo}>
+            <div class="flex flex-wrap items-center gap-3"><h3 class="text-lg">{o.titulo}</h3><Senal variante={o.estado === 'en-ejecucion' ? 'vial' : 'frio'}>{estados[o.estado]}</Senal></div>
+            <p class="mt-2 text-sm text-texto-2">{o.descripcion}</p>
+          </Card>
+        </li>
+      ))}
+    </ul>
+    <div class="revelar lg:sticky lg:top-28 lg:self-start">
+      <HuecoCapacidad capacidad="estadoRutasEnVivo" titulo="Estado de las rutas en tiempo real" descripcion="Cortes, desvíos y clima por ruta y kilómetro. Este espacio se conecta al centro de operaciones cuando entre en servicio." alternativaHref="/emergencias" alternativaTexto="Mientras tanto: emergencias y auxilio" />
+    </div>
+  </div>
+</Seccion>

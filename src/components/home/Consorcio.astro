@@ -1,0 +1,23 @@
+---
+import Mojon from '@/components/ui/Mojon.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import type { Empresa } from '@/lib/datos/esquemas';
+interface Props { empresa: Empresa }
+const { empresa } = Astro.props;
+---
+<Seccion id="consorcio" indice="06" eyebrow="Quiénes somos" titulo="Un consorcio de constructoras viales, con contrato a 20 años." intro="Covicen es la sociedad que integran las tres empresas adjudicatarias del Tramo Centro. Inversión 100% privada, sin subsidios, bajo supervisión de Vialidad Nacional." fondo="fondo-2">
+  <div class="grid gap-10 lg:grid-cols-[1fr_1.2fr]">
+    <div class="escalonar flex gap-10">
+      <div style="--i: 0"><Mojon valor={empresa.concesion.plazoAnios} unidad="años" etiqueta="de concesión" animar /></div>
+      <div style="--i: 1"><Mojon valor={empresa.consorcio.length} etiqueta="empresas en el consorcio" animar /></div>
+    </div>
+    <ul class="escalonar divide-y divide-borde border-y border-borde">
+      {empresa.consorcio.map((e, i) => (
+        <li class="flex flex-col gap-1 py-5 sm:flex-row sm:items-baseline sm:justify-between" style={`--i: ${i}`}>
+          <span class="font-extrabold text-texto">{e.nombre}</span>
+          <span class="text-sm text-texto-2">{e.descripcion}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Seccion>

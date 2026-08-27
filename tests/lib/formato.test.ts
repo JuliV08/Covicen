@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { conIva, fechaCorta, fechaLarga, moneda, numero } from '@/lib/formato';
 
-const sinNbsp = (s: string) => s.replace(/ /g, ' ');
+const sinNbsp = (s: string) => s.replace(/[  ]/g, ' ');
 
 describe('formato es-AR', () => {
   it('moneda sin decimales con punto de miles', () => expect(sinNbsp(moneda(1399))).toBe('$ 1.399'));

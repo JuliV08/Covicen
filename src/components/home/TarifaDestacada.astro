@@ -1,0 +1,36 @@
+---
+import { ArrowRight, ExternalLink } from '@lucide/astro';
+import IconoVehiculo from '@/components/ilustraciones/IconoVehiculo.astro';
+import Boton from '@/components/ui/Boton.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import Senal from '@/components/ui/Senal.astro';
+import type { Empresa, Tarifario } from '@/lib/datos/esquemas';
+import { conIva, fechaCorta, fechaLarga, moneda } from '@/lib/formato';
+interface Props { tarifario: Tarifario; empresa: Empresa }
+const { tarifario, empresa } = Astro.props;
+const auto = tarifario.tarifas.find((t) => t.categoria === 'cat-2');
+if (!auto || auto.montoSinIva === null) throw new Error('TarifaDestacada: falta la tarifa de auto');
+const sinIva = auto.montoSinIva;
+---
+<Seccion id="tarifa" indice="01" eyebrow="Tarifa" titulo="La más baja de los ocho tramos." intro="En la Red Federal de Concesiones gana quien ofrece el peaje más barato. Covicen ganó ofreciendo el más barato de todos.">
+  <div class="revelar grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-end">
+    <div class="esquineros rounded-md border border-borde bg-superficie/50 p-8">
+      <div class="flex items-center gap-3 text-texto-2"><IconoVehiculo categoria="cat-2" size={32} /> <span>{auto.nombre} · {auto.descripcion}</span></div>
+      <p class="mt-6 flex flex-wrap items-baseline gap-x-3">
+        <span class="font-extrabold leading-none tracking-[var(--tracking-titulo)] text-texto" style="font-size: clamp(3rem, 2rem + 5vw, 6.5rem)">{moneda(sinIva)}</span>
+        <span class="text-lg text-texto-2">+ IVA</span>
+      </p>
+      <p class="mt-3 text-texto-2"><strong class="text-texto">{moneda(conIva(sinIva, tarifario.alicuotaIva))}</strong> con IVA incluido.</p>
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <Senal>{tarifario.origen === 'oferta' ? 'Tarifa ofertada' : 'Tarifa homologada'}</Senal>
+        <span class="text-sm text-texto-2">Vigencia: {tarifario.vigencia.desde ? `desde el ${fechaLarga(tarifario.vigencia.desde)}` : tarifario.vigencia.descripcion}</span>
+      </div>
+    </div>
+    <div class="flex flex-col gap-5">
+      <p class="text-texto-2">Tope de la licitación: <span class="tabular-nums text-texto">{moneda(empresa.concesion.tarifaTopeSinIva)} + IVA</span>. Oferta de Covicen: <span class="tabular-nums text-texto">{moneda(sinIva)} + IVA</span>. Adjudicado el {fechaCorta(empresa.concesion.adjudicacion.fecha)} por {empresa.concesion.adjudicacion.resolucion}.</p>
+      <a href={empresa.concesion.adjudicacion.url} rel="noopener noreferrer" target="_blank" class="link-crece inline-flex items-center gap-1 self-start text-sm">Ver la resolución en el Boletín Oficial <ExternalLink size={14} aria-hidden="true" /></a>
+      <div><Boton href="/tarifas" variante="secundario">Tarifario completo por categoría <ArrowRight size={18} aria-hidden="true" slot="icono" /></Boton></div>
+      <p class="text-xs text-texto-3">Publicado el {fechaCorta(tarifario.publicadoEl)}. {tarifario.avisos[2]}</p>
+    </div>
+  </div>
+</Seccion>
