@@ -1,0 +1,30 @@
+---
+import Base from '@/layouts/Base.astro';
+import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import { datos } from '@/lib/datos';
+const contacto = await datos.contacto();
+const politicas = [
+  { id: 'calidad', titulo: 'Política de calidad', puntos: ['Cumplir los niveles de servicio del contrato y medirlos con los indicadores de Vialidad Nacional.', 'Mantener la calzada, la señalización y los sistemas de auxilio en condiciones verificables.', 'Publicar en este sitio el avance de obras y los cambios de tarifa con su fecha de vigencia.'] },
+  { id: 'seguridad-vial', titulo: 'Política de seguridad vial', puntos: ['La seguridad de quienes circulan está por encima de cualquier meta de tránsito o recaudación.', 'Señalización y balizamiento de obras según normativa; zonas de obra con velocidad reducida.', 'Respuesta a emergencias en todo el tramo, las 24 horas, con un número visible en cada página.'] },
+  { id: 'anticorrupcion', titulo: 'Política anticorrupción', puntos: ['Tolerancia cero al soborno, la dádiva y el conflicto de interés en contrataciones y en la relación con el Estado.', 'Contrataciones con criterios objetivos y trazables.', 'Canal de denuncias: hasta que exista un sistema anónimo, por correo al área de ética.'] },
+];
+---
+<Base titulo="Políticas" descripcion="Políticas de calidad, seguridad vial y anticorrupción de Covicen, concesionaria del Tramo Centro." migas={[{ nombre: 'Políticas', href: '/politicas' }]}>
+  <Seccion nivel="h1" eyebrow="Políticas" titulo="Cómo nos comprometemos a operar." intro="Tres políticas, escritas para que cualquiera pueda exigirlas." class="pt-10">
+    <nav aria-label="Secciones" class="revelar mb-10 flex flex-wrap gap-2">{politicas.map((p) => <a href={`#${p.id}`} class="rounded-md border border-borde px-3 py-1.5 text-sm text-texto-2 transition-colors hover:border-borde-fuerte hover:text-texto">{p.titulo}</a>)}</nav>
+    <div class="escalonar grid gap-6">
+      {politicas.map((p, i) => (
+        <article id={p.id} class="esquineros scroll-mt-28 rounded-md border border-borde bg-superficie/40 p-8" style={`--i: ${i}`}>
+          <h2 class="text-2xl">{p.titulo}</h2>
+          <ul class="mt-4 flex flex-col gap-3 text-texto-2">{p.puntos.map((t) => <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-acento" aria-hidden="true"></span>{t}</li>)}</ul>
+          {p.id === 'anticorrupcion' && (
+            <div class="mt-6">
+              <HuecoCapacidad capacidad="canalEticoAnonimo" titulo="Canal ético anónimo" descripcion="Denuncias anónimas con seguimiento. Hasta entonces, el canal es por correo y no es anónimo: lo decimos para que lo sepas antes de escribir." alternativaHref={contacto.email.etica ? `mailto:${contacto.email.etica}` : '/contacto'} alternativaTexto={contacto.email.etica ? `Escribir a ${contacto.email.etica}` : 'Contacto (correo de ética a confirmar)'} />
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  </Seccion>
+</Base>

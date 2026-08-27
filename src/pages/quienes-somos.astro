@@ -1,0 +1,39 @@
+---
+import { ExternalLink } from '@lucide/astro';
+import Base from '@/layouts/Base.astro';
+import Mojon from '@/components/ui/Mojon.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import { datos } from '@/lib/datos';
+import { fechaLarga, numero } from '@/lib/formato';
+const e = await datos.empresa();
+const c = e.concesion;
+---
+<Base titulo="Quiénes somos" descripcion="Covicen es la concesionaria del Tramo Centro de la Red Federal de Concesiones, integrada por AFEMA S.A., Pablo Federico e Hijos S.A. y Guido Mogetta S.A. Concesión a 20 años, adjudicada por Resolución 1379/2026." migas={[{ nombre: 'Quiénes somos', href: '/quienes-somos' }]}>
+  <Seccion nivel="h1" eyebrow="Quiénes somos" titulo="Una concesionaria nueva para un tramo que ya existe." intro={`Covicen (${e.descriptor}) es la sociedad que integran las tres empresas adjudicatarias del Tramo Centro. ${e.enFormacion ? 'La sociedad está en formación: los datos registrales se publican cuando se complete la inscripción.' : ''}`} class="pt-10">
+    <div class="escalonar grid gap-10 sm:grid-cols-3">
+      <div style="--i: 0"><Mojon valor={Math.round(c.km)} unidad="km" etiqueta="de rutas nacionales" animar /></div>
+      <div style="--i: 1"><Mojon valor={c.plazoAnios} unidad="años" etiqueta={`de concesión${c.prorrogaAnios ? ` (+${c.prorrogaAnios} prorrogables)` : ''}`} animar /></div>
+      <div style="--i: 2"><Mojon valor={c.tramosEtapa} etiqueta="tramos en la Etapa III; el nuestro ofertó la tarifa más baja" animar /></div>
+    </div>
+  </Seccion>
+  <Seccion indice="01" eyebrow="El consorcio" titulo="Tres empresas de construcción vial." fondo="fondo-2">
+    <ul class="escalonar grid gap-4 md:grid-cols-3">{e.consorcio.map((s, i) => <li class="esquineros rounded-md border border-borde bg-superficie/40 p-6" style={`--i: ${i}`}><h3 class="text-xl">{s.nombre}</h3><p class="mt-2 text-texto-2">{s.descripcion}</p></li>)}</ul>
+  </Seccion>
+  <Seccion indice="02" eyebrow="La concesión" titulo="Qué asumimos.">
+    <div class="revelar grid gap-8 md:grid-cols-2">
+      <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 text-texto-2">
+        <dt class="eyebrow">Régimen</dt><dd>Concesión de obra pública por peaje, inversión 100% privada, sin subsidios.</dd>
+        <dt class="eyebrow">Tramo</dt><dd>Centro: {numero(c.km, 2)} km sobre {c.rutas.join(', ')} ({c.provincias.join(' y ')}).</dd>
+        <dt class="eyebrow">Plazo</dt><dd>{c.plazoAnios} años desde el {fechaLarga(c.inicioOperacion)}.</dd>
+        <dt class="eyebrow">Adjudicación</dt><dd>{fechaLarga(c.adjudicacion.fecha)}, {c.adjudicacion.resolucion}. <a href={c.adjudicacion.url} rel="noopener noreferrer" target="_blank" class="link-crece inline-flex items-center gap-1">Boletín Oficial <ExternalLink size={12} aria-hidden="true" /></a></dd>
+        <dt class="eyebrow">Control</dt><dd>Dirección Nacional de Vialidad, con indicadores objetivos de desempeño y niveles de servicio.</dd>
+      </dl>
+      <ul class="flex flex-col gap-3 text-texto-2">
+        <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-vial" aria-hidden="true"></span>Construir, conservar, mantener y ampliar la ruta durante toda la concesión.</li>
+        <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-vial" aria-hidden="true"></span>Prestar servicios al usuario: emergencias, auxilio, seguridad vial, cobro electrónico.</li>
+        <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-vial" aria-hidden="true"></span>No cobrar la tarifa ofertada hasta alcanzar la transitabilidad óptima.</li>
+        <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-vial" aria-hidden="true"></span>Rendir cuentas ante Vialidad Nacional y ante quienes pagan el peaje.</li>
+      </ul>
+    </div>
+  </Seccion>
+</Base>

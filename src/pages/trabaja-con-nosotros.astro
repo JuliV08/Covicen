@@ -1,0 +1,24 @@
+---
+import Base from '@/layouts/Base.astro';
+import Formulario from '@/components/Formulario.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import { datos } from '@/lib/datos';
+const contacto = await datos.contacto();
+---
+<Base titulo="Trabajá con nosotros" descripcion="Sumate al equipo de Covicen: operación de peajes, auxilio en ruta, mantenimiento vial, administración. Córdoba y Santa Fe." migas={[{ nombre: 'Trabajá con nosotros', href: '/trabaja-con-nosotros' }]}>
+  <Seccion nivel="h1" eyebrow="Trabajá con nosotros" titulo="681 km necesitan gente." intro="Operación de estaciones, auxilio en ruta, mantenimiento, seguridad vial y administración, en Córdoba y Santa Fe. Contanos quién sos y en qué querés trabajar." class="pt-10">
+    <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.2fr]">
+      <ul class="flex flex-col gap-4 text-texto-2">
+        <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-vial" aria-hidden="true"></span>Las búsquedas se publican en Novedades cuando se abren.</li>
+        <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-vial" aria-hidden="true"></span>Podés adelantarte: dejá tu perfil y la zona donde vivís.</li>
+        <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-vial" aria-hidden="true"></span>Recibimos el CV por WhatsApp o por correo, como archivo o como link.</li>
+      </ul>
+      <Formulario asunto="Trabajá con nosotros" whatsapp={contacto.whatsapp.numero} email={contacto.email.rrhh ?? contacto.email.general} textoBoton="Enviar mi perfil por WhatsApp" campos={[
+        { nombre: 'nombre', etiqueta: 'Nombre y apellido', requerido: true },
+        { nombre: 'zona', etiqueta: 'Zona donde vivís', tipo: 'select', opciones: ['Rosario y alrededores', 'Carcarañá – Leones', 'Villa María – James Craik', 'Pilar – Córdoba', 'San Francisco', 'Rafaela', 'Santa Fe – Franck', 'Otra'], requerido: true },
+        { nombre: 'area', etiqueta: 'Área de interés', tipo: 'select', opciones: ['Operación de peajes', 'Auxilio y emergencias', 'Mantenimiento vial', 'Seguridad vial', 'Administración', 'Sistemas', 'Otra'], requerido: true },
+        { nombre: 'mensaje', etiqueta: 'Contanos de vos (experiencia, disponibilidad, link a tu CV)', tipo: 'textarea', requerido: true },
+      ]} />
+    </div>
+  </Seccion>
+</Base>

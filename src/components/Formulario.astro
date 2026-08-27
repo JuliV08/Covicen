@@ -1,0 +1,51 @@
+---
+import { Mail, MessageCircle } from '@lucide/astro';
+import { ruta } from '@/lib/rutas';
+import { enlaceWhatsapp } from '@/lib/whatsapp';
+export interface Campo {
+  nombre: string;
+  etiqueta: string;
+  tipo?: 'text' | 'email' | 'tel' | 'textarea' | 'select';
+  opciones?: string[];
+  requerido?: boolean;
+  placeholder?: string;
+}
+interface Props { asunto: string; whatsapp: string | null; email: string | null; campos: Campo[]; textoBoton?: string }
+const { asunto, whatsapp, email, campos, textoBoton = 'Enviar por WhatsApp' } = Astro.props;
+const action = whatsapp ? enlaceWhatsapp(whatsapp, `Asunto: ${asunto}`) : email ? `mailto:${email}?subject=${encodeURIComponent(asunto)}` : '#';
+const canal = whatsapp ? 'whatsapp' : email ? 'email' : 'a-confirmar';
+---
+<form class="formulario grid gap-5" data-formulario data-asunto={asunto} data-whatsapp={whatsapp ?? ''} data-email={email ?? ''} data-canal={canal} action={action} method="get" target="_blank" novalidate>
+  {campos.map((c) => (
+    <div class="grid gap-2">
+      <label for={`campo-${c.nombre}`} class="text-sm font-semibold text-texto">{c.etiqueta}{c.requerido && <span class="text-vial" aria-hidden="true"> *</span>}</label>
+      {c.tipo === 'textarea' ? (
+        <textarea id={`campo-${c.nombre}`} name={c.nombre} rows="5" required={c.requerido} placeholder={c.placeholder} class="campo"></textarea>
+      ) : c.tipo === 'select' ? (
+        <select id={`campo-${c.nombre}`} name={c.nombre} required={c.requerido} class="campo">{(c.opciones ?? []).map((o) => <option value={o}>{o}</option>)}</select>
+      ) : (
+        <input id={`campo-${c.nombre}`} name={c.nombre} type={c.tipo ?? 'text'} required={c.requerido} placeholder={c.placeholder} class="campo" autocomplete={c.tipo === 'email' ? 'email' : c.tipo === 'tel' ? 'tel' : c.nombre === 'nombre' ? 'name' : 'off'} />
+      )}
+      <p class="error hidden text-sm text-error" data-error-de={c.nombre} aria-live="polite"></p>
+    </div>
+  ))}
+  {canal === 'a-confirmar' ? (
+    <p class="rounded-md border border-dashed border-borde-fuerte p-4 text-sm text-texto-2">El canal de contacto se habilita antes del inicio de la operación. Mientras tanto, guardá esta página.</p>
+  ) : (
+    <div class="flex flex-wrap items-center gap-4">
+      <button type="submit" class="btn-enviar inline-flex min-h-11 items-center gap-2 rounded-md bg-acento px-5 py-3 font-semibold text-fondo transition hover:-translate-y-px hover:bg-acento-hover hover:shadow-[0_10px_28px_-10px_var(--color-glow)]">
+        {canal === 'whatsapp' ? <MessageCircle size={18} aria-hidden="true" /> : <Mail size={18} aria-hidden="true" />} {canal === 'whatsapp' ? textoBoton : 'Enviar por correo'}
+      </button>
+      {canal === 'whatsapp' && email && <a href={`mailto:${email}?subject=${encodeURIComponent(asunto)}`} class="link-crece text-sm text-texto-2">o escribinos a {email}</a>}
+    </div>
+  )}
+  <p class="text-xs text-texto-3">Los datos que envíes viajan por el canal que elijas (WhatsApp es un servicio de Meta). Ver <a href={ruta('/privacidad')} class="link-crece">política de privacidad</a>.</p>
+</form>
+<script src="../scripts/formulario.ts"></script>
+<style>
+  .campo { width: 100%; border: 1px solid var(--color-borde); border-radius: var(--radius-md); background: var(--color-fondo-2); color: var(--color-texto); padding: 0.75rem 1rem; min-height: 2.75rem; transition: border-color var(--dur-ui), box-shadow var(--dur-ui); }
+  .campo:hover { border-color: var(--color-borde-fuerte); }
+  .campo:focus { outline: none; border-color: var(--color-acento); box-shadow: 0 0 0 3px var(--color-glow); }
+  .campo[aria-invalid="true"] { border-color: var(--color-error); }
+  .campo::placeholder { color: var(--color-texto-3); }
+</style>

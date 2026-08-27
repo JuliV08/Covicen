@@ -1,0 +1,21 @@
+---
+import Base from '@/layouts/Base.astro';
+import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
+import Formulario from '@/components/Formulario.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import { datos } from '@/lib/datos';
+const contacto = await datos.contacto();
+---
+<Base titulo="Proveedores" descripcion="Proveedores y licitaciones de Covicen para el Tramo Centro: registrate y recibí las convocatorias." migas={[{ nombre: 'Proveedores', href: '/proveedores' }]}>
+  <Seccion nivel="h1" eyebrow="Proveedores" titulo="Vamos a comprar mucho. Queremos comprar bien." intro="Insumos viales, señalización, tecnología de cobro, servicios de auxilio, obra civil. El portal de proveedores se habilita con los sistemas; mientras tanto, registrate acá." class="pt-10">
+    <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.2fr]">
+      <HuecoCapacidad capacidad="portalProveedores" titulo="Portal de proveedores y licitaciones" descripcion="Alta de proveedor, carga de comprobantes, estado de pagos y convocatorias abiertas." />
+      <Formulario asunto="Alta de proveedor" whatsapp={contacto.whatsapp.numero} email={contacto.email.proveedores ?? contacto.email.general} textoBoton="Registrarme por WhatsApp" campos={[
+        { nombre: 'empresa', etiqueta: 'Empresa', requerido: true },
+        { nombre: 'nombre', etiqueta: 'Persona de contacto', requerido: true },
+        { nombre: 'rubro', etiqueta: 'Rubro', tipo: 'select', opciones: ['Obra civil y pavimento', 'Señalización y balizamiento', 'Tecnología y cobro electrónico', 'Auxilio y grúas', 'Seguridad e higiene', 'Servicios generales', 'Otro'], requerido: true },
+        { nombre: 'mensaje', etiqueta: 'Qué ofrecés y dónde operás', tipo: 'textarea', requerido: true },
+      ]} />
+    </div>
+  </Seccion>
+</Base>

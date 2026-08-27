@@ -1,0 +1,24 @@
+---
+import Base from '@/layouts/Base.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import { datos } from '@/lib/datos';
+const [e, contacto] = await Promise.all([datos.empresa(), datos.contacto()]);
+---
+<Base titulo="Política de privacidad" descripcion="Cómo trata Covicen los datos personales que recibe por sus canales de contacto, según la Ley 25.326 de Protección de Datos Personales." migas={[{ nombre: 'Privacidad', href: '/privacidad' }]}>
+  <Seccion nivel="h1" eyebrow="Privacidad" titulo="Qué datos recibimos y qué hacemos con ellos." class="pt-10">
+    <div class="revelar prose-covicen max-w-prose text-texto-2">
+      <h2>Responsable</h2>
+      <p>{e.marca} ({e.descriptor}){e.enFormacion ? ', sociedad en formación' : `, ${e.razonSocial}, CUIT ${e.cuit}`}. Los datos de contacto del responsable se publican en el pie de página cuando se complete la inscripción.</p>
+      <h2>Qué datos recibimos</h2>
+      <p>Este sitio no tiene cuentas de usuario, no usa cookies de terceros ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos por WhatsApp o por correo desde los formularios: nombre, contacto y el contenido de tu mensaje.</p>
+      <h2>Para qué</h2>
+      <p>Para responder consultas y reclamos, gestionar postulaciones laborales y altas de proveedores. No los usamos con otros fines ni los cedemos a terceros, salvo obligación legal.</p>
+      <h2>Canales de terceros</h2>
+      <p>WhatsApp es un servicio de Meta Platforms, con sus propias condiciones y política de privacidad. El correo electrónico viaja por el proveedor que uses.</p>
+      <h2>Tus derechos</h2>
+      <p>Según la Ley 25.326 podés acceder, rectificar y suprimir tus datos. Escribinos por el canal de contacto{contacto.email.general ? ` o a ${contacto.email.general}` : ''}. La Agencia de Acceso a la Información Pública, órgano de control de la ley, atiende denuncias por incumplimiento.</p>
+      <h2>Conservación</h2>
+      <p>Conservamos los mensajes el tiempo necesario para resolver lo que pediste y cumplir obligaciones legales; después, se eliminan.</p>
+    </div>
+  </Seccion>
+</Base>
