@@ -1,0 +1,31 @@
+---
+import { Mail, MessageCircle, Phone } from '@lucide/astro';
+import Base from '@/layouts/Base.astro';
+import Formulario from '@/components/Formulario.astro';
+import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import { datos } from '@/lib/datos';
+import { enlaceWhatsapp } from '@/lib/whatsapp';
+const contacto = await datos.contacto();
+const tel = contacto.emergencias.telefono;
+---
+<Base titulo="Contacto" descripcion="Consultas y reclamos a Covicen por WhatsApp o correo. Emergencias en ruta, las 24 horas." migas={[{ nombre: 'Contacto', href: '/contacto' }]}>
+  <Seccion nivel="h1" eyebrow="Contacto" titulo="Escribinos. Llega con tus datos ya cargados." intro="Consultas, reclamos y sugerencias. Para emergencias en la ruta, llamá: el número está en cada página." class="pt-10">
+    <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.3fr]">
+      <ul class="flex flex-col gap-4">
+        <li class="esquineros rounded-md border border-borde bg-superficie/40 p-5"><p class="eyebrow flex items-center gap-2"><Phone size={14} aria-hidden="true" /> Emergencias 24 h</p>{tel ? <a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="link-crece mt-2 block text-2xl font-extrabold tabular-nums text-texto no-underline">{tel}</a> : <p class="mt-2 text-texto-2" data-emergencias="a-confirmar">Número a confirmar antes del inicio de la operación.</p>}</li>
+        <li class="esquineros rounded-md border border-borde bg-superficie/40 p-5"><p class="eyebrow flex items-center gap-2"><MessageCircle size={14} aria-hidden="true" /> WhatsApp</p>{contacto.whatsapp.numero ? <a href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen')} class="link-crece mt-2 inline-block text-texto" rel="noopener">Abrir chat</a> : <p class="mt-2 text-texto-2">A confirmar.</p>}</li>
+        <li class="esquineros rounded-md border border-borde bg-superficie/40 p-5"><p class="eyebrow flex items-center gap-2"><Mail size={14} aria-hidden="true" /> Correo</p>{contacto.email.general ? <a href={`mailto:${contacto.email.general}`} class="link-crece mt-2 inline-block text-texto">{contacto.email.general}</a> : <p class="mt-2 text-texto-2">A confirmar.</p>}</li>
+        <li><HuecoCapacidad capacidad="ticketingReclamos" titulo="Seguimiento de reclamos" descripcion="Número de reclamo y estado en línea, cuando exista el sistema." /></li>
+      </ul>
+      <Formulario asunto="Consulta o reclamo" whatsapp={contacto.whatsapp.numero} email={contacto.email.general} campos={[
+        { nombre: 'motivo', etiqueta: 'Motivo', tipo: 'select', opciones: ['Consulta', 'Reclamo', 'Sugerencia', 'Prensa'], requerido: true },
+        { nombre: 'nombre', etiqueta: 'Nombre y apellido', requerido: true },
+        { nombre: 'telefono', etiqueta: 'Teléfono', tipo: 'tel' },
+        { nombre: 'ruta', etiqueta: 'Ruta y kilómetro (si aplica)', placeholder: 'RN 9, km 350' },
+        { nombre: 'patente', etiqueta: 'Patente (opcional, para reclamos de cobro)' },
+        { nombre: 'mensaje', etiqueta: 'Mensaje', tipo: 'textarea', requerido: true },
+      ]} />
+    </div>
+  </Seccion>
+</Base>

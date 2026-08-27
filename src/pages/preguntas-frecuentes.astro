@@ -1,0 +1,19 @@
+---
+import Base from '@/layouts/Base.astro';
+import Faq from '@/components/Faq.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import { datos } from '@/lib/datos';
+import { jsonLdFaq } from '@/lib/seo';
+const preguntas = await datos.faq();
+const temas = [['general', 'General'], ['tarifas', 'Tarifas'], ['peajes', 'Peajes'], ['pago', 'Pago'], ['servicios', 'Servicios'], ['empresa', 'Empresa']] as const;
+---
+<Base titulo="Preguntas frecuentes" descripcion="Respuestas sobre el peaje del Tramo Centro: cuánto cuesta, desde cuándo se cobra, dónde están las estaciones, TelePASE, Free Flow, emergencias y reclamos." jsonLd={[jsonLdFaq(preguntas)]} migas={[{ nombre: 'Preguntas frecuentes', href: '/preguntas-frecuentes' }]}>
+  <Seccion nivel="h1" eyebrow="Preguntas frecuentes" titulo="Lo que más se pregunta." class="pt-10">
+    <nav aria-label="Temas" class="revelar mb-10 flex flex-wrap gap-2">{temas.map(([id, n]) => <a href={`#tema-${id}`} class="rounded-md border border-borde px-3 py-1.5 text-sm text-texto-2 transition-colors hover:border-borde-fuerte hover:text-texto">{n}</a>)}</nav>
+    <div class="grid gap-14">
+      {temas.map(([id, n]) => { const lista = preguntas.filter((p) => p.tema === id); return lista.length > 0 && (
+        <section id={`tema-${id}`} class="scroll-mt-28"><h2 class="revelar mb-4 text-2xl">{n}</h2><Faq preguntas={lista} /></section>
+      ); })}
+    </div>
+  </Seccion>
+</Base>
