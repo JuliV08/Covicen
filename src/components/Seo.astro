@@ -1,0 +1,48 @@
+---
+import type { Contacto, Empresa } from '@/lib/datos/esquemas';
+import { config } from '@/lib/config';
+import { absoluta, ruta } from '@/lib/rutas';
+import { jsonLdOrganizacion, jsonLdSitioWeb } from '@/lib/seo';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  jsonLd: Record<string, unknown>[];
+  tipo: 'website' | 'article';
+  imagen?: string;
+  empresa: Empresa;
+  contacto: Contacto;
+}
+const { titulo, descripcion, jsonLd, tipo, imagen, empresa, contacto } = Astro.props;
+const esHome = Astro.url.pathname === config.base;
+const tituloCompleto = esHome ? 'Covicen — Corredor Vial del Centro' : `${titulo} | Covicen`;
+// pathname ya trae base y barra final (trailingSlash: always)
+const canonical = `${config.sitio}${Astro.url.pathname}`;
+const og = imagen ?? absoluta('/og.png');
+const inicio = `${config.sitio}${config.base}`;
+const bloques = [jsonLdOrganizacion(empresa, contacto, inicio, absoluta('/favicon.svg')), jsonLdSitioWeb(inicio), ...jsonLd];
+---
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{tituloCompleto}</title>
+<meta name="description" content={descripcion} />
+<link rel="canonical" href={canonical} />
+{!config.indexable && <meta name="robots" content="noindex, nofollow" />}
+<meta name="theme-color" content="#0B1526" />
+<link rel="icon" href={ruta('/favicon.svg')} type="image/svg+xml" />
+<link rel="apple-touch-icon" href={ruta('/apple-touch-icon.png')} />
+<link rel="sitemap" href={ruta('/sitemap-index.xml')} />
+<meta property="og:type" content={tipo} />
+<meta property="og:site_name" content="Covicen" />
+<meta property="og:locale" content="es_AR" />
+<meta property="og:title" content={tituloCompleto} />
+<meta property="og:description" content={descripcion} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={og} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={tituloCompleto} />
+<meta name="twitter:description" content={descripcion} />
+<meta name="twitter:image" content={og} />
+{bloques.map((b) => <script type="application/ld+json" is:inline set:html={JSON.stringify(b)}></script>)}

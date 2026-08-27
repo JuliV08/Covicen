@@ -1,0 +1,18 @@
+---
+import { Phone } from '@lucide/astro';
+import type { Contacto } from '@/lib/datos/esquemas';
+interface Props { contacto: Contacto }
+const { contacto } = Astro.props;
+const tel = contacto.emergencias.telefono;
+---
+<div class="fixed inset-x-0 bottom-0 z-40 border-t border-borde bg-fondo-2/95 p-3 backdrop-blur sm:hidden" style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom))">
+  {tel ? (
+    <a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="flex h-12 items-center justify-center gap-2 rounded-md bg-vial font-semibold text-fondo" aria-label={`Llamar a emergencias: ${tel}`}>
+      <Phone size={18} aria-hidden="true" /> {contacto.emergencias.etiqueta} <span class="font-extrabold tabular-nums">{tel}</span>
+    </a>
+  ) : (
+    <div class="flex h-12 items-center justify-center gap-2 rounded-md bg-vial/90 text-sm font-semibold text-fondo" data-emergencias="a-confirmar">
+      <Phone size={18} aria-hidden="true" /> {contacto.emergencias.etiqueta} · <span class="text-xs font-medium uppercase tracking-wider">número a confirmar</span>
+    </div>
+  )}
+</div>

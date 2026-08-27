@@ -1,0 +1,60 @@
+---
+import Isotipo from '@/components/marca/Isotipo.astro';
+import type { Contacto, Empresa } from '@/lib/datos/esquemas';
+import { ruta } from '@/lib/rutas';
+import { enlaceWhatsapp } from '@/lib/whatsapp';
+
+interface Props { empresa: Empresa; contacto: Contacto }
+const { empresa, contacto } = Astro.props;
+const columnas = [
+  { titulo: 'Usuarios', links: [['Tarifas', '/tarifas'], ['Medios de pago', '/medios-de-pago'], ['Emergencias', '/emergencias'], ['Seguridad vial', '/seguridad-vial'], ['Preguntas frecuentes', '/preguntas-frecuentes']] },
+  { titulo: 'Empresa', links: [['Quiénes somos', '/quienes-somos'], ['Obras', '/obras'], ['Novedades', '/novedades'], ['Políticas', '/politicas'], ['Transparencia', '/transparencia'], ['Trabajá con nosotros', '/trabaja-con-nosotros']] },
+] as const;
+const interes = [
+  ['Vialidad Nacional', 'https://www.argentina.gob.ar/transporte/vialidad-nacional'],
+  ['Red Federal de Concesiones', 'https://www.argentina.gob.ar/transporte/vialidad-nacional/red-federal-de-concesiones'],
+  ['Boletín Oficial', 'https://www.boletinoficial.gob.ar/'],
+  ['TelePASE', 'https://www.telepase.com.ar/'],
+] as const;
+const aConfirmar = (v: string | null) => v ?? 'a confirmar';
+---
+<footer class="mt-24 border-t border-borde bg-fondo-2">
+  <div class="contenedor grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
+    <div>
+      <div class="flex items-center gap-3"><Isotipo size={40} /><span class="text-xl font-extrabold">COVICEN</span></div>
+      <p class="eyebrow mt-2">{empresa.descriptor}</p>
+      <p class="mt-4 text-sm text-texto-2">Concesionaria del Tramo Centro de la Red Federal de Concesiones. {empresa.concesion.rutas.join(' · ')} · {empresa.concesion.provincias.join(' y ')}.</p>
+    </div>
+    {columnas.map((c) => (
+      <nav aria-label={c.titulo}>
+        <h2 class="eyebrow mb-4 text-texto">{c.titulo}</h2>
+        <ul class="flex flex-col gap-2">
+          {c.links.map(([n, h]) => <li><a href={ruta(h)} class="link-crece text-texto-2 hover:text-texto">{n}</a></li>)}
+        </ul>
+      </nav>
+    ))}
+    <div>
+      <h2 class="eyebrow mb-4 text-texto">Contacto</h2>
+      <ul class="flex flex-col gap-2 text-texto-2">
+        <li>{contacto.whatsapp.numero ? <a href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen')} class="link-crece" rel="noopener">WhatsApp</a> : <span>WhatsApp · a confirmar</span>}</li>
+        <li>{contacto.email.general ? <a href={`mailto:${contacto.email.general}`} class="link-crece">{contacto.email.general}</a> : <span>Correo · a confirmar</span>}</li>
+        <li><a href={ruta('/contacto')} class="link-crece">Formulario de contacto</a></li>
+        <li><a href={ruta('/proveedores')} class="link-crece">Proveedores</a></li>
+      </ul>
+      <h2 class="eyebrow mb-3 mt-8 text-texto">Datos registrales</h2>
+      <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm text-texto-3">
+        <dt>Razón social</dt><dd>{aConfirmar(empresa.razonSocial)}</dd>
+        <dt>CUIT</dt><dd>{aConfirmar(empresa.cuit)}</dd>
+        <dt>Domicilio</dt><dd>{aConfirmar(empresa.domicilioLegal)}</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="border-t border-borde">
+    <div class="contenedor flex flex-col gap-4 py-6 text-sm text-texto-3 md:flex-row md:items-center md:justify-between">
+      <p>{empresa.enFormacion && <span>Sociedad en formación · </span>}Adjudicación: {empresa.concesion.adjudicacion.resolucion}. <a href={ruta('/privacidad')} class="link-crece">Privacidad</a></p>
+      <ul class="flex flex-wrap gap-4">
+        {interes.map(([n, h]) => <li><a href={h} rel="noopener noreferrer" target="_blank" class="link-crece">{n}</a></li>)}
+      </ul>
+    </div>
+  </div>
+</footer>

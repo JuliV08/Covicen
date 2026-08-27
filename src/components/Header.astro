@@ -1,0 +1,139 @@
+---
+import { ChevronDown, Menu, Phone, X } from '@lucide/astro';
+import Logotipo from '@/components/marca/Logotipo.astro';
+import type { Contacto } from '@/lib/datos/esquemas';
+import { ruta } from '@/lib/rutas';
+
+interface Props { contacto: Contacto; rutaActual: string }
+const { contacto, rutaActual } = Astro.props;
+
+const items = [
+  { nombre: 'Tarifas', href: '/tarifas' },
+  { nombre: 'El tramo', href: '/el-tramo' },
+  { nombre: 'Servicios', href: '/servicios' },
+  { nombre: 'Obras', href: '/obras' },
+  { nombre: 'Novedades', href: '/novedades' },
+];
+const nosotros = [
+  { nombre: 'Quiénes somos', href: '/quienes-somos' },
+  { nombre: 'Políticas', href: '/politicas' },
+  { nombre: 'Transparencia', href: '/transparencia' },
+  { nombre: 'Trabajá con nosotros', href: '/trabaja-con-nosotros' },
+];
+const activo = (href: string) => rutaActual.startsWith(ruta(href));
+const nosotrosActivo = nosotros.some((n) => activo(n.href));
+const tel = contacto.emergencias.telefono;
+const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
+---
+<header class="cabecera fixed inset-x-0 top-0 z-50 h-[var(--alto-header)] border-b" transition:animate="none">
+  <div class="contenedor flex h-full items-center justify-between gap-6">
+    <Logotipo conDescriptor={true} />
+
+    <nav aria-label="Principal" class="hidden lg:block">
+      <ul class="nav-lista flex items-center gap-1">
+        {items.map((i) => (
+          <li>
+            <a href={ruta(i.href)} class="nav-item" aria-current={activo(i.href) ? 'page' : undefined}>{i.nombre}</a>
+          </li>
+        ))}
+        <li>
+          <details class="desplegable relative" data-desplegable>
+            <summary class:list={['nav-item flex cursor-pointer list-none items-center gap-1', { 'is-activo': nosotrosActivo }]} aria-haspopup="true">
+              Nosotros <ChevronDown size={16} aria-hidden="true" class="chevron" />
+            </summary>
+            <ul class="absolute right-0 top-full mt-2 w-64 rounded-md border border-borde bg-superficie-2 p-2 shadow-2xl">
+              {nosotros.map((n) => (
+                <li>
+                  <a href={ruta(n.href)} class="block rounded-sm px-3 py-2 text-texto transition-colors hover:bg-superficie hover:text-acento-hover" aria-current={activo(n.href) ? 'page' : undefined}>{n.nombre}</a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        </li>
+        <li><a href={ruta('/contacto')} class="nav-item" aria-current={activo('/contacto') ? 'page' : undefined}>Contacto</a></li>
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      {telHref ? (
+        <a href={telHref} class="btn-vial hidden sm:inline-flex" aria-label={`Llamar a emergencias: ${tel}`}>
+          <Phone size={18} aria-hidden="true" class="telefono" /> <span>Emergencias</span> <span class="font-extrabold tabular-nums">{tel}</span>
+        </a>
+      ) : (
+        <span class="btn-vial hidden sm:inline-flex opacity-90" data-emergencias="a-confirmar" title="Número a confirmar">
+          <Phone size={18} aria-hidden="true" /> <span>Emergencias</span> <span class="text-[0.7rem] font-medium uppercase tracking-wider">número a confirmar</span>
+        </span>
+      )}
+      <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-md border border-borde text-texto hover:border-borde-fuerte hover:bg-superficie lg:hidden" popovertarget="menu-mobile" aria-label="Abrir menú">
+        <Menu size={22} aria-hidden="true" />
+      </button>
+    </div>
+  </div>
+
+  <nav id="menu-mobile" popover class="menu-mobile" aria-label="Menú">
+    <div class="flex items-center justify-between border-b border-borde p-5">
+      <span class="eyebrow">Menú</span>
+      <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-md border border-borde hover:bg-superficie" popovertarget="menu-mobile" popovertargetaction="hide" aria-label="Cerrar menú">
+        <X size={22} aria-hidden="true" />
+      </button>
+    </div>
+    <ul class="flex flex-col p-3">
+      {[...items, ...nosotros, { nombre: 'Contacto', href: '/contacto' }, { nombre: 'Preguntas frecuentes', href: '/preguntas-frecuentes' }].map((i) => (
+        <li>
+          <a href={ruta(i.href)} class="block rounded-sm px-3 py-3 text-lg font-semibold text-texto hover:bg-superficie hover:text-acento-hover" aria-current={activo(i.href) ? 'page' : undefined}>{i.nombre}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .cabecera { border-color: transparent; backdrop-filter: blur(12px); }
+  @supports (animation-timeline: scroll()) {
+    .cabecera { animation: cabecera-fondo linear both; animation-timeline: scroll(root); animation-range: 0 120px; }
+  }
+  @supports not (animation-timeline: scroll()) {
+    .cabecera { background: rgb(16 32 58 / 0.85); border-color: var(--color-borde); }
+  }
+  @keyframes cabecera-fondo {
+    from { background: transparent; border-color: transparent; }
+    to { background: rgb(16 32 58 / 0.85); border-color: var(--color-borde); }
+  }
+
+  .nav-item {
+    position: relative; display: inline-block; padding: 0.5rem 0.75rem; border-radius: var(--radius-sm);
+    color: var(--color-texto-2); font-weight: 500; text-decoration: none;
+    transition: color var(--dur-micro) var(--ease-salida);
+  }
+  .nav-item::after {
+    content: ""; position: absolute; left: 0.75rem; right: 0.75rem; bottom: 0.2rem; height: 2px; border-radius: 1px;
+    background: var(--color-acento); transform: scaleX(0); transform-origin: left;
+    transition: transform var(--dur-ui) var(--ease-salida);
+  }
+  .nav-item:hover, .nav-item:focus-visible, .nav-item[aria-current="page"], .nav-item.is-activo { color: var(--color-texto); }
+  .nav-item:hover::after, .nav-item[aria-current="page"]::after, .nav-item.is-activo::after { transform: scaleX(1); }
+  .desplegable summary::-webkit-details-marker { display: none; }
+  .desplegable .chevron { transition: transform var(--dur-ui) var(--ease-salida); }
+  .desplegable[open] .chevron { transform: rotate(180deg); }
+  .desplegable[open] > ul { animation: aparecer var(--dur-ui) var(--ease-salida) both; }
+  @keyframes aparecer { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  .btn-vial {
+    align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; border-radius: var(--radius-md);
+    background: var(--color-vial); color: var(--color-fondo); font-weight: 600; text-decoration: none;
+    transition: box-shadow var(--dur-ui) var(--ease-salida), transform var(--dur-ui) var(--ease-salida);
+  }
+  .btn-vial:hover { box-shadow: 0 8px 24px -6px rgb(240 196 25 / 0.45); transform: translateY(-1px); }
+  .btn-vial:hover :global(.telefono) { animation: oscilar 0.5s var(--ease-suave) 1; }
+  .btn-vial:focus-visible { outline-color: var(--color-vial); }
+  @keyframes oscilar { 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+
+  .menu-mobile {
+    inset: unset; top: 0; right: 0; height: 100dvh; width: min(100%, 22rem); margin: 0; border: 0; border-left: 1px solid var(--color-borde);
+    background: var(--color-fondo-2); color: var(--color-texto); translate: 100% 0;
+    transition: translate var(--dur-ui) var(--ease-salida), display var(--dur-ui) allow-discrete, overlay var(--dur-ui) allow-discrete;
+  }
+  .menu-mobile:popover-open { translate: 0 0; }
+  @starting-style { .menu-mobile:popover-open { translate: 100% 0; } }
+  .menu-mobile::backdrop { background: rgb(11 21 38 / 0.6); }
+</style>

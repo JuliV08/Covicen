@@ -1,0 +1,13 @@
+---
+import Base from '@/layouts/Base.astro';
+import { ruta } from '@/lib/rutas';
+---
+<Base titulo="Página no encontrada" descripcion="La página que buscás no existe. Consultá tarifas, el tramo o emergencias.">
+  <section class="contenedor py-24">
+    <p class="eyebrow">Error 404</p>
+    <h1 class="mt-3">Esta ruta no existe.</h1>
+    <p class="mt-4 max-w-prose text-texto-2">
+      Puede que el enlace esté vencido o mal escrito. Lo que más se busca: <a href={ruta('/tarifas')}>tarifas</a>, <a href={ruta('/el-tramo')}>el tramo</a> y <a href={ruta('/emergencias')}>emergencias</a>.
+    </p>
+  </section>
+</Base>

@@ -3575,6 +3575,10 @@ const iniciar = () => {
   });
 };
 document.addEventListener('astro:page-load', iniciar);
+
+// Todos los scripts de src/scripts/ terminan con esto: sin import/export, TypeScript los trata como
+// scripts globales y `iniciar` choca entre archivos ("Cannot redeclare block-scoped variable").
+export {};
 ```
 Run: `pnpm test tests/components/formulario.test.ts` → PASS (2). Si `tests/presupuesto.test.ts` ahora falla por el tamaño, sumá `formulario.ts` y `cuenta-regresiva.ts` a su lista con un tope de **4 KB** para los cuatro scripts (el presupuesto del spec de 2 KB era para animación; `revelar.ts` sigue por debajo).
 
