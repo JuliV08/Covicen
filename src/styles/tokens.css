@@ -1,0 +1,59 @@
+/* Tokens de Covicen. Dos capas: marca (manual "Covicen Marca 9b1", fijos) y semánticos (los usan los componentes).
+   El tema claro futuro redefine SOLO la capa semántica. */
+@theme {
+  /* --- reset de la paleta por defecto de Tailwind: solo existen nuestros colores --- */
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* --- marca (no usar en componentes) --- */
+  --color-marca-900: #1E4870;
+  --color-marca-700: #2C688F;
+  --color-marca-500: #4A92BA;
+  --color-marca-300: #68BCE1;
+  --color-gris-texto: #5A6472;
+  --color-gris-fondo: #EEF1F4;
+
+  /* --- semánticos, tema oscuro "La ruta, de noche" --- */
+  --color-fondo: #0B1526;
+  --color-fondo-2: #10203A;
+  --color-superficie: #16304E;
+  --color-superficie-2: #1E4870;
+  --color-texto: #E8EEF5;
+  --color-texto-2: #A9C4D8;
+  --color-texto-3: #8593A0; /* ≥ 4.5:1 sobre fondo y fondo-2; NO sobre superficie */
+  --color-acento: #68BCE1;
+  --color-acento-hover: #8FCDE8;
+  --color-vial: #F0C419;
+  --color-error: #FF8A80;
+  --color-borde: rgb(255 255 255 / 0.10);
+  --color-borde-fuerte: rgb(255 255 255 / 0.18);
+  --color-glow: rgb(104 188 225 / 0.35);
+
+  /* --- tipografía --- */
+  --font-sans: "Archivo Variable", "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --tracking-eyebrow: 0.15em;
+  --tracking-titulo: -0.02em;
+
+  /* --- radios: sobrio --- */
+  --radius-*: initial;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* --- movimiento --- */
+  --ease-salida: cubic-bezier(0.25, 1, 0.5, 1);   /* ease-out-quart: entradas */
+  --ease-suave: cubic-bezier(0.65, 0, 0.35, 1);   /* ease-in-out-cubic: scrub */
+}
+
+:root {
+  --dur-micro: 120ms;
+  --dur-ui: 240ms;
+  --dur-entrada: 600ms;
+  --dur-narrativa: 900ms;
+  --stagger: 60ms;
+  --alto-header: 4.5rem;
+  --ancho-max: 80rem;
+  color-scheme: dark;
+}

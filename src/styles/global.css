@@ -1,0 +1,75 @@
+@import "tailwindcss";
+@import "./tokens.css";
+@import "@fontsource-variable/archivo";
+@import "./movimiento.css";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-fondo text-texto font-sans antialiased;
+    font-size: 1rem;
+    line-height: 1.6;
+    font-variant-numeric: tabular-nums;
+  }
+  ::selection { background: var(--color-acento); color: var(--color-fondo); }
+
+  /* foco visible, uniforme, en todo lo interactivo */
+  :focus-visible {
+    outline: 2px solid var(--color-acento);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+  h1, h2, h3 { @apply font-extrabold text-texto; letter-spacing: var(--tracking-titulo); line-height: 1.05; text-wrap: balance; }
+  h1 { font-size: clamp(2.5rem, 2rem + 4vw, 6rem); }
+  h2 { font-size: clamp(1.9rem, 1.4rem + 2.2vw, 3.25rem); }
+  h3 { font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.75rem); }
+  p { text-wrap: pretty; }
+  a { @apply text-acento; transition: color var(--dur-micro) var(--ease-salida); }
+  a:hover { @apply text-acento-hover; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+}
+
+@layer components {
+  .contenedor { width: min(100% - 2.5rem, var(--ancho-max)); margin-inline: auto; }
+  /* grilla de plano: fondo tech tenue */
+  .plano {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.04) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+  }
+  /* esquineros finos, como dibujo técnico */
+  .esquineros { position: relative; }
+  .esquineros::before, .esquineros::after {
+    content: ""; position: absolute; width: 0.75rem; height: 0.75rem; pointer-events: none;
+    border-color: var(--color-borde-fuerte); border-style: solid;
+    transition: width var(--dur-ui) var(--ease-salida), height var(--dur-ui) var(--ease-salida), border-color var(--dur-ui);
+  }
+  .esquineros::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+  .esquineros::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+  .esquineros:hover::before, .esquineros:hover::after { width: 1.25rem; height: 1.25rem; border-color: var(--color-acento); }
+  /* link con subrayado que crece desde la izquierda */
+  .link-crece {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat; background-size: 0% 1px; background-position: 0 100%;
+    transition: background-size var(--dur-ui) var(--ease-salida), color var(--dur-micro);
+  }
+  .link-crece:hover, .link-crece:focus-visible { background-size: 100% 1px; }
+  .eyebrow { @apply font-medium uppercase text-texto-2; letter-spacing: var(--tracking-eyebrow); font-size: 0.75rem; }
+  /* texto largo (privacidad, novedades) */
+  .prose-covicen h2 { margin-top: 2rem; font-size: 1.35rem; color: var(--color-texto); }
+  .prose-covicen h3 { margin-top: 1.5rem; font-size: 1.15rem; color: var(--color-texto); }
+  .prose-covicen p { margin-top: 0.75rem; }
+  .prose-covicen ul, .prose-covicen ol { margin-top: 0.75rem; padding-left: 1.25rem; }
+  .prose-covicen ul { list-style: disc; }
+  .prose-covicen ol { list-style: decimal; }
+  .prose-covicen li { margin-top: 0.35rem; }
+  .prose-covicen strong { color: var(--color-texto); }
+}
