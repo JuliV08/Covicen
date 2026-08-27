@@ -1,6 +1,6 @@
 // Grilla cinética: nodos cada 55 px unidos por líneas; se deforman hacia el puntero (radio 260, fuerza 24)
 // y las ondas de cada clic los empujan. Colores de la landing (acento celeste sobre navy).
-const CELDA = 55, RADIO = 260, FUERZA = 24, PUNTOS = 28, SUAVE = 0.08;
+const CELDA = 55, RADIO = 260, FUERZA = 24, PUNTOS = 28, SUAVE = 0.35; // SUAVE 0.35: sigue al puntero sin retraso perceptible (la referencia usaba 0.08 y quedaba atrás)
 const BASE = { r: 255, g: 255, b: 255, a: 0.11 };
 const ACTIVA = { r: 104, g: 188, b: 225, a: 0.9 };
 const GLOW = '104,188,225';

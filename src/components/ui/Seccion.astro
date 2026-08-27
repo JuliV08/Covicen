@@ -7,7 +7,7 @@ interface Props {
   eyebrow?: string;
   titulo?: string;
   intro?: string;
-  /** 'fondo' = liso; 'fondo-2' y 'plano' = sección oscura con la grilla cinética de fondo. */
+  /** 'fondo' = liso; 'fondo-2' y 'plano' = sección con la grilla cinética, fundida con las secciones vecinas. */
   fondo?: 'fondo' | 'fondo-2' | 'plano';
   class?: string;
   nivel?: 'h1' | 'h2';
@@ -16,8 +16,9 @@ const { id, indice, eyebrow, titulo, intro, fondo = 'fondo', class: clase = '', 
 const Titulo = nivel;
 const cinetica = fondo !== 'fondo';
 ---
-<section id={id} class:list={['relative py-20 md:py-28', cinetica ? 'bg-fondo-2 overflow-hidden' : 'bg-fondo', clase]}>
+<section id={id} class:list={['relative py-20 md:py-28', cinetica ? 'seccion-cinetica' : 'bg-fondo', clase]}>
   {cinetica && <GrillaCinetica />}
+  {cinetica && <span class="costura costura-arriba" aria-hidden="true"></span>}
   <div class="contenedor relative z-10">
     {(indice || eyebrow || titulo) && (
       <header class="revelar mb-12 grid gap-4 md:grid-cols-[auto_1fr] md:gap-10">
@@ -31,4 +32,5 @@ const cinetica = fondo !== 'fondo';
     )}
     <slot />
   </div>
+  {cinetica && <span class="costura costura-abajo" aria-hidden="true"></span>}
 </section>

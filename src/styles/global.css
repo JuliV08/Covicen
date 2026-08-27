@@ -50,6 +50,25 @@
       linear-gradient(to bottom, rgb(255 255 255 / 0.04) 1px, transparent 1px);
     background-size: 4rem 4rem;
   }
+  /* Sección con grilla cinética, fundida con las vecinas: el fondo va de `fondo` a `fondo-2` y vuelve, la grilla se
+     desvanece en los bordes, y una "costura" (hairline + marca vial centrada, como el divisor del hero) une los bloques. */
+  .seccion-cinetica {
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--color-fondo) 0%, var(--color-fondo-2) 16%, var(--color-fondo-2) 84%, var(--color-fondo) 100%);
+  }
+  .seccion-cinetica > canvas {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
+  }
+  .costura { position: absolute; left: 0; right: 0; height: 1px; z-index: 5; pointer-events: none;
+    background: linear-gradient(90deg, transparent, var(--color-borde-fuerte) 25%, rgb(104 188 225 / 0.55) 50%, var(--color-borde-fuerte) 75%, transparent); }
+  .costura-arriba { top: 0; }
+  .costura-abajo { bottom: 0; }
+  .costura::before { content: ""; position: absolute; left: 50%; top: 50%; width: 2.5rem; height: 3px; border-radius: 2px; transform: translate(-50%, -50%);
+    background: var(--color-acento); box-shadow: 0 0 14px var(--color-glow), 0 0 2px var(--color-acento); }
+  /* resplandor que "derrama" la grilla hacia la sección vecina */
+  .costura::after { content: ""; position: absolute; left: 20%; right: 20%; top: 50%; height: 120px; transform: translateY(-50%); pointer-events: none;
+    background: radial-gradient(60% 100% at 50% 50%, rgb(104 188 225 / 0.07), transparent 70%); }
   /* link con subrayado que crece desde la izquierda */
   .link-crece {
     background-image: linear-gradient(currentColor, currentColor);

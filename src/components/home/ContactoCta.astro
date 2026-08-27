@@ -1,5 +1,5 @@
 ---
-import { MessageCircle } from '@lucide/astro';
+import { ArrowRight, MessageCircle } from '@lucide/astro';
 import GrillaCinetica from '@/components/ilustraciones/GrillaCinetica.astro';
 import Boton from '@/components/ui/Boton.astro';
 import type { Contacto } from '@/lib/datos/esquemas';
@@ -7,8 +7,9 @@ import { enlaceWhatsapp } from '@/lib/whatsapp';
 interface Props { contacto: Contacto }
 const { contacto } = Astro.props;
 ---
-<section class="relative overflow-hidden border-y border-borde bg-fondo-2 py-20">
+<section class="seccion-cinetica relative py-24">
   <GrillaCinetica />
+  <span class="costura costura-arriba" aria-hidden="true"></span>
   <div class="contenedor revelar relative z-10 flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
     <div>
       <p class="eyebrow">Contacto</p>
@@ -16,10 +17,11 @@ const { contacto } = Astro.props;
       <p class="mt-3 max-w-xl text-texto-2">Escribinos por WhatsApp desde el formulario: llega con tus datos y el motivo ya cargados.</p>
     </div>
     <div class="flex flex-wrap gap-3">
-      <Boton href="/contacto">Ir al formulario</Boton>
+      <Boton href="/contacto">Ir al formulario <ArrowRight size={18} aria-hidden="true" /></Boton>
       {contacto.whatsapp.numero && (
         <Boton href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen, quiero hacer una consulta.')} variante="secundario" externo><MessageCircle size={18} aria-hidden="true" /> WhatsApp directo</Boton>
       )}
     </div>
   </div>
+  <span class="costura costura-abajo" aria-hidden="true"></span>
 </section>

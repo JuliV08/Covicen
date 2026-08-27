@@ -11,26 +11,56 @@ const { href, variante = 'primario', class: clase = '', externo = false, ariaLab
 const esInterno = href !== undefined && href.startsWith('/');
 const destino = href === undefined ? undefined : esInterno ? ruta(href) : href;
 const clases = ['btn', `btn-${variante}`, clase];
+// El primario lleva "puntos flotantes" (adaptación propia del Floating Dots CTA a la paleta): diez partículas que suben.
+const puntos = variante === 'primario' ? Array.from({ length: 10 }, (_, i) => i) : [];
 ---
 {destino ? (
-  <a href={destino} class:list={clases} aria-label={ariaLabel} rel={externo ? 'noopener noreferrer' : undefined} target={externo ? '_blank' : undefined}><slot /></a>
+  <a href={destino} class:list={clases} aria-label={ariaLabel} rel={externo ? 'noopener noreferrer' : undefined} target={externo ? '_blank' : undefined}>
+    {puntos.length > 0 && <span class="btn-puntos" aria-hidden="true">{puntos.map((i) => <i style={`--i: ${i}`}></i>)}</span>}
+    <span class="btn-interior"><slot /></span>
+  </a>
 ) : (
-  <button type="button" class:list={clases} aria-label={ariaLabel}><slot /></button>
+  <button type="button" class:list={clases} aria-label={ariaLabel}>
+    {puntos.length > 0 && <span class="btn-puntos" aria-hidden="true">{puntos.map((i) => <i style={`--i: ${i}`}></i>)}</span>}
+    <span class="btn-interior"><slot /></span>
+  </button>
 )}
 <style>
   .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 2.75rem; padding: 0.7rem 1.25rem;
-    border-radius: var(--radius-md); font-weight: 600; text-decoration: none; cursor: pointer;
+    position: relative; display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: 0.7rem 1.35rem;
+    border-radius: 12px; font-weight: 600; text-decoration: none; cursor: pointer;
     transition: transform var(--dur-ui) var(--ease-salida), box-shadow var(--dur-ui) var(--ease-salida), background var(--dur-ui), border-color var(--dur-ui), color var(--dur-micro);
   }
+  .btn-interior { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 0.5rem; }
   .btn :global(svg) { transition: transform var(--dur-ui) var(--ease-salida); }
   .btn:hover :global(svg) { transform: translateX(2px); }
-  .btn:active { transform: translateY(0) !important; box-shadow: none !important; }
-  .btn-primario { background: var(--color-acento); color: var(--color-fondo); }
-  .btn-primario:hover { transform: translateY(-1px); box-shadow: 0 10px 28px -10px var(--color-glow); background: var(--color-acento-hover); }
+  .btn:active { transform: translateY(0) !important; }
+
+  /* Primario: gradiente azul de marca con luz interior, puntos que flotan y flecha que se dibuja en hover. */
+  .btn-primario {
+    overflow: hidden; color: #fff;
+    background: linear-gradient(135deg, #2C688F 0%, #1E4870 100%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), 0 10px 24px -12px rgb(104 188 225 / 0.6);
+  }
+  .btn-primario::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(135deg, rgb(104 188 225 / 0.28), transparent 60%); }
+  .btn-primario:hover, .btn-primario:focus-visible { transform: translateY(-1px); background: linear-gradient(135deg, #3B7FAE 0%, #245A8C 100%); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22), 0 14px 30px -12px rgb(104 188 225 / 0.8); }
+  .btn-puntos { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .btn-puntos i {
+    position: absolute; bottom: -4px; left: calc(5% + var(--i) * 9.5%); width: 3px; height: 3px; border-radius: 50%;
+    background: #E8EEF5; opacity: 0;
+    animation: puntos-flotan calc(2.4s + var(--i) * 0.22s) linear infinite;
+    animation-delay: calc(var(--i) * -0.45s);
+  }
+  .btn-puntos i:nth-child(odd) { width: 2px; height: 2px; background: var(--color-acento); }
+  @keyframes puntos-flotan { 0% { transform: translateY(0); opacity: 0; } 12% { opacity: 0.9; } 85% { opacity: 0; } 100% { transform: translateY(-55px); opacity: 0; } }
+  .btn-primario:hover :global(svg path) { stroke-dasharray: 20; animation: flecha-dibujar 0.7s ease forwards; }
+  @keyframes flecha-dibujar { 0% { stroke-dasharray: 0 20; stroke-dashoffset: 0; } 50% { stroke-dasharray: 10 10; stroke-dashoffset: -5; } 100% { stroke-dasharray: 20 0; stroke-dashoffset: -10; } }
+
   .btn-secundario { border: 1px solid var(--color-borde); color: var(--color-texto); background: transparent; }
   .btn-secundario:hover { border-color: var(--color-borde-fuerte); background: var(--color-superficie); }
   .btn-vial { background: var(--color-vial); color: var(--color-fondo); }
   .btn-vial:hover { transform: translateY(-1px); box-shadow: 0 10px 28px -8px rgb(240 196 25 / 0.45); }
   .btn-vial:focus-visible { outline-color: var(--color-vial); }
+
+  @media (prefers-reduced-motion: reduce) { .btn-puntos i { animation: none; } .btn-primario:hover :global(svg path) { animation: none; stroke-dasharray: none; } }
 </style>

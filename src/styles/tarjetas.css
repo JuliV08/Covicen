@@ -1,56 +1,67 @@
-/* Tarjetas con borde de luz fluida (adaptación propia del "binaural glow" a la paleta de Covicen).
-   Un solo elemento: gradiente interior en padding-box + gradiente animado en border-box; el glow es box-shadow.
-   Variantes: .tarjeta-vial (amarillo, emergencias), .tarjeta-hueco (capacidad apagada), .tarjeta-panel (contenedor grande). */
+/* Tarjetas con halo: un gradiente cónico de azules gira alrededor del borde (1,5 px) y, difuso, forma un halo exterior.
+   Un solo elemento + ::before. Variantes: .tarjeta-vial (amarillo, emergencias), .tarjeta-hueco, .tarjeta-panel. */
+@property --angulo { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+
 @layer components {
   .tarjeta {
-    --tarjeta-luz-1: #68BCE1;
-    --tarjeta-luz-2: #2C688F;
-    --tarjeta-luz-3: #4A92BA;
-    --tarjeta-luz-4: #1E4870;
-    --tarjeta-glow: rgb(104 188 225 / 0.28);
-    --tarjeta-glow-2: rgb(74 146 186 / 0.18);
+    --halo-1: #68BCE1;
+    --halo-2: #2C688F;
+    --halo-3: #8FCDE8;
+    --halo-4: #1E4870;
+    --halo-5: #4A92BA;
+    --halo-opacidad: 0.32;
+    --halo-conico: conic-gradient(from var(--angulo), var(--halo-1), var(--halo-2), var(--halo-3), var(--halo-4), var(--halo-5), var(--halo-1));
     position: relative;
+    isolation: isolate;
     border: 1.5px solid transparent;
     border-radius: 16px;
     background:
-      linear-gradient(180deg, #16304E 0%, #10203A 45%, #0B1526 100%) padding-box,
-      linear-gradient(120deg, var(--tarjeta-luz-1), var(--tarjeta-luz-2), var(--tarjeta-luz-3), var(--tarjeta-luz-4), var(--tarjeta-luz-1)) border-box;
-    background-size: 100% 100%, 260% 260%;
-    background-position: 0 0, 0% 50%;
-    box-shadow: 0 20px 30px -18px rgb(0 0 0 / 0.6), 0 0 22px -6px var(--tarjeta-glow), 0 0 8px -4px var(--tarjeta-glow-2);
-    animation: tarjeta-flujo 7s ease-in-out infinite;
+      linear-gradient(180deg, #17334F 0%, #10203A 55%, #0B1526 100%) padding-box,
+      var(--halo-conico) border-box;
+    box-shadow: 0 20px 30px -18px rgb(0 0 0 / 0.6);
+    animation: halo-girar 9s linear infinite;
     transition: transform var(--dur-ui) var(--ease-salida), box-shadow var(--dur-ui) var(--ease-salida);
   }
-  .tarjeta:hover, .tarjeta:focus-visible, .tarjeta:focus-within { animation-duration: 3.5s; box-shadow: 0 24px 36px -18px rgb(0 0 0 / 0.6), 0 0 34px -4px var(--tarjeta-glow), 0 0 12px -2px var(--tarjeta-glow-2); }
+  /* Halo exterior: el mismo gradiente cónico, desenfocado, detrás de la tarjeta. */
+  .tarjeta::before {
+    content: ""; position: absolute; inset: -3px; z-index: -1; border-radius: inherit; pointer-events: none;
+    background: var(--halo-conico);
+    filter: blur(14px);
+    opacity: var(--halo-opacidad);
+    animation: halo-girar 9s linear infinite;
+    transition: opacity var(--dur-ui) var(--ease-salida);
+  }
+  .tarjeta:hover, .tarjeta:focus-visible, .tarjeta:focus-within { animation-duration: 4s; }
+  .tarjeta:hover::before, .tarjeta:focus-visible::before, .tarjeta:focus-within::before { animation-duration: 4s; opacity: calc(var(--halo-opacidad) * 1.9); }
   a.tarjeta:hover, a.tarjeta:focus-visible { transform: translateY(-3px); }
 
   .tarjeta-vial {
-    --tarjeta-luz-1: #F0C419;
-    --tarjeta-luz-2: #B8901A;
-    --tarjeta-luz-3: #F7D558;
-    --tarjeta-luz-4: #9C7A10;
-    --tarjeta-glow: rgb(240 196 25 / 0.34);
-    --tarjeta-glow-2: rgb(240 196 25 / 0.16);
+    --halo-1: #F0C419;
+    --halo-2: #B8901A;
+    --halo-3: #F7D558;
+    --halo-4: #9C7A10;
+    --halo-5: #E0B830;
+    --halo-opacidad: 0.34;
     background:
-      linear-gradient(180deg, #2A2A1A 0%, #1B1F2A 45%, #0B1526 100%) padding-box,
-      linear-gradient(120deg, var(--tarjeta-luz-1), var(--tarjeta-luz-2), var(--tarjeta-luz-3), var(--tarjeta-luz-4), var(--tarjeta-luz-1)) border-box;
-    background-size: 100% 100%, 260% 260%;
+      linear-gradient(180deg, #2A2A1A 0%, #1B1F2A 50%, #0B1526 100%) padding-box,
+      var(--halo-conico) border-box;
   }
 
-  /* Hueco de capacidad: mismo borde, más apagado y con trazo discontinuo simulado por opacidad. */
-  .tarjeta-hueco { opacity: 0.85; animation-duration: 12s; }
+  /* Hueco de capacidad: mismo lenguaje, más apagado y lento. */
+  .tarjeta-hueco { --halo-opacidad: 0.18; animation-duration: 16s; }
+  .tarjeta-hueco::before { animation-duration: 16s; }
 
-  /* Panel grande: mismo lenguaje, borde más quieto, para contener secciones enteras. */
-  .tarjeta-panel { border-radius: 24px; animation-duration: 14s; padding: clamp(1.25rem, 3vw, 2.5rem); }
+  /* Panel grande para contener secciones enteras: halo más suave y giro más lento. */
+  .tarjeta-panel { --halo-opacidad: 0.22; border-radius: 24px; padding: clamp(1.25rem, 3vw, 2.5rem); animation-duration: 18s; }
+  .tarjeta-panel::before { animation-duration: 18s; filter: blur(22px); }
 
-  /* Caja de ícono de la tarjeta */
+  /* Caja de ícono */
   .tarjeta-icono { display: inline-flex; align-items: center; justify-content: center; width: 3.25rem; height: 3.25rem; border-radius: 12px; border: 1px solid rgb(104 188 225 / 0.3); background: rgb(30 72 112 / 0.5); color: var(--color-acento); }
   .tarjeta-vial .tarjeta-icono { border-color: rgb(240 196 25 / 0.35); background: rgb(240 196 25 / 0.12); color: var(--color-vial); }
 
-  @keyframes tarjeta-flujo {
-    0% { background-position: 0 0, 0% 50%; }
-    50% { background-position: 0 0, 100% 50%; }
-    100% { background-position: 0 0, 0% 50%; }
-  }
-  @media (prefers-reduced-motion: reduce) { .tarjeta { animation: none; } }
+  @keyframes halo-girar { to { --angulo: 360deg; } }
+
+  /* En táctil el halo queda quieto (sin repintado constante); con reduced-motion, todo quieto. */
+  @media (hover: none) { .tarjeta::before { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .tarjeta, .tarjeta::before { animation: none; } }
 }
