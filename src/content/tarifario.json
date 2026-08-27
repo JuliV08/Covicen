@@ -1,0 +1,27 @@
+{
+  "publicadoEl": "2026-08-27",
+  "vigencia": {
+    "desde": null,
+    "descripcion": "A partir de la habilitación del cobro por Vialidad Nacional. La tarifa ofertada no se aplica hasta alcanzar las condiciones de transitabilidad óptima que exige el contrato."
+  },
+  "moneda": "ARS",
+  "alicuotaIva": 0.21,
+  "origen": "oferta",
+  "tarifas": [
+    { "categoria": "cat-1", "nombre": "Motos", "descripcion": "Motocicletas y ciclomotores.", "montoSinIva": null },
+    { "categoria": "cat-2", "nombre": "Autos y camionetas", "descripcion": "Vehículos de 2 ejes y hasta 2,10 m de altura.", "montoSinIva": 1399, "nota": "Tarifa ofertada en la adjudicación (Res. 1379/2026)." },
+    { "categoria": "cat-3", "nombre": "Autos con remolque y vehículos de 2 ejes de más de 2,10 m", "descripcion": "Autos y camionetas con remolque o acoplado; camiones y ómnibus de 2 ejes.", "montoSinIva": null },
+    { "categoria": "cat-4", "nombre": "Camiones y ómnibus de 3 y 4 ejes", "descripcion": "Vehículos pesados de 3 o 4 ejes.", "montoSinIva": null },
+    { "categoria": "cat-5", "nombre": "Camiones de 5 y 6 ejes", "descripcion": "Vehículos pesados de 5 o 6 ejes.", "montoSinIva": null },
+    { "categoria": "cat-6", "nombre": "Camiones de 7 o más ejes", "descripcion": "Vehículos pesados de 7 ejes o más.", "montoSinIva": null }
+  ],
+  "fuente": {
+    "nombre": "Resolución 1379/2026 — Boletín Oficial",
+    "url": "https://www.boletinoficial.gob.ar/detalleAviso/primera/346271/20260824"
+  },
+  "avisos": [
+    "Las categorías son las de referencia habitual en la red nacional; el cuadro tarifario definitivo lo homologa Vialidad Nacional.",
+    "Los valores sin dato se publican cuando exista el cuadro homologado. No publicamos estimaciones.",
+    "La tarifa se actualiza por índices oficiales según el contrato de concesión."
+  ]
+}

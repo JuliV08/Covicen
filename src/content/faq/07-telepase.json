@@ -1,0 +1,8 @@
+{
+  "slug": "telepase",
+  "tema": "pago",
+  "orden": 7,
+  "enHome": false,
+  "pregunta": "¿Puedo pagar con TelePASE? ¿Es obligatorio?",
+  "respuesta": "Sí: el dispositivo TelePASE es único para toda la red nacional y va a funcionar en las estaciones del Tramo Centro. No es obligatorio para circular; también se puede pagar en efectivo en las estaciones con cabina."
+}

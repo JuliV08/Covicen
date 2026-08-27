@@ -1,0 +1,40 @@
+{
+  "km": 681.92,
+  "provincias": ["Córdoba", "Santa Fe"],
+  "rutas": [
+    { "nombre": "RN 9", "descripcion": "Autopista Rosario–Córdoba", "desde": "Rosario (Circunvalación, viaducto Che Guevara)", "hasta": "Pilar (Córdoba), inicio de la Red de Accesos a Córdoba", "km": 363 },
+    { "nombre": "RN 19", "descripcion": "Santa Fe – San Francisco", "desde": "Santa Fe", "hasta": "San Francisco (Córdoba)", "km": 130, "nota": "Extremos exactos del tramo concesionado a confirmar contra el contrato." },
+    { "nombre": "RN 34", "descripcion": "Rosario – Rafaela", "desde": "Empalme con RN 9 (Rosario)", "hasta": "Rafaela", "km": 188, "nota": "Extremos exactos del tramo concesionado a confirmar contra el contrato." }
+  ],
+  "ciudades": [
+    { "slug": "rosario", "nombre": "Rosario", "provincia": "Santa Fe", "mapa": { "x": 771, "y": 465 }, "principal": true },
+    { "slug": "carcarana", "nombre": "Carcarañá", "provincia": "Santa Fe", "mapa": { "x": 677, "y": 445 } },
+    { "slug": "leones", "nombre": "Leones", "provincia": "Córdoba", "mapa": { "x": 458, "y": 399 } },
+    { "slug": "villa-maria", "nombre": "Villa María", "provincia": "Córdoba", "mapa": { "x": 279, "y": 341 } },
+    { "slug": "james-craik", "nombre": "James Craik", "provincia": "Córdoba", "mapa": { "x": 238, "y": 284 } },
+    { "slug": "pilar", "nombre": "Pilar", "provincia": "Córdoba", "mapa": { "x": 158, "y": 173 } },
+    { "slug": "cordoba", "nombre": "Córdoba", "provincia": "Córdoba", "mapa": { "x": 101, "y": 114 }, "principal": true },
+    { "slug": "san-francisco", "nombre": "San Francisco", "provincia": "Córdoba", "mapa": { "x": 500, "y": 116 } },
+    { "slug": "rafaela", "nombre": "Rafaela", "provincia": "Santa Fe", "mapa": { "x": 612, "y": 74 }, "principal": true },
+    { "slug": "franck", "nombre": "Franck", "provincia": "Santa Fe", "mapa": { "x": 715, "y": 150 } },
+    { "slug": "santa-fe", "nombre": "Santa Fe", "provincia": "Santa Fe", "mapa": { "x": 762, "y": 162 }, "principal": true },
+    { "slug": "totoras", "nombre": "Totoras", "provincia": "Santa Fe", "mapa": { "x": 673, "y": 380 } }
+  ],
+  "trazados": [
+    { "ruta": "RN 9", "ciudades": ["rosario", "carcarana", "leones", "villa-maria", "james-craik", "pilar", "cordoba"] },
+    { "ruta": "RN 19", "ciudades": ["santa-fe", "franck", "san-francisco"] },
+    { "ruta": "RN 34", "ciudades": ["rosario", "totoras", "rafaela"] }
+  ],
+  "cabinas": [
+    { "slug": "carcarana", "nombre": "Carcarañá", "ruta": "RN 9", "km": null, "localidad": "Carcarañá", "provincia": "Santa Fe", "situacion": "existente", "estado": "confirmada", "mapa": { "x": 677, "y": 445 }, "fuente": { "nombre": "El Litoral, 25/08/2026", "url": "https://www.ellitoral.com/politica/peajes-santafe-rutanacional11-vialidadnacional-tramocentro-llambicampbell-rutanacional34-totoras-chacosantafe-resolucion1379-franck-vera-rutanacional9_0_g0HSrixqTt.html" } },
+    { "slug": "james-craik", "nombre": "James Craik", "ruta": "RN 9", "km": null, "localidad": "James Craik", "provincia": "Córdoba", "situacion": "existente", "estado": "confirmada", "mapa": { "x": 238, "y": 284 }, "fuente": { "nombre": "La Capital, 24/08/2026", "url": "https://www.lacapital.com.ar/la-ciudad/un-grupo-cordobes-cobrara-el-peaje-la-autopista-rosario-cordoba-n10277073.html" } },
+    { "slug": "leones", "nombre": "Leones", "ruta": "RN 9", "km": null, "localidad": "Leones", "provincia": "Córdoba", "situacion": "nueva", "estado": "confirmada", "mapa": { "x": 458, "y": 399 }, "fuente": { "nombre": "La Capital", "url": "https://www.lacapital.com.ar/la-autopista-cordoba-sumara-otro-peaje-la-altura-leones-n10260956.html" } },
+    { "slug": "franck", "nombre": "Franck", "ruta": "RN 19", "km": null, "localidad": "Franck", "provincia": "Santa Fe", "situacion": "existente", "estado": "confirmada", "mapa": { "x": 715, "y": 150 }, "fuente": { "nombre": "El Litoral, 25/08/2026", "url": "https://www.ellitoral.com/politica/peajes-santafe-rutanacional11-vialidadnacional-tramocentro-llambicampbell-rutanacional34-totoras-chacosantafe-resolucion1379-franck-vera-rutanacional9_0_g0HSrixqTt.html" } },
+    { "slug": "san-francisco", "nombre": "San Francisco", "ruta": "RN 19", "km": 120, "localidad": "San Francisco", "provincia": "Córdoba", "situacion": "nueva", "estado": "confirmada", "mapa": { "x": 500, "y": 116 }, "fuente": { "nombre": "El Litoral, 25/08/2026", "url": "https://www.ellitoral.com/politica/peajes-santafe-rutanacional11-vialidadnacional-tramocentro-llambicampbell-rutanacional34-totoras-chacosantafe-resolucion1379-franck-vera-rutanacional9_0_g0HSrixqTt.html" } },
+    { "slug": "totoras", "nombre": "Totoras", "ruta": "RN 34", "km": 60, "localidad": "Totoras", "provincia": "Santa Fe", "situacion": "nueva", "estado": "confirmada", "mapa": { "x": 673, "y": 380 }, "fuente": { "nombre": "El Litoral, 25/08/2026", "url": "https://www.ellitoral.com/politica/peajes-santafe-rutanacional11-vialidadnacional-tramocentro-llambicampbell-rutanacional34-totoras-chacosantafe-resolucion1379-franck-vera-rutanacional9_0_g0HSrixqTt.html" } }
+  ],
+  "avisos": [
+    "Las ubicaciones surgen de la Resolución 1379/2026 y de la cobertura de prensa. La habilitación de cada estación la define Vialidad Nacional.",
+    "La estación San Vicente (RN 34) deja de operar con el inicio de la concesión."
+  ]
+}

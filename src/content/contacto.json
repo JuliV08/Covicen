@@ -1,0 +1,6 @@
+{
+  "emergencias": { "telefono": null, "etiqueta": "Emergencias en ruta" },
+  "whatsapp": { "numero": null },
+  "email": { "general": null, "rrhh": null, "proveedores": null, "etica": null },
+  "redes": {}
+}

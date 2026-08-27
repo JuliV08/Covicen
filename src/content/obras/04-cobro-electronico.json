@@ -1,0 +1,10 @@
+{
+  "slug": "cobro-electronico",
+  "titulo": "Cobro electrónico: TelePASE y Free Flow",
+  "ruta": "Todo el tramo",
+  "tipo": "Tecnología",
+  "estado": "planificada",
+  "avance": null,
+  "orden": 4,
+  "descripcion": "Incorporación progresiva de cobro sin detención: TelePASE en todas las estaciones y modalidad Free Flow (sin barreras) en las nuevas, según lo exige el contrato."
+}

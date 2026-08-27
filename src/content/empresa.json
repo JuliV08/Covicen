@@ -1,0 +1,30 @@
+{
+  "marca": "Covicen",
+  "descriptor": "Corredor Vial del Centro",
+  "razonSocial": null,
+  "cuit": null,
+  "domicilioLegal": null,
+  "enFormacion": true,
+  "consorcio": [
+    { "nombre": "AFEMA S.A.", "descripcion": "Constructora vial con base en Córdoba." },
+    { "nombre": "Pablo Federico e Hijos S.A.", "descripcion": "Construcción y obras de hormigón, 25 años de trayectoria." },
+    { "nombre": "Guido Mogetta S.A.", "descripcion": "Construcción, obra pública, transporte y minería." }
+  ],
+  "concesion": {
+    "tramo": "Centro",
+    "km": 681.92,
+    "rutas": ["RN 9", "RN 19", "RN 34"],
+    "provincias": ["Córdoba", "Santa Fe"],
+    "plazoAnios": 20,
+    "prorrogaAnios": 10,
+    "inicioOperacion": "2026-10-05",
+    "adjudicacion": {
+      "fecha": "2026-08-24",
+      "resolucion": "Resolución 1379/2026 del Ministerio de Economía",
+      "url": "https://www.boletinoficial.gob.ar/detalleAviso/primera/346271/20260824"
+    },
+    "tarifaOfertadaSinIva": 1399,
+    "tarifaTopeSinIva": 3200,
+    "tramosEtapa": 8
+  }
+}
