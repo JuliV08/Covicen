@@ -9,7 +9,10 @@ Probá en el teléfono también (misma red: `pnpm dev --host` y la IP que imprim
 - Hero **con la foto** (`src/assets/atmosfera/hero-ruta-nocturna.jpg`): en desktop, **parallax 2.5D**: un canvas WebGL desplaza la foto según un mapa de profundidad (la calzada cercana se mueve más, el horizonte y el cielo casi nada) con un avance lento automático, respuesta suave al mouse y al scroll, y un dolly hacia el punto de fuga. Movete con el mouse sobre el hero y mirá cómo la ruta "gira" respecto del horizonte. En mobile (o sin WebGL / con reduced-motion) queda la foto con un zoom lento centrado en el punto de fuga. Si reemplazás la foto, regenerá el mapa con `python scripts/generar-profundidad.py` ajustando `HORIZONTE` y pasá el `vp` nuevo en `Hero.astro`. Sin foto, vuelve la calzada vectorial en perspectiva. Una luz suave sigue al cursor. Eyebrow, título, texto, botones y cuenta regresiva entran escalonados con desenfoque; la cuenta regresiva corre por segundos.
 - Al scrollear: el header gana fondo translúcido y borde; cada sección **entra una sola vez** (28 px + fade, cards escalonadas de a 90 ms); el fondo del hero tiene parallax leve. La scrollbar es la nativa, estilizada con los tokens (pulgar azul sobre pista navy); en mobile hay una barra fina de progreso bajo el header.
 - Al pie del hero, "Scrolleá ↓" y un **divisor**: hairline con el isotipo en un círculo con glow. Los accesos rápidos ya no se superponen al hero.
-- **Tarjetas con borde de luz** (todas las cards del sitio): borde de 1,5 px con gradiente celeste→azul que fluye lento, glow suave, y en hover el flujo se acelera y la card se eleva. La de **Emergencias** usa la variante amarilla. Misma altura por fila, "Ver más" al pie.
+- **Tarjetas con halo** (todas las cards del sitio): un gradiente cónico de azules gira alrededor del borde de 1,5 px (9 s por vuelta) y, difuso, forma un halo exterior; en hover gira más rápido, el halo se intensifica y la card se eleva. La de **Emergencias** usa la variante amarilla. Misma altura por fila, "Ver más" al pie. En táctil el halo queda quieto.
+- **CTAs primarios** ("Ver tarifas" en el hero, "Ir al formulario" antes del footer y cualquiera nuevo con `<Boton>`): gradiente azul de marca con luz interior, diez partículas que suben todo el tiempo y, en hover, la flecha se dibuja sola.
+- **Costuras entre secciones:** las secciones con grilla ya no cortan el fondo: el color va de navy liso a navy de sección y vuelve, la grilla se desvanece en los bordes, y en cada unión hay una hairline con una marca vial celeste centrada y un resplandor que se derrama hacia la sección vecina (el mismo lenguaje que el divisor del hero).
+- **Quiénes somos** también va dentro de un panel con halo.
 - **Tarifa: una sola card que gira.** Frente: `$ 1.399 + IVA` y `$ 1.693` con IVA, etiqueta "Tarifa ofertada", ícono de auto. Al pasar el mouse (o tocar en el teléfono) gira 180° y muestra el detalle: "la más baja de los 8 tramos", vigencia, resolución, y el CTA "Tarifario completo por categoría" con el link al Boletín Oficial. Los tres ítems del dorso entran escalonados.
 - **El tramo, dentro de un panel** grande con el mismo borde de luz, sobre fondo con **grilla cinética**: mové el mouse y los nodos se atraen hacia el puntero; hacé clic y sale una onda. La misma grilla está en Servicios, Consorcio y el CTA de contacto (en táctil queda estática).
 - Mapa: las tres rutas se dibujan con el scroll (glow celeste); las marcas amarillas fluyen, una luz blanca recorre cada ruta y las seis balizas laten; hover en una baliza agranda el halo y muestra el nombre. Debajo, la leyenda con los peajes por ruta.
@@ -24,8 +27,8 @@ Probá en el teléfono también (misma red: `pnpm dev --host` y la IP que imprim
 - Tres botones secundarios al pie (cómo pagar, dónde están los peajes, desde cuándo se cobra).
 
 ## El tramo `/el-tramo/`
-- Desktop: mapa fijo (sticky) mientras pasan cuatro paneles con mojones (681 km, 3 rutas, 2 provincias, 6 peajes). Mobile: apilado.
-- Estaciones: seis cards con señal "Nueva"/"Existente", localidad y fuente; avisos abajo.
+- Desktop: el mapa fijo (sticky) dentro de un panel con halo a la izquierda; a la derecha pasan cuatro tarjetas con mojones (681 km, 3 rutas, 2 provincias, 6 peajes) y un CTA a tarifas. Mobile: apilado.
+- Estaciones: seis tarjetas con halo sobre la grilla cinética, señal "Nueva"/"Existente", localidad y fuente; avisos abajo.
 
 ## Servicios, Emergencias, Medios de pago, Seguridad vial
 - Servicios: hub con las tres cards + dos huecos (oficina virtual, seguimiento de reclamos).
