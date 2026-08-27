@@ -16,7 +16,7 @@ const pasos = [
 ---
 <Base titulo="Emergencias" descripcion="Emergencias y auxilio en ruta en el Tramo Centro (RN 9, RN 19 y RN 34): qué hacer ante un desperfecto o accidente y a quién llamar." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Emergencias', href: '/emergencias' }]}>
   <Seccion nivel="h1" eyebrow="Emergencias" titulo="Ante una emergencia en la ruta." class="pt-10">
-    <div class="revelar esquineros rounded-md border border-vial/50 bg-vial p-8 text-fondo">
+    <div class="revelar tarjeta p-8 text-fondo">
       <p class="eyebrow text-fondo/80">{contacto.emergencias.etiqueta} · 24 horas</p>
       {tel ? (
         <a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="mt-3 inline-flex items-center gap-4 font-extrabold tabular-nums text-fondo no-underline" style="font-size: clamp(2.5rem, 2rem + 4vw, 5rem)"><Phone size={40} aria-hidden="true" /> {tel}</a>

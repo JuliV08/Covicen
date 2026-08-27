@@ -20,10 +20,11 @@ describe('Boton', () => {
 });
 
 describe('Card', () => {
-  it('con href es un link entero con esquineros', async () => {
+  it('con href es un link entero con borde de luz (tarjeta) y variante vial', async () => {
     const html = await render(Card, { href: '/obras', etiqueta: 'Obra' }, 'cuerpo');
-    expect(html).toMatch(/<a [^>]*class="[^"]*esquineros/);
+    expect(html).toMatch(/<a [^>]*class="[^"]*tarjeta/);
     expect(html).toContain('href="/obras/"');
+    expect(await render(Card, { variante: 'vial' }, 'x')).toContain('tarjeta-vial');
   });
 });
 

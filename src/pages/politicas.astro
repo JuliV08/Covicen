@@ -15,7 +15,7 @@ const politicas = [
     <nav aria-label="Secciones" class="revelar mb-10 flex flex-wrap gap-2">{politicas.map((p) => <a href={`#${p.id}`} class="rounded-md border border-borde px-3 py-1.5 text-sm text-texto-2 transition-colors hover:border-borde-fuerte hover:text-texto">{p.titulo}</a>)}</nav>
     <div class="escalonar grid gap-6">
       {politicas.map((p, i) => (
-        <article id={p.id} class="esquineros scroll-mt-28 rounded-md border border-borde bg-superficie/40 p-8" style={`--i: ${i}`}>
+        <article id={p.id} class="tarjeta scroll-mt-28 p-8" style={`--i: ${i}`}>
           <h2 class="text-2xl">{p.titulo}</h2>
           <ul class="mt-4 flex flex-col gap-3 text-texto-2">{p.puntos.map((t) => <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-acento" aria-hidden="true"></span>{t}</li>)}</ul>
           {p.id === 'anticorrupcion' && (

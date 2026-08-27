@@ -12,22 +12,18 @@ const accesos = [
   { Icono: CreditCard, titulo: 'Medios de pago', texto: 'TelePASE, efectivo y Free Flow.', href: ruta('/medios-de-pago'), vial: false },
 ];
 ---
-<section class="relative z-10 -mt-12">
-  <ul class="contenedor escalonar grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+<section class="py-14 md:py-16" aria-label="Accesos rápidos">
+  <ul class="contenedor escalonar grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
     {accesos.map(({ Icono, ...a }, i) => (
       <li style={`--i: ${i}`}>
-        <a href={a.href} class:list={['acceso esquineros flex h-full items-start gap-4 rounded-md border p-5 no-underline', a.vial ? 'border-vial/60 bg-vial text-fondo' : 'border-borde bg-fondo-2 text-texto']}>
-          <Icono size={24} aria-hidden="true" class="mt-0.5 shrink-0" />
+        <a href={a.href} class:list={['tarjeta flex h-full items-start gap-4 p-5 text-texto no-underline', a.vial && 'tarjeta-vial']}>
+          <span class="tarjeta-icono shrink-0"><Icono size={22} aria-hidden="true" /></span>
           <span>
-            <span class="block font-extrabold">{a.titulo}</span>
-            <span class:list={['mt-1 block text-sm', a.vial ? 'text-fondo/80' : 'text-texto-2']}>{a.texto}</span>
+            <span class:list={['block font-extrabold', a.vial && 'text-vial']}>{a.titulo}</span>
+            <span class="mt-1 block text-sm text-texto-2">{a.texto}</span>
           </span>
         </a>
       </li>
     ))}
   </ul>
 </section>
-<style>
-  .acceso { transition: transform var(--dur-ui) var(--ease-salida), border-color var(--dur-ui), box-shadow var(--dur-ui); }
-  .acceso:hover, .acceso:focus-visible { transform: translateY(-2px); border-color: var(--color-borde-fuerte); box-shadow: 0 16px 40px -24px var(--color-glow); }
-</style>

@@ -1,0 +1,20 @@
+---
+// Separador entre el hero y el contenido: hairline con un ornamento centrado (el isotipo en una tinta) y glow.
+import Isotipo from '@/components/marca/Isotipo.astro';
+interface Props { class?: string }
+const { class: clase = '' } = Astro.props;
+---
+<div class:list={['divisor relative', clase]} aria-hidden="true">
+  <div class="divisor-linea"></div>
+  <div class="divisor-ornamento"><Isotipo variante="tinta" size={20} /></div>
+</div>
+<style>
+  .divisor { height: 0; }
+  .divisor-linea { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--color-borde-fuerte) 20%, var(--color-acento) 50%, var(--color-borde-fuerte) 80%, transparent); opacity: 0.9; }
+  .divisor-ornamento {
+    position: absolute; left: 50%; top: 0; transform: translate(-50%, -50%);
+    display: flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; border-radius: 999px;
+    color: var(--color-acento); background: var(--color-fondo); border: 1px solid var(--color-acento);
+    box-shadow: 0 0 0 6px var(--color-fondo), 0 0 24px var(--color-glow);
+  }
+</style>

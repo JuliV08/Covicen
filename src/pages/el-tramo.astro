@@ -27,7 +27,7 @@ const paneles = [
   <Seccion indice="01" eyebrow="Estaciones de peaje" titulo="Dónde se paga." fondo="fondo-2">
     <ul class="escalonar grid gap-3 md:grid-cols-2 lg:grid-cols-3">
       {tramo.cabinas.map((c, i) => (
-        <li class="esquineros rounded-md border border-borde bg-superficie/50 p-5" style={`--i: ${i}`}>
+        <li class="tarjeta p-5" style={`--i: ${i}`}>
           <div class="flex items-center justify-between gap-3"><span class="eyebrow">{c.ruta}{c.km !== null && ` · km ${c.km}`}</span><Senal variante={c.situacion === 'nueva' ? 'vial' : 'frio'}>{c.situacion === 'nueva' ? 'Nueva' : 'Existente'}</Senal></div>
           <h3 class="mt-3 text-xl">{c.nombre}</h3>
           <p class="mt-1 text-sm text-texto-2">{c.localidad}, {c.provincia}</p>

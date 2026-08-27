@@ -1,13 +1,15 @@
 ---
 import { MessageCircle } from '@lucide/astro';
+import GrillaCinetica from '@/components/ilustraciones/GrillaCinetica.astro';
 import Boton from '@/components/ui/Boton.astro';
 import type { Contacto } from '@/lib/datos/esquemas';
 import { enlaceWhatsapp } from '@/lib/whatsapp';
 interface Props { contacto: Contacto }
 const { contacto } = Astro.props;
 ---
-<section class="plano border-y border-borde py-20">
-  <div class="contenedor revelar flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+<section class="relative overflow-hidden border-y border-borde bg-fondo-2 py-20">
+  <GrillaCinetica />
+  <div class="contenedor revelar relative z-10 flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
     <div>
       <p class="eyebrow">Contacto</p>
       <h2 class="mt-3">¿Consultas, reclamos, propuestas?</h2>

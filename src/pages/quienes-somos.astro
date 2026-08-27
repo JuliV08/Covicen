@@ -17,7 +17,7 @@ const c = e.concesion;
     </div>
   </Seccion>
   <Seccion indice="01" eyebrow="El consorcio" titulo="Tres empresas de construcción vial." fondo="fondo-2">
-    <ul class="escalonar grid gap-4 md:grid-cols-3">{e.consorcio.map((s, i) => <li class="esquineros rounded-md border border-borde bg-superficie/40 p-6" style={`--i: ${i}`}><h3 class="text-xl">{s.nombre}</h3><p class="mt-2 text-texto-2">{s.descripcion}</p></li>)}</ul>
+    <ul class="escalonar grid gap-4 md:grid-cols-3">{e.consorcio.map((s, i) => <li class="tarjeta p-6" style={`--i: ${i}`}><h3 class="text-xl">{s.nombre}</h3><p class="mt-2 text-texto-2">{s.descripcion}</p></li>)}</ul>
   </Seccion>
   <Seccion indice="02" eyebrow="La concesión" titulo="Qué asumimos.">
     <div class="revelar grid gap-8 md:grid-cols-2">

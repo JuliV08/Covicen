@@ -1,13 +1,13 @@
 ---
 import { ArrowRight } from '@lucide/astro';
 import { ruta } from '@/lib/rutas';
-interface Props { href?: string; etiqueta?: string; class?: string; style?: string }
-const { href, etiqueta, class: clase = '', style } = Astro.props;
+interface Props { href?: string; etiqueta?: string; class?: string; style?: string; variante?: 'normal' | 'vial' }
+const { href, etiqueta, class: clase = '', style, variante = 'normal' } = Astro.props;
 const Tag = href ? 'a' : 'article';
-// h-full + flex-col: en una grilla, todas las cards miden lo mismo y "Ver más" queda al pie.
-const clases = ['card esquineros flex h-full flex-col rounded-md border border-borde bg-superficie/60 p-6 text-texto no-underline', clase];
+// Tarjeta con borde de luz fluida. h-full + flex-col: en una grilla todas miden lo mismo y "Ver más" queda al pie.
+const clases = ['card tarjeta flex h-full flex-col p-6 text-texto no-underline', variante === 'vial' && 'tarjeta-vial', clase];
 ---
-<Tag href={href ? ruta(href) : undefined} class:list={clases} style={style} data-spotlight={href ? '' : undefined}>
+<Tag href={href ? ruta(href) : undefined} class:list={clases} style={style}>
   {etiqueta && <p class="eyebrow mb-3">{etiqueta}</p>}
   <div class="flex-1"><slot /></div>
   {href && (
@@ -15,12 +15,6 @@ const clases = ['card esquineros flex h-full flex-col rounded-md border border-b
   )}
 </Tag>
 <style>
-  .card {
-    --mx: -200px; --my: -200px;
-    background-image: radial-gradient(320px circle at var(--mx) var(--my), rgb(104 188 225 / 0.12), transparent 65%);
-    transition: transform var(--dur-ui) var(--ease-salida), border-color var(--dur-ui), background-color var(--dur-ui), box-shadow var(--dur-ui);
-  }
-  a.card:hover, a.card:focus-visible { transform: translateY(-3px); border-color: var(--color-borde-fuerte); background-color: var(--color-superficie); box-shadow: 0 20px 40px -28px var(--color-glow); }
   .card-flecha :global(svg) { transition: transform var(--dur-ui) var(--ease-salida); }
   a.card:hover .card-flecha :global(svg) { transform: translateX(4px); }
 </style>

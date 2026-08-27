@@ -1,36 +1,81 @@
 ---
-import { ArrowRight, ExternalLink } from '@lucide/astro';
+// Tarifa como una sola card que gira (flip 3D) al pasar el mouse o tocarla: frente = el precio; dorso = detalle + CTA.
+import { ArrowRight, BadgeCheck, CalendarClock, ExternalLink, FileText, Hand } from '@lucide/astro';
 import IconoVehiculo from '@/components/ilustraciones/IconoVehiculo.astro';
-import Boton from '@/components/ui/Boton.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import Senal from '@/components/ui/Senal.astro';
 import type { Empresa, Tarifario } from '@/lib/datos/esquemas';
 import { conIva, fechaCorta, fechaLarga, moneda } from '@/lib/formato';
+import { ruta } from '@/lib/rutas';
 interface Props { tarifario: Tarifario; empresa: Empresa }
 const { tarifario, empresa } = Astro.props;
 const auto = tarifario.tarifas.find((t) => t.categoria === 'cat-2');
 if (!auto || auto.montoSinIva === null) throw new Error('TarifaDestacada: falta la tarifa de auto');
 const sinIva = auto.montoSinIva;
+const vigencia = tarifario.vigencia.desde ? `Vigencia: desde el ${fechaLarga(tarifario.vigencia.desde)}.` : `Vigencia: ${tarifario.vigencia.descripcion}`;
+const detalles = [
+  { Icono: BadgeCheck, texto: `La más baja de los ${empresa.concesion.tramosEtapa} tramos adjudicados (tope: ${moneda(empresa.concesion.tarifaTopeSinIva)} + IVA).` },
+  { Icono: CalendarClock, texto: vigencia },
+  { Icono: FileText, texto: `Adjudicada el ${fechaCorta(empresa.concesion.adjudicacion.fecha)} por ${empresa.concesion.adjudicacion.resolucion}.` },
+];
 ---
 <Seccion id="tarifa" indice="01" eyebrow="Tarifa" titulo="La más baja de los ocho tramos." intro="En la Red Federal de Concesiones gana quien ofrece el peaje más barato. Covicen ganó ofreciendo el más barato de todos.">
-  <div class="revelar grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-end">
-    <div class="esquineros rounded-md border border-borde bg-superficie/50 p-8">
-      <div class="flex items-center gap-3 text-texto-2"><IconoVehiculo categoria="cat-2" size={32} /> <span>{auto.nombre} · {auto.descripcion}</span></div>
-      <p class="mt-6 flex flex-wrap items-baseline gap-x-3">
-        <span class="font-extrabold leading-none tracking-[var(--tracking-titulo)] text-texto" style="font-size: clamp(3rem, 2rem + 5vw, 6.5rem)">{moneda(sinIva)}</span>
-        <span class="text-lg text-texto-2">+ IVA</span>
-      </p>
-      <p class="mt-3 text-texto-2"><strong class="text-texto">{moneda(conIva(sinIva, tarifario.alicuotaIva))}</strong> con IVA incluido.</p>
-      <div class="mt-6 flex flex-wrap items-center gap-3">
-        <Senal>{tarifario.origen === 'oferta' ? 'Tarifa ofertada' : 'Tarifa homologada'}</Senal>
-        <span class="text-sm text-texto-2">Vigencia: {tarifario.vigencia.desde ? `desde el ${fechaLarga(tarifario.vigencia.desde)}` : tarifario.vigencia.descripcion}</span>
+  <div class="revelar mx-auto max-w-2xl">
+    <div class="flip" data-flip tabindex="0" role="group" aria-label="Tarifa del peaje: pasá el mouse o tocá para ver el detalle">
+      <div class="flip-caras">
+        <div class="flip-cara tarjeta p-8">
+          <div class="flex items-center justify-between gap-4">
+            <span class="tarjeta-icono"><IconoVehiculo categoria="cat-2" size={28} /></span>
+            <Senal>{tarifario.origen === 'oferta' ? 'Tarifa ofertada' : 'Tarifa homologada'}</Senal>
+          </div>
+          <p class="eyebrow mt-8">{auto.nombre} · por paso</p>
+          <p class="mt-3 flex flex-wrap items-baseline gap-x-3">
+            <span class="font-extrabold leading-none tracking-[var(--tracking-titulo)] text-texto" style="font-size: clamp(3.25rem, 2rem + 5vw, 6.5rem)">{moneda(sinIva)}</span>
+            <span class="text-lg text-texto-2">+ IVA</span>
+          </p>
+          <p class="mt-3 text-texto-2"><strong class="text-texto">{moneda(conIva(sinIva, tarifario.alicuotaIva))}</strong> con IVA incluido.</p>
+          <p class="flip-pista mt-8 inline-flex items-center gap-2 text-sm text-texto-3"><Hand size={16} aria-hidden="true" /> Pasá el mouse para ver el detalle y la vigencia</p>
+        </div>
+        <div class="flip-cara flip-dorso tarjeta p-8">
+          <p class="eyebrow">Detalle</p>
+          <p class="mt-2 text-2xl font-extrabold text-texto">{moneda(sinIva)} + IVA <span class="text-base font-medium text-texto-2">· {moneda(conIva(sinIva, tarifario.alicuotaIva))} final</span></p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {detalles.map(({ Icono, texto }, i) => (
+              <li class="flip-item flex items-start gap-3 text-sm text-texto-2" style={`--i: ${i}`}>
+                <span class="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-superficie-2 text-acento"><Icono size={12} aria-hidden="true" /></span>
+                <span>{texto}</span>
+              </li>
+            ))}
+          </ul>
+          <div class="mt-6 border-t border-borde pt-4">
+            <a href={ruta('/tarifas')} class="flip-cta flex items-center justify-between rounded-lg border border-transparent p-3 text-sm font-semibold text-texto no-underline">
+              Tarifario completo por categoría
+              <span class="flip-cta-icono relative inline-flex"><ArrowRight size={16} aria-hidden="true" class="relative z-10 text-acento" /></span>
+            </a>
+            <a href={empresa.concesion.adjudicacion.url} rel="noopener noreferrer" target="_blank" class="link-crece mt-3 inline-flex items-center gap-1 text-xs text-texto-2" aria-label="Ver la resolución en el Boletín Oficial (se abre en otra pestaña)">Resolución en el Boletín Oficial <ExternalLink size={12} aria-hidden="true" /></a>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="flex flex-col gap-5">
-      <p class="text-texto-2">Tope de la licitación: <span class="tabular-nums text-texto">{moneda(empresa.concesion.tarifaTopeSinIva)} + IVA</span>. Oferta de Covicen: <span class="tabular-nums text-texto">{moneda(sinIva)} + IVA</span>. Adjudicado el {fechaCorta(empresa.concesion.adjudicacion.fecha)} por {empresa.concesion.adjudicacion.resolucion}.</p>
-      <a href={empresa.concesion.adjudicacion.url} rel="noopener noreferrer" target="_blank" class="link-crece inline-flex items-center gap-1 self-start text-sm">Ver la resolución en el Boletín Oficial <ExternalLink size={14} aria-hidden="true" /></a>
-      <div><Boton href="/tarifas" variante="secundario">Tarifario completo por categoría <ArrowRight size={18} aria-hidden="true" /></Boton></div>
-      <p class="text-xs text-texto-3">Publicado el {fechaCorta(tarifario.publicadoEl)}. {tarifario.avisos[2]}</p>
-    </div>
+    <p class="mt-4 text-center text-xs text-texto-3">Publicado el {fechaCorta(tarifario.publicadoEl)}. {tarifario.avisos[2]}</p>
   </div>
 </Seccion>
+<script src="../../scripts/flip.ts"></script>
+<style>
+  .flip { perspective: 1600px; outline: none; }
+  .flip-caras { position: relative; display: grid; transform-style: preserve-3d; transition: transform 700ms var(--ease-suave); }
+  .flip-cara { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .flip-dorso { transform: rotateY(180deg); }
+  .flip:hover .flip-caras, .flip:focus-visible .flip-caras, .flip.volteada .flip-caras { transform: rotateY(180deg); }
+  .flip:hover .flip-cara, .flip:focus-visible .flip-cara, .flip.volteada .flip-cara { animation-duration: 3.5s; }
+  .flip-item { opacity: 0; transform: translateX(-10px); transition: opacity 500ms var(--ease-salida), transform 500ms var(--ease-salida); transition-delay: calc(200ms + var(--i, 0) * 100ms); }
+  .flip:hover .flip-item, .flip:focus-visible .flip-item, .flip.volteada .flip-item { opacity: 1; transform: none; }
+  .flip-cta { background: var(--color-superficie); transition: transform var(--dur-ui) var(--ease-salida), background var(--dur-ui), border-color var(--dur-ui); }
+  .flip-cta:hover { transform: scale(1.02); background: linear-gradient(90deg, rgb(104 188 225 / 0.18), rgb(104 188 225 / 0.06), transparent); border-color: rgb(104 188 225 / 0.3); }
+  .flip-cta-icono::before { content: ""; position: absolute; inset: -6px; border-radius: 8px; background: linear-gradient(135deg, rgb(104 188 225 / 0.25), transparent); opacity: 0; transform: scale(0.9); transition: opacity var(--dur-ui), transform var(--dur-ui); }
+  .flip-cta:hover .flip-cta-icono::before { opacity: 1; transform: scale(1); }
+  .flip-cta :global(svg) { transition: transform var(--dur-ui) var(--ease-salida); }
+  .flip-cta:hover :global(svg) { transform: translateX(4px) scale(1.1); }
+  @media (hover: none) { .flip-pista { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .flip-caras { transition: none; } .flip-item { transition: none; opacity: 1; transform: none; } }
+</style>

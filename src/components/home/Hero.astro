@@ -37,10 +37,14 @@ const hayFoto = imagenAtmosfera('hero-ruta-nocturna') !== undefined;
     </div>
     <div class="mt-10" style="--i: 4"><CuentaRegresiva fecha={c.inicioOperacion} /></div>
   </div>
+  <p class="scrollea eyebrow absolute bottom-6 left-1/2 hidden -translate-x-1/2 items-center gap-2 text-texto-3 md:inline-flex" aria-hidden="true">Scrolleá <span class="scrollea-flecha">↓</span></p>
 </section>
 <script src="../../scripts/cuenta-regresiva.ts"></script>
 <style>
   /* Luz suave que sigue al cursor (spotlight.ts setea --mx/--my en la sección). */
   .hero { --mx: 70%; --my: 40%; }
+  .scrollea-flecha { display: inline-block; animation: bajar-flecha 1.8s var(--ease-suave) infinite; }
+  @keyframes bajar-flecha { 0%, 100% { transform: translateY(0); opacity: 0.6; } 50% { transform: translateY(4px); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .scrollea-flecha { animation: none; } }
   .hero-luz { background: radial-gradient(640px circle at var(--mx) var(--my), rgb(104 188 225 / 0.09), transparent 62%); transition: opacity var(--dur-entrada); }
 </style>

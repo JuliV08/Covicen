@@ -10,6 +10,7 @@ import NovedadesRecientes from '@/components/home/NovedadesRecientes.astro';
 import ObrasYEstado from '@/components/home/ObrasYEstado.astro';
 import Servicios from '@/components/home/Servicios.astro';
 import TarifaDestacada from '@/components/home/TarifaDestacada.astro';
+import Divisor from '@/components/ui/Divisor.astro';
 import { datos } from '@/lib/datos';
 
 const [empresa, contacto, tramo, tarifario, obras, novedades, faq] = await Promise.all([
@@ -24,6 +25,7 @@ const [empresa, contacto, tramo, tarifario, obras, novedades, faq] = await Promi
 ---
 <Base titulo="Inicio" descripcion="Covicen, concesionaria del Tramo Centro de la Red Federal de Concesiones: 681 km sobre RN 9, RN 19 y RN 34 en Córdoba y Santa Fe. Tarifas, peajes, emergencias y obras.">
   <Hero {empresa} />
+  <Divisor />
   <AccesosRapidos {contacto} />
   <TarifaDestacada {tarifario} {empresa} />
   <ElTramo {tramo} />
