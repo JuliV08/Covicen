@@ -1,0 +1,23 @@
+---
+import { ExternalLink } from '@lucide/astro';
+import Base from '@/layouts/Base.astro';
+import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
+import Boton from '@/components/ui/Boton.astro';
+import Card from '@/components/ui/Card.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+const medios = [
+  { titulo: 'TelePASE', texto: 'El dispositivo es único para toda la red nacional: si ya lo tenés, funciona en el Tramo Centro. No es obligatorio para circular.' },
+  { titulo: 'Efectivo en cabina', texto: 'En las estaciones con cabina (Carcarañá, James Craik, Franck) se puede pagar en efectivo.' },
+  { titulo: 'Free Flow', texto: 'Las estaciones nuevas (Leones, San Francisco, Totoras) se construyen sin barreras: pórticos que leen el vehículo sin detenerlo.' },
+];
+---
+<Base titulo="Medios de pago" descripcion="Cómo pagar el peaje en el Tramo Centro: TelePASE, efectivo en cabina y Free Flow en las estaciones nuevas de RN 9, RN 19 y RN 34." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Medios de pago', href: '/medios-de-pago' }]}>
+  <Seccion nivel="h1" eyebrow="Medios de pago" titulo="Cómo pagar el peaje." intro="Con dispositivo, en efectivo o sin frenar." class="pt-10">
+    <ul class="escalonar grid gap-4 md:grid-cols-3">{medios.map((m, i) => <li style={`--i: ${i}`}><Card><h2 class="text-xl">{m.titulo}</h2><p class="mt-2 text-texto-2">{m.texto}</p></Card></li>)}</ul>
+    <div class="revelar mt-8 flex flex-wrap gap-3">
+      <Boton href="https://www.telepase.com.ar/" variante="secundario" externo>Gestionar TelePASE <ExternalLink size={16} aria-hidden="true" slot="icono" /></Boton>
+      <Boton href="/tarifas" variante="secundario">Ver tarifas</Boton>
+    </div>
+    <div class="mt-12"><HuecoCapacidad capacidad="oficinaVirtual" titulo="Pagá tu factura en línea" descripcion="Consulta y pago de facturas cuando esté operativo el sistema de facturación." alternativaHref="/contacto" alternativaTexto="Consultar por WhatsApp" /></div>
+  </Seccion>
+</Base>

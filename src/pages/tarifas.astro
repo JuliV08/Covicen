@@ -1,0 +1,18 @@
+---
+import Base from '@/layouts/Base.astro';
+import TablaTarifas from '@/components/TablaTarifas.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import Boton from '@/components/ui/Boton.astro';
+import { datos } from '@/lib/datos';
+const [tarifario, empresa] = await Promise.all([datos.tarifario(), datos.empresa()]);
+---
+<Base titulo="Tarifas" descripcion="Tarifa del peaje del Tramo Centro (RN 9, RN 19 y RN 34): $1.399 más IVA por auto, la más baja de la Red Federal de Concesiones. Categorías, vigencia y fuente oficial." migas={[{ nombre: 'Tarifas', href: '/tarifas' }]}>
+  <Seccion nivel="h1" eyebrow="Tarifas" titulo="Cuánto cuesta el peaje." intro={`Tarifa ofertada por Covicen en la adjudicación del Tramo Centro: ${empresa.concesion.tarifaOfertadaSinIva.toLocaleString('es-AR')} pesos más IVA por auto. Tope de la licitación: ${empresa.concesion.tarifaTopeSinIva.toLocaleString('es-AR')} pesos.`} class="pt-10">
+    <TablaTarifas {tarifario} />
+    <div class="revelar mt-12 flex flex-wrap gap-3">
+      <Boton href="/medios-de-pago" variante="secundario">Cómo pagar</Boton>
+      <Boton href="/el-tramo" variante="secundario">Dónde están los peajes</Boton>
+      <Boton href="/preguntas-frecuentes#desde-cuando-se-cobra" variante="secundario">¿Desde cuándo se cobra?</Boton>
+    </div>
+  </Seccion>
+</Base>

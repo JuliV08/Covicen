@@ -1,0 +1,23 @@
+---
+import Base from '@/layouts/Base.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+const consejos = [
+  ['Distancia de seguimiento', 'En autopista, tres segundos respecto del vehículo de adelante. Con lluvia o niebla, el doble.'],
+  ['Velocidad', 'Máxima 130 km/h en autopista y 110 en ruta convencional para autos; menos con lluvia, viento o niebla. La mínima en autopista es 60.'],
+  ['Luces bajas siempre', 'Es obligatorio circular con luces bajas encendidas de día y de noche en rutas nacionales.'],
+  ['Niebla', 'La zona de Leones, Marcos Juárez y la ruta 34 tienen niebla frecuente en otoño e invierno. Bajá la velocidad, luces bajas, no frenes de golpe.'],
+  ['Animales sueltos', 'Son frecuentes en RN 19 y RN 34. De noche, atención a los ojos que reflejan la luz. Avisá al número de emergencias.'],
+  ['Cansancio', 'Cada dos horas, parada. Si cabeceás, no se pasa con música: se pasa durmiendo veinte minutos.'],
+  ['Sobrepaso', 'Solo con línea discontinua y visibilidad completa. En autopista, por la izquierda; después volvé al carril derecho.'],
+  ['Cinturón y sillas', 'Todos los ocupantes con cinturón; menores de diez años atrás, con sistema de retención según edad.'],
+];
+---
+<Base titulo="Seguridad vial" descripcion="Consejos de seguridad vial para RN 9, RN 19 y RN 34: distancia, velocidad, niebla, animales sueltos, cansancio y sobrepaso. Por Covicen, concesionaria del Tramo Centro." migas={[{ nombre: 'Seguridad vial', href: '/seguridad-vial' }]}>
+  <Seccion nivel="h1" eyebrow="Seguridad vial" titulo="Manejar bien el centro del país." intro="Ocho hábitos que evitan la mayoría de los siniestros en estas tres rutas." class="pt-10">
+    <ol class="escalonar grid gap-4 md:grid-cols-2">
+      {consejos.map(([t, d], i) => (
+        <li class="esquineros rounded-md border border-borde bg-superficie/40 p-6" style={`--i: ${i}`}><span class="eyebrow tabular-nums">0{i + 1}</span><h2 class="mt-3 text-xl">{t}</h2><p class="mt-2 text-texto-2">{d}</p></li>
+      ))}
+    </ol>
+  </Seccion>
+</Base>

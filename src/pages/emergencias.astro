@@ -1,0 +1,35 @@
+---
+import { MessageCircle, Phone } from '@lucide/astro';
+import Base from '@/layouts/Base.astro';
+import Boton from '@/components/ui/Boton.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import { datos } from '@/lib/datos';
+import { enlaceWhatsapp } from '@/lib/whatsapp';
+const contacto = await datos.contacto();
+const tel = contacto.emergencias.telefono;
+const pasos = [
+  ['Salí de la calzada', 'Detenete en la banquina, lo más a la derecha posible, y encendé las balizas.'],
+  ['Protegete', 'Bajá por el lado contrario al tránsito y esperá detrás del guardarraíl si lo hay. Chaleco reflectivo de noche.'],
+  ['Llamá', 'Indicá ruta, sentido y kilómetro (los mojones están cada kilómetro). Quedate en línea.'],
+  ['Esperá el auxilio', 'El móvil de Covicen llega, asegura el lugar y asiste. No aceptes remolques no identificados.'],
+];
+---
+<Base titulo="Emergencias" descripcion="Emergencias y auxilio en ruta en el Tramo Centro (RN 9, RN 19 y RN 34): qué hacer ante un desperfecto o accidente y a quién llamar." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Emergencias', href: '/emergencias' }]}>
+  <Seccion nivel="h1" eyebrow="Emergencias" titulo="Ante una emergencia en la ruta." class="pt-10">
+    <div class="revelar esquineros rounded-md border border-vial/50 bg-vial p-8 text-fondo">
+      <p class="eyebrow text-fondo/80">{contacto.emergencias.etiqueta} · 24 horas</p>
+      {tel ? (
+        <a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="mt-3 inline-flex items-center gap-4 font-extrabold tabular-nums text-fondo no-underline" style="font-size: clamp(2.5rem, 2rem + 4vw, 5rem)"><Phone size={40} aria-hidden="true" /> {tel}</a>
+      ) : (
+        <p class="mt-3 font-extrabold text-fondo" style="font-size: clamp(1.75rem, 1.25rem + 2vw, 3rem)" data-emergencias="a-confirmar">Número a confirmar antes del inicio de la operación.</p>
+      )}
+      <p class="mt-4 max-w-prose text-fondo/85">Auxilio mecánico, asistencia en accidentes, animales u objetos en la calzada. {contacto.whatsapp.numero && <a href={enlaceWhatsapp(contacto.whatsapp.numero, 'EMERGENCIA en ruta. Ruta: / Km: / Sentido: ')} class="inline-flex items-center gap-1 font-semibold text-fondo underline" rel="noopener"><MessageCircle size={16} aria-hidden="true" /> También por WhatsApp</a>}</p>
+    </div>
+    <ol class="escalonar mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {pasos.map(([t, d], i) => (
+        <li class="rounded-md border border-borde bg-superficie/40 p-6" style={`--i: ${i}`}><span class="eyebrow tabular-nums">0{i + 1}</span><h2 class="mt-3 text-xl">{t}</h2><p class="mt-2 text-texto-2">{d}</p></li>
+      ))}
+    </ol>
+    <div class="revelar mt-12"><Boton href="/seguridad-vial" variante="secundario">Consejos de seguridad vial</Boton></div>
+  </Seccion>
+</Base>
