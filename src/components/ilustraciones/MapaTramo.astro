@@ -1,0 +1,72 @@
+---
+import type { Tramo } from '@/lib/datos/esquemas';
+interface Props { tramo: Tramo; modo?: 'scroll' | 'cargar'; class?: string; interactivo?: boolean }
+const { tramo, modo = 'scroll', class: clase = '', interactivo = true } = Astro.props;
+
+const porSlug = new Map(tramo.ciudades.map((c) => [c.slug, c]));
+const ciudad = (s: string) => {
+  const c = porSlug.get(s);
+  if (!c) throw new Error(`MapaTramo: la ciudad "${s}" no existe en tramo.json`);
+  return c;
+};
+const d = (slugs: string[]) => slugs.map((s, i) => `${i === 0 ? 'M' : 'L'}${ciudad(s).mapa.x} ${ciudad(s).mapa.y}`).join(' ');
+const etiquetaRuta = (slugs: string[]) => {
+  const medio = Math.floor(slugs.length / 2);
+  const a = ciudad(slugs[medio - 1]!);
+  const b = ciudad(slugs[medio]!);
+  return { x: (a.mapa.x + b.mapa.x) / 2, y: (a.mapa.y + b.mapa.y) / 2 - 10 };
+};
+const claseDibujar = modo === 'scroll' ? 'dibujar al-scroll' : 'dibujar al-cargar';
+const claseBaliza = modo === 'scroll' ? 'baliza' : 'baliza al-cargar';
+const descripcion = `Mapa esquemático del Tramo Centro: ${tramo.rutas.map((r) => r.nombre).join(', ')} entre ${tramo.ciudades.filter((c) => c.principal).map((c) => c.nombre).join(', ')}, con ${tramo.cabinas.length} estaciones de peaje.`;
+---
+<figure class:list={['mapa', clase]}>
+  <svg viewBox="0 0 820 520" role="img" aria-label={descripcion} class="h-auto w-full">
+    <defs>
+      <pattern id="mapa-plano" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="rgb(255 255 255 / 0.05)"></path></pattern>
+      <filter id="mapa-glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"></feGaussianBlur></filter>
+    </defs>
+    <rect width="820" height="520" fill="url(#mapa-plano)"></rect>
+    {tramo.trazados.map((t) => (
+      <g>
+        <path d={d(t.ciudades)} fill="none" stroke="var(--color-borde-fuerte)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"></path>
+        <path d={d(t.ciudades)} fill="none" stroke="var(--color-glow)" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" filter="url(#mapa-glow)" pathLength="1000" class={claseDibujar}></path>
+        <path d={d(t.ciudades)} fill="none" stroke="var(--color-acento)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" pathLength="1000" class={claseDibujar}></path>
+        <path d={d(t.ciudades)} fill="none" stroke="var(--color-vial)" stroke-width="1" stroke-dasharray="6 12" opacity="0.7" pathLength="1000" class={claseDibujar}></path>
+        <text x={etiquetaRuta(t.ciudades).x} y={etiquetaRuta(t.ciudades).y} class="ruta-etiqueta" text-anchor="middle">{t.ruta}</text>
+      </g>
+    ))}
+    {tramo.ciudades.map((c) => (
+      <g>
+        <circle cx={c.mapa.x} cy={c.mapa.y} r={c.principal ? 6 : 3.5} fill="var(--color-fondo)" stroke="var(--color-acento)" stroke-width={c.principal ? 2 : 1.5}></circle>
+        {c.principal && (
+          <text x={c.mapa.x + (c.mapa.x > 410 ? -12 : 12)} y={c.mapa.y + 5} class="ciudad-etiqueta" text-anchor={c.mapa.x > 410 ? 'end' : 'start'}>{c.nombre}</text>
+        )}
+      </g>
+    ))}
+    {tramo.cabinas.map((cab, i) => (
+      <g class={claseBaliza} style={`--i: ${i}`} data-estado={cab.estado} data-situacion={cab.situacion} tabindex={interactivo ? 0 : undefined}>
+        <title>{`Peaje ${cab.nombre} · ${cab.ruta}${cab.km !== null ? ` km ${cab.km}` : ''} · ${cab.situacion === 'nueva' ? 'estación nueva' : 'estación existente'}`}</title>
+        <circle cx={cab.mapa.x} cy={cab.mapa.y} r="14" fill="var(--color-vial)" opacity="0.18" class="baliza-halo"></circle>
+        <circle cx={cab.mapa.x} cy={cab.mapa.y} r="6" fill="var(--color-vial)" stroke="var(--color-fondo)" stroke-width="2"></circle>
+        <text x={cab.mapa.x} y={cab.mapa.y - 18} class="cabina-etiqueta" text-anchor="middle">{cab.nombre}</text>
+      </g>
+    ))}
+  </svg>
+  <figcaption class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-texto-2">
+    <span class="inline-flex items-center gap-2"><span class="inline-block h-0.5 w-6 bg-acento" aria-hidden="true"></span> Rutas del tramo</span>
+    <span class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full bg-vial" aria-hidden="true"></span> Estación de peaje</span>
+    <span class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full border-2 border-acento" aria-hidden="true"></span> Ciudad</span>
+  </figcaption>
+</figure>
+<style>
+  .mapa text { font-family: var(--font-sans); fill: var(--color-texto-2); }
+  .ruta-etiqueta { font-size: 13px; font-weight: 800; letter-spacing: 0.12em; fill: var(--color-acento); }
+  .ciudad-etiqueta { font-size: 15px; font-weight: 600; fill: var(--color-texto); }
+  .cabina-etiqueta { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; fill: var(--color-vial); opacity: 0; transition: opacity var(--dur-ui) var(--ease-salida); }
+  .baliza { cursor: default; outline: none; }
+  .baliza:hover .cabina-etiqueta, .baliza:focus-visible .cabina-etiqueta { opacity: 1; }
+  .baliza-halo { transition: transform var(--dur-ui) var(--ease-salida), opacity var(--dur-ui); transform-box: fill-box; transform-origin: center; }
+  .baliza:hover .baliza-halo, .baliza:focus-visible .baliza-halo { transform: scale(1.4); opacity: 0.35; }
+  @media (min-width: 48rem) { .cabina-etiqueta { opacity: 0.9; } }
+</style>

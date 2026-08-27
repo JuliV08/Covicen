@@ -1,0 +1,19 @@
+---
+// Familia propia de íconos de categoría de vehículo: línea 1.5, grilla 24, perfil sobre línea base y=19.
+interface Props { categoria: string; size?: number; class?: string }
+const { categoria, size = 28, class: clase = '' } = Astro.props;
+const iconos: Record<string, string> = {
+  'cat-1': 'M4 17.5a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0m10 0a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0M6.5 15l3-5h4l2 3h2M9.5 10l-1-3h2.5M13.5 10 12 8',
+  'cat-2': 'M3 16h18v-3l-2.5-1-2-4h-8l-3 4-2.5 1zM7 16.5a2 2 0 1 0 4 0 2 2 0 0 0-4 0m6 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0M9.5 8v4h6',
+  'cat-3': 'M2 16h11v-3l-2-1-1.5-3H5l-2 3-1 1zM4 16.5a2 2 0 1 0 4 0 2 2 0 0 0-4 0M13 14h2l1-4h5v6h-1M16 16.5a2 2 0 1 0 4 0 2 2 0 0 0-4 0',
+  'cat-4': 'M2 16V8h11v8zM13 11h5l3 3v2h-8M4 16.5a2 2 0 1 0 4 0 2 2 0 0 0-4 0m5 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0m7 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0',
+  'cat-5': 'M1 16V9h12v7zM13 11h5l3 3v2h-8M2.5 16.5a2 2 0 1 0 4 0 2 2 0 0 0-4 0m4.5 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0m4.5 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0m4.5 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0',
+  'cat-6': 'M1 16V9h13v7zM14 11h4l3 3v2h-7M1.5 16.5a1.6 1.6 0 1 0 3.2 0 1.6 1.6 0 0 0-3.2 0m3.6 0a1.6 1.6 0 1 0 3.2 0 1.6 1.6 0 0 0-3.2 0m3.6 0a1.6 1.6 0 1 0 3.2 0 1.6 1.6 0 0 0-3.2 0m3.6 0a1.6 1.6 0 1 0 3.2 0 1.6 1.6 0 0 0-3.2 0m3.6 0a1.6 1.6 0 1 0 3.2 0 1.6 1.6 0 0 0-3.2 0',
+};
+const d = iconos[categoria];
+if (!d) throw new Error(`IconoVehiculo: categoría desconocida "${categoria}"`);
+---
+<svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class={clase}>
+  <path d={d}></path>
+  <line x1="1" y1="19" x2="23" y2="19" stroke-dasharray="2 2" opacity="0.5"></line>
+</svg>
