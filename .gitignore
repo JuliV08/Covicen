@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+.omc/
+!.omc/skills/
+public/og.png
+public/apple-touch-icon.png
