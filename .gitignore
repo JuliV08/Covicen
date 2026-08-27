@@ -8,3 +8,4 @@ dist/
 !.omc/skills/
 public/og.png
 public/apple-touch-icon.png
+dist-*/
