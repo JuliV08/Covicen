@@ -23,18 +23,25 @@ const detalles = [
   <div class="revelar mx-auto max-w-2xl">
     <div class="flip" data-flip tabindex="0" role="group" aria-label="Tarifa del peaje: pasá el mouse o tocá para ver el detalle">
       <div class="flip-caras">
-        <div class="flip-cara tarjeta p-8">
+        <!-- El frente es flex-col: si el dorso es más alto (mobile), el bloque central se centra y la pista va al pie: sin vacíos. -->
+        <div class="flip-cara flip-frente tarjeta p-8">
           <div class="flex items-center justify-between gap-4">
             <span class="tarjeta-icono"><IconoVehiculo categoria="cat-2" size={28} /></span>
             <Senal>{tarifario.origen === 'oferta' ? 'Tarifa ofertada' : 'Tarifa homologada'}</Senal>
           </div>
-          <p class="eyebrow mt-8">{auto.nombre} · por paso</p>
-          <p class="mt-3 flex flex-wrap items-baseline gap-x-3">
-            <span class="font-extrabold leading-none tracking-[var(--tracking-titulo)] text-texto" style="font-size: clamp(3.25rem, 2rem + 5vw, 6.5rem)">{moneda(sinIva)}</span>
-            <span class="text-lg text-texto-2">+ IVA</span>
+          <div class="my-auto py-6">
+            <p class="eyebrow">{auto.nombre} · por paso</p>
+            <p class="mt-3 flex flex-wrap items-baseline gap-x-3">
+              <span class="font-extrabold leading-none tracking-[var(--tracking-titulo)] text-texto" style="font-size: clamp(3.25rem, 2rem + 5vw, 6.5rem)">{moneda(sinIva)}</span>
+              <span class="text-lg text-texto-2">+ IVA</span>
+            </p>
+            <p class="mt-3 text-texto-2"><strong class="text-texto">{moneda(conIva(sinIva, tarifario.alicuotaIva))}</strong> con IVA incluido.</p>
+          </div>
+          <p class="flip-pista mt-auto inline-flex items-center gap-2 text-sm text-texto-3">
+            <Hand size={16} aria-hidden="true" />
+            <span class="pista-mouse">Pasá el mouse para ver el detalle y la vigencia</span>
+            <span class="pista-toque">Tocá la tarjeta para ver el detalle y la vigencia</span>
           </p>
-          <p class="mt-3 text-texto-2"><strong class="text-texto">{moneda(conIva(sinIva, tarifario.alicuotaIva))}</strong> con IVA incluido.</p>
-          <p class="flip-pista mt-8 inline-flex items-center gap-2 text-sm text-texto-3"><Hand size={16} aria-hidden="true" /> Pasá el mouse para ver el detalle y la vigencia</p>
         </div>
         <div class="flip-cara flip-dorso tarjeta p-8">
           <p class="eyebrow">Detalle</p>
@@ -53,6 +60,7 @@ const detalles = [
               <span class="flip-cta-icono relative inline-flex"><ArrowRight size={16} aria-hidden="true" class="relative z-10 text-acento" /></span>
             </a>
             <a href={empresa.concesion.adjudicacion.url} rel="noopener noreferrer" target="_blank" class="link-crece mt-3 inline-flex items-center gap-1 text-xs text-texto-2" aria-label="Ver la resolución en el Boletín Oficial (se abre en otra pestaña)">Resolución en el Boletín Oficial <ExternalLink size={12} aria-hidden="true" /></a>
+            <p class="pista-toque mt-3 text-xs text-texto-3">Tocá de nuevo para volver.</p>
           </div>
         </div>
       </div>
@@ -64,18 +72,30 @@ const detalles = [
 <style>
   .flip { perspective: 1600px; outline: none; }
   .flip-caras { position: relative; display: grid; transform-style: preserve-3d; transition: transform 700ms var(--ease-suave); }
-  .flip-cara { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .flip-cara { grid-area: 1 / 1; display: flex; flex-direction: column; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
   .flip-dorso { transform: rotateY(180deg); }
-  .flip:hover .flip-caras, .flip:focus-visible .flip-caras, .flip.volteada .flip-caras { transform: rotateY(180deg); }
-  .flip:hover .flip-cara, .flip:focus-visible .flip-cara, .flip.volteada .flip-cara { animation-duration: 3.5s; }
+  /* El giro por :hover va SOLO donde hay hover real: en táctil el "sticky hover" del toque dejaba la card trabada dada vuelta. */
+  .flip.volteada .flip-caras, .flip:focus-visible .flip-caras { transform: rotateY(180deg); }
+  .flip.volteada .flip-cara, .flip:focus-visible .flip-cara { animation-duration: 3.5s; }
   .flip-item { opacity: 0; transform: translateX(-10px); transition: opacity 500ms var(--ease-salida), transform 500ms var(--ease-salida); transition-delay: calc(200ms + var(--i, 0) * 100ms); }
-  .flip:hover .flip-item, .flip:focus-visible .flip-item, .flip.volteada .flip-item { opacity: 1; transform: none; }
+  .flip.volteada .flip-item, .flip:focus-visible .flip-item { opacity: 1; transform: none; }
+  @media (hover: hover) {
+    .flip:hover .flip-caras { transform: rotateY(180deg); }
+    .flip:hover .flip-cara { animation-duration: 3.5s; }
+    .flip:hover .flip-item { opacity: 1; transform: none; }
+  }
   .flip-cta { background: var(--color-superficie); transition: transform var(--dur-ui) var(--ease-salida), background var(--dur-ui), border-color var(--dur-ui); }
   .flip-cta:hover { transform: scale(1.02); background: linear-gradient(90deg, rgb(104 188 225 / 0.18), rgb(104 188 225 / 0.06), transparent); border-color: rgb(104 188 225 / 0.3); }
   .flip-cta-icono::before { content: ""; position: absolute; inset: -6px; border-radius: 8px; background: linear-gradient(135deg, rgb(104 188 225 / 0.25), transparent); opacity: 0; transform: scale(0.9); transition: opacity var(--dur-ui), transform var(--dur-ui); }
   .flip-cta:hover .flip-cta-icono::before { opacity: 1; transform: scale(1); }
   .flip-cta :global(svg) { transition: transform var(--dur-ui) var(--ease-salida); }
   .flip-cta:hover :global(svg) { transform: translateX(4px) scale(1.1); }
-  @media (hover: none) { .flip-pista { display: none; } }
+  /* La pista cambia según el dispositivo: mouse o toque. */
+  .pista-toque { display: none; }
+  @media (hover: none) {
+    .pista-mouse { display: none; }
+    .pista-toque { display: inline; }
+    .flip-dorso .pista-toque { display: block; }
+  }
   @media (prefers-reduced-motion: reduce) { .flip-caras { transition: none; } .flip-item { transition: none; opacity: 1; transform: none; } }
 </style>
