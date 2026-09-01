@@ -17,6 +17,7 @@ Este es el vault del proyecto (vive en el repo, viaja con el código). El punter
 - Manual de marca: `docs/marca/Logo Covicen 2.pdf` · Prompts de imágenes: `docs/marca/prompts-imagenes.md`
 
 ## Estado
+- **2026-09-01** — **publicada en GitHub Pages**: https://juliv08.github.io/Covicen/ (repo `JuliV08/Covicen`, deploy por Actions en cada push a `main`, demo con `noindex`).
 - **2026-08-27 (tarde)** — sesión de construcción: brainstorming → spec → plan → **landing v1 en Astro 7** construida en local, con tests, `astro check` y build en verde. Sin push todavía: Juli crea el repo remoto y habilita Pages (ver `README.md`). Ver [[Decisiones de arquitectura]].
 - **2026-08-27 (mañana)** — sesión de contexto. Investigación de negocio hecha y **confirmada por el cliente** (es el Tramo Centro). Prompt maestro escrito.
 - **Pendiente urgente**: registrar el dominio. NIC.ar pide CUIT y la sociedad no lo tiene → va a nombre de un tercero y se transfiere después. Ver [[Contexto del negocio (Corredores Viales)]].
