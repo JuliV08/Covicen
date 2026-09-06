@@ -9,3 +9,9 @@ dist/
 public/og.png
 public/apple-touch-icon.png
 dist-*/
+
+# Repos de referencia de Corredores Viales (contienen credenciales reales): nunca al repo
+CVSA/
+
+# Cuaderno de ejecución de planes (scratch)
+.superpowers/
