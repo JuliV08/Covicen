@@ -3,6 +3,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # El sistema avisa al publicar un cuadro (repository_dispatch) y la web se reconstruye sola.
+  repository_dispatch:
+    types: [datos-publicados]
+  # Una vez por día (03:00 en Argentina): los cuadros programados a futuro entran el día que corresponde.
+  schedule:
+    - cron: "0 6 * * *"
 permissions:
   contents: read
   pages: write
@@ -18,7 +24,10 @@ jobs:
       PUBLIC_SITE_URL: https://${{ github.repository_owner }}.github.io
       PUBLIC_BASE_PATH: /${{ github.event.repository.name }}/
       PUBLIC_INDEXABLE: "false"
-      FUENTE_DATOS: local
+      # Sin la variable de repositorio API_URL, la landing sigue leyendo del repo. Con ella, lee tramo y
+      # tarifario de la API del sistema (el resto sigue en el repo hasta que exista su sistema).
+      FUENTE_DATOS: ${{ vars.API_URL != '' && 'api' || 'local' }}
+      API_URL: ${{ vars.API_URL }}
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6

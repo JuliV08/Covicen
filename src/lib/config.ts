@@ -8,6 +8,10 @@ const fuente = oDefecto(import.meta.env.FUENTE_DATOS, 'local');
 if (fuente !== 'local' && fuente !== 'api') {
   throw new Error(`FUENTE_DATOS inválida: "${fuente}" (esperaba local | api)`);
 }
+const apiUrl = oDefecto(import.meta.env.API_URL, '').replace(/\/+$/, '');
+if (fuente === 'api' && !apiUrl) {
+  throw new Error('FUENTE_DATOS=api exige API_URL (ej. https://api.covicen.com.ar)');
+}
 
 export const config = {
   /** Origen del sitio, sin base ni barra final. */
@@ -17,4 +21,6 @@ export const config = {
   /** true = se puede indexar (hay dominio). false = demo, noindex. */
   indexable: oDefecto(import.meta.env.PUBLIC_INDEXABLE, 'false') === 'true',
   fuenteDatos: fuente as 'local' | 'api',
+  /** Origen de la API del sistema, sin barra final. Solo se usa con FUENTE_DATOS=api. */
+  apiUrl,
 } as const;

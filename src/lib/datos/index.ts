@@ -12,6 +12,9 @@ const fuenteLocal: FuenteDatos = {
   novedad: async (slug) => (await import('./fuentes/local-novedades')).novedadLocal(slug),
 };
 
-export const datos: FuenteDatos = config.fuenteDatos === 'api' ? fuenteApi : fuenteLocal;
+// FUENTE_DATOS=api: la API del sistema para lo que ya existe (tramo, tarifario); el repo para el
+// resto. Nada se simula: lo que la API no tiene, sigue versionado acá hasta que exista su sistema.
+export const datos: FuenteDatos =
+  config.fuenteDatos === 'api' ? { ...fuenteLocal, ...fuenteApi } : fuenteLocal;
 export { capacidades } from './capacidades';
 export type * from './esquemas';

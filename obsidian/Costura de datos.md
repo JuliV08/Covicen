@@ -31,7 +31,18 @@ Dirección única de dependencia: `content/ → lib/datos/ → componentes/pági
 
 `capacidades.ts`: `estadoRutasEnVivo`, `oficinaVirtual`, `ticketingReclamos`, `portalProveedores`, `canalEticoAnonimo` — todas `false`. El componente `HuecoCapacidad` renderiza el hueco ("Próximamente" + alternativa real) cuando el flag está apagado y el `<slot />` cuando está prendido.
 
-## Cómo conectar Django mañana
+## Cómo está conectado el sistema (desde el 2026-09-06)
+
+`fuentes/api.ts` implementa **solo** `tramo()` y `tarifario()` contra la API pública del sistema (`/api/v1/tramo/`, `/api/v1/tarifario/`), con `fetch` + `esquema.safeParse`: si el servidor no responde, devuelve otra forma o no hay cuadro vigente (404), **el build falla** y no se publica basura. `index.ts` compone `{ ...fuenteLocal, ...fuenteApi }` cuando `FUENTE_DATOS=api`: la API para lo que el sistema tiene, el repo para el resto (empresa, contacto, obras, novedades, FAQ, estado de rutas). La regla 4 sigue: lo que no existe no se simula.
+
+- `API_URL` (variable de build, no pública) es obligatoria con `FUENTE_DATOS=api`; `config.apiUrl` la expone sin barra final.
+- El contrato lo siguen mandando los esquemas Zod: `pnpm contrato` exporta `docs/contrato/{tramo,tarifario}.schema.json` y el backend valida cada respuesta contra esos archivos en su suite. Dos campos nuevos, opcionales: `montoConIva` y `freeFlow`.
+- Los textos que carga un operador (`avisos`, `vigencia.descripcion`, `nota`, `fuente.nombre`) se pintan como texto; hay un test que inyecta HTML y comprueba que no se convierte en elementos.
+- Workflow de Pages: `repository_dispatch` (`datos-publicados`, lo dispara el sistema al publicar) y un cron diario a las 03:00 (los cuadros programados entran solos). `FUENTE_DATOS` pasa a `api` cuando existe la variable de repositorio `API_URL`; hasta que haya VPS, sigue en `local`.
+- Demo local: `FUENTE_DATOS=api API_URL=http://localhost:8000 pnpm build` contra el Docker del sistema (verificado el 2026-09-06: 21 páginas, `verificar` OK).
+- Fixtures reales de la API en `tests/fixtures/api/`, validados por Zod en `tests/lib/fuente-api.test.ts`.
+
+## Cómo se conectó (histórico: el plan original)
 
 1. Implementar cada método de `fuentes/api.ts` con `fetch` + `esquemaX.parse(...)` (el contrato manda; si el sistema viejo devuelve otra forma, el mapeo va en `api.ts`, no en la UI).
 2. `FUENTE_DATOS=api` en el entorno del build (o SSR con adapter si hace falta runtime).
