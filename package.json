@@ -15,7 +15,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "verificar": "pnpm build && node scripts/verificar.ts",
-    "og": "node scripts/generar-og.ts"
+    "og": "node scripts/generar-og.ts",
+    "contrato": "node scripts/exportar-contrato.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

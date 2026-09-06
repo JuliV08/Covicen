@@ -79,6 +79,8 @@ export const esquemaCabina = z.object({
   provincia: z.string().min(1),
   situacion: z.enum(['existente', 'nueva']),
   estado: z.enum(['confirmada', 'a-confirmar']),
+  /** Peaje sin barrera. Lo informa el sistema; opcional para el JSON del repo. */
+  freeFlow: z.boolean().optional(),
   mapa: puntoMapa,
   fuente: z.object({ nombre: z.string().min(1), url }).optional(),
 });
@@ -101,6 +103,8 @@ export const esquemaTarifa = z.object({
   nombre: z.string().min(1),
   descripcion: z.string().min(1),
   montoSinIva: z.number().positive().nullable(),
+  /** Lo calcula el sistema (IVA + redondeo). La UI sigue formateando con lib/formato.ts. */
+  montoConIva: z.number().positive().nullable().optional(),
   nota: z.string().optional(),
 });
 export type Tarifa = z.infer<typeof esquemaTarifa>;

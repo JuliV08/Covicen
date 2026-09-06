@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "publicadoEl": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "vigencia": {
+      "type": "object",
+      "properties": {
+        "desde": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "descripcion": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "desde",
+        "descripcion"
+      ]
+    },
+    "moneda": {
+      "type": "string",
+      "const": "ARS"
+    },
+    "alicuotaIva": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "origen": {
+      "type": "string",
+      "enum": [
+        "oferta",
+        "homologada"
+      ]
+    },
+    "tarifas": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "categoria": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "nombre": {
+            "type": "string",
+            "minLength": 1
+          },
+          "descripcion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "montoSinIva": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "montoConIva": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nota": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "categoria",
+          "nombre",
+          "descripcion",
+          "montoSinIva"
+        ]
+      }
+    },
+    "fuente": {
+      "type": "object",
+      "properties": {
+        "nombre": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "nombre",
+        "url"
+      ]
+    },
+    "avisos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "publicadoEl",
+    "vigencia",
+    "moneda",
+    "alicuotaIva",
+    "origen",
+    "tarifas",
+    "fuente",
+    "avisos"
+  ]
+}
