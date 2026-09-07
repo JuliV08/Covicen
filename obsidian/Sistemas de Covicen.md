@@ -4,6 +4,18 @@ Mapa objetivo de los sistemas de Covicen y el primer sistema decidido. Cerrado e
 
 > El análisis de los sistemas de referencia de Corredores Viales (CVSA) vive en el vault privado de Juli, no acá. Este documento solo contiene lo que es de Covicen.
 
+## Estado (2026-09-06, noche): sistema 1 construido, demo local
+
+El tarifario + catálogo del tramo está construido de punta a punta en el repo privado `JuliV08/covicen-sistemas` (commits locales por tarea, sin push todavía). Qué hay:
+
+- **Backend** (Django 5.2 + DRF + Postgres 17): módulos `cuentas` (usuario propio por email, tres grupos: Carga, Publicación, Administración; bloqueo por intentos; contraseña temporal que hay que cambiar), `tramo` (concesión, rutas, ciudades con trazado, cabinas), `tarifario` (categorías, cuadros con vigencia y estado, tarifas con IVA calculado; dos cuadros publicados no pueden solaparse, lo garantiza la base), `publicacion` (registro de cada publicación y aviso a GitHub para que la landing se reconstruya). API pública `/api/v1/` de solo lectura con caché y ETag; API del panel `/api/panel/` con sesión por cookie y CSRF. 137 tests, con el contrato de la landing validado contra los JSON Schema exportados de los esquemas Zod.
+- **Panel** (React + Vite + Tailwind, tema "Papel con marco de tinta", ver [[Sistema de diseno del panel]]): ingreso, inicio (cuadro vigente, próximo, pendientes, cabinas, últimas publicaciones), cuadros (lista, detalle con grilla, encabezado, historial, acciones por estado y diálogo de publicar que dice qué cuadro cierra y desde cuándo rige), catálogo (rutas con la concesión, ciudades con el recorrido, cabinas con vista previa sobre el mapa), categorías, publicaciones (con reintento del aviso) y usuarios (alta con contraseña temporal mostrada una sola vez). Alrededor de 300 tests con la API simulada y siete guardas de diseño (sin colores literales, un solo botón, un solo select, sin emojis, íconos del set).
+- **Infra**: Docker Compose local (un comando) y de producción (Caddy con HTTPS automático, backups diarios cifrados, Postgres sin puertos al host), imagen del panel sobre Caddy con CSP estricta, workflows de CI y deploy por SSH a GHCR. Como no hay minutos de GitHub Actions, la compuerta hoy es local (`lefthook` antes de cada push corre lo mismo que CI); el runner propio en el VPS viene con el VPS.
+- **Seguridad**: dos pasadas (una sobre la spec, otra sobre el código) por un agente de seguridad que no escribió el código; sin hallazgos altos; los medios se arreglaron el mismo día y lo que depende de infraestructura ajena quedó con fecha en `docs/runbooks/pendientes-seguridad.md` del repo privado.
+- **Landing**: `fuentes/api.ts` implementado para tramo y tarifario; build verificado contra el sistema local (ver [[Costura de datos]]).
+
+Pendiente para cerrar el sistema: prueba de punta a punta con Playwright en CI (escrita, corre cuando exista el runner), revisión final de todo el repo por un revisor que no escribió el código, y la verificación de la demo con Juli en su máquina. Lo que depende de Covicen sigue igual: VPS, dominio, cuadro homologado, cabinas confirmadas, usuarios reales, bucket de backups.
+
 ## Qué se convierte en qué
 
 Lo que una concesionaria hace por dentro se puede agrupar en cuatro capas. CVSA lo resolvió con veinte repos (trece aplicaciones chicas en Laravel clonadas del mismo esqueleto, un servidor de identidad aparte, dos sistemas nuevos en Django + React y una plataforma de datos). Covicen nace con **un solo proyecto Django modular**, una identidad, un deploy, y cada capacidad como un módulo.

@@ -23,6 +23,8 @@ Método: **los valores se calculan, no se eligen a ojo**. Cada par texto/superfi
 | Filo del botón primario | cian → violeta | celeste → vial. |
 | Vidrio, radiales, gradiente de marca en fondos | no en claro | No, en ningún modo: la landing tampoco los usa. |
 
+**Valores finales tras el cálculo de contraste (2026-09-06):** el marco es navy sobre 216° con escalera 6/9/11/14 % (un navy al 4 % ya es negro); `--info-subtle` del marco pasó a `214 55% 18%` (el chip azul desaparecía sobre navy; `--info` encima queda en 4,61:1); el vial como letra sobre papel pasó a `44 95% 27%` (hover `22%`): a 30 % daba 4,22:1, a 27 % el peor par es 5,01:1. El guard `contrasteTokens.test.ts` recalcula 44 pares por modo en cada corrida.
+
 Modo oscuro completo del panel: fuera de v1 (el marco ya es oscuro; el papel oscuro se agrega redefiniendo la capa `:root`).
 
 ## Lo que se copia de V-Shop sin cambios
