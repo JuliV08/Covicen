@@ -14,7 +14,7 @@ El tarifario + catálogo del tramo está construido de punta a punta en el repo 
 - **Seguridad**: dos pasadas (una sobre la spec, otra sobre el código) por un agente de seguridad que no escribió el código; sin hallazgos altos; los medios se arreglaron el mismo día y lo que depende de infraestructura ajena quedó con fecha en `docs/runbooks/pendientes-seguridad.md` del repo privado.
 - **Landing**: `fuentes/api.ts` implementado para tramo y tarifario; build verificado contra el sistema local (ver [[Costura de datos]]).
 
-Pendiente para cerrar el sistema: prueba de punta a punta con Playwright en CI (escrita, corre cuando exista el runner), revisión final de todo el repo por un revisor que no escribió el código, y la verificación de la demo con Juli en su máquina. Lo que depende de Covicen sigue igual: VPS, dominio, cuadro homologado, cabinas confirmadas, usuarios reales, bucket de backups.
+**Cierre (2026-09-07).** Revisión final de todo el repo por un revisor que no escribió el código: "apto con arreglos antes", los arreglos aplicados el mismo día (fecha de Córdoba en la API pública, rango de vigencias solapado como 409, página "no encontrada", Administración borra rutas y ciudades, link de la fuente solo si es http, la web muestra el "con IVA" que manda el sistema). Tercera pasada de seguridad sobre CI y contenedores aplicada. Prueba de punta a punta con Playwright escrita (corre cuando exista el runner). Queda: que Juli pushee los dos repos (el CI del backend baja el contrato del repo público), la demo en su máquina, y lo que depende de Covicen: VPS, dominio, cuadro homologado, cabinas confirmadas, usuarios reales, bucket de backups. Desvíos a la spec anotados al final de la spec.
 
 ## Qué se convierte en qué
 
