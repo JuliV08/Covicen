@@ -12,7 +12,7 @@ src/lib/datos/
   fuente.ts                       interface FuenteDatos (todos los métodos async)
   fuentes/local-json.ts           v1: JSON importado + import.meta.glob, validado con Zod
   fuentes/local-novedades.ts      v1: astro:content (se importa diferido)
-  fuentes/api.ts                  stub que LANZA. Acá va Django.
+  fuentes/api.ts                  Django: tramo() y tarifario() contra la API pública (fetch + safeParse). El resto sigue local.
   capacidades.ts                  flags de lo que depende de sistemas
   index.ts                        export const datos = FUENTE_DATOS === 'api' ? fuenteApi : fuenteLocal
 ```
@@ -24,7 +24,7 @@ Dirección única de dependencia: `content/ → lib/datos/ → componentes/pági
 1. **Un solo contrato.** El mismo schema Zod valida el JSON de hoy y la respuesta de la API de mañana. Si Django devuelve otra cosa, rompe en build.
 2. **La UI formatea, los datos no.** Nada de `"$1.399"` en JSON: `lib/formato.ts` (es-AR).
 3. **Interfaz async desde el día 1**, aunque hoy se resuelva en build.
-4. **`fuentes/api.ts` no mockea.** Lanza `FuenteApi: no implementado`.
+4. **`fuentes/api.ts` no mockea.** Lo que el sistema no tiene todavía no se simula: viene del repo. (Hasta el 2026-09-06 lanzaba `FuenteApi: no implementado`.)
 5. **Formularios reales sin backend**: link `wa.me` con mensaje estructurado; con `ticketingReclamos: true` el mismo componente hará POST.
 
 ## Capacidades (huecos reservados)

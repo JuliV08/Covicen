@@ -5,6 +5,7 @@ const sinNbsp = (s: string) => s.replace(/[  ]/g, ' ');
 
 describe('formato es-AR', () => {
   it('moneda sin decimales con punto de miles', () => expect(sinNbsp(moneda(1399))).toBe('$ 1.399'));
+  it('moneda con centavos solo cuando los hay', () => expect(sinNbsp(moneda(1692.79))).toBe('$ 1.692,79'));
   it('conIva redondea al peso', () => expect(conIva(1399, 0.21)).toBe(1693));
   it('fechaLarga no corre un día por zona horaria', () => expect(fechaLarga('2026-10-05')).toBe('5 de octubre de 2026'));
   it('fechaCorta', () => expect(fechaCorta('2026-10-05')).toBe('05/10/2026'));

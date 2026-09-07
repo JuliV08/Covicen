@@ -362,3 +362,9 @@ Franjas horarias; precio por sentido; tarifas diferenciales (vecinos, docentes, 
 | 3 | Lugar externo para la copia de los backups (un bucket S3 compatible o un Storage Box) | Covicen | Backups fuera del servidor |
 
 **Riesgos:** la inscripción de la sociedad demora VPS y dominio (mitigación: todo funciona en local y el deploy es el mismo paquete); el cuadro homologado puede traer categorías distintas de las seis actuales (mitigación: las categorías son datos, no código); la restricción de exclusión y `nulls_distinct` exigen Postgres 15+ (mitigación: la imagen es 17 y el test de integración corre contra 17 en CI).
+
+## Desvíos registrados al cierre (2026-09-07)
+
+- **§6, `/api/docs/`**: la interfaz Swagger no se sirve en producción (carga sus assets desde un CDN ajeno y el schema publica el mapa de la API del panel). Queda solo en local; el schema JSON sigue disponible por el host del panel, con sesión. Hallazgo de la segunda pasada de seguridad.
+- **§10, servicio `panel` en el compose local**: el panel se levanta con `pnpm --dir panel dev` en la máquina (Vite con recarga en caliente) en vez de un contenedor más; en CI y en producción sí va en Docker (imagen Caddy). Decisión por la RAM de la máquina de desarrollo.
+- **§5.4, "nunca float"**: la salida de la API pública usa `float` porque el contrato Zod de la landing pide `number`; el cálculo y el almacenamiento siguen en `Decimal`.

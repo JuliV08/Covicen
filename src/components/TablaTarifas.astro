@@ -6,6 +6,9 @@ import { conIva, fechaCorta, fechaLarga, moneda } from '@/lib/formato';
 interface Props { tarifario: Tarifario }
 const { tarifario: t } = Astro.props;
 const vigencia = t.vigencia.desde ? `Vigencia: desde el ${fechaLarga(t.vigencia.desde)}.` : `Vigencia: ${t.vigencia.descripcion}`;
+// La URL de la fuente la carga un operador: solo se enlaza si es http(s). `z.url()` acepta `javascript:`.
+const esHttp = (url: string) => /^https?:\/\//i.test(url);
+// El "con IVA" lo calcula el sistema con su redondeo (al peso o al centavo); el cálculo local es el respaldo del JSON del repo.
 ---
 <div class="revelar">
   <div class="mb-6 flex flex-wrap items-center gap-3">
@@ -25,7 +28,7 @@ const vigencia = t.vigencia.desde ? `Vigencia: desde el ${fechaLarga(t.vigencia.
             <th scope="row" class="px-4 py-4 font-semibold text-texto"><span class="flex items-center gap-3"><IconoVehiculo categoria={f.categoria} class="icono text-texto-2" /> {f.nombre}</span></th>
             <td class="px-4 py-4 text-texto-2">{f.descripcion}{f.nota && <span class="mt-1 block text-xs text-texto-2">{f.nota}</span>}</td>
             <td class="px-4 py-4 text-right tabular-nums text-texto">{f.montoSinIva === null ? <span class="text-texto-2">— <span class="text-xs uppercase tracking-wider">a confirmar</span></span> : moneda(f.montoSinIva)}</td>
-            <td class="px-4 py-4 text-right tabular-nums text-texto">{f.montoSinIva === null ? <span class="text-texto-2">—</span> : moneda(conIva(f.montoSinIva, t.alicuotaIva))}</td>
+            <td class="px-4 py-4 text-right tabular-nums text-texto">{f.montoSinIva === null ? <span class="text-texto-2">—</span> : moneda(f.montoConIva ?? conIva(f.montoSinIva, t.alicuotaIva))}</td>
           </tr>
         ))}
       </tbody>
@@ -33,7 +36,7 @@ const vigencia = t.vigencia.desde ? `Vigencia: desde el ${fechaLarga(t.vigencia.
   </div>
   <p class="mt-2 text-xs text-texto-3 sm:hidden">Deslizá la tabla hacia el costado para ver todas las columnas.</p>
   <ul class="mt-6 flex flex-col gap-2 text-sm text-texto-2">{t.avisos.map((a) => <li class="flex gap-2"><span aria-hidden="true">—</span>{a}</li>)}</ul>
-  <p class="mt-4 text-xs text-texto-3">Publicado el {fechaCorta(t.publicadoEl)}. Fuente: <a href={t.fuente.url} rel="noopener noreferrer" target="_blank" aria-label={`${t.fuente.nombre} (se abre en otra pestaña)`}>{t.fuente.nombre}</a>.</p>
+  <p class="mt-4 text-xs text-texto-3">Publicado el {fechaCorta(t.publicadoEl)}. Fuente: {esHttp(t.fuente.url) ? <a href={t.fuente.url} rel="noopener noreferrer" target="_blank" aria-label={`${t.fuente.nombre} (se abre en otra pestaña)`}>{t.fuente.nombre}</a> : t.fuente.nombre}.</p>
 </div>
 <style>
   /* El ícono lo renderiza IconoVehiculo (componente hijo): no lleva el atributo de scope, va con :global. */
