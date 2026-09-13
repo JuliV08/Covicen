@@ -41,6 +41,9 @@
   }
 }
 
+/* Piezas exclusivas de un tema: el hero tiene una foto por tema. Un elemento sin caja no carga su <img loading="lazy">. */
+html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro { display: none; }
+
 @layer components {
   .contenedor { width: min(100% - 2.5rem, var(--ancho-max)); margin-inline: auto; }
   /* grilla de plano: fondo tech tenue */

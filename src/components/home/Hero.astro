@@ -6,21 +6,23 @@ import ParallaxProfundidad from '@/components/ilustraciones/ParallaxProfundidad.
 import Boton from '@/components/ui/Boton.astro';
 import Eyebrow from '@/components/ui/Eyebrow.astro';
 import type { Empresa } from '@/lib/datos/esquemas';
-import { imagenAtmosfera } from '@/lib/atmosfera';
+import { imagenAtmosfera, variantesHero } from '@/lib/atmosfera';
 import { fechaLarga, numero } from '@/lib/formato';
 interface Props { empresa: Empresa }
 const { empresa } = Astro.props;
 const c = empresa.concesion;
-// Con foto: parallax 2.5D con mapa de profundidad (WebGL en desktop; en mobile, la foto con un dolly lento).
+// Con foto: parallax 2.5D con mapa de profundidad (WebGL en desktop; en mobile, la foto con un dolly lento). Si existe
+// hero-ruta-diurna.jpg hay una foto por tema (mismo encuadre: el mapa de profundidad es procedural y sirve para las dos).
 // Sin foto: la calzada vectorial en perspectiva. Luces sintéticas sobre la foto se veían como glitch: fuera.
-const hayFoto = imagenAtmosfera('hero-ruta-nocturna') !== undefined;
+const fotos = variantesHero(imagenAtmosfera('hero-ruta-nocturna') !== undefined, imagenAtmosfera('hero-ruta-diurna') !== undefined);
+const hayFoto = fotos.length > 0;
 ---
 <section class="hero plano relative isolate overflow-hidden" style="min-height: calc(100dvh - var(--alto-header))" data-spotlight>
-  {hayFoto ? (
-    <div class="parallax absolute inset-0 -z-20" aria-hidden="true">
-      <ParallaxProfundidad nombre="hero-ruta-nocturna" profundidad="hero-ruta-nocturna.profundidad" vp={[0.78, 0.595]} />
+  {hayFoto ? fotos.map((f) => (
+    <div class:list={['parallax absolute inset-0 -z-20', f.clase]} aria-hidden="true">
+      <ParallaxProfundidad nombre={f.nombre} profundidad="hero-ruta-nocturna.profundidad" vp={[0.78, 0.595]} prioridad={f.prioridad} />
     </div>
-  ) : (
+  )) : (
     <HeroRuta class="-z-10 parallax" />
   )}
   <div class:list={['absolute inset-0 -z-10 bg-gradient-to-r from-fondo', hayFoto ? 'via-fondo/70 to-fondo/10' : 'via-fondo/85 to-fondo/20']} aria-hidden="true"></div>

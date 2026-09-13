@@ -131,8 +131,14 @@ const montar = (raiz: HTMLElement) => {
 const iniciarTodo = () => {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   if (!matchMedia('(hover: hover) and (min-width: 64rem)').matches) return;
-  document.querySelectorAll<HTMLElement>('[data-parallax]:not([data-montado])').forEach((r) => { r.dataset.montado = ''; montar(r); });
+  // Lo oculto por el tema (display: none) no se monta; al cambiar de tema se vuelve a pasar por acá y se monta lo visible.
+  document.querySelectorAll<HTMLElement>('[data-parallax]:not([data-montado])').forEach((r) => {
+    if (r.getClientRects().length === 0) return;
+    r.dataset.montado = '';
+    montar(r);
+  });
 };
 document.addEventListener('astro:page-load', iniciarTodo);
+document.addEventListener('tema:cambio', iniciarTodo);
 
 export {};

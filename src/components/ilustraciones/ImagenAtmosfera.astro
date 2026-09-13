@@ -3,12 +3,12 @@
 import { Image } from 'astro:assets';
 import { imagenAtmosfera } from '@/lib/atmosfera';
 interface Props { nombre: string; alt: string; class?: string; sizes?: string; widths?: number[]; prioridad?: boolean; brillo?: number }
-const { nombre, alt, class: clase = '', sizes = '100vw', widths = [640, 1024, 1600, 2400], prioridad = false, brillo = 0.62 } = Astro.props;
+const { nombre, alt, class: clase = '', sizes = '100vw', widths = [640, 1024, 1600, 2400], prioridad = false, brillo } = Astro.props;
 const imagen = imagenAtmosfera(nombre);
 ---
 {imagen && (
-  <Image src={imagen} {alt} {widths} {sizes} format="avif" quality={55} loading={prioridad ? 'eager' : 'lazy'} decoding="async" class:list={['imagen-atmosfera', clase]} style={`--brillo: ${brillo}`} />
+  <Image src={imagen} {alt} {widths} {sizes} format="avif" quality={55} loading={prioridad ? 'eager' : 'lazy'} decoding="async" class:list={['imagen-atmosfera', clase]} style={brillo !== undefined ? `--brillo: ${brillo}` : undefined} />
 )}
 <style>
-  .imagen-atmosfera { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85) brightness(var(--brillo, 0.62)); }
+  .imagen-atmosfera { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85) brightness(var(--brillo, var(--brillo-foto))); }
 </style>
