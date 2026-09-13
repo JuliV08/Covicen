@@ -1,13 +1,19 @@
 // Grilla cinética: nodos cada 55 px unidos por líneas; se deforman hacia el puntero (radio 260, fuerza 24)
-// y las ondas de cada clic los empujan. Colores de la landing (acento celeste sobre navy).
-const CELDA = 55, RADIO = 260, FUERZA = 24, PUNTOS = 28, SUAVE = 0.35; // SUAVE 0.35: sigue al puntero sin retraso perceptible (la referencia usaba 0.08 y quedaba atrás)
-const BASE = { r: 255, g: 255, b: 255, a: 0.11 };
-const ACTIVA = { r: 104, g: 188, b: 225, a: 0.9 };
-const GLOW = '104,188,225';
+// y las ondas de cada clic los empujan. Colores desde los tokens del tema activo: la trama con el color del texto,
+// los nodos activos y el glow con el acento. Se releen y repintan en `tema:cambio`.
+import { colorDeToken, conAlfa, mezcla, type Color, type Rgb } from './lib/color';
+const CELDA = 55, RADIO = 260, FUERZA = 24, PUNTOS = 28, SUAVE = 0.35; // SUAVE 0.35: sigue al puntero sin retraso perceptible
+let BASE: Color = { r: 255, g: 255, b: 255, a: 0.11 };
+let ACTIVA: Color = { r: 104, g: 188, b: 225, a: 0.9 };
+let GLOW: Rgb = { r: 104, g: 188, b: 225 };
+const releerColores = () => {
+  BASE = { ...colorDeToken('--color-texto'), a: 0.11 };
+  ACTIVA = { ...colorDeToken('--color-acento'), a: 0.9 };
+  GLOW = colorDeToken('--color-acento');
+};
+const repintar: Array<() => void> = [];
 type Onda = { x: number; y: number; radio: number; opacidad: number; nacida: number };
-type Color = { r: number; g: number; b: number; a: number };
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-const mezcla = (a: Color, b: Color, t: number) => `rgba(${Math.round(lerp(a.r, b.r, t))},${Math.round(lerp(a.g, b.g, t))},${Math.round(lerp(a.b, b.b, t))},${lerp(a.a, b.a, t).toFixed(3)})`;
 const suavizar = (t: number) => t * t * (3 - 2 * t);
 
 const montar = (canvas: HTMLCanvasElement, interactivo: boolean) => {
@@ -25,6 +31,7 @@ const montar = (canvas: HTMLCanvasElement, interactivo: boolean) => {
     canvas.width = w; canvas.height = h; // DPR 1 a propósito: es un fondo, y así el costo es mínimo
     dibujar(performance.now());
   };
+  repintar.push(() => dibujar(performance.now()));
 
   const desplazar = (x: number, y: number, c: number, f: number, cols: number, filas: number, t: number) => {
     const bordeC = Math.min(c / 1.5, (cols - 1 - c) / 1.5, 1);
@@ -56,7 +63,7 @@ const montar = (canvas: HTMLCanvasElement, interactivo: boolean) => {
 
   const dibujar = (t: number) => {
     ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = 'rgba(255,255,255,0.045)';
+    ctx.fillStyle = conAlfa(BASE, 0.045);
     for (let x = PUNTOS / 2; x < w; x += PUNTOS) for (let y = PUNTOS / 2; y < h; y += PUNTOS) { ctx.beginPath(); ctx.arc(x, y, 0.7, 0, Math.PI * 2); ctx.fill(); }
     for (let i = ondas.length - 1; i >= 0; i--) {
       const o = ondas[i]!;
@@ -82,13 +89,13 @@ const montar = (canvas: HTMLCanvasElement, interactivo: boolean) => {
       if (s > 0.3) {
         const R = r + lerp(0, 6, (s - 0.3) / 0.7);
         const g = ctx.createRadialGradient(n.x, n.y, r * 0.5, n.x, n.y, R);
-        g.addColorStop(0, `rgba(${GLOW},${(s * 0.3).toFixed(3)})`); g.addColorStop(1, `rgba(${GLOW},0)`);
+        g.addColorStop(0, conAlfa(GLOW, s * 0.3)); g.addColorStop(1, conAlfa(GLOW, 0));
         ctx.beginPath(); ctx.arc(n.x, n.y, R, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
       }
       ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
-      ctx.fillStyle = mezcla({ r: 255, g: 255, b: 255, a: 0.2 }, { ...ACTIVA, a: 1 }, s); ctx.fill();
+      ctx.fillStyle = mezcla({ ...BASE, a: 0.2 }, { ...ACTIVA, a: 1 }, s); ctx.fill();
     }
-    for (const o of ondas) { ctx.beginPath(); ctx.arc(o.x, o.y, o.radio, 0, Math.PI * 2); ctx.strokeStyle = `rgba(${GLOW},${(o.opacidad * 0.28).toFixed(3)})`; ctx.lineWidth = 1.5; ctx.stroke(); }
+    for (const o of ondas) { ctx.beginPath(); ctx.arc(o.x, o.y, o.radio, 0, Math.PI * 2); ctx.strokeStyle = conAlfa(GLOW, o.opacidad * 0.28); ctx.lineWidth = 1.5; ctx.stroke(); }
   };
 
   const cuadro = (t: number) => {
@@ -111,9 +118,11 @@ const montar = (canvas: HTMLCanvasElement, interactivo: boolean) => {
 };
 
 const iniciar = () => {
+  releerColores();
   const interactivo = matchMedia('(hover: hover)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.querySelectorAll<HTMLCanvasElement>('canvas[data-grilla]:not([data-montada])').forEach((c) => { c.dataset.montada = ''; montar(c, interactivo); });
 };
 document.addEventListener('astro:page-load', iniciar);
+document.addEventListener('tema:cambio', () => { releerColores(); repintar.forEach((f) => f()); });
 
 export {};

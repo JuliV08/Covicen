@@ -85,8 +85,8 @@ const detalles = [
     .flip:hover .flip-item { opacity: 1; transform: none; }
   }
   .flip-cta { background: var(--color-superficie); transition: transform var(--dur-ui) var(--ease-salida), background var(--dur-ui), border-color var(--dur-ui); }
-  .flip-cta:hover { transform: scale(1.02); background: linear-gradient(90deg, rgb(104 188 225 / 0.18), rgb(104 188 225 / 0.06), transparent); border-color: rgb(104 188 225 / 0.3); }
-  .flip-cta-icono::before { content: ""; position: absolute; inset: -6px; border-radius: 8px; background: linear-gradient(135deg, rgb(104 188 225 / 0.25), transparent); opacity: 0; transform: scale(0.9); transition: opacity var(--dur-ui), transform var(--dur-ui); }
+  .flip-cta:hover { transform: scale(1.02); background: linear-gradient(90deg, color-mix(in srgb, var(--color-acento) 18%, transparent), color-mix(in srgb, var(--color-acento) 6%, transparent), transparent); border-color: color-mix(in srgb, var(--color-acento) 30%, transparent); }
+  .flip-cta-icono::before { content: ""; position: absolute; inset: -6px; border-radius: 8px; background: linear-gradient(135deg, color-mix(in srgb, var(--color-acento) 25%, transparent), transparent); opacity: 0; transform: scale(0.9); transition: opacity var(--dur-ui), transform var(--dur-ui); }
   .flip-cta:hover .flip-cta-icono::before { opacity: 1; transform: scale(1); }
   .flip-cta :global(svg) { transition: transform var(--dur-ui) var(--ease-salida); }
   .flip-cta:hover :global(svg) { transform: translateX(4px) scale(1.1); }

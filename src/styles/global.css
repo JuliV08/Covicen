@@ -46,8 +46,8 @@
   /* grilla de plano: fondo tech tenue */
   .plano {
     background-image:
-      linear-gradient(to right, rgb(255 255 255 / 0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(255 255 255 / 0.04) 1px, transparent 1px);
+      linear-gradient(to right, var(--color-plano) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-plano) 1px, transparent 1px);
     background-size: 4rem 4rem;
   }
   /* Sección con grilla cinética, fundida con las vecinas: el fondo va de `fondo` a `fondo-2` y vuelve, la grilla se
@@ -57,18 +57,18 @@
     background: linear-gradient(180deg, var(--color-fondo) 0%, var(--color-fondo-2) 16%, var(--color-fondo-2) 84%, var(--color-fondo) 100%);
   }
   .seccion-cinetica > canvas {
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
-    mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
   }
   .costura { position: absolute; left: 0; right: 0; height: 1px; z-index: 5; pointer-events: none;
-    background: linear-gradient(90deg, transparent, var(--color-borde-fuerte) 25%, rgb(104 188 225 / 0.55) 50%, var(--color-borde-fuerte) 75%, transparent); }
+    background: linear-gradient(90deg, transparent, var(--color-borde-fuerte) 25%, color-mix(in srgb, var(--color-acento) 55%, transparent) 50%, var(--color-borde-fuerte) 75%, transparent); }
   .costura-arriba { top: 0; }
   .costura-abajo { bottom: 0; }
   .costura::before { content: ""; position: absolute; left: 50%; top: 50%; width: 2.5rem; height: 3px; border-radius: 2px; transform: translate(-50%, -50%);
     background: var(--color-acento); box-shadow: 0 0 14px var(--color-glow), 0 0 2px var(--color-acento); }
   /* resplandor que "derrama" la grilla hacia la sección vecina */
   .costura::after { content: ""; position: absolute; left: 20%; right: 20%; top: 50%; height: 120px; transform: translateY(-50%); pointer-events: none;
-    background: radial-gradient(60% 100% at 50% 50%, rgb(104 188 225 / 0.07), transparent 70%); }
+    background: radial-gradient(60% 100% at 50% 50%, var(--color-luz), transparent 70%); }
   /* link con subrayado que crece desde la izquierda */
   .link-crece {
     background-image: linear-gradient(currentColor, currentColor);
@@ -86,4 +86,15 @@
   .prose-covicen ol { list-style: decimal; }
   .prose-covicen li { margin-top: 0.35rem; }
   .prose-covicen strong { color: var(--color-texto); }
+
+  /* Botón de señalética (amarillo vial): header, barra inferior y <Boton variante="vial">. ÚNICA definición. */
+  .btn-vial {
+    display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; border-radius: var(--radius-md);
+    background: var(--color-vial); color: var(--color-sobre-vial); font-weight: 600; text-decoration: none;
+    transition: box-shadow var(--dur-ui) var(--ease-salida), transform var(--dur-ui) var(--ease-salida);
+  }
+  .btn-vial:hover { box-shadow: 0 8px 24px -6px color-mix(in srgb, var(--color-vial) 45%, transparent); transform: translateY(-1px); }
+  .btn-vial:hover .telefono { animation: oscilar 0.5s var(--ease-suave) 1; }
+  .btn-vial:focus-visible { outline-color: var(--color-vial); }
+  @keyframes oscilar { 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
 }

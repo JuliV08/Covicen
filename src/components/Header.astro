@@ -95,11 +95,11 @@ const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
     .cabecera { animation: cabecera-fondo linear both; animation-timeline: scroll(root); animation-range: 0 120px; }
   }
   @supports not (animation-timeline: scroll()) {
-    .cabecera { background: rgb(16 32 58 / 0.85); border-color: var(--color-borde); }
+    .cabecera { background: var(--color-cabecera); border-color: var(--color-borde); }
   }
   @keyframes cabecera-fondo {
     from { background: transparent; border-color: transparent; }
-    to { background: rgb(16 32 58 / 0.85); border-color: var(--color-borde); }
+    to { background: var(--color-cabecera); border-color: var(--color-borde); }
   }
 
   .nav-item {
@@ -120,15 +120,7 @@ const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
   .desplegable[open] > ul { animation: aparecer var(--dur-ui) var(--ease-salida) both; }
   @keyframes aparecer { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 
-  .btn-vial {
-    align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; border-radius: var(--radius-md);
-    background: var(--color-vial); color: var(--color-fondo); font-weight: 600; text-decoration: none;
-    transition: box-shadow var(--dur-ui) var(--ease-salida), transform var(--dur-ui) var(--ease-salida);
-  }
-  .btn-vial:hover { box-shadow: 0 8px 24px -6px rgb(240 196 25 / 0.45); transform: translateY(-1px); }
-  .btn-vial:hover :global(.telefono) { animation: oscilar 0.5s var(--ease-suave) 1; }
-  .btn-vial:focus-visible { outline-color: var(--color-vial); }
-  @keyframes oscilar { 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+  /* .btn-vial vive en global.css (una sola definición para header, barra y botón). */
 
   .menu-mobile {
     inset: unset; top: 0; right: 0; height: 100dvh; width: min(100%, 22rem); margin: 0; border: 0; border-left: 1px solid var(--color-borde);
@@ -137,5 +129,5 @@ const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
   }
   .menu-mobile:popover-open { translate: 0 0; }
   @starting-style { .menu-mobile:popover-open { translate: 100% 0; } }
-  .menu-mobile::backdrop { background: rgb(11 21 38 / 0.6); }
+  .menu-mobile::backdrop { background: color-mix(in srgb, var(--color-fondo) 60%, transparent); }
 </style>
