@@ -3,8 +3,9 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { loadEnv } from 'vite';
-import { contraste, leerTokens } from './lib/contraste.ts';
+import { contraste, leerTemas } from './lib/contraste.ts';
 import { existeDestino, jsonLdDe, linksInternos, paginasDe } from './lib/html.ts';
+import { paresContraste } from './lib/pares.ts';
 
 const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
 const base = `/${(env.PUBLIC_BASE_PATH || '/').replace(/^\/+|\/+$/g, '')}/`.replace('//', '/');
@@ -55,15 +56,14 @@ for (const ruta of paginas) {
   if (/[\u{1F300}-\u{1FAFF}]/u.test(html)) fallo(`${nombre}: hay emojis en la UI`);
 }
 
-// 6. contraste de tokens usados
-const tokens = leerTokens(readFileSync('src/styles/tokens.css', 'utf8'));
-const pares: Array<[string, string]> = [
-  ['texto', 'fondo'], ['texto-2', 'fondo'], ['texto-3', 'fondo'], ['acento', 'fondo'], ['vial', 'fondo'],
-  ['texto', 'superficie'], ['texto-2', 'superficie'], ['fondo', 'vial'], ['fondo', 'acento'], ['error', 'fondo'],
-];
-for (const [a, b] of pares) {
-  const r = contraste(tokens[a]!, tokens[b]!);
-  if (r < 4.5) fallo(`contraste ${a}/${b} = ${r.toFixed(2)} < 4.5`);
+// 6. contraste de tokens usados, en los dos temas (la lista de pares vive en scripts/lib/pares.ts)
+const temas = leerTemas(readFileSync('src/styles/tokens.css', 'utf8'));
+for (const [tema, tokens] of Object.entries(temas)) {
+  for (const [a, b] of paresContraste) {
+    if (!tokens[a] || !tokens[b]) { fallo(`tema ${tema}: falta el token --color-${tokens[a] ? b : a}`); continue; }
+    const r = contraste(tokens[a]!, tokens[b]!);
+    if (r < 4.5) fallo(`tema ${tema}: contraste ${a}/${b} = ${r.toFixed(2)} < 4.5`);
+  }
 }
 
 // 9. presupuesto de JS enviado

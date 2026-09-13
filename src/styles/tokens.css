@@ -1,6 +1,8 @@
 /* Tokens de Covicen. Dos capas: marca (manual "Covicen Marca 9b1", fijos) y semánticos (los usan los componentes).
-   El tema claro futuro redefine SOLO la capa semántica. */
-@theme {
+   El tema oscuro "La ruta, de noche" es el de @theme. El tema claro redefine SOLO la capa semántica, abajo, en
+   html[data-tema="claro"]. Regla: los componentes usan solo semánticos; ningún color se escribe a mano fuera de acá.
+   `@theme static`: Tailwind emite TODOS los tokens, también los que solo se usan con var() dentro de <style> de componentes. */
+@theme static {
   /* --- reset de la paleta por defecto de Tailwind: solo existen nuestros colores --- */
   --color-*: initial;
   --color-white: #ffffff;
@@ -14,21 +16,33 @@
   --color-gris-texto: #5A6472;
   --color-gris-fondo: #EEF1F4;
 
-  /* --- semánticos, tema oscuro "La ruta, de noche" --- */
+  /* --- semánticos, tema oscuro --- */
   --color-fondo: #0B1526;
   --color-fondo-2: #10203A;
   --color-superficie: #16304E;
   --color-superficie-2: #1E4870;
   --color-texto: #E8EEF5;
   --color-texto-2: #A9C4D8;
-  --color-texto-3: #8593A0; /* ≥ 4.5:1 sobre fondo y fondo-2; NO sobre superficie */
+  --color-texto-3: #8593A0; /* ≥ 4.5:1 sobre fondo y fondo-2; NUNCA sobre superficie ni superficie-2 */
   --color-acento: #68BCE1;
   --color-acento-hover: #8FCDE8;
-  --color-vial: #F0C419;
+  --color-vial: #F0C419;         /* señalética: SOLO como fondo; el texto encima es sobre-vial */
+  --color-vial-texto: #F0C419;   /* el amarillo usado como texto (en claro se oscurece para llegar a 4.5:1) */
+  --color-sobre-vial: #0B1526;   /* texto sobre amarillo */
+  --color-sobre-acento: #0B1526; /* texto sobre acento (botón de envío, badges) */
+  --color-ok: #7BD389;           /* estación operativa */
+  --color-sobre-ok: #0B1526;
   --color-error: #FF8A80;
+  --color-cabecera: rgb(16 32 58 / 0.85);      /* fondo del header al scrollear */
+  --color-tarjeta-interior-1: #17334F;         /* degradé interior de .tarjeta, de arriba a abajo */
+  --color-tarjeta-interior-2: #10203A;
+  --color-tarjeta-interior-3: #0B1526;
   --color-borde: rgb(255 255 255 / 0.10);
   --color-borde-fuerte: rgb(255 255 255 / 0.18);
   --color-glow: rgb(104 188 225 / 0.35);
+  --color-sombra: rgb(0 0 0 / 0.6);
+  --color-plano: rgb(255 255 255 / 0.04);     /* grilla de fondo */
+  --color-luz: rgb(104 188 225 / 0.09);       /* resplandores suaves */
 
   /* --- tipografía --- */
   --font-sans: "Archivo Variable", "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -55,5 +69,37 @@
   --stagger: 60ms;
   --alto-header: 4.5rem;
   --ancho-max: 80rem;
+  --brillo-foto: 0.62; /* las fotos de atmósfera se oscurecen para que el texto gane */
   color-scheme: dark;
+}
+
+/* Tema claro: mismos nombres, valores del manual (gris-fondo, gris-texto, marca-900 en títulos, marca-700 en links).
+   Sin @layer a propósito: lo no-layered le gana a la capa `theme` de Tailwind, y html[...] es más específico que :root. */
+html[data-tema="claro"] {
+  --color-fondo: #EEF1F4;
+  --color-fondo-2: #F7F9FB;
+  --color-superficie: #FFFFFF;
+  --color-superficie-2: #DDE6EE;
+  --color-texto: #16304E;
+  --color-texto-2: #5A6472;
+  --color-texto-3: #546070;
+  --color-acento: #2C688F;
+  --color-acento-hover: #1E4870;
+  --color-vial-texto: #6E5A00;
+  --color-sobre-acento: #FFFFFF;
+  --color-ok: #1B6B35;
+  --color-sobre-ok: #FFFFFF;
+  --color-error: #B3261E;
+  --color-cabecera: rgb(238 241 244 / 0.85);
+  --color-tarjeta-interior-1: #FFFFFF;
+  --color-tarjeta-interior-2: #F7F9FB;
+  --color-tarjeta-interior-3: #EEF1F4;
+  --color-borde: rgb(30 72 112 / 0.14);
+  --color-borde-fuerte: rgb(30 72 112 / 0.28);
+  --color-glow: rgb(44 104 143 / 0.25);
+  --color-sombra: rgb(30 72 112 / 0.18);
+  --color-plano: rgb(30 72 112 / 0.06);
+  --color-luz: rgb(44 104 143 / 0.08);
+  --brillo-foto: 1;
+  color-scheme: light;
 }
