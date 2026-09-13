@@ -27,7 +27,7 @@ const deshabilitado = canal === 'a-confirmar';
     <legend class="sr-only">{asunto}</legend>
     {campos.map((c) => (
       <div class="grid gap-2">
-        <label for={`campo-${c.nombre}`} class="text-sm font-semibold text-texto">{c.etiqueta}{c.requerido && <span class="text-vial" aria-hidden="true"> *</span>}</label>
+        <label for={`campo-${c.nombre}`} class="text-sm font-semibold text-texto">{c.etiqueta}{c.requerido && <span class="text-vial-texto" aria-hidden="true"> *</span>}</label>
         {c.tipo === 'textarea' ? (
           <textarea id={`campo-${c.nombre}`} name={c.nombre} rows="5" required={c.requerido} placeholder={c.placeholder} class="campo" aria-describedby={`error-${c.nombre}`}></textarea>
         ) : c.tipo === 'select' ? (
@@ -41,7 +41,7 @@ const deshabilitado = canal === 'a-confirmar';
   </fieldset>
   {!deshabilitado && (
     <div class="flex flex-wrap items-center gap-4">
-      <button type="submit" class="btn-enviar inline-flex min-h-11 items-center gap-2 rounded-md bg-acento px-5 py-3 font-semibold text-fondo transition hover:-translate-y-px hover:bg-acento-hover hover:shadow-[0_10px_28px_-10px_var(--color-glow)]">
+      <button type="submit" class="btn-enviar inline-flex min-h-11 items-center gap-2 rounded-md bg-acento px-5 py-3 font-semibold text-sobre-acento transition hover:-translate-y-px hover:bg-acento-hover hover:shadow-[0_10px_28px_-10px_var(--color-glow)]">
         {canal === 'whatsapp' ? <MessageCircle size={18} aria-hidden="true" /> : <Mail size={18} aria-hidden="true" />} {canal === 'whatsapp' ? textoBoton : 'Enviar por correo'}
       </button>
       {canal === 'whatsapp' && email && <a href={`mailto:${email}?subject=${encodeURIComponent(asunto)}`} class="link-crece text-sm text-texto-2">o escribinos a {email}</a>}

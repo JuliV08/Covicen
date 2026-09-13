@@ -19,7 +19,7 @@ const accesos = [
         <a href={a.href} class:list={['tarjeta flex h-full items-start gap-4 p-5 text-texto no-underline', a.vial && 'tarjeta-vial']}>
           <span class="tarjeta-icono shrink-0"><Icono size={22} aria-hidden="true" /></span>
           <span>
-            <span class:list={['block font-extrabold', a.vial && 'text-vial']}>{a.titulo}</span>
+            <span class:list={['block font-extrabold', a.vial && 'text-vial-texto']}>{a.titulo}</span>
             <span class="mt-1 block text-sm text-texto-2">{a.texto}</span>
           </span>
         </a>
