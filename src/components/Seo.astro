@@ -3,6 +3,7 @@ import type { Contacto, Empresa } from '@/lib/datos/esquemas';
 import { config } from '@/lib/config';
 import { absoluta, ruta } from '@/lib/rutas';
 import { jsonLdOrganizacion, jsonLdSitioWeb } from '@/lib/seo';
+import { COLOR_TEMA, temaInicial } from '@/lib/tema';
 // Preload del subset latin de Archivo: es el mismo archivo que referencia el @font-face de fontsource (Vite lo dedupe por hash).
 import archivoWoff2 from '@fontsource-variable/archivo/files/archivo-latin-wght-normal.woff2?url';
 
@@ -30,7 +31,7 @@ const bloques = [jsonLdOrganizacion(empresa, contacto, inicio, absoluta('/favico
 <meta name="description" content={descripcion} />
 <link rel="canonical" href={canonical} />
 {!config.indexable && <meta name="robots" content="noindex, nofollow" />}
-<meta name="theme-color" content="#0B1526" />
+<meta name="theme-color" content={COLOR_TEMA[temaInicial()]} />
 <link rel="preload" href={archivoWoff2} as="font" type="font/woff2" crossorigin />
 <link rel="icon" href={ruta('/favicon.svg')} type="image/svg+xml" />
 <link rel="apple-touch-icon" href={ruta('/apple-touch-icon.png')} />

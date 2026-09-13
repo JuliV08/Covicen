@@ -1,0 +1,17 @@
+---
+// Botón sol/luna. En oscuro ofrece el sol (pasar a claro); en claro, la luna. El estado real lo pinta scripts/tema.ts.
+import { Moon, Sun } from '@lucide/astro';
+interface Props { class?: string }
+const { class: clase = '' } = Astro.props;
+---
+<button type="button" class:list={['interruptor-tema inline-flex h-11 w-11 items-center justify-center rounded-md border border-borde text-texto transition-colors hover:border-borde-fuerte hover:bg-superficie', clase]} data-tema-boton aria-pressed="false" aria-label="Cambiar a tema claro">
+  <Sun size={20} aria-hidden="true" class="sol" />
+  <Moon size={20} aria-hidden="true" class="luna" />
+</button>
+<script src="../scripts/tema.ts"></script>
+<style>
+  .interruptor-tema :global(.sol) { display: block; }
+  .interruptor-tema :global(.luna) { display: none; }
+  :global(html[data-tema="claro"]) .interruptor-tema :global(.sol) { display: none; }
+  :global(html[data-tema="claro"]) .interruptor-tema :global(.luna) { display: block; }
+</style>
