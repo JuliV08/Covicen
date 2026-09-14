@@ -73,7 +73,9 @@ for (const [tema, tokens] of Object.entries(temas)) {
   }
 }
 
-// 10b. textos prohibidos también en los json y xml emitidos (sitemap, datos): "ausentes en todo dist/"
+// 10b. textos prohibidos también en los json y xml emitidos (sitemap, datos): "ausentes en todo dist/".
+// No se miran js/css/svg: ahí \b681\b haría match en hashes de assets o valores numéricos (`.681;`), y ningún texto de
+// usuario vive en esos archivos.
 const archivosDe = (dir: string): string[] => readdirSync(dir).flatMap((n) => { const r = join(dir, n); return statSync(r).isDirectory() ? archivosDe(r) : [r]; });
 for (const archivo of archivosDe(DIST).filter((a) => /\.(json|xml)$/.test(a))) {
   const contenido = readFileSync(archivo, 'utf8');

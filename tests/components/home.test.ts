@@ -22,8 +22,9 @@ describe('Hero', () => {
 describe('TarifaDestacada', () => {
   it('muestra la categoría destacada al público, la vigencia y la resolución', async () => {
     // Intl separa "$" del número con un espacio no separable (U+00A0 o U+202F): se normaliza con escapes, no con literales.
-    const html = (await render(TarifaDestacada, { tarifario: await fuenteLocalJson.tarifario(), empresa: await fuenteLocalJson.empresa() })).replace(/[  ]/g, ' ');
+    const html = (await render(TarifaDestacada, { tarifario: await fuenteLocalJson.tarifario() })).replace(/[  ]/g, ' ');
     expect(html).toContain('$ 1.500');
+    expect(html).toContain('Autos');
     expect(html).toContain('$ 1.239,67');
     expect(html).toContain('26 de febrero de 2026');
     expect(html).toContain('Cuadro vigente');

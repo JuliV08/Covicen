@@ -8,7 +8,7 @@ import { fechaCorta, fechaLarga, kmTexto, moneda } from '@/lib/formato';
 import { iconoDeTarifa, publico, tarifasParaCabina } from '@/lib/tarifas';
 interface Props { tarifario: Tarifario; cabina?: Cabina; id?: string; compacta?: boolean }
 const { tarifario: t, cabina, id, compacta = false } = Astro.props;
-const filas = tarifasParaCabina(t, cabina?.slug ?? '');
+const filas = tarifasParaCabina(t, cabina?.slug);
 const vigencia = t.vigencia.desde ? `Vigencia: desde el ${fechaLarga(t.vigencia.desde)}.` : `Vigencia: ${t.vigencia.descripcion}`;
 const esHttp = (url: string) => /^https?:\/\//i.test(url);
 const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km !== null ? ` km ${kmTexto(cabina.km)}` : ''}` : 'Todas las estaciones operativas';

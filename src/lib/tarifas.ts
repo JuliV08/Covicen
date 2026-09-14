@@ -7,9 +7,9 @@ export type FilaTarifa = Tarifa & { telepaseSinIva: number | null; manualSinIva:
 
 /** Tarifas que rigen en una cabina: las generales, con las excepciones de esa cabina aplicadas (mismo modelo que el backend).
  *  Manual sin dato (undefined) = igual a TelePASE (Res. 248/2026: un solo precio); manual null = sin valor publicado. */
-export const tarifasParaCabina = (t: Tarifario, cabina: string): FilaTarifa[] =>
+export const tarifasParaCabina = (t: Tarifario, cabina?: string): FilaTarifa[] =>
   t.tarifas.map((f) => {
-    const ex = t.excepciones?.find((e) => e.cabina === cabina && e.categoria === f.categoria);
+    const ex = cabina ? t.excepciones?.find((e) => e.cabina === cabina && e.categoria === f.categoria) : undefined;
     const telepase = ex ? ex.montoSinIva : f.montoSinIva;
     const manualCrudo = ex ? ex.montoManualSinIva : f.montoManualSinIva;
     return { ...f, telepaseSinIva: telepase, manualSinIva: manualCrudo === undefined ? telepase : manualCrudo };

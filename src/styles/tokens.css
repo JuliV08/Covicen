@@ -72,6 +72,10 @@
   --ancho-max: 80rem;
   --brillo-foto: 0.62; /* las fotos de atmósfera se oscurecen para que el texto gane */
   color-scheme: dark;
+  /* Solo para @media print (global.css): papel y tinta no dependen del tema. */
+  --color-papel: #FFFFFF;
+  --color-tinta: #000000;
+  --color-tinta-suave: #999999;
 }
 
 /* Tema claro: mismos nombres, valores del manual (gris-fondo, gris-texto, marca-900 en títulos, marca-700 en links).
