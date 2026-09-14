@@ -1,23 +1,51 @@
 ---
 import { ExternalLink } from '@lucide/astro';
 import Base from '@/layouts/Base.astro';
-import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
 import Boton from '@/components/ui/Boton.astro';
 import Card from '@/components/ui/Card.astro';
 import Seccion from '@/components/ui/Seccion.astro';
-const medios = [
-  { titulo: 'TelePASE', texto: 'El dispositivo es único para toda la red nacional: si ya lo tenés, funciona en el Tramo Centro. No es obligatorio para circular.' },
-  { titulo: 'Efectivo en cabina', texto: 'En las estaciones con cabina (Carcarañá, James Craik, Franck) se puede pagar en efectivo.' },
-  { titulo: 'Free Flow', texto: 'Las estaciones nuevas (Leones, San Francisco, Totoras) se construyen sin barreras: pórticos que leen el vehículo sin detenerlo.' },
+import Senal from '@/components/ui/Senal.astro';
+import { datos } from '@/lib/datos';
+import { cabinaOperativa } from '@/lib/datos/esquemas';
+const [tramo, contacto] = await Promise.all([datos.tramo(), datos.contacto()]);
+const conCabina = tramo.cabinas.filter(cabinaOperativa).map((c) => c.nombre);
+const freeFlow = tramo.cabinas.filter((c) => c.freeFlow).map((c) => c.nombre);
+const colocacion = tramo.cabinas.filter((c) => c.servicios?.colocacionTelepase).map((c) => c.nombre);
+const oficina = contacto.enlaces.oficinaVirtual;
+// Modalidades del pliego (PETG 51.1).
+const modalidades = [
+  { titulo: 'Prepago con TelePASE', texto: 'Cargás saldo por adelantado y cada pasada se descuenta a la tarifa vigente de tu categoría.', fuente: 'PETG art. 51.1.1' },
+  { titulo: 'Pospago con TelePASE', texto: 'Asociás una tarjeta de crédito o débito y pagás a mes vencido. La factura detalla pasadas, estaciones e importes.', fuente: 'PETG art. 51.1.2' },
+  { titulo: 'Contado en la vía', texto: `Efectivo o medios electrónicos en las vías habilitadas de las estaciones con cabina (${conCabina.join(', ')}).`, fuente: 'PETG art. 51.1.3' },
 ];
 ---
-<Base titulo="Medios de pago" descripcion="Cómo pagar el peaje en el Tramo Centro: TelePASE, efectivo en cabina y Free Flow en las estaciones nuevas de RN 9, RN 19 y RN 34." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Medios de pago', href: '/medios-de-pago' }]}>
-  <Seccion nivel="h1" eyebrow="Medios de pago" titulo="Cómo pagar el peaje." intro="Con dispositivo, en efectivo o sin frenar." class="pt-10">
-    <ul class="escalonar grid gap-4 md:grid-cols-3">{medios.map((m, i) => <li style={`--i: ${i}`}><Card><h2 class="text-xl">{m.titulo}</h2><p class="mt-2 text-texto-2">{m.texto}</p></Card></li>)}</ul>
-    <div class="revelar mt-8 flex flex-wrap gap-3">
-      <Boton href="https://www.telepase.com.ar/" variante="secundario" externo>Gestionar TelePASE <ExternalLink size={16} aria-hidden="true" /></Boton>
-      <Boton href="/tarifas" variante="secundario">Ver tarifas</Boton>
+<Base titulo="Medios de pago" descripcion="Cómo pagar el peaje en el Tramo Centro: TelePASE prepago o pospago, pago en la vía en Carcarañá, James Craik y Franck, Free Flow en las estaciones nuevas, y qué hacer si pasaste sin pagar." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Medios de pago', href: '/medios-de-pago' }]}>
+  <Seccion nivel="h1" eyebrow="Medios de pago" titulo="Cómo pagar el peaje." intro="Con TelePASE se paga lo mismo que en la vía. El dispositivo es gratis y sirve en toda la red nacional." class="pt-10">
+    <ul class="escalonar grid gap-4 md:grid-cols-3">{modalidades.map((m, i) => <li style={`--i: ${i}`}><Card><h2 class="text-xl">{m.titulo}</h2><p class="mt-2 text-texto-2">{m.texto}</p><p class="anotacion mt-3 text-xs text-texto-2">Fuente: {m.fuente}</p></Card></li>)}</ul>
+  </Seccion>
+
+  <Seccion id="telepase" indice="01" eyebrow="TelePASE" titulo="Gratis, y en todas las estaciones." intro="La adhesión, el primer dispositivo por vehículo, su colocación, la renovación, la cancelación y la reposición no tienen costo para el usuario (PETG art. 50.5). Los exentos y las tarifas diferenciales también se gestionan con TelePASE." fondo="fondo-2">
+    <div class="revelar grid gap-6 md:grid-cols-2">
+      <div class="tarjeta p-6"><h3 class="text-xl">Cómo adherirte</h3><p class="mt-2 text-texto-2">En el sitio oficial de TelePASE o en un punto de colocación. Elegís prepago o pospago y retirás el dispositivo sin cargo.</p><div class="mt-4"><Boton href={contacto.enlaces.telepase} variante="secundario" externo>Ir a TelePASE <ExternalLink size={16} aria-hidden="true" /></Boton></div></div>
+      <div class="tarjeta p-6"><h3 class="text-xl">Dónde se coloca</h3>{colocacion.length > 0 ? <p class="mt-2 text-texto-2">En los sectores de detención segura de {colocacion.join(', ')}, en días hábiles.</p> : <p class="mt-2 text-texto-2">En los sectores de detención segura de las estaciones, con horarios señalizados en cada una. Publicamos las ubicaciones cuando Covicen las defina.</p>}</div>
     </div>
-    <div class="mt-12"><HuecoCapacidad capacidad="oficinaVirtual" titulo="Pagá tu factura en línea" descripcion="Consulta y pago de facturas cuando esté operativo el sistema de facturación." alternativaHref="/contacto" alternativaTexto="Consultar por WhatsApp" /></div>
+  </Seccion>
+
+  <Seccion id="free-flow" indice="02" eyebrow="Free Flow" titulo="Sin barreras en las estaciones nuevas." intro={`${freeFlow.join(', ')} se construyen sin cabinas: pórticos que leen el TelePASE o la patente sin que frenes. Cobran cuando Vialidad Nacional las habilite.`}>
+    <p class="revelar text-texto-2">Si pasás sin TelePASE por una estación Free Flow, el peaje se paga después por los medios habilitados; pasado el plazo, se aplican los recargos de abajo.</p>
+  </Seccion>
+
+  <Seccion id="mi-cuenta" indice="03" eyebrow="Mi cuenta" titulo="Tus pasadas, facturas y pagos en un solo lugar." intro="La oficina virtual de TelePASE: consultás pasadas y facturas, ves si tenés deuda, descargás comprobantes y pagás." fondo="fondo-2">
+    <div class="revelar flex flex-wrap items-center gap-4">
+      {oficina ? <Boton href={oficina} externo>Entrar a Mi cuenta <ExternalLink size={16} aria-hidden="true" /></Boton> : <><Senal variante="frio">Se habilita con la toma de posesión</Senal><p class="text-texto-2">El acceso se publica acá y en la barra superior del sitio cuando esté disponible.</p></>}
+    </div>
+  </Seccion>
+
+  <Seccion id="sin-pagar" indice="04" eyebrow="Pasaste sin pagar" titulo="Cómo regularizarlo." intro="Si cruzás una estación sin TelePASE vigente y sin pagar (PETG art. 51.1.4):">
+    <ol class="revelar grid gap-4 md:grid-cols-2">
+      <li class="tarjeta p-6"><p class="eyebrow">Dentro de los 30 días</p><p class="mt-2 text-texto-2">La tarifa que correspondía más <strong class="text-texto">una tarifa</strong> de tu categoría.</p></li>
+      <li class="tarjeta p-6"><p class="eyebrow">Después de los 30 días</p><p class="mt-2 text-texto-2">La tarifa más <strong class="text-texto">dos tarifas</strong> de tu categoría, con intereses a la tasa activa del Banco Nación.</p></li>
+    </ol>
+    {contacto.cuentaRegularizacion ? <p class="revelar mt-6 text-texto-2">Podés pagar la deuda por transferencia a: <strong class="text-texto">{contacto.cuentaRegularizacion}</strong>.</p> : <p class="revelar mt-6 text-texto-2">El medio para pagar la deuda se publica acá cuando esté habilitado.</p>}
   </Seccion>
 </Base>
