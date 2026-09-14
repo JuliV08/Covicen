@@ -35,10 +35,17 @@ const hexDe = (css: string): Record<string, string> => {
   return tokens;
 };
 
+/** Texto crudo del bloque `@theme` (tema oscuro) y del bloque `html[data-tema="claro"]`. */
+export const bloqueTheme = (css: string): string => bloque(css, /@theme(?:\s+static)?\s*\{/);
+export const bloqueClaro = (css: string): string => bloque(css, /html\[data-tema="claro"\]\s*\{/);
+
+/** Nombres de TODAS las variables (`--nombre:`) de un bloque: hex, rgb o números. `--color-*` (el reset) no cuenta. */
+export const nombresDeTokens = (texto: string): string[] => [...texto.matchAll(/--([\w-]+):/g)].map((m) => m[1]!);
+
 /** Tokens del tema oscuro: `{ nombre: '#HEX' }` por cada `--color-<nombre>: #hex` del bloque `@theme`. Ignora valores no hex. */
-export const leerTokens = (css: string): Record<string, string> => hexDe(bloque(css, /@theme(?:\s+static)?\s*\{/));
+export const leerTokens = (css: string): Record<string, string> => hexDe(bloqueTheme(css));
 
 /** Tokens del tema claro: los del oscuro, pisados por los de `html[data-tema="claro"] { … }`. */
-export const leerTokensClaro = (css: string): Record<string, string> => ({ ...leerTokens(css), ...hexDe(bloque(css, /html\[data-tema="claro"\]\s*\{/)) });
+export const leerTokensClaro = (css: string): Record<string, string> => ({ ...leerTokens(css), ...hexDe(bloqueClaro(css)) });
 
 export const leerTemas = (css: string): { oscuro: Record<string, string>; claro: Record<string, string> } => ({ oscuro: leerTokens(css), claro: leerTokensClaro(css) });

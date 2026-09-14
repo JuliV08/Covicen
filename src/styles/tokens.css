@@ -30,6 +30,7 @@
   --color-vial-texto: #F0C419;   /* el amarillo usado como texto (en claro se oscurece para llegar a 4.5:1) */
   --color-sobre-vial: #0B1526;   /* texto sobre amarillo */
   --color-sobre-acento: #0B1526; /* texto sobre acento (botón de envío, badges) */
+  --color-sobre-marca: #FFFFFF;  /* texto sobre el navy de marca (botón primario), igual en los dos temas */
   --color-ok: #7BD389;           /* estación operativa */
   --color-sobre-ok: #0B1526;
   --color-error: #FF8A80;
@@ -87,6 +88,7 @@ html[data-tema="claro"] {
   --color-acento-hover: #1E4870;
   --color-vial-texto: #6E5A00;
   --color-sobre-acento: #FFFFFF;
+  --color-sobre-marca: #FFFFFF;
   --color-ok: #1B6B35;
   --color-sobre-ok: #FFFFFF;
   --color-error: #B3261E;

@@ -1,11 +1,14 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { contraste, leerTemas } from '../../scripts/lib/contraste.ts';
+import { bloqueClaro, bloqueTheme, contraste, leerTemas, nombresDeTokens } from '../../scripts/lib/contraste.ts';
 import { paresContraste } from '../../scripts/lib/pares.ts';
 
 const css = readFileSync('src/styles/tokens.css', 'utf8');
 const temas = leerTemas(css);
 const marca = ['marca-900', 'marca-700', 'marca-500', 'marca-300', 'gris-texto', 'gris-fondo', 'vial'];
+// Lo que el bloque claro TIENE que redefinir: los semánticos hex que cambian y los que no son hex (nadie más los mira).
+const semanticosHex = ['fondo', 'fondo-2', 'superficie', 'superficie-2', 'texto', 'texto-2', 'texto-3', 'acento', 'acento-hover', 'vial-texto', 'sobre-acento', 'sobre-marca', 'ok', 'sobre-ok', 'error', 'tarjeta-interior-1', 'tarjeta-interior-2', 'tarjeta-interior-3'];
+const semanticosNoHex = ['color-cabecera', 'color-borde', 'color-borde-fuerte', 'color-glow', 'color-sombra', 'color-plano', 'color-luz', 'brillo-foto'];
 
 describe('tokens', () => {
   it('define los 7 colores del manual de marca', () => {
@@ -20,13 +23,21 @@ describe('tokens', () => {
   it('el tema claro redefine solo la capa semántica: los de marca no cambian', () => {
     for (const k of marca) expect(temas.claro[k], k).toBe(temas.oscuro[k]);
   });
-  it('los dos temas definen exactamente los mismos tokens', () => {
-    expect(Object.keys(temas.claro).sort()).toEqual(Object.keys(temas.oscuro).sort());
+  it('el bloque claro no inventa tokens: cada uno existe en el oscuro (brillo-foto vive en :root)', () => {
+    const enOscuro = new Set([...nombresDeTokens(bloqueTheme(css)), 'brillo-foto']);
+    const claro = nombresDeTokens(bloqueClaro(css));
+    expect(claro.length).toBeGreaterThan(20);
+    for (const n of claro) expect(enOscuro.has(n), `--${n} solo existe en el claro`).toBe(true);
+  });
+  it('el claro redefine todos los semánticos, también los que no son hex (bordes, glow, sombra, plano, luz, cabecera, brillo)', () => {
+    const claro = new Set(nombresDeTokens(bloqueClaro(css)));
+    for (const n of [...semanticosHex.map((s) => `color-${s}`), ...semanticosNoHex]) expect(claro.has(n), `falta --${n} en el bloque claro`).toBe(true);
   });
   it('el claro cambia el fondo al gris del manual y el texto a navy', () => {
     expect(temas.claro['fondo']).toBe('#EEF1F4');
     expect(temas.claro['texto']).toBe('#16304E');
     expect(temas.claro['acento']).toBe('#2C688F');
+    expect(temas.claro['sobre-marca']).toBe('#FFFFFF');
   });
   describe.each(Object.entries(temas))('tema %s', (_nombre, tokens) => {
     it.each(paresContraste)('%s sobre %s cumple AA (≥ 4.5)', (texto, fondo) => {

@@ -90,7 +90,7 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
   .prose-covicen li { margin-top: 0.35rem; }
   .prose-covicen strong { color: var(--color-texto); }
 
-  /* Botón de señalética (amarillo vial): header, barra inferior y <Boton variante="vial">. ÚNICA definición. */
+  /* Botón de señalética (amarillo vial): header y <Boton variante="vial">; la barra inferior lo adopta en la Fase 1. ÚNICA definición. */
   .btn-vial {
     display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; border-radius: var(--radius-md);
     background: var(--color-vial); color: var(--color-sobre-vial); font-weight: 600; text-decoration: none;

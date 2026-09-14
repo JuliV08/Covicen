@@ -22,7 +22,7 @@ const marco: Array<{ titulo: string; descripcion: string; url: string | null }> 
           {m.url ? (
             <a href={m.url} rel="noopener noreferrer" target="_blank" class="link-crece mt-4 inline-flex items-center gap-1 text-sm" aria-label={`Fuente oficial: ${m.titulo} (se abre en otra pestaña)`}>Fuente oficial <ExternalLink size={14} aria-hidden="true" /></a>
           ) : (
-            <p class="mt-4 text-xs text-texto-3">Publicada en el Boletín Oficial de la República Argentina.</p>
+            <p class="mt-4 text-xs text-texto-2">Publicada en el Boletín Oficial de la República Argentina.</p>
           )}
         </li>
       ))}

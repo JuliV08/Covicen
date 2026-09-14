@@ -7,6 +7,7 @@ const temaActual = (): Tema => (document.documentElement.dataset.tema === 'claro
 const pintarBotones = () => {
   const tema = temaActual();
   document.querySelectorAll<HTMLButtonElement>('[data-tema-boton]').forEach((b) => {
+    b.hidden = false;
     b.setAttribute('aria-pressed', String(tema === 'claro'));
     b.setAttribute('aria-label', `Cambiar a tema ${otroTema(tema)}`);
   });

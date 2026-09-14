@@ -11,7 +11,7 @@ const releerColores = () => {
   ACTIVA = { ...colorDeToken('--color-acento'), a: 0.9 };
   GLOW = colorDeToken('--color-acento');
 };
-const repintar: Array<() => void> = [];
+const repintar = new WeakMap<HTMLCanvasElement, () => void>();
 type Onda = { x: number; y: number; radio: number; opacidad: number; nacida: number };
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const suavizar = (t: number) => t * t * (3 - 2 * t);
@@ -31,7 +31,7 @@ const montar = (canvas: HTMLCanvasElement, interactivo: boolean) => {
     canvas.width = w; canvas.height = h; // DPR 1 a propósito: es un fondo, y así el costo es mínimo
     dibujar(performance.now());
   };
-  repintar.push(() => dibujar(performance.now()));
+  repintar.set(canvas, () => dibujar(performance.now()));
 
   const desplazar = (x: number, y: number, c: number, f: number, cols: number, filas: number, t: number) => {
     const bordeC = Math.min(c / 1.5, (cols - 1 - c) / 1.5, 1);
@@ -123,6 +123,6 @@ const iniciar = () => {
   document.querySelectorAll<HTMLCanvasElement>('canvas[data-grilla]:not([data-montada])').forEach((c) => { c.dataset.montada = ''; montar(c, interactivo); });
 };
 document.addEventListener('astro:page-load', iniciar);
-document.addEventListener('tema:cambio', () => { releerColores(); repintar.forEach((f) => f()); });
+document.addEventListener('tema:cambio', () => { releerColores(); document.querySelectorAll<HTMLCanvasElement>('canvas[data-grilla][data-montada]').forEach((c) => repintar.get(c)?.()); });
 
 export {};

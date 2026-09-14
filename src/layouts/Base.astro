@@ -10,7 +10,7 @@ import Seo from '@/components/Seo.astro';
 import { datos } from '@/lib/datos';
 import { absoluta } from '@/lib/rutas';
 import { jsonLdMigas } from '@/lib/seo';
-import { CLAVE_TEMA, COLOR_TEMA, TEMA_POR_DEFECTO } from '@/lib/tema';
+import { CLAVE_TEMA, COLOR_TEMA, TEMA_POR_DEFECTO, temaInicial } from '@/lib/tema';
 
 interface Props {
   titulo: string;
@@ -28,7 +28,7 @@ const bloques = migas
   : jsonLd;
 ---
 <!doctype html>
-<html lang="es-AR">
+<html lang="es-AR" data-tema={temaInicial()}>
   <head>
     <Seo {titulo} {descripcion} jsonLd={bloques} {tipo} {imagen} {empresa} {contacto} />
     <!-- Tema ANTES de pintar (sin destello) y en cada navegación: ClientRouter reemplaza los atributos de <html>.
