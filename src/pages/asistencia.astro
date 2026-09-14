@@ -1,0 +1,14 @@
+---
+// Página mínima hasta la Fase 5 (botón de asistencia con ubicación): el canal "asistencia" del pliego apunta acá.
+import Base from '@/layouts/Base.astro';
+import Boton from '@/components/ui/Boton.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import { datos } from '@/lib/datos';
+const contacto = await datos.contacto();
+const tel = contacto.emergencias.telefono;
+---
+<Base titulo="Asistencia en ruta" descripcion="Pedí asistencia en la ruta: llamá al 140, gratis y las 24 horas, y decí ruta, sentido y kilómetro. El botón de asistencia con tu ubicación se habilita con la toma de posesión." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Asistencia en ruta', href: '/asistencia' }]}>
+  <Seccion nivel="h1" eyebrow="Asistencia" titulo="Pedí asistencia en la ruta." intro={`Llamá al ${tel}: es gratis desde cualquier celular y atiende las 24 horas. Decí ruta, sentido y kilómetro.`} class="pt-10">
+    <div class="revelar flex flex-wrap gap-3"><Boton href={`tel:${tel}`} variante="vial" ariaLabel={`Llamar a emergencias, ${tel}`}>Llamar al {tel}</Boton><Boton href="/emergencias" variante="secundario">Qué hacer ante una emergencia</Boton></div>
+  </Seccion>
+</Base>

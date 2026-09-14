@@ -1,0 +1,32 @@
+---
+// Tabla de canales de atención con los plazos del pliego (PETG 58): acuse (TA) y respuesta (TR). Un canal sin valor
+// existe por contrato pero todavía no está habilitado: se dice cuándo, sin inventar un número.
+import type { Canal } from '@/lib/datos/esquemas';
+import { ruta } from '@/lib/rutas';
+interface Props { canales: Canal[]; compacto?: boolean }
+const { canales, compacto = false } = Astro.props;
+const enlace = (c: Canal) => {
+  if (!c.valor) return null;
+  if (c.tipo === 'telefono') return { href: `tel:${c.valor.replace(/[^\d+]/g, '')}`, texto: c.valor };
+  if (c.tipo === 'correo') return { href: `mailto:${c.valor}`, texto: c.valor };
+  if (c.tipo === 'whatsapp') return { href: `https://wa.me/${c.valor}`, texto: 'Abrir WhatsApp' };
+  if (c.tipo === 'web') return { href: c.valor.startsWith('/') ? ruta(c.valor) : c.valor, texto: 'Abrir' };
+  return null;
+};
+---
+<div class="overflow-x-auto rounded-md border border-borde" tabindex="0" role="region" aria-label="Canales de atención y plazos">
+  <table class="w-full border-collapse text-left text-sm">
+    <caption class="sr-only">Canales de atención al usuario con su disponibilidad, tiempo de acuse y tiempo de respuesta.</caption>
+    <thead class="bg-fondo-2 uppercase tracking-wider text-texto-2"><tr><th scope="col" class="px-4 py-3">Canal</th>{!compacto && <th scope="col" class="px-4 py-3">Disponibilidad</th>}<th scope="col" class="px-4 py-3">Acuse</th><th scope="col" class="px-4 py-3">Respuesta</th></tr></thead>
+    <tbody class="divide-y divide-borde">
+      {canales.map((c) => { const e = enlace(c); return (
+        <tr class="hover:bg-superficie">
+          <th scope="row" class="px-4 py-3 font-semibold text-texto">{c.nombre}<span class="block text-sm font-normal text-texto-2">{e ? <a href={e.href} rel={e.href.startsWith('http') ? 'noopener noreferrer' : undefined} target={e.href.startsWith('http') ? '_blank' : undefined}>{e.texto}</a> : 'Se habilita con la toma de posesión, el 5 de octubre de 2026.'}</span></th>
+          {!compacto && <td class="px-4 py-3 text-texto-2">{c.disponibilidad}</td>}
+          <td class="px-4 py-3 text-texto-2">{c.acuse}</td>
+          <td class="px-4 py-3 text-texto-2">{c.respuesta}</td>
+        </tr>
+      ); })}
+    </tbody>
+  </table>
+</div>
