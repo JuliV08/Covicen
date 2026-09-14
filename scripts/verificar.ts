@@ -88,6 +88,11 @@ for (const slug of ['carcarana', 'james-craik', 'franck', 'leones', 'san-francis
 }
 for (const p of ['asistencia', 'tramites']) if (!existsSync(join(DIST, p, 'index.html'))) fallo(`falta la página /${p}/`);
 
+// 12. la hoja de impresión (pliego 61.7) está en el CSS emitido, con el encabezado de la hoja y las URL de los enlaces externos
+const css = readdirSync(join(DIST, '_astro')).filter((f) => f.endsWith('.css')).map((f) => readFileSync(join(DIST, '_astro', f), 'utf8')).join('\n');
+if (!css.includes('@media print')) fallo('el CSS emitido no tiene la hoja de impresión (@media print)');
+if (!css.includes('attr(data-fecha)') || !css.includes('attr(href)')) fallo('la hoja de impresión emitida perdió el encabezado o las URL de los enlaces');
+
 // 9. presupuesto de JS enviado
 const archivosJs = readdirSync(join(DIST, '_astro')).filter((f) => f.endsWith('.js'));
 const totalJs = archivosJs.reduce((s, f) => s + gzipSync(readFileSync(join(DIST, '_astro', f))).length, 0);

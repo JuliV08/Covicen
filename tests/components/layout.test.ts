@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import Base from '@/layouts/Base.astro';
@@ -41,6 +42,16 @@ describe('Base', () => {
     expect(html).toContain('href="tel:140"');
     expect(html).toContain('aria-label="Llamar a emergencias, 140"');
     expect(html).not.toContain('data-emergencias="a-confirmar"');
+  });
+  it('impresión: el body lleva el sitio y la fecha del encabezado de la hoja (pliego 61.7)', async () => {
+    const html = await render('/tarifas/', { titulo: 'Tarifas', descripcion: 'x' });
+    expect(html).toMatch(/<body[^>]*data-sitio="covicen\.test"/);
+    expect(html).toMatch(/<body[^>]*data-fecha="\d{1,2}\/\d{1,2}\/\d{4}"/);
+  });
+  it('el destino del skip link tiene foco visible: sin outline-none y con su regla de foco', async () => {
+    const html = await render('/tarifas/', { titulo: 'Tarifas', descripcion: 'x' });
+    expect(html).not.toMatch(/<main[^>]*outline-none/);
+    expect(readFileSync('src/layouts/Base.astro', 'utf8')).toMatch(/#contenido:focus-visible[^{]*\{[^}]*outline:\s*2px solid var\(--color-acento\)/);
   });
 });
 

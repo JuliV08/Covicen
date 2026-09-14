@@ -1,4 +1,5 @@
 ---
+import { Printer } from '@lucide/astro';
 import Base from '@/layouts/Base.astro';
 import TablaTarifas from '@/components/TablaTarifas.astro';
 import TarjetaEstacion from '@/components/TarjetaEstacion.astro';
@@ -32,7 +33,10 @@ const jsonLd = [{
       <TarjetaEstacion {cabina} completa nivel="h2" />
       <div class="flex flex-col gap-6" data-tarifas-estacion>
         {estado.clave === 'operativa' ? (
-          <TablaTarifas {tarifario} {cabina} />
+          <>
+            <TablaTarifas {tarifario} {cabina} />
+            <div><button type="button" class="inline-flex items-center gap-2 rounded-md border border-borde px-4 py-2 font-semibold text-texto hover:border-borde-fuerte hover:bg-superficie" data-imprimir><Printer size={18} aria-hidden="true" /> Imprimir el cuadro</button></div>
+          </>
         ) : (
           <p class="text-lg text-texto-2">Esta estación todavía no cobra: la habilita Vialidad Nacional cuando esté construida. Va a operar con Free Flow, sin barreras, y con el mismo cuadro tarifario que Carcarañá.</p>
         )}

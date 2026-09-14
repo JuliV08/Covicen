@@ -72,9 +72,12 @@
   --ancho-max: 80rem;
   --brillo-foto: 0.62; /* las fotos de atmósfera se oscurecen para que el texto gane */
   color-scheme: dark;
-  /* Solo para @media print (global.css): papel y tinta no dependen del tema. */
+  /* Solo para @media print (impresion.css): papel y tinta no dependen del tema. Grises: tinta-2 para el texto terciario
+     (12,6:1 sobre papel), tinta-media para bordes de tarjetas y la regla del encabezado, tinta-suave para bordes finos. */
   --color-papel: #FFFFFF;
   --color-tinta: #000000;
+  --color-tinta-2: #333333;
+  --color-tinta-media: #666666;
   --color-tinta-suave: #999999;
 }
 

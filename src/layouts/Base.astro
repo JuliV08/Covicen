@@ -7,6 +7,7 @@ import Footer from '@/components/Footer.astro';
 import Header from '@/components/Header.astro';
 import HiloRuta from '@/components/HiloRuta.astro';
 import Seo from '@/components/Seo.astro';
+import { config } from '@/lib/config';
 import { datos } from '@/lib/datos';
 import { absoluta } from '@/lib/rutas';
 import { jsonLdMigas } from '@/lib/seo';
@@ -26,6 +27,10 @@ const [empresa, contacto, avisos] = await Promise.all([datos.empresa(), datos.co
 const bloques = migas
   ? [...jsonLd, jsonLdMigas([{ nombre: 'Inicio', url: absoluta('/') }, ...migas.map((m) => ({ nombre: m.nombre, url: absoluta(m.href) }))])]
   : jsonLd;
+// Encabezado de la hoja de impresión (impresion.css lee data-sitio y data-fecha del <body>). La fecha es la del build,
+// el fallback sin JS: imprimir.ts la pisa con la del momento de imprimir.
+const sitio = config.sitio.replace(/^https?:\/\//, '');
+const impreso = new Date().toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
 ---
 <!doctype html>
 <html lang="es-AR" data-tema={temaInicial()}>
@@ -51,11 +56,11 @@ const bloques = migas
     <!-- Sin JS y sin scroll-driven animations, el fallback de reveal dejaría todo en opacity:0. -->
     <noscript><style>.revelar, .escalonar > * { opacity: 1 !important; transform: none !important; }</style></noscript>
   </head>
-  <body class="flex min-h-dvh flex-col bg-fondo pb-20 text-texto sm:pb-0">
+  <body class="flex min-h-dvh flex-col bg-fondo pb-20 text-texto sm:pb-0" data-sitio={sitio} data-fecha={impreso}>
     <a href="#contenido" class="salto">Saltar al contenido</a>
     <Header {contacto} {avisos} rutaActual={Astro.url.pathname} />
     <HiloRuta />
-    <main id="contenido" tabindex="-1" class:list={['flex-1 pt-[var(--alto-header)] outline-none', claseMain]}>
+    <main id="contenido" tabindex="-1" class:list={['flex-1 pt-[var(--alto-header)]', claseMain]}>
       {migas && <Breadcrumbs {migas} />}
       <slot />
     </main>
@@ -65,9 +70,13 @@ const bloques = migas
     <script src="../scripts/menu.ts"></script>
     <script src="../scripts/spotlight.ts"></script>
     <script src="../scripts/contador.ts"></script>
+    <script src="../scripts/imprimir.ts"></script>
   </body>
 </html>
 <style is:global>
   .salto { position: absolute; left: 1rem; top: -100%; z-index: 100; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: var(--color-vial); color: var(--color-sobre-vial); font-weight: 600; text-decoration: none; }
   .salto:focus { top: 1rem; }
+  /* Destino del salto: foco visible (pliego 61.7). El anillo va hacia adentro porque <main> ocupa todo el ancho y arranca
+     bajo el header fijo: hacia afuera lo recortaría el viewport y lo taparía el header. */
+  #contenido:focus-visible { outline: 2px solid var(--color-acento); outline-offset: -4px; border-radius: var(--radius-sm); }
 </style>

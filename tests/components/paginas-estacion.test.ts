@@ -12,6 +12,8 @@ describe('/peajes/[slug]/', () => {
     expect(html.match(/<h1/g)?.length).toBe(1);
     expect(html).toContain('"@type":"Place"');
     expect(html).toContain('href="tel:140"');
+    // spec §11: el botón Imprimir también en la página de la estación (ahí hay un cuadro que imprimir)
+    expect(html).toContain('data-imprimir');
   });
   it('una estación próxima explica que todavía no cobra', async () => {
     const rutas = await getStaticPaths();
@@ -19,5 +21,6 @@ describe('/peajes/[slug]/', () => {
     const html = await c.renderToString(Peaje, { request: new Request('https://covicen.test/peajes/totoras/'), params: { slug: 'totoras' }, props: rutas.find((r) => r.params.slug === 'totoras')!.props });
     expect(html).toContain('todavía no cobra');
     expect(html).not.toContain('Ficha completa');
+    expect(html).not.toContain('data-imprimir');
   });
 });

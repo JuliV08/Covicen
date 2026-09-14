@@ -1,0 +1,74 @@
+/* Vista de impresión (pliego 61.7, spec §11). Papel blanco, tinta negra, sin cromo del sitio ni animaciones; las URL de
+   los enlaces externos visibles; las tablas completas; todas las tarjetas de estación aunque el mapa interactivo esté
+   mostrando una sola. Colores: SOLO los tokens de papel y tinta del :root de tokens.css. Los semánticos se pisan acá, así
+   todo lo que usa tokens (utilidades de Tailwind incluidas) sale en blanco y negro sin tocar un componente. */
+@media print {
+  @page { margin: 1.5cm; }
+
+  /* Papel y tinta en los dos temas. Sin @layer a propósito: le gana a la capa `theme` y, por orden, al bloque claro. */
+  :root, html[data-tema="claro"] {
+    color-scheme: light;
+    --color-fondo: var(--color-papel); --color-fondo-2: var(--color-papel);
+    --color-superficie: var(--color-papel); --color-superficie-2: var(--color-papel); --color-cabecera: var(--color-papel);
+    --color-tarjeta-interior-1: var(--color-papel); --color-tarjeta-interior-2: var(--color-papel); --color-tarjeta-interior-3: var(--color-papel);
+    --color-texto: var(--color-tinta); --color-texto-2: var(--color-tinta); --color-texto-3: var(--color-tinta-2);
+    --color-acento: var(--color-tinta); --color-acento-hover: var(--color-tinta);
+    --color-ok: var(--color-tinta); --color-error: var(--color-tinta); --color-vial-texto: var(--color-tinta);
+    /* el amarillo vial pasa a gris medio: en el mapa las estaciones próximas se distinguen de las operativas (negras)
+       también en blanco y negro. Lo que va sobre un fondo de color se escribe en tinta: si el navegador no imprime fondos,
+       el texto sigue ahí. */
+    --color-vial: var(--color-tinta-media);
+    --color-sobre-vial: var(--color-tinta); --color-sobre-ok: var(--color-tinta); --color-sobre-acento: var(--color-tinta); --color-sobre-marca: var(--color-tinta);
+    --color-borde: var(--color-tinta-suave); --color-borde-fuerte: var(--color-tinta-media);
+    --color-glow: transparent; --color-sombra: transparent; --color-plano: transparent; --color-luz: transparent;
+    --brillo-foto: 1;
+  }
+
+  *, *::before, *::after { animation: none !important; transition: none !important; box-shadow: none !important; text-shadow: none !important; }
+  /* Lo que en pantalla entra animado (revelar.ts, scroll-driven, coreografía del hero) en papel ya está en su lugar. */
+  .revelar, .escalonar > *, .entrada > *, .aparece { opacity: 1 !important; transform: none !important; filter: none !important; }
+  .dibujar { stroke-dashoffset: 0 !important; }
+
+  html { background: var(--color-papel); }
+  body { padding: 0 !important; background: var(--color-papel) !important; color: var(--color-tinta) !important; }
+  /* Encabezado de la hoja: sitio y fecha vienen del <body> (Base.astro); la fecha la refresca imprimir.ts al imprimir. */
+  body::before {
+    content: "Covicen · " attr(data-sitio) " · impreso el " attr(data-fecha);
+    display: block; padding: 0 0 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--color-tinta-media);
+    font-size: 12px; color: var(--color-tinta-2);
+  }
+
+  /* Cromo de pantalla: el header del sitio (con barra superior y anuncios; `body > header` porque las secciones también
+     usan <header> para su título), la navegación del footer, las navegaciones internas de anclas (las migas quedan),
+     todo lo fijo o pegado (barra del 140, hilo de progreso), el salto al contenido, los fondos animados y los controles. */
+  body > header, footer nav, .fixed, .sticky, .salto, .hilo-mobile, canvas, [data-grilla], .costura, .scrollea, .parallax, .hero-luz, .divisor,
+  main nav:not([aria-label="Migas de pan"]), button, .control, .punto, [data-anuncios] {
+    display: none !important;
+  }
+  main { padding-top: 0 !important; }
+  .hero, .hero > .contenedor { min-height: 0 !important; }
+  .seccion-cinetica, .plano { background: none !important; }
+  section { padding-block: 1.5rem !important; }
+  h1 { font-size: 2rem; } h2 { font-size: 1.5rem; } h3 { font-size: 1.2rem; }
+  h1, h2, h3 { break-after: avoid; }
+
+  /* Tarjetas, chips y botones-enlace: un borde fino, sin halo, degradé ni fondo. */
+  .tarjeta { background: none !important; border: 1px solid var(--color-tinta-media) !important; break-inside: avoid; }
+  .tarjeta::before, .tarjeta::after { content: none !important; }
+  .senal, .btn, .btn-vial { background: none !important; color: var(--color-tinta) !important; border: 1px solid var(--color-tinta-media) !important; }
+  .btn-puntos, .btn-primario::after { display: none !important; }
+
+  /* Enlaces en tinta y subrayados; los externos muestran su URL (los internos ya están en el sitio que dice el encabezado). */
+  a { color: var(--color-tinta) !important; text-decoration: underline; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 12px; word-break: break-all; }
+
+  /* Lo que el JS esconde para mostrar de a uno sale completo: las seis tarjetas de estación y las diapositivas del hero.
+     Tailwind pone `display: none !important` en [hidden]; esta excepción es más específica y también importante. */
+  [data-tarjeta-estacion][hidden], [data-slide][hidden] { display: block !important; }
+
+  /* Tablas completas: sin scroll horizontal, sin corte de página adentro, encabezado repetido si igual se corta. */
+  .overflow-x-auto { overflow: visible !important; }
+  table { break-inside: avoid; width: 100%; }
+  thead { display: table-header-group; }
+  tr, img, li { break-inside: avoid; }
+}
