@@ -8,7 +8,7 @@ const [e, contacto] = await Promise.all([datos.empresa(), datos.contacto()]);
   <Seccion nivel="h1" eyebrow="Privacidad" titulo="Qué datos recibimos y qué hacemos con ellos." class="pt-10">
     <div class="revelar prose-covicen max-w-prose text-texto-2">
       <h2>Responsable</h2>
-      <p>{e.marca} ({e.descriptor}){e.enFormacion ? ', sociedad en formación' : `, ${e.razonSocial}, CUIT ${e.cuit}`}. Los datos de contacto del responsable se publican en el pie de página cuando se complete la inscripción.</p>
+      <p>{e.marca}{e.enFormacion ? ', sociedad en formación' : `, ${e.razonSocial}, CUIT ${e.cuit}`}. Los datos de contacto del responsable se publican en el pie de página cuando se complete la inscripción.</p>
       <h2>Qué datos recibimos</h2>
       <p>Este sitio no tiene cuentas de usuario, no usa cookies de terceros ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos por WhatsApp o por correo desde los formularios: nombre, contacto y el contenido de tu mensaje.</p>
       <h2>Para qué</h2>

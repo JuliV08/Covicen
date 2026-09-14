@@ -3,7 +3,7 @@ import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
 import { jsonLdArticulo, jsonLdFaq, jsonLdMigas, jsonLdOrganizacion, jsonLdSitioWeb } from '@/lib/seo';
 
 describe('JSON-LD', () => {
-  it('Organization sin CUIT, con área servida y sin contactPoint si no hay teléfono', async () => {
+  it('Organization sin CUIT ni alternateName, con área servida y con el 140 como contacto de emergencia', async () => {
     const o = jsonLdOrganizacion(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto(), 'https://covicen.test', 'https://covicen.test/isotipo.svg');
     expect(o['@type']).toBe('Organization');
     expect(o.name).toBe('Covicen');
@@ -12,7 +12,8 @@ describe('JSON-LD', () => {
       { '@type': 'AdministrativeArea', name: 'Santa Fe' },
     ]);
     expect(o).not.toHaveProperty('taxID');
-    expect(o).not.toHaveProperty('contactPoint');
+    expect(o).not.toHaveProperty('alternateName');
+    expect(o.contactPoint).toEqual([{ '@type': 'ContactPoint', telephone: '140', contactType: 'emergency', areaServed: 'AR', availableLanguage: 'es' }]);
   });
   it('WebSite', () => expect(jsonLdSitioWeb('https://covicen.test')['@type']).toBe('WebSite'));
   it('FAQPage con mainEntity', async () => {

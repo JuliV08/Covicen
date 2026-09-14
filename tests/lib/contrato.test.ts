@@ -32,4 +32,22 @@ describe('contrato exportado (docs/contrato)', () => {
     expect(cabina.properties).toHaveProperty('freeFlow');
     expect(cabina.required).not.toContain('freeFlow');
   });
+
+  it('los campos nuevos del tramo y del tarifario son opcionales (el backend no está obligado a mandarlos)', () => {
+    const { tramo, tarifario } = exportarContrato() as {
+      tramo: { properties: { cabinas: { items: { required: string[]; properties: Record<string, unknown> } }; rutas: { items: { required: string[]; properties: Record<string, unknown> } } } };
+      tarifario: { required: string[]; properties: Record<string, unknown> & { tarifas: { items: { required: string[]; properties: Record<string, unknown> } }; origen: { enum: string[] } } };
+    };
+    for (const campo of ['vias', 'operativa', 'sentido', 'telefono', 'horarioAtencion', 'servicios']) {
+      expect(tramo.properties.cabinas.items.properties).toHaveProperty(campo);
+      expect(tramo.properties.cabinas.items.required).not.toContain(campo);
+    }
+    for (const campo of ['pkInicial', 'pkFinal']) expect(tramo.properties.rutas.items.required).not.toContain(campo);
+    for (const campo of ['resolucion', 'cabinas', 'categoriaDestacada', 'excepciones']) {
+      expect(tarifario.properties).toHaveProperty(campo);
+      expect(tarifario.required).not.toContain(campo);
+    }
+    expect(tarifario.properties.tarifas.items.required).not.toContain('montoManualSinIva');
+    expect(tarifario.properties.origen.enum).toEqual(['oferta', 'homologada', 'heredado']);
+  });
 });

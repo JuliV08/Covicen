@@ -7,7 +7,6 @@ export const jsonLdOrganizacion = (e: Empresa, c: Contacto, sitio: string, logoU
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: e.marca,
-    alternateName: e.descriptor,
     url: sitio,
     logo: logoUrl,
     description: `Concesionaria del Tramo Centro de la Red Federal de Concesiones: ${e.concesion.rutas.join(', ')} en ${e.concesion.provincias.join(' y ')}.`,
@@ -16,11 +15,10 @@ export const jsonLdOrganizacion = (e: Empresa, c: Contacto, sitio: string, logoU
   };
   if (e.razonSocial) o.legalName = e.razonSocial;
   if (e.cuit) o.taxID = e.cuit;
-  if (c.emergencias.telefono) {
-    o.contactPoint = [
-      { '@type': 'ContactPoint', telephone: c.emergencias.telefono, contactType: 'emergency', areaServed: 'AR', availableLanguage: 'es' },
-    ];
-  }
+  // El 140 es obligatorio por pliego (PETG 59), así que siempre hay un punto de contacto de emergencia.
+  o.contactPoint = [
+    { '@type': 'ContactPoint', telephone: c.emergencias.telefono, contactType: 'emergency', areaServed: 'AR', availableLanguage: 'es' },
+  ];
   const sameAs = Object.values(c.redes).filter(Boolean);
   if (sameAs.length) o.sameAs = sameAs;
   return o;

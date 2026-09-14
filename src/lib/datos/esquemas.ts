@@ -12,10 +12,13 @@ export type NombreRuta = z.infer<typeof esquemaNombreRuta>;
 
 export const esquemaEmpresa = z.object({
   marca: z.literal('Covicen'),
-  descriptor: z.string().min(1),
   razonSocial: z.string().min(1).nullable(),
   cuit: z.string().regex(/^\d{2}-\d{8}-\d$/).nullable(),
   domicilioLegal: z.string().min(1).nullable(),
+  /** El pliego (PETG 61.6) pide legal Y comercial. */
+  domicilioComercial: z.string().min(1).nullable(),
+  /** Adónde lleva el QR de Data Fiscal (constancia de inscripción). */
+  constanciaUrl: url.nullable(),
   enFormacion: z.boolean(),
   consorcio: z.array(z.object({ nombre: z.string().min(1), descripcion: z.string().min(1) })).min(1),
   concesion: z.object({
@@ -27,6 +30,7 @@ export const esquemaEmpresa = z.object({
     prorrogaAnios: z.number().int().nonnegative(),
     inicioOperacion: fechaIso,
     adjudicacion: z.object({ fecha: fechaIso, resolucion: z.string().min(1), url }),
+    /** Tarifa ofertada en la adjudicación. Es un dato histórico para explicar cómo se fija la tarifa; NO es el precio vigente. */
     tarifaOfertadaSinIva: z.number().positive(),
     tarifaTopeSinIva: z.number().positive(),
     tramosEtapa: z.number().int().positive(),
@@ -34,8 +38,26 @@ export const esquemaEmpresa = z.object({
 });
 export type Empresa = z.infer<typeof esquemaEmpresa>;
 
+/** Un canal de atención con los plazos del pliego (PETG 58). `valor` null = existe por pliego, todavía no habilitado. */
+export const esquemaCanal = z.object({
+  id: slug,
+  nombre: z.string().min(1),
+  tipo: z.enum(['telefono', 'web', 'correo', 'whatsapp', 'presencial']),
+  valor: z.string().min(1).nullable(),
+  disponibilidad: z.string().min(1),
+  acuse: z.string().min(1),
+  respuesta: z.string().min(1),
+  fuente: z.string().min(1),
+});
+export type Canal = z.infer<typeof esquemaCanal>;
+
 export const esquemaContacto = z.object({
-  emergencias: z.object({ telefono: z.string().regex(/^[0-9+\- ]{6,20}$/).nullable(), etiqueta: z.string().min(1) }),
+  /** Número corto de emergencia (PETG 59): obligatorio. */
+  emergencias: z.object({ telefono: z.string().regex(/^[0-9+\- ]{3,20}$/), etiqueta: z.string().min(1) }),
+  /** Línea gratuita 0800 (PETG 61.1). */
+  lineaGratuita: z.string().regex(/^[0-9+\- ]{6,20}$/).nullable(),
+  /** atencionalusuario@covicen.com.ar (PETG 61.5). Se publica cuando la casilla funcione. */
+  atencionUsuario: z.email().nullable(),
   /** E.164 sin '+', ej. 5493510000000 → wa.me/5493510000000 */
   whatsapp: z.object({ numero: z.string().regex(/^\d{10,15}$/).nullable() }),
   email: z.object({
@@ -44,7 +66,10 @@ export const esquemaContacto = z.object({
     proveedores: z.email().nullable(),
     etica: z.email().nullable(),
   }),
-  redes: z.object({ instagram: url.optional(), x: url.optional(), linkedin: url.optional() }),
+  redes: z.object({ instagram: url.optional(), x: url.optional(), linkedin: url.optional(), facebook: url.optional(), youtube: url.optional() }),
+  /** oficinaVirtual: Telepeaje Plus, cuando exista. atencionDnv: canales de atención al usuario de la DNV (PETG 61.6), cuando indiquen la URL. */
+  enlaces: z.object({ telepase: url, oficinaVirtual: url.nullable(), atencionDnv: url.nullable() }),
+  canales: z.array(esquemaCanal),
 });
 export type Contacto = z.infer<typeof esquemaContacto>;
 
@@ -54,6 +79,9 @@ export const esquemaRuta = z.object({
   desde: z.string().min(1),
   hasta: z.string().min(1),
   km: z.number().positive().nullable(),
+  /** Progresivas del PETP art. 1. Sirven para ubicar incidentes por km sobre el trazo del mapa. */
+  pkInicial: z.number().nonnegative().optional(),
+  pkFinal: z.number().positive().optional(),
   nota: z.string().optional(),
 });
 export type Ruta = z.infer<typeof esquemaRuta>;
@@ -67,6 +95,8 @@ export const esquemaCiudad = z.object({
   provincia: z.string().min(1),
   mapa: puntoMapa,
   principal: z.boolean().default(false),
+  /** 'empalme' = nodo del trazado que no es una ciudad (ej. el empalme RN 34 / RN 19 donde termina la concesión). */
+  tipo: z.enum(['ciudad', 'empalme']).default('ciudad'),
 });
 export type Ciudad = z.infer<typeof esquemaCiudad>;
 
@@ -81,10 +111,26 @@ export const esquemaCabina = z.object({
   estado: z.enum(['confirmada', 'a-confirmar']),
   /** Peaje sin barrera. Lo informa el sistema; opcional para el JSON del repo. */
   freeFlow: z.boolean().optional(),
+  /** Cobra hoy (verde en el mapa). Si falta, se deriva de `situacion` (ver cabinaOperativa). */
+  operativa: z.boolean().optional(),
+  vias: z.number().int().positive().optional(),
+  sentido: z.enum(['ambos', 'ascendente', 'descendente']).optional(),
+  telefono: z.string().min(3).optional(),
+  horarioAtencion: z.string().min(1).optional(),
+  servicios: z
+    .object({
+      areaDescanso: z.boolean().optional(),
+      detencionSegura: z.boolean().optional(),
+      gruaGratuita: z.boolean().optional(),
+      sanitarios: z.boolean().optional(),
+      colocacionTelepase: z.boolean().optional(),
+    })
+    .optional(),
   mapa: puntoMapa,
   fuente: z.object({ nombre: z.string().min(1), url }).optional(),
 });
 export type Cabina = z.infer<typeof esquemaCabina>;
+export const cabinaOperativa = (c: Cabina): boolean => c.operativa ?? c.situacion === 'existente';
 
 export const esquemaTramo = z.object({
   km: z.number().positive(),
@@ -102,9 +148,14 @@ export const esquemaTarifa = z.object({
   categoria: slug,
   nombre: z.string().min(1),
   descripcion: z.string().min(1),
+  /** Con TelePASE (la columna principal). */
   montoSinIva: z.number().positive().nullable(),
   /** Lo calcula el sistema (IVA + redondeo). La UI sigue formateando con lib/formato.ts. */
   montoConIva: z.number().positive().nullable().optional(),
+  /** Pago electrónico o manual en la vía. Hoy igual al de TelePASE (Res. 248/2026); rige distinto cuando haya vías 100% automáticas. */
+  montoManualSinIva: z.number().positive().nullable().optional(),
+  /** Múltiplo de la tarifa básica (PETG 53.2). Informativo. */
+  multiplicador: z.number().positive().optional(),
   nota: z.string().optional(),
 });
 export type Tarifa = z.infer<typeof esquemaTarifa>;
@@ -114,8 +165,18 @@ export const esquemaTarifario = z.object({
   vigencia: z.object({ desde: fechaIso.nullable(), descripcion: z.string().min(1) }),
   moneda: z.literal('ARS'),
   alicuotaIva: z.number().min(0).max(1),
-  origen: z.enum(['oferta', 'homologada']),
+  /** 'heredado' = cuadro de la concesionaria saliente que rige desde la toma de posesión (PETP art. 3). */
+  origen: z.enum(['oferta', 'homologada', 'heredado']),
+  resolucion: z.string().min(1).optional(),
+  /** Slugs de las cabinas donde rige. Ausente = todas las operativas. */
+  cabinas: z.array(slug).optional(),
+  /** Tarifa que muestra el home. Ausente = la primera. */
+  categoriaDestacada: slug.optional(),
   tarifas: z.array(esquemaTarifa).min(1),
+  /** Una fila con cabina reemplaza la general para esa cabina y categoría (mismo modelo que el backend). */
+  excepciones: z
+    .array(z.object({ cabina: slug, categoria: slug, montoSinIva: z.number().positive().nullable(), montoManualSinIva: z.number().positive().nullable().optional() }))
+    .optional(),
   fuente: z.object({ nombre: z.string().min(1), url }),
   avisos: z.array(z.string()),
 });

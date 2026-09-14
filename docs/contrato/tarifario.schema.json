@@ -43,8 +43,24 @@
       "type": "string",
       "enum": [
         "oferta",
-        "homologada"
+        "homologada",
+        "heredado"
       ]
+    },
+    "resolucion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cabinas": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      }
+    },
+    "categoriaDestacada": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
     },
     "tarifas": {
       "minItems": 1,
@@ -86,6 +102,21 @@
               }
             ]
           },
+          "montoManualSinIva": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "multiplicador": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
           "nota": {
             "type": "string"
           }
@@ -94,6 +125,49 @@
           "categoria",
           "nombre",
           "descripcion",
+          "montoSinIva"
+        ]
+      }
+    },
+    "excepciones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cabina": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "categoria": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "montoSinIva": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "montoManualSinIva": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "cabina",
+          "categoria",
           "montoSinIva"
         ]
       }

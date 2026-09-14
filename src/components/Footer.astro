@@ -22,7 +22,6 @@ const aConfirmar = (v: string | null) => v ?? 'a confirmar';
   <div class="contenedor grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
     <div>
       <div class="flex items-center gap-3"><Isotipo size={40} /><span class="text-xl font-extrabold">COVICEN</span></div>
-      <p class="eyebrow mt-2">{empresa.descriptor}</p>
       <p class="mt-4 text-sm text-texto-2">Concesionaria del Tramo Centro de la Red Federal de Concesiones. {empresa.concesion.rutas.join(' · ')} · {empresa.concesion.provincias.join(' y ')}.</p>
     </div>
     {columnas.map((c) => (
