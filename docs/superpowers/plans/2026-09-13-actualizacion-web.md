@@ -1592,7 +1592,7 @@ git commit -m "feat(datos): 679,03 km, extremos y progresivas del PETP, estacion
 **Interfaces:**
 - Produces: `Aviso = { id, texto, url?, desde?, hasta?, tono: 'info' | 'vial' }`; `avisosVigentes(avisos: Aviso[], hoy: string): Aviso[]`; `hoyArgentina(): string` (YYYY-MM-DD); `FuenteDatos.avisos(): Promise<Aviso[]>`; componente `<BarraSuperior avisos={Aviso[]} contacto={Contacto} />` (40 px, `h-10`); script `anuncios.ts` sobre `[data-anuncios]` con hijos `[data-anuncio]` y botones `[data-anuncio-anterior]`/`[data-anuncio-siguiente]`.
 
-- [ ] **Step 1: Tests**
+- [x] **Step 1: Tests**
 
 Crear `tests/lib/avisos.test.ts`:
 
@@ -1650,12 +1650,12 @@ describe('BarraSuperior', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y ver que fallan**
+- [x] **Step 2: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/lib/avisos.test.ts tests/components/barra-superior.test.ts`
 Expected: FAIL (módulos inexistentes).
 
-- [ ] **Step 3: Esquema, filtro y datos**
+- [x] **Step 3: Esquema, filtro y datos**
 
 Al final de `src/lib/datos/esquemas.ts` agregar:
 
@@ -1706,7 +1706,7 @@ En `src/lib/datos/fuentes/local-json.ts`: agregar `import avisosJson from '@/con
 
 con `import { z } from 'astro/zod';` arriba.
 
-- [ ] **Step 4: Componente y script**
+- [x] **Step 4: Componente y script**
 
 Crear `src/components/BarraSuperior.astro`:
 
@@ -1803,12 +1803,12 @@ export {};
 
 En `tests/presupuesto.test.ts` línea 7 agregar `'src/scripts/anuncios.ts'` a `todos`.
 
-- [ ] **Step 5: Correr los tests**
+- [x] **Step 5: Correr los tests**
 
 Run: `pnpm vitest run tests/lib/avisos.test.ts tests/components/barra-superior.test.ts tests/lib/datos tests/presupuesto.test.ts`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/lib/datos/esquemas.ts src/lib/avisos.ts src/content/avisos.json src/lib/datos/fuente.ts src/lib/datos/fuentes/local-json.ts src/components/BarraSuperior.astro src/scripts/anuncios.ts tests/presupuesto.test.ts tests/lib/avisos.test.ts tests/components/barra-superior.test.ts
@@ -1828,7 +1828,7 @@ git commit -m "feat(anuncios): barra superior con avisos vigentes rotando y acce
 - Consumes: `<BarraSuperior avisos contacto />`, `<InterruptorTema />`, `.btn-vial` global, `datos.avisos()`.
 - Produces: `<Header contacto avisos rutaActual />` (prop nueva `avisos: Aviso[]`), altura total `--alto-header` = 7rem (40 + 72 px).
 
-- [ ] **Step 1: Tests**
+- [x] **Step 1: Tests**
 
 En `tests/components/layout.test.ts`: reemplazar el `it('emergencias: sin número …')` (líneas 39–42) por:
 
@@ -1863,12 +1863,12 @@ describe('Header', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y ver que falla**
+- [x] **Step 2: Correr y ver que falla**
 
 Run: `pnpm vitest run tests/components/layout.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: Reescribir `src/components/Header.astro`**
+- [x] **Step 3: Reescribir `src/components/Header.astro`**
 
 ```astro
 ---
@@ -2022,7 +2022,7 @@ const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
 </style>
 ```
 
-- [ ] **Step 4: `BarraEmergencias.astro` con el 140 grande**
+- [x] **Step 4: `BarraEmergencias.astro` con el 140 grande**
 
 ```astro
 ---
@@ -2040,20 +2040,20 @@ const tel = contacto.emergencias.telefono;
 </div>
 ```
 
-- [ ] **Step 5: `Base.astro` y la altura del header**
+- [x] **Step 5: `Base.astro` y la altura del header**
 
 En `src/layouts/Base.astro` línea 24: `const [empresa, contacto, avisos] = await Promise.all([datos.empresa(), datos.contacto(), datos.avisos()]);` y línea 39: `<Header {contacto} {avisos} rutaActual={Astro.url.pathname} />`.
 
 En `src/styles/tokens.css`, en `:root`: `--alto-header: 7rem; /* 2.5rem de barra superior + 4.5rem de header */`.
 
-- [ ] **Step 6: Tests, typecheck y vista**
+- [x] **Step 6: Tests, typecheck y vista**
 
 Run: `pnpm vitest run tests/components/layout.test.ts tests/components/barra-superior.test.ts tests/components/tema.test.ts`
 Expected: PASS.
 
 Run: `pnpm dev`: la barra arriba con el anuncio rotando y TelePASE · Mi cuenta · sol/luna; el header con el 140 grande; en ancho de celular el burger, la barra inferior con el 140 y, dentro del menú, TelePASE, Mi cuenta y el interruptor. El contenido arranca debajo del header (nada tapado). Cerrar.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/components/Header.astro src/components/BarraEmergencias.astro src/layouts/Base.astro src/styles/tokens.css tests/components/layout.test.ts
@@ -2072,7 +2072,7 @@ git commit -m "feat(header): dos filas con barra de anuncios y accesos, y el 140
 **Interfaces:**
 - Produces: `fechaHoraLarga(d: Date): string` ("13 de septiembre de 2026, 15:04"); `enlacesInstitucionales: Array<{ id, nombre, url }>` y `logoInstitucional(id): string | undefined` (SVG inline si existe `src/assets/institucional/<id>.svg`).
 
-- [ ] **Step 1: Tests**
+- [x] **Step 1: Tests**
 
 Agregar a `tests/lib/formato.test.ts` (dentro del `describe` existente o en uno nuevo):
 
@@ -2127,12 +2127,12 @@ describe('Footer', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y ver que fallan**
+- [x] **Step 2: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/components/footer.test.ts tests/lib/formato.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: `formato.ts` e `institucional.ts`**
+- [x] **Step 3: `formato.ts` e `institucional.ts`**
 
 Agregar a `src/lib/formato.ts`:
 
@@ -2163,7 +2163,7 @@ export const logoInstitucional = (id: string): string | undefined =>
   Object.entries(logos).find(([ruta]) => ruta.endsWith(`/${id}.svg`))?.[1];
 ```
 
-- [ ] **Step 4: Reescribir `src/components/Footer.astro`**
+- [x] **Step 4: Reescribir `src/components/Footer.astro`**
 
 ```astro
 ---
@@ -2270,12 +2270,12 @@ const actualizado = fechaHoraLarga(new Date());
 
 Si `astro check` dice que `Youtube`, `Facebook`, `Linkedin` o `Instagram` no existen en `@lucide/astro`, buscar el nombre exacto con `grep -o "export { default as [A-Za-z]*" node_modules/@lucide/astro/dist/index.js | grep -i <nombre>` y ajustar el import; nunca dibujar la marca a mano.
 
-- [ ] **Step 5: Tests**
+- [x] **Step 5: Tests**
 
 Run: `pnpm vitest run tests/components/footer.test.ts tests/lib/formato.test.ts`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/components/Footer.astro src/lib/formato.ts src/lib/institucional.ts tests/components/footer.test.ts tests/lib/formato.test.ts
@@ -2289,7 +2289,7 @@ git commit -m "feat(footer): slots ocultos hasta tener el dato, fila institucion
 - Regenerate: `public/og.png`, `public/apple-touch-icon.png` (`pnpm og`)
 - Modify: `tests/components/marca.test.ts:23-32`, `tests/components/layout.test.ts:21-24`, `tests/lib/seo.test.ts`
 
-- [ ] **Step 1: Tests**
+- [x] **Step 1: Tests**
 
 `tests/components/marca.test.ts`, reemplazar el `describe('Logotipo', …)` por:
 
@@ -2310,12 +2310,12 @@ describe('Logotipo', () => {
 
 `tests/lib/seo.test.ts`, en el primer `it` agregar `expect(o).not.toHaveProperty('alternateName');`.
 
-- [ ] **Step 2: Correr y ver que fallan**
+- [x] **Step 2: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/components/marca.test.ts tests/components/layout.test.ts tests/lib/seo.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: Cambios**
+- [x] **Step 3: Cambios**
 
 `src/components/marca/Logotipo.astro`:
 
@@ -2352,17 +2352,17 @@ const { class: clase = '' } = Astro.props;
 
 `src/pages/quienes-somos.astro` línea 13: reemplazar `Covicen (${e.descriptor}) es la sociedad` por `Covicen es la sociedad` (la página entera se reescribe en la Fase 4; acá solo se saca el descriptor).
 
-- [ ] **Step 4: Regenerar la OG**
+- [x] **Step 4: Regenerar la OG**
 
 Run: `pnpm og`
 Expected: `ok public/og.png` y `ok public/apple-touch-icon.png`. Abrir `public/og.png` y comprobar: isotipo a la izquierda, "COVICEN" centrado verticalmente con él, la línea de abajo con "679 km", sin la línea del descriptor.
 
-- [ ] **Step 5: Tests**
+- [x] **Step 5: Tests**
 
 Run: `pnpm vitest run tests/components tests/lib/seo.test.ts`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/components/marca/Logotipo.astro src/components/Seo.astro src/lib/seo.ts src/assets/marca/og.svg public/og.png public/apple-touch-icon.png src/pages/privacidad.astro src/pages/quienes-somos.astro tests/components/marca.test.ts tests/components/layout.test.ts tests/lib/seo.test.ts
@@ -2375,12 +2375,12 @@ git commit -m "feat(marca): fuera el descriptor Corredor Vial del Centro; títul
 - Modify: `src/pages/index.astro:26`, `src/pages/el-tramo.astro:13-20`, `src/pages/trabaja-con-nosotros.astro:9`, `src/pages/quienes-somos.astro:14-18`, `src/pages/contacto.astro:16-18`, `src/pages/emergencias.astro:9,20-25`, `src/content/faq/01-que-es-covicen.json`, `src/content/novedades/2026-08-24-adjudicacion-tramo-centro.md:10`
 - Modify: `src/components/TablaTarifas.astro:30` (la fila sin valor no dice "a confirmar"; la tabla entera se rehace en la Fase 3)
 
-- [ ] **Step 1: Buscar todo lo que hay que tocar**
+- [x] **Step 1: Buscar todo lo que hay que tocar**
 
 Run: `grep -rn -i "a confirmar\|681\|numero a confirmar" src/ --include=*.astro --include=*.json --include=*.md --include=*.ts | grep -v "isotipo-path" | grep -v "tramo.json"`
 Expected: la lista de ocurrencias de abajo (si aparece alguna más, entra en esta tarea).
 
-- [ ] **Step 2: Cambios de texto**
+- [x] **Step 2: Cambios de texto**
 
 - `src/pages/index.astro` línea 26: `descripcion="Covicen, concesionaria del Tramo Centro de la Red Federal de Concesiones: 679 km sobre RN 9, RN 19 y RN 34 en Córdoba y Santa Fe. Tarifas, peajes, emergencias y obras."`
 - `src/pages/el-tramo.astro`: línea 13 → `{ valor: Math.floor(tramo.km), unidad: 'km', etiqueta: 'de rutas nacionales', texto: \`Desde Rosario hasta Pilar por la autopista, y desde Santo Tomé hasta el límite con Córdoba por la RN 19. ${numero(tramo.km, 2)} km bajo una misma concesión, según el pliego del Tramo Centro.\` },`; línea 19 → `descripcion="El Tramo Centro de la Red Federal de Concesiones: 679,03 km sobre RN 9 (autopista Rosario–Córdoba), RN 19 y RN 34, en Córdoba y Santa Fe. Mapa, ciudades y estaciones de peaje."`; línea 20 → `titulo="679 kilómetros de centro." intro="Un corredor que une Rosario con Córdoba por la autopista y se abre hacia Santo Tomé, Franck y San Francisco por la RN 19."`.
@@ -2413,12 +2413,12 @@ Expected: la lista de ocurrencias de abajo (si aparece alguna más, entra en est
 - `src/content/novedades/2026-08-24-adjudicacion-tramo-centro.md` línea 10: `—681,92 km sobre` → `—679 km sobre`.
 - `src/components/TablaTarifas.astro` línea 30: reemplazar `<span class="text-texto-2">— <span class="text-xs uppercase tracking-wider">a confirmar</span></span>` por `<span class="text-texto-2" aria-label="Sin valor publicado">—</span>`.
 
-- [ ] **Step 3: Typecheck y suite completa**
+- [x] **Step 3: Typecheck y suite completa**
 
 Run: `pnpm check && pnpm test`
 Expected: PASS. Si `check` marca `contacto.emergencias.telefono` posiblemente nulo en algún archivo no listado, es porque quedó un `tel ? … : …`: simplificarlo (el 140 es obligatorio).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/pages/index.astro src/pages/el-tramo.astro src/pages/trabaja-con-nosotros.astro src/pages/quienes-somos.astro src/pages/contacto.astro src/pages/emergencias.astro src/content/faq/01-que-es-covicen.json src/content/novedades/2026-08-24-adjudicacion-tramo-centro.md src/components/TablaTarifas.astro
@@ -2432,7 +2432,7 @@ git commit -m "feat(contenido): 679 km en todo el sitio, sin relleno 'a confirma
 - Modify: `scripts/lib/html.ts` (`textoVisible`)
 - Modify: `tests/scripts/html.test.ts`
 
-- [ ] **Step 1: Test de `textoVisible`**
+- [x] **Step 1: Test de `textoVisible`**
 
 Agregar a `tests/scripts/html.test.ts`:
 
@@ -2444,7 +2444,7 @@ Agregar a `tests/scripts/html.test.ts`:
 
 (y sumar `textoVisible` al import desde `../../scripts/lib/html.ts`).
 
-- [ ] **Step 2: Implementar**
+- [x] **Step 2: Implementar**
 
 Agregar a `scripts/lib/html.ts`:
 
@@ -2468,12 +2468,12 @@ En `scripts/verificar.ts`: sumar `textoVisible` al import de la línea 7 y reemp
   if (!visible.includes('Última actualización')) fallo(`${nombre}: falta "Última actualización" en el pie`);
 ```
 
-- [ ] **Step 3: Verificar**
+- [x] **Step 3: Verificar**
 
 Run: `pnpm vitest run tests/scripts/html.test.ts && pnpm verificar`
 Expected: test PASS; `verificar` → `OK: N páginas verificadas, 0 fallos.` Si lista una página con "681" o "a confirmar", corregir el texto en esa página (es contenido, no código) y repetir.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add scripts/verificar.ts scripts/lib/html.ts tests/scripts/html.test.ts
@@ -2482,22 +2482,22 @@ git commit -m "test(verificar): tel:140 en toda página, textos prohibidos, 679 
 
 ### Tarea 1.9: Cierre de la Fase 1
 
-- [ ] **Step 1: Todo en verde**
+- [x] **Step 1: Todo en verde**
 
 Run: `pnpm check && pnpm test && pnpm verificar`
 Expected: verde.
 
-- [ ] **Step 2: Revisión en carril separado**
+- [x] **Step 2: Revisión en carril separado**
 
 Dispatch de `rev-bro` con la spec (§2, §3, §5, §6), este plan (Fase 1) y el diff de la fase; corre él mismo las tres verificaciones. Atender hallazgos.
 
-- [ ] **Step 3: Vault y lista para el backend**
+- [x] **Step 3: Vault y lista para el backend**
 
 - `obsidian/Costura de datos.md`: sección "Campos nuevos del contrato (2026-09-13)" con la lista de la spec §6.2 y la nota "todos opcionales; el backend puede mandarlos cuando quiera".
 - `obsidian/Decisiones de arquitectura.md`: filas para "sin descriptor", "esconder, no a confirmar", "679,03 km del PETP", "header de dos filas", "barra de anuncios siempre visible".
 - `obsidian/Home.md`: estado "Fase 1 cerrada".
 
-- [ ] **Step 4: Commit (si no se hizo por tarea)**
+- [x] **Step 4: Commit (si no se hizo por tarea)**
 
 ```bash
 git add -A -- src scripts tests docs/contrato public/og.png public/apple-touch-icon.png obsidian
@@ -2519,7 +2519,7 @@ Resultado: cada estación del mapa es un enlace con foco que abre su tarjeta; ve
 **Interfaces:**
 - Produces: `kmTexto(n: number): string` ("340", "19,95": coma decimal solo si hay decimales); `estadoCabina(c: Cabina): { clave: 'operativa' | 'proxima'; etiqueta: string }`; `SERVICIOS: ReadonlyArray<readonly [ClaveServicio, string]>`; `ClaveServicio = 'areaDescanso' | 'detencionSegura' | 'gruaGratuita' | 'sanitarios' | 'colocacionTelepase'`; `serviciosDeCabina(c): { clave; etiqueta }[]`; `leyendaServicios(t: Tramo): { clave; etiqueta }[]`; `puntoEnRuta(t: Tramo, ruta: NombreRuta, km: number): { x: number; y: number } | null`.
 
-- [ ] **Step 1: Tests**
+- [x] **Step 1: Tests**
 
 Crear `tests/lib/tramo.test.ts`:
 
@@ -2565,12 +2565,12 @@ describe('puntoEnRuta', async () => {
 
 Agregar a `tests/lib/formato.test.ts` (y `kmTexto` al import): `it('kmTexto: coma decimal solo si hay decimales', () => { expect(kmTexto(340)).toBe('340'); expect(kmTexto(19.95)).toBe('19,95'); });`
 
-- [ ] **Step 2: Correr y ver que falla**
+- [x] **Step 2: Correr y ver que falla**
 
 Run: `pnpm vitest run tests/lib/tramo.test.ts tests/lib/formato.test.ts`
 Expected: FAIL (módulo inexistente; `kmTexto` no existe).
 
-- [ ] **Step 3: Implementar `kmTexto` y `src/lib/tramo.ts`**
+- [x] **Step 3: Implementar `kmTexto` y `src/lib/tramo.ts`**
 
 Agregar a `src/lib/formato.ts`: `/** Kilómetro para mostrar: "340", "19,95". */ export const kmTexto = (n: number): string => numero(n, Number.isInteger(n) ? 0 : 2);`
 
@@ -2629,12 +2629,12 @@ export const puntoEnRuta = (t: Tramo, nombre: NombreRuta, km: number): { x: numb
 };
 ```
 
-- [ ] **Step 4: Correr los tests**
+- [x] **Step 4: Correr los tests**
 
 Run: `pnpm vitest run tests/lib/tramo.test.ts tests/lib/formato.test.ts`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/tramo.ts src/lib/formato.ts tests/lib/tramo.test.ts tests/lib/formato.test.ts
@@ -2651,7 +2651,7 @@ git commit -m "feat(tramo): estado operativo, servicios, posición por km sobre 
 **Interfaces:**
 - Produces: `<TarjetaEstacion cabina={Cabina} completa?: boolean nivel?: 'h2' | 'h3' />` (raíz `<article data-estacion-tarjeta={slug}>`); `Senal` acepta `variante: 'vial' | 'frio' | 'ok'`.
 
-- [ ] **Step 1: Test**
+- [x] **Step 1: Test**
 
 Crear `tests/components/estacion.test.ts`:
 
@@ -2694,12 +2694,12 @@ describe('TarjetaEstacion', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y ver que falla**
+- [x] **Step 2: Correr y ver que falla**
 
 Run: `pnpm vitest run tests/components/estacion.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: `Senal` con variante `ok`**
+- [x] **Step 3: `Senal` con variante `ok`**
 
 Reemplazar `src/components/ui/Senal.astro`:
 
@@ -2714,7 +2714,7 @@ const colores = { vial: 'bg-vial text-sobre-vial', frio: 'border border-borde-fu
 
 (`text-xs` = 12 px: el mínimo del pliego para anotaciones; el `text-[0.7rem]` anterior era 11,2 px.)
 
-- [ ] **Step 4: Crear `src/components/TarjetaEstacion.astro`**
+- [x] **Step 4: Crear `src/components/TarjetaEstacion.astro`**
 
 ```astro
 ---
@@ -2765,12 +2765,12 @@ const sentidos = { ambos: 'Cobra en ambos sentidos', ascendente: 'Cobra en senti
 
 Si `Bath`, `Coffee`, `ShieldCheck`, `Tag` o `Truck` no existen en `@lucide/astro`: `grep -o "export { default as [A-Za-z]*" node_modules/@lucide/astro/dist/index.js | grep -i <nombre>` y elegir el más parecido (nunca dibujarlos a mano).
 
-- [ ] **Step 5: Tests**
+- [x] **Step 5: Tests**
 
 Run: `pnpm vitest run tests/components/estacion.test.ts tests/components/ui.test.ts tests/styles`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/components/TarjetaEstacion.astro src/components/ui/Senal.astro tests/components/estacion.test.ts
@@ -2788,7 +2788,7 @@ git commit -m "feat(mapa): tarjeta de estación con estado, servicios y accesos;
 **Interfaces:**
 - Produces: `<MapaTramo tramo incidentes? modo? class? />` (SVG `role="group"`, cada estación `<a data-estacion={slug} data-estado-operativo="operativa|proxima">`); `<MapaInteractivo tramo incidentes? modo? disposicion?: 'lado' | 'abajo' />` (raíz `[data-mapa-interactivo]`, tarjetas en `[data-tarjeta-estacion={slug}]`); script `mapa.ts`.
 
-- [ ] **Step 1: Tests**
+- [x] **Step 1: Tests**
 
 Reemplazar el `describe('MapaTramo', …)` de `tests/components/ilustraciones.test.ts` (líneas 7–20) por:
 
@@ -2846,12 +2846,12 @@ describe('MapaInteractivo', () => {
 
 En `tests/presupuesto.test.ts` línea 7 agregar `'src/scripts/mapa.ts'`.
 
-- [ ] **Step 2: Correr y ver que fallan**
+- [x] **Step 2: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/components/ilustraciones.test.ts tests/components/mapa.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: Reescribir `src/components/ilustraciones/MapaTramo.astro`**
+- [x] **Step 3: Reescribir `src/components/ilustraciones/MapaTramo.astro`**
 
 ```astro
 ---
@@ -2970,7 +2970,7 @@ const marcadores = incidentes.flatMap((inc) => { const p = inc.km === null ? nul
 </style>
 ```
 
-- [ ] **Step 4: `MapaInteractivo.astro` y `mapa.ts`**
+- [x] **Step 4: `MapaInteractivo.astro` y `mapa.ts`**
 
 Crear `src/components/MapaInteractivo.astro`:
 
@@ -3016,12 +3016,12 @@ document.addEventListener('astro:page-load', iniciar);
 export {};
 ```
 
-- [ ] **Step 5: Tests**
+- [x] **Step 5: Tests**
 
 Run: `pnpm vitest run tests/components/ilustraciones.test.ts tests/components/mapa.test.ts tests/presupuesto.test.ts tests/styles`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/components/ilustraciones/MapaTramo.astro src/components/MapaInteractivo.astro src/scripts/mapa.ts tests/components/ilustraciones.test.ts tests/components/mapa.test.ts tests/presupuesto.test.ts
@@ -3037,7 +3037,7 @@ git commit -m "feat(mapa): estaciones como enlaces con foco, verde/amarillo por 
 - Modify: `scripts/verificar.ts` (existencia de las seis páginas)
 - Create: `tests/components/paginas-estacion.test.ts`
 
-- [ ] **Step 1: Test de las páginas de estación**
+- [x] **Step 1: Test de las páginas de estación**
 
 Crear `tests/components/paginas-estacion.test.ts`:
 
@@ -3060,12 +3060,12 @@ describe('/peajes/[slug]/', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y ver que falla**
+- [x] **Step 2: Correr y ver que falla**
 
 Run: `pnpm vitest run tests/components/paginas-estacion.test.ts`
 Expected: FAIL (la página no existe).
 
-- [ ] **Step 3: Home — `src/components/home/ElTramo.astro`**
+- [x] **Step 3: Home — `src/components/home/ElTramo.astro`**
 
 ```astro
 ---
@@ -3093,7 +3093,7 @@ const operativas = tramo.cabinas.filter(cabinaOperativa).length;
 </Seccion>
 ```
 
-- [ ] **Step 4: Página `src/pages/el-tramo.astro`**
+- [x] **Step 4: Página `src/pages/el-tramo.astro`**
 
 ```astro
 ---
@@ -3171,7 +3171,7 @@ const conServicios = tramo.cabinas.filter((c) => serviciosDeCabina(c).length > 0
 
 (El bloque "Cuadros tarifarios" pasa a mostrar las tablas por estación en la Fase 3.)
 
-- [ ] **Step 5: Página por estación `src/pages/peajes/[slug].astro`**
+- [x] **Step 5: Página por estación `src/pages/peajes/[slug].astro`**
 
 ```astro
 ---
@@ -3218,7 +3218,7 @@ const jsonLd = [{
 
 (En la Fase 3, el `<p>` de la estación operativa se reemplaza por `<TablaTarifas tarifario cabina />`.)
 
-- [ ] **Step 6: `verificar.ts`: las páginas de estación existen**
+- [x] **Step 6: `verificar.ts`: las páginas de estación existen**
 
 Después del bloque de contraste (antes de `// 9. presupuesto de JS enviado`) agregar:
 
@@ -3231,14 +3231,14 @@ for (const slug of ['carcarana', 'james-craik', 'franck', 'leones', 'san-francis
 
 y sumar `existsSync` al import de `node:fs` de la línea 2.
 
-- [ ] **Step 7: Tests y verificación**
+- [x] **Step 7: Tests y verificación**
 
 Run: `pnpm vitest run tests/components && pnpm check && pnpm verificar`
 Expected: PASS y `OK` (las seis páginas nuevas pasan los chequeos: título, h1, canonical, tel:140, sin "a confirmar").
 
 Run: `pnpm dev`: en `/` tocar Franck → aparece su tarjeta; Tab por las estaciones muestra el anillo; en `/el-tramo/` la sub-navegación pegada funciona; `/peajes/totoras/` dice que todavía no cobra. Cerrar.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/components/home/ElTramo.astro src/pages/el-tramo.astro "src/pages/peajes/[slug].astro" scripts/verificar.ts tests/components/paginas-estacion.test.ts
@@ -3247,10 +3247,10 @@ git commit -m "feat(tramo): mapa interactivo en el home y El tramo en cuatro blo
 
 ### Tarea 2.5: Cierre de la Fase 2
 
-- [ ] **Step 1:** `pnpm check && pnpm test && pnpm verificar` en verde.
-- [ ] **Step 2:** Revisión de `rev-bro` (spec §7, plan Fase 2, diff). Atender hallazgos.
-- [ ] **Step 3:** `obsidian/Costura de datos.md`: nota sobre `lib/tramo.ts` (interpolación por km, trazados en sentido de las progresivas). `obsidian/Home.md`: "Fase 2 cerrada".
-- [ ] **Step 4:** Commit de cierre si no se hizo por tarea.
+- [x] **Step 1:** `pnpm check && pnpm test && pnpm verificar` en verde.
+- [x] **Step 2:** Revisión de `rev-bro` (spec §7, plan Fase 2, diff). Atender hallazgos.
+- [x] **Step 3:** `obsidian/Costura de datos.md`: nota sobre `lib/tramo.ts` (interpolación por km, trazados en sentido de las progresivas). `obsidian/Home.md`: "Fase 2 cerrada".
+- [x] **Step 4:** Commit de cierre si no se hizo por tarea.
 
 ## Fase 3 — Tarifas
 
@@ -3267,7 +3267,7 @@ Resultado: `/tarifas/` publica el cuadro heredado de la Res. 248/2026 por estaci
 **Interfaces:**
 - Produces: `Tarifa.icono?: 'moto' | 'auto' | 'camioneta' | 'camion-2' | 'camion-3-4' | 'camion-5-6' | 'camion-7'`; constante `ICONOS_VEHICULO`; datos: 5 categorías `cat-1`…`cat-5`, `origen: 'heredado'`, `cabinas: ['carcarana','james-craik','franck']`, `categoriaDestacada: 'cat-1'`.
 
-- [ ] **Step 1: Tests**
+- [x] **Step 1: Tests**
 
 En `tests/lib/datos/local-json.test.ts` reemplazar el `it('tarifario: …')` por:
 
@@ -3289,12 +3289,12 @@ En `tests/lib/datos/local-json.test.ts` reemplazar el `it('tarifario: …')` por
 
 En `tests/lib/contrato.test.ts`, en el último `it` agregar `expect(tarifario.properties.tarifas.items.required).not.toContain('icono');`.
 
-- [ ] **Step 2: Correr y ver que fallan**
+- [x] **Step 2: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/lib/datos/local-json.test.ts tests/lib/contrato.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: Contrato**
+- [x] **Step 3: Contrato**
 
 En `src/lib/datos/esquemas.ts`, antes de `esquemaTarifa` agregar:
 
@@ -3306,7 +3306,7 @@ export type IconoVehiculo = (typeof ICONOS_VEHICULO)[number];
 
 y dentro de `esquemaTarifa`, después de `descripcion`: `icono: z.enum(ICONOS_VEHICULO).optional(),`.
 
-- [ ] **Step 4: `src/content/tarifario.json`**
+- [x] **Step 4: `src/content/tarifario.json`**
 
 ```json
 {
@@ -3342,12 +3342,12 @@ y dentro de `esquemaTarifa`, después de `descripcion`: `icono: z.enum(ICONOS_VE
 
 Los "sin IVA" son los del anexo oficial (IF-2026-18452702-APN-DNV#MEC): 1.239,67 × 1,21 = 1.500,00, etc.
 
-- [ ] **Step 5: Regenerar el contrato y correr los tests**
+- [x] **Step 5: Regenerar el contrato y correr los tests**
 
 Run: `pnpm contrato && pnpm vitest run tests/lib/datos tests/lib/contrato.test.ts`
 Expected: PASS. (`tests/components/tarifas.test.ts` y `home.test.ts` fallan hasta la 3.3.)
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/lib/datos/esquemas.ts src/content/tarifario.json docs/contrato/tarifario.schema.json tests/lib/datos/local-json.test.ts tests/lib/contrato.test.ts
@@ -3363,7 +3363,7 @@ git commit -m "feat(tarifas): cuadro heredado de la Res. 248/2026 con cinco cate
 **Interfaces:**
 - Produces: `FilaTarifa = Tarifa & { telepaseSinIva: number | null; manualSinIva: number | null }`; `tarifasParaCabina(t: Tarifario, cabina: string): FilaTarifa[]`; `publico(sinIva, conIvaSistema, alicuota): number | null`; `tarifaDestacada(t): Tarifa`; `cabinasDelCuadro(t, cabinas: Cabina[]): Cabina[]`; `iconoDeTarifa(f: Tarifa): IconoVehiculo`; `<IconoVehiculo icono={IconoVehiculo} size? class? />`.
 
-- [ ] **Step 1: Tests**
+- [x] **Step 1: Tests**
 
 Crear `tests/lib/tarifas.test.ts`:
 
@@ -3421,12 +3421,12 @@ describe('IconoVehiculo', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y ver que fallan**
+- [x] **Step 2: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/lib/tarifas.test.ts tests/components/ilustraciones.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: `src/lib/tarifas.ts`**
+- [x] **Step 3: `src/lib/tarifas.ts`**
 
 ```ts
 // Lo que la UI deriva del tarifario: filas por cabina (con excepciones aplicadas), precio al público, destacada e íconos.
@@ -3461,7 +3461,7 @@ const LEGADO: Record<string, IconoVehiculo> = { 'cat-1': 'moto', 'cat-2': 'auto'
 export const iconoDeTarifa = (f: Tarifa): IconoVehiculo => f.icono ?? LEGADO[f.categoria] ?? 'auto';
 ```
 
-- [ ] **Step 4: `IconoVehiculo.astro` por tipo**
+- [x] **Step 4: `IconoVehiculo.astro` por tipo**
 
 Reemplazar las líneas 3–14 de `src/components/ilustraciones/IconoVehiculo.astro` por:
 
@@ -3483,12 +3483,12 @@ const d = iconos[icono];
 if (!d) throw new Error(`IconoVehiculo: tipo desconocido "${icono}"`);
 ```
 
-- [ ] **Step 5: Correr los tests**
+- [x] **Step 5: Correr los tests**
 
 Run: `pnpm vitest run tests/lib/tarifas.test.ts tests/components/ilustraciones.test.ts`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/lib/tarifas.ts tests/lib/tarifas.test.ts src/components/ilustraciones/IconoVehiculo.astro tests/components/ilustraciones.test.ts
@@ -3505,7 +3505,7 @@ git commit -m "feat(tarifas): filas por cabina con excepciones, precio al públi
 **Interfaces:**
 - Produces: `<TablaTarifas tarifario cabina? id? compacta? />`; script `imprimir.ts` sobre `[data-imprimir]`.
 
-- [ ] **Step 1: Tests**
+- [x] **Step 1: Tests**
 
 Reemplazar el primer `describe` de `tests/components/tarifas.test.ts` (líneas 7–19) por:
 
@@ -3550,12 +3550,12 @@ describe('TarifaDestacada', () => {
 
 En `tests/presupuesto.test.ts` línea 7 agregar `'src/scripts/imprimir.ts'`.
 
-- [ ] **Step 2: Correr y ver que fallan**
+- [x] **Step 2: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/components/tarifas.test.ts tests/components/home.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: `src/components/TablaTarifas.astro`**
+- [x] **Step 3: `src/components/TablaTarifas.astro`**
 
 ```astro
 ---
@@ -3609,7 +3609,7 @@ const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km
 </style>
 ```
 
-- [ ] **Step 4: `src/scripts/imprimir.ts`**
+- [x] **Step 4: `src/scripts/imprimir.ts`**
 
 ```ts
 // Botón "Imprimir" (pliego 61.7: vista de impresión). La hoja de estilos de impresión vive en src/styles/impresion.css.
@@ -3618,7 +3618,7 @@ document.addEventListener('astro:page-load', iniciar);
 export {};
 ```
 
-- [ ] **Step 5: `src/pages/tarifas.astro`**
+- [x] **Step 5: `src/pages/tarifas.astro`**
 
 ```astro
 ---
@@ -3735,7 +3735,7 @@ const exentos = ['Ambulancias', 'Vehículos de las Fuerzas Armadas y de Segurida
 
 `/tramites/` se crea en la Fase 4; hasta entonces `verificar` va a marcar el link roto: crear en esta tarea un `src/pages/tramites.astro` mínimo (título "Guía de trámites", `Seccion` con intro "Requisitos y pasos de los trámites del usuario." y un `Boton` a `/contacto`) que la Fase 4 reemplaza. Lo mismo para el ancla `#sin-pagar` (es un ancla, no rompe el chequeo de links).
 
-- [ ] **Step 6: Home, El tramo y páginas de estación**
+- [x] **Step 6: Home, El tramo y páginas de estación**
 
 `src/components/home/TarifaDestacada.astro`:
 - Línea 8: `import { fechaCorta, fechaLarga, moneda } from '@/lib/formato';` y agregar `import { publico, tarifaDestacada } from '@/lib/tarifas';` y `import { iconoDeTarifa } from '@/lib/tarifas';` (una sola línea: `import { iconoDeTarifa, publico, tarifaDestacada } from '@/lib/tarifas';`).
@@ -3759,12 +3759,12 @@ const exentos = ['Ambulancias', 'Vehículos de las Fuerzas Armadas y de Segurida
 
 `src/pages/peajes/[slug].astro`: importar `TablaTarifas` y cargar `const tarifario = await datos.tarifario();`; reemplazar el `<p>` de la estación operativa por `<TablaTarifas {tarifario} {cabina} />`.
 
-- [ ] **Step 7: Tests, typecheck y verificación**
+- [x] **Step 7: Tests, typecheck y verificación**
 
 Run: `pnpm vitest run tests/components && pnpm check && pnpm verificar`
 Expected: PASS y `OK`. Revisar en `pnpm dev`: `/tarifas/` con tres tablas, ancla `#franck` desde la tarjeta de estación, botón Imprimir abre el diálogo; home con $1.500.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/components/TablaTarifas.astro src/pages/tarifas.astro src/pages/tramites.astro src/components/home/TarifaDestacada.astro src/pages/el-tramo.astro "src/pages/peajes/[slug].astro" src/scripts/imprimir.ts tests/components/tarifas.test.ts tests/components/home.test.ts tests/presupuesto.test.ts
@@ -3773,10 +3773,10 @@ git commit -m "feat(tarifas): tabla por estación con TelePASE y pago manual, bl
 
 ### Tarea 3.4: Cierre de la Fase 3
 
-- [ ] **Step 1:** `pnpm check && pnpm test && pnpm verificar` en verde.
-- [ ] **Step 2:** Revisión de `rev-bro` (spec §8, plan Fase 3, diff). En particular: que ningún número publicado sea distinto de los del anexo de la Res. 248/2026, y que el "manual" sea igual al TelePASE.
-- [ ] **Step 3:** `obsidian/Decisiones de arquitectura.md`: "cuadro heredado; columna manual = TelePASE hoy; sin estimaciones". `obsidian/Home.md`: "Fase 3 cerrada".
-- [ ] **Step 4:** Commit de cierre si no se hizo por tarea.
+- [x] **Step 1:** `pnpm check && pnpm test && pnpm verificar` en verde.
+- [x] **Step 2:** Revisión de `rev-bro` (spec §8, plan Fase 3, diff). En particular: que ningún número publicado sea distinto de los del anexo de la Res. 248/2026, y que el "manual" sea igual al TelePASE.
+- [x] **Step 3:** `obsidian/Decisiones de arquitectura.md`: "cuadro heredado; columna manual = TelePASE hoy; sin estimaciones". `obsidian/Home.md`: "Fase 3 cerrada".
+- [x] **Step 4:** Commit de cierre si no se hizo por tarea.
 
 ## Fase 4 — Contenido que sale del pliego
 
@@ -3794,7 +3794,7 @@ Resultado: servicios gratuitos y con costo con los tiempos publicados, canales c
 **Interfaces:**
 - Produces: `Servicio = { id, nombre, gratuito: boolean, descripcion, alcance?, tiempos?: string[], fuente }`; `Norma = { id, titulo, descripcion, url: string | null, descargable: boolean }`; `Tramite = { id, nombre, quien, requisitos: string[], pasos: string[], plazo?, url?, fuente }`; `Consejo = { id, titulo, texto, categoria: 'conducir' | 'emergencia' }`; `Empresa.polizaRc: { aseguradora: string; numero: string; vigenciaHasta: fechaIso; url: string | null } | null`; `Contacto.cuentaRegularizacion: string | null`; `FuenteDatos.servicios()`, `normativa()`, `tramites()`, `consejos()`.
 
-- [ ] **Step 1: Tests**
+- [x] **Step 1: Tests**
 
 Agregar a `tests/lib/datos/local-json.test.ts`:
 
@@ -3828,12 +3828,12 @@ En `tests/lib/datos/esquemas.test.ts`, en `describe('esquemaEmpresa')`, sumar `p
 
 y en `describe('esquemaContacto')` sumar `cuentaRegularizacion: null` al objeto `vacio`.
 
-- [ ] **Step 2: Correr y ver que fallan**
+- [x] **Step 2: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/lib/datos`
 Expected: FAIL.
 
-- [ ] **Step 3: Esquemas**
+- [x] **Step 3: Esquemas**
 
 En `src/lib/datos/esquemas.ts`: dentro de `esquemaEmpresa`, después de `constanciaUrl`, agregar:
 
@@ -3892,7 +3892,7 @@ export const esquemaConsejo = z.object({
 export type Consejo = z.infer<typeof esquemaConsejo>;
 ```
 
-- [ ] **Step 4: Datos**
+- [x] **Step 4: Datos**
 
 `src/content/empresa.json`: agregar `"polizaRc": null` después de `"constanciaUrl": null`. `src/content/contacto.json`: agregar `"cuentaRegularizacion": null` después de `"canales": [...]`.
 
@@ -3957,7 +3957,7 @@ Crear `src/content/consejos.json`:
 ]
 ```
 
-- [ ] **Step 5: Fuente de datos**
+- [x] **Step 5: Fuente de datos**
 
 En `src/lib/datos/fuente.ts` importar los tipos y agregar a la interfaz:
 
@@ -3977,12 +3977,12 @@ En `src/lib/datos/fuentes/local-json.ts`: importar `serviciosJson`, `normativaJs
   consejos: async (): Promise<Consejo[]> => z.array(esquemaConsejo).parse(consejosJson),
 ```
 
-- [ ] **Step 6: Correr los tests**
+- [x] **Step 6: Correr los tests**
 
 Run: `pnpm vitest run tests/lib/datos && pnpm check`
 Expected: PASS.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/lib/datos/esquemas.ts src/lib/datos/fuente.ts src/lib/datos/fuentes/local-json.ts src/content/servicios.json src/content/normativa.json src/content/tramites.json src/content/consejos.json src/content/empresa.json src/content/contacto.json tests/lib/datos/local-json.test.ts tests/lib/datos/esquemas.test.ts
@@ -3999,7 +3999,7 @@ git commit -m "feat(datos): servicios, normativa, trámites y consejos del plieg
 **Interfaces:**
 - Produces: `<Canales canales={Canal[]} compacto? />` (tabla con nombre, disponibilidad, acuse, respuesta; los sin `valor` dicen "Se habilita con la toma de posesión, el 5 de octubre de 2026").
 
-- [ ] **Step 1: Test**
+- [x] **Step 1: Test**
 
 Crear `tests/components/servicios.test.ts`:
 
@@ -4021,12 +4021,12 @@ describe('Canales', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y ver que falla**
+- [x] **Step 2: Correr y ver que falla**
 
 Run: `pnpm vitest run tests/components/servicios.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: `src/components/Canales.astro`**
+- [x] **Step 3: `src/components/Canales.astro`**
 
 ```astro
 ---
@@ -4063,7 +4063,7 @@ const enlace = (c: Canal) => {
 </div>
 ```
 
-- [ ] **Step 4: `src/pages/servicios.astro`**
+- [x] **Step 4: `src/pages/servicios.astro`**
 
 ```astro
 ---
@@ -4119,12 +4119,12 @@ const servicios = [
 ];
 ```
 
-- [ ] **Step 5: Tests y verificación**
+- [x] **Step 5: Tests y verificación**
 
 Run: `pnpm vitest run tests/components/servicios.test.ts && pnpm check`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/pages/servicios.astro src/components/home/Servicios.astro src/components/Canales.astro tests/components/servicios.test.ts
@@ -4136,7 +4136,7 @@ git commit -m "feat(servicios): gratuitos y con costo con tiempos del pliego, y 
 **Files:**
 - Modify: `src/pages/medios-de-pago.astro` (todo)
 
-- [ ] **Step 1: Reescribir**
+- [x] **Step 1: Reescribir**
 
 ```astro
 ---
@@ -4192,12 +4192,12 @@ const modalidades = [
 </Base>
 ```
 
-- [ ] **Step 2: Verificar**
+- [x] **Step 2: Verificar**
 
 Run: `pnpm check && pnpm vitest run tests/components`
 Expected: PASS.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/pages/medios-de-pago.astro
@@ -4211,7 +4211,7 @@ git commit -m "feat(pago): modalidades del pliego, TelePASE gratis, Free Flow de
 - Create: `scripts/originalidad.ts`
 - Modify: `src/lib/atmosfera.ts` (glob de institucional para el organigrama)
 
-- [ ] **Step 1: Reescribir la página**
+- [x] **Step 1: Reescribir la página**
 
 ```astro
 ---
@@ -4299,7 +4299,7 @@ export const imagenInstitucional = (nombre: string): ImageMetadata | undefined =
 
 (Crear la carpeta `src/assets/institucional/` con un `.gitkeep`; el organigrama lo carga Covicen como `organigrama.png`.)
 
-- [ ] **Step 2: Script de originalidad (se corre una vez, no en CI)**
+- [x] **Step 2: Script de originalidad (se corre una vez, no en CI)**
 
 Crear `scripts/originalidad.ts`:
 
@@ -4330,12 +4330,12 @@ process.exit(coincidencias > 0 ? 1 : 0);
 
 Agregar a `package.json` → `"originalidad": "node scripts/originalidad.ts"`.
 
-- [ ] **Step 3: Correr**
+- [x] **Step 3: Correr**
 
 Run: `pnpm build && pnpm originalidad https://www.corresur.com.ar/ https://cvsa.com.ar/` (sumar las páginas institucionales de Autovía del Mercosur y Caminos del Río Uruguay que estén en línea: buscar "nosotros"/"institucional" en cada sitio y pasar esas URL).
 Expected: `0 secuencias de 6 palabras en común` para cada URL. Si hay coincidencias, reescribir esa frase en la página y repetir. Corresur devuelve 403 sin User-Agent de navegador: el script ya manda uno; si sigue en 403, comparar contra el texto guardado a mano desde el navegador en `scratch/corresur.txt` adaptando la URL por una ruta local (`file://` no aplica: pegar el texto y leerlo con `readFileSync`).
 
-- [ ] **Step 4: Tests, typecheck y commit**
+- [x] **Step 4: Tests, typecheck y commit**
 
 Run: `pnpm check && pnpm verificar`
 Expected: verde (sin "681", "a confirmar" ni descriptor).
@@ -4350,7 +4350,7 @@ git commit -m "feat(institucional): Quiénes somos original con los compromisos 
 **Files:**
 - Modify: `src/pages/transparencia.astro` (todo), `src/pages/tramites.astro` (todo), `src/pages/seguridad-vial.astro` (todo), `src/pages/emergencias.astro` (pasos y tiempos desde datos)
 
-- [ ] **Step 1: `src/pages/transparencia.astro`**
+- [x] **Step 1: `src/pages/transparencia.astro`**
 
 ```astro
 ---
@@ -4396,7 +4396,7 @@ const registrales = e.razonSocial && e.cuit && e.domicilioLegal;
 </Base>
 ```
 
-- [ ] **Step 2: `src/pages/tramites.astro`**
+- [x] **Step 2: `src/pages/tramites.astro`**
 
 ```astro
 ---
@@ -4432,7 +4432,7 @@ const tramites = await datos.tramites();
 
 (El formulario de trámites se agrega en la Fase 5.)
 
-- [ ] **Step 3: `src/pages/seguridad-vial.astro`**
+- [x] **Step 3: `src/pages/seguridad-vial.astro`**
 
 ```astro
 ---
@@ -4459,7 +4459,7 @@ const emergencia = consejos.filter((c) => c.categoria === 'emergencia');
 </Base>
 ```
 
-- [ ] **Step 4: `src/pages/emergencias.astro`: pasos y tiempos desde datos**
+- [x] **Step 4: `src/pages/emergencias.astro`: pasos y tiempos desde datos**
 
 Reemplazar el frontmatter para cargar `const [contacto, servicios, consejos] = await Promise.all([datos.contacto(), datos.servicios(), datos.consejos()]);`, `const grua = servicios.find((s) => s.id === 'grua-y-remolque');`, `const pasos = consejos.filter((c) => c.categoria === 'emergencia');`, y quitar el array `pasos` literal. Reemplazar el `<ol>` de pasos por:
 
@@ -4480,7 +4480,7 @@ Reemplazar el frontmatter para cargar `const [contacto, servicios, consejos] = a
 
 e importar `Canales` (`import Canales from '@/components/Canales.astro';`).
 
-- [ ] **Step 5: Verificar y commit**
+- [x] **Step 5: Verificar y commit**
 
 Run: `pnpm check && pnpm vitest run tests/components && pnpm verificar`
 Expected: verde.
@@ -4500,7 +4500,7 @@ git commit -m "feat(contenido): transparencia con normativa y póliza, guía de 
 - Modify: `src/content/novedades/2026-08-26-que-cambia-el-5-de-octubre.md`, `2026-08-27-como-se-fija-la-tarifa.md`, `2026-08-27-obras-antes-que-peaje.md` (repasar afirmaciones)
 - Create: `src/content/novedades/2026-09-13-que-cuadro-tarifario-rige.md`
 
-- [ ] **Step 1: Obras (PETP art. 5, 6 y 7)**
+- [x] **Step 1: Obras (PETP art. 5, 6 y 7)**
 
 Borrar los cuatro JSON de `src/content/obras/` y crear:
 
@@ -4518,7 +4518,7 @@ Borrar los cuatro JSON de `src/content/obras/` y crear:
 
 Actualizar las descripciones de `src/pages/obras.astro` (línea 12: `descripcion="Obras de Covicen en el Tramo Centro: puesta en valor inicial, losas de hormigón en RN 9 y RN 19, banquinas entre Rosario y Carcarañá, puente sobre el Carcarañá, rehabilitación asfáltica y estaciones Free Flow. Estado y avance."`).
 
-- [ ] **Step 2: FAQ**
+- [x] **Step 2: FAQ**
 
 Cambiar solo el campo `respuesta` (y `pregunta` donde se indica):
 
@@ -4541,7 +4541,7 @@ Crear:
 
 `17-tarifa-vecinal.json`: `{ "slug": "tarifa-vecinal", "tema": "tarifas", "orden": 17, "enHome": false, "pregunta": "Vivo cerca del peaje. ¿Tengo tarifa vecinal?", "respuesta": "Existe una tarifa diferencial para vecinos y frentistas de una estación y para docentes, solo para autos (categoría 1), que se renueva cada año y se tramita por Trámites a Distancia. Los requisitos están en la Guía de trámites; el monto se informa al hacer el trámite." }`
 
-- [ ] **Step 3: Novedades**
+- [x] **Step 3: Novedades**
 
 - `2026-08-26-que-cambia-el-5-de-octubre.md`: poner `destacada: true` en el frontmatter (es el mensaje de campaña del carrusel) y repasar el cuerpo: donde diga que "no se cobra" o mencione $1.399 como precio, reemplazar por "rige el cuadro vigente (Resolución 248/2026) hasta terminar las obras iniciales".
 - `2026-08-27-como-se-fija-la-tarifa.md`: agregar un párrafo final: "Mientras tanto, desde la toma de posesión rige en las tres estaciones el cuadro que ya se cobraba, aprobado por la Resolución 248/2026 de Vialidad Nacional: $1.500 por auto con IVA. La tarifa ofertada llega con las obras iniciales terminadas."
@@ -4585,10 +4585,10 @@ git commit -m "feat(contenido): obras obligatorias del pliego, FAQ actualizada y
 
 ### Tarea 4.7: Cierre de la Fase 4
 
-- [ ] **Step 1:** `pnpm check && pnpm test && pnpm verificar` en verde; `pnpm originalidad …` en 0 coincidencias.
-- [ ] **Step 2:** Revisión de `rev-bro` (spec §9, plan Fase 4, diff): en particular que cada dato del pliego citado coincida con el artículo y que no haya afirmaciones sin fuente.
-- [ ] **Step 3:** Vault: `obsidian/Costura de datos.md` (métodos nuevos: `servicios`, `normativa`, `tramites`, `consejos`, `avisos`); nota nueva `obsidian/Obligaciones del pliego para la web.md` con el checklist de la spec §13 y el estado real; `Home.md`: "Fase 4 cerrada".
-- [ ] **Step 4:** Commit de cierre si no se hizo por tarea.
+- [x] **Step 1:** `pnpm check && pnpm test && pnpm verificar` en verde; `pnpm originalidad …` en 0 coincidencias.
+- [x] **Step 2:** Revisión de `rev-bro` (spec §9, plan Fase 4, diff): en particular que cada dato del pliego citado coincida con el artículo y que no haya afirmaciones sin fuente.
+- [x] **Step 3:** Vault: `obsidian/Costura de datos.md` (métodos nuevos: `servicios`, `normativa`, `tramites`, `consejos`, `avisos`); nota nueva `obsidian/Obligaciones del pliego para la web.md` con el checklist de la spec §13 y el estado real; `Home.md`: "Fase 4 cerrada".
+- [x] **Step 4:** Commit de cierre si no se hizo por tarea.
 
 ## Fase 5 — Interactivo: estado de la traza, asistencia, carrusel y formularios
 
@@ -4606,7 +4606,7 @@ Resultado: el módulo de estado tipo subte con datos de ejemplo (y marcadores en
 **Interfaces:**
 - Produces: `EstadoRuta.ejemplo?: boolean`; `incidentes[].tipo: 'transito' | 'obra' | 'incidente' | 'clima'`, `sentido?`, `desde?`, `hasta?`; `estadoPorRuta(estado, rutas): Array<{ ruta; nivel: 'normal' | 'precaucion' | 'corte'; etiqueta; incidentes }>`; `<EstadoTraza estado={EstadoRuta} rutas={NombreRuta[]} nivel?: 'h2' | 'h3' />`.
 
-- [ ] **Step 1: Tests**
+- [x] **Step 1: Tests**
 
 Crear `tests/lib/estado.test.ts`:
 
@@ -4667,12 +4667,12 @@ En `tests/lib/datos/local-json.test.ts` reemplazar `it('estadoRutas: no disponib
   });
 ```
 
-- [ ] **Step 2: Correr y ver que fallan**
+- [x] **Step 2: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/lib/estado.test.ts tests/components/estado-traza.test.ts tests/lib/datos/local-json.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: Contrato, datos y helper**
+- [x] **Step 3: Contrato, datos y helper**
 
 Reemplazar `esquemaEstadoRuta` en `src/lib/datos/esquemas.ts` por:
 
@@ -4737,7 +4737,7 @@ export const estadoPorRuta = (estado: EstadoRuta, rutas: NombreRuta[]): FilaEsta
   });
 ```
 
-- [ ] **Step 4: `src/components/EstadoTraza.astro`**
+- [x] **Step 4: `src/components/EstadoTraza.astro`**
 
 ```astro
 ---
@@ -4787,7 +4787,7 @@ const sentidos = { ambos: 'ambos sentidos', ascendente: 'sentido ascendente', de
 
 Si `CloudFog` o `Construction` no existen en `@lucide/astro`, usar `Cloud` y `HardHat` (verificar con grep en `node_modules/@lucide/astro/dist/index.js`).
 
-- [ ] **Step 5: Colocarlo en home y en Obras**
+- [x] **Step 5: Colocarlo en home y en Obras**
 
 `src/pages/index.astro`: cargar `datos.estadoRutas()` en el `Promise.all` (variable `estado`) y pasar `<ObrasYEstado {obras} {estado} rutas={tramo.rutas.map((r) => r.nombre)} />`.
 
@@ -4801,12 +4801,12 @@ Si `CloudFog` o `Construction` no existen en `@lucide/astro`, usar `Cloud` y `Ha
 
 `src/pages/obras.astro`: cargar `estado` y `tramo`, y reemplazar la línea 30 por el mismo condicional (con `nivel="h2"`).
 
-- [ ] **Step 6: Tests**
+- [x] **Step 6: Tests**
 
 Run: `pnpm vitest run tests/lib/estado.test.ts tests/components/estado-traza.test.ts tests/lib/datos && pnpm check`
 Expected: PASS. (`tests/lib/datos/api.test.ts` sigue igual: `estadoRutas` no está en la API.)
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/lib/datos/esquemas.ts src/lib/datos/fuentes/local-json.ts src/content/estado-ruta.json src/components/EstadoTraza.astro src/lib/estado.ts src/components/home/ObrasYEstado.astro src/pages/obras.astro src/pages/index.astro tests/lib/estado.test.ts tests/components/estado-traza.test.ts tests/lib/datos/local-json.test.ts
@@ -4823,7 +4823,7 @@ git commit -m "feat(estado): estado de la traza tipo subte con datos de ejemplo 
 **Interfaces:**
 - Produces: `Campo.tipo` suma `'readonly'` (`valor?: string`, lo rellena un script); `Formulario` props nuevas `plazos?: string`, `id?: string`; el mensaje se arma recorriendo los campos (`name` → texto de su `label`).
 
-- [ ] **Step 1: Tests**
+- [x] **Step 1: Tests**
 
 Reemplazar `tests/components/formulario.test.ts`:
 
@@ -4858,12 +4858,12 @@ describe('Formulario', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y ver que fallan**
+- [x] **Step 2: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/components/formulario.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: `Formulario.astro`**
+- [x] **Step 3: `Formulario.astro`**
 
 - `Campo` (líneas 5–12): `tipo?: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'readonly'` y `valor?: string`.
 - `Props` (línea 13): `interface Props { asunto: string; whatsapp: string | null; email: string | null; campos: Campo[]; textoBoton?: string; plazos?: string; id?: string }` y `const { asunto, whatsapp, email, campos, textoBoton = 'Enviar por WhatsApp', plazos, id } = Astro.props;`
@@ -4874,7 +4874,7 @@ Expected: FAIL.
 - Línea 50 (texto legal): `class="text-sm text-texto-3"` (14 px: es un párrafo, no una anotación).
 - En el `<style>`: `.campo-lectura { background: var(--color-superficie); color: var(--color-texto-2); }`.
 
-- [ ] **Step 4: `formulario.ts` recorre los campos**
+- [x] **Step 4: `formulario.ts` recorre los campos**
 
 Reemplazar las líneas 20–27 por:
 
@@ -4890,7 +4890,7 @@ Reemplazar las líneas 20–27 por:
       const texto = lineas.join('\n');
 ```
 
-- [ ] **Step 5: Contacto con los formularios (a) y (b), canales y cómo reclamar**
+- [x] **Step 5: Contacto con los formularios (a) y (b), canales y cómo reclamar**
 
 Reescribir `src/pages/contacto.astro`:
 
@@ -4983,12 +4983,12 @@ En `src/pages/tramites.astro`, antes de `</Seccion>` final, agregar el formulari
 
 (importar `Formulario` y cargar `contacto` con `datos.contacto()` en el frontmatter de `tramites.astro`).
 
-- [ ] **Step 6: Tests, typecheck, verificación**
+- [x] **Step 6: Tests, typecheck, verificación**
 
 Run: `pnpm vitest run tests/components && pnpm check && pnpm verificar`
 Expected: verde. Los formularios salen deshabilitados (sin canal) con el aviso honesto.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/components/Formulario.astro src/scripts/formulario.ts src/pages/contacto.astro src/pages/tramites.astro tests/components/formulario.test.ts
@@ -5005,7 +5005,7 @@ git commit -m "feat(formularios): los tres del pliego con plazos y aviso honesto
 **Interfaces:**
 - Produces: `textoUbicacion(lat, lng, precision?): string` ("-32,7150, -61,1550 (±25 m) · https://maps.google.com/?q=-32.7150,-61.1550"); página `/asistencia/` con `[data-asistencia]`, botón `[data-ubicar]`, salida `[data-ubicacion]`, botón `[data-copiar]`, y el `Formulario` con campo `readonly` `ubicacion`.
 
-- [ ] **Step 1: Tests**
+- [x] **Step 1: Tests**
 
 Crear `tests/lib/asistencia.test.ts`:
 
@@ -5043,12 +5043,12 @@ describe('/asistencia/', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y ver que fallan**
+- [x] **Step 2: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/lib/asistencia.test.ts tests/components/asistencia.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: `src/lib/asistencia.ts` y `src/scripts/asistencia.ts`**
+- [x] **Step 3: `src/lib/asistencia.ts` y `src/scripts/asistencia.ts`**
 
 ```ts
 // src/lib/asistencia.ts — el texto de la ubicación que se dicta al 140 o viaja en el mensaje. Sin dependencias del DOM.
@@ -5105,7 +5105,7 @@ document.addEventListener('astro:page-load', iniciar);
 export {};
 ```
 
-- [ ] **Step 4: `src/pages/asistencia.astro`**
+- [x] **Step 4: `src/pages/asistencia.astro`**
 
 ```astro
 ---
@@ -5155,7 +5155,7 @@ const hayCanal = Boolean(contacto.whatsapp.numero || contacto.atencionUsuario ||
 <script src="../scripts/asistencia.ts"></script>
 ```
 
-- [ ] **Step 5: Accesos al botón**
+- [x] **Step 5: Accesos al botón**
 
 - `src/pages/emergencias.astro`: después del bloque del 140, `<div class="revelar mt-6"><Boton href="/asistencia" variante="vial">Pedir asistencia con mi ubicación</Boton></div>`.
 - `src/components/BarraEmergencias.astro`: el contenedor pasa a `flex gap-2`; el `<a tel>` con `flex-1`, y al lado `<a href={ruta('/asistencia')} class="inline-flex h-12 items-center justify-center rounded-md border border-borde-fuerte px-3 text-sm font-semibold text-texto" aria-label="Pedir asistencia en ruta"><LocateFixed size={18} aria-hidden="true" /></a>` (importar `LocateFixed` y `ruta`).
@@ -5165,14 +5165,14 @@ const hayCanal = Boolean(contacto.whatsapp.numero || contacto.atencionUsuario ||
 - `scripts/verificar.ts`: al bloque 11 sumar `for (const p of ['asistencia', 'tramites']) if (!existsSync(join(DIST, p, 'index.html'))) fallo(\`falta la página /${p}/\`);`.
 - `tests/presupuesto.test.ts` línea 7: agregar `'src/scripts/asistencia.ts'`.
 
-- [ ] **Step 6: Tests, typecheck y prueba manual**
+- [x] **Step 6: Tests, typecheck y prueba manual**
 
 Run: `pnpm vitest run tests/lib/asistencia.test.ts tests/components && pnpm check && pnpm verificar`
 Expected: verde.
 
 Run: `pnpm dev` y abrir `/asistencia/` en el celular (misma red, `--host`) o en el navegador: "Obtener mi ubicación" pide permiso, muestra coordenadas y link, "Copiar" copia. Negar el permiso: el mensaje lo dice y el resto sigue. Cerrar.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/pages/asistencia.astro src/scripts/asistencia.ts src/lib/asistencia.ts src/pages/emergencias.astro src/components/BarraEmergencias.astro src/components/TarjetaEstacion.astro src/components/home/AccesosRapidos.astro src/components/Footer.astro scripts/verificar.ts tests/presupuesto.test.ts tests/lib/asistencia.test.ts tests/components/asistencia.test.ts
@@ -5189,7 +5189,7 @@ git commit -m "feat(asistencia): botón de asistencia en ruta con ubicación del
 **Interfaces:**
 - Produces: `<Hero empresa novedades={Novedad[]} />`; sin destacadas renderiza el slide fijo solo; con destacadas, `[data-carrusel]` con `[data-slide]` (el fijo primero), botones `[data-slide-anterior]`/`[data-slide-siguiente]` y puntos `[data-slide-ir]`.
 
-- [ ] **Step 1: Tests**
+- [x] **Step 1: Tests**
 
 En `tests/components/home.test.ts`, reemplazar el `describe('Hero', …)` por:
 
@@ -5216,12 +5216,12 @@ describe('Hero', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y ver que falla**
+- [x] **Step 2: Correr y ver que falla**
 
 Run: `pnpm vitest run tests/components/home.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: Hero con carrusel**
+- [x] **Step 3: Hero con carrusel**
 
 En `src/components/home/Hero.astro`: importar `ChevronLeft, ChevronRight` de lucide y `type { Empresa, Novedad }`; `interface Props { empresa: Empresa; novedades?: Novedad[] }`, `const { empresa, novedades = [] } = Astro.props;`, `const destacadas = novedades.filter((n) => n.destacada).slice(0, 3);`, `const hayCarrusel = destacadas.length > 0;`. Reemplazar el `<div class="entrada contenedor …">` (líneas 28–39) por:
 
@@ -5315,12 +5315,12 @@ export {};
 
 En `tests/presupuesto.test.ts` línea 7 agregar `'src/scripts/carrusel.ts'`.
 
-- [ ] **Step 4: Tests y verificación**
+- [x] **Step 4: Tests y verificación**
 
 Run: `pnpm vitest run tests/components/home.test.ts tests/presupuesto.test.ts && pnpm check && pnpm verificar`
 Expected: verde (una novedad está `destacada: true` desde la Fase 4, así que el home muestra el carrusel con dos slides).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/components/home/Hero.astro src/pages/index.astro src/scripts/carrusel.ts tests/components/home.test.ts tests/presupuesto.test.ts
@@ -5329,11 +5329,11 @@ git commit -m "feat(home): carrusel del hero con las novedades destacadas, acces
 
 ### Tarea 5.5: Cierre de la Fase 5
 
-- [ ] **Step 1:** `pnpm check && pnpm test && pnpm verificar` en verde. Verificar el presupuesto de JS impreso por `verificar` (≤ 30 KB gz).
+- [x] **Step 1:** `pnpm check && pnpm test && pnpm verificar` en verde. Verificar el presupuesto de JS impreso por `verificar` (≤ 30 KB gz).
 - [ ] **Step 2:** Revisión de `sec-bro` sobre `src/pages/asistencia.astro`, `src/scripts/asistencia.ts`, `src/components/Formulario.astro`, `src/scripts/formulario.ts`, `src/pages/contacto.astro`, `src/pages/tramites.astro` (privacidad de la ubicación, inyección en el mensaje, `target=_blank` con `noopener`, sin datos guardados). Atender hallazgos.
 - [ ] **Step 3:** Revisión de `rev-bro` (spec §10, plan Fase 5, diff).
-- [ ] **Step 4:** Vault: `Costura de datos.md` (estado-ruta.json y el flag `ejemplo`), `Decisiones de arquitectura.md` (asistencia sin simular envío; carrusel = destacadas; popup no). `Home.md`: "Fase 5 cerrada".
-- [ ] **Step 5:** Commit de cierre si no se hizo por tarea.
+- [x] **Step 4:** Vault: `Costura de datos.md` (estado-ruta.json y el flag `ejemplo`), `Decisiones de arquitectura.md` (asistencia sin simular envío; carrusel = destacadas; popup no). `Home.md`: "Fase 5 cerrada".
+- [x] **Step 5:** Commit de cierre si no se hizo por tarea.
 
 ## Fase 6 — Legibilidad, impresión, HTML válido, docs y cierre
 
@@ -5346,7 +5346,7 @@ Resultado: el sitio cumple las reglas de legibilidad del pliego (61.7) con guard
 - Modify: todos los archivos que usan `link-crece` (`grep -rn "link-crece" src/`), `src/components/ui/Senal.astro`, `src/pages/novedades/index.astro:13`, `src/pages/obras.astro:24-25`, `src/components/home/TarifaDestacada.astro:63`, `src/components/Breadcrumbs.astro:14`, `src/components/Footer.astro` (links de columnas), `src/pages/el-tramo.astro` (sub-nav), `src/pages/tramites.astro` y `src/pages/politicas.astro` (navs de anclas)
 - Create: `tests/styles/legibilidad.test.ts`
 
-- [ ] **Step 1: Guarda**
+- [x] **Step 1: Guarda**
 
 Crear `tests/styles/legibilidad.test.ts`:
 
@@ -5384,12 +5384,12 @@ describe('legibilidad (pliego 61.7)', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y ver que falla**
+- [x] **Step 2: Correr y ver que falla**
 
 Run: `pnpm vitest run tests/styles/legibilidad.test.ts`
 Expected: FAIL (link-crece, text-xs sin anotacion, sin regla de subrayado).
 
-- [ ] **Step 3: `global.css`**
+- [x] **Step 3: `global.css`**
 
 En `@layer base`, reemplazar las líneas 34–35 (`a { … }` y `a:hover`) por:
 
@@ -5408,18 +5408,18 @@ En `@layer components`: borrar el bloque `.link-crece` (líneas 72–78) y reemp
   .prose-covicen p + p { margin-block-start: 2.4em; margin-block-start: 1.5lh; }
 ```
 
-- [ ] **Step 4: Quitar `link-crece` y marcar anotaciones**
+- [x] **Step 4: Quitar `link-crece` y marcar anotaciones**
 
 Run: `grep -rn "link-crece" src/` y en cada ocurrencia borrar la clase (los enlaces quedan subrayados por la regla global). Donde el enlace está en un menú (`Breadcrumbs.astro:14`, los `<nav>` del `Footer.astro`, la sub-navegación de `el-tramo.astro`, las navs de anclas de `tramites.astro`, `politicas.astro`, `preguntas-frecuentes.astro` y `tarifas.astro`) agregar `no-underline hover:underline`.
 
 Anotaciones: `Senal.astro` → agregar `anotacion` a la lista de clases; `novedades/index.astro:13` (etiquetas) → `anotacion text-xs`; `obras.astro:24-25` → `anotacion text-xs`; `TarifaDestacada.astro:63` → `text-sm` (es una instrucción, no una anotación). Volver a correr el grep del test hasta que quede vacío.
 
-- [ ] **Step 5: Tests y vista**
+- [x] **Step 5: Tests y vista**
 
 Run: `pnpm vitest run tests/styles && pnpm check`
 Expected: PASS. En `pnpm dev`: los enlaces del cuerpo subrayados, el menú y los botones no; los párrafos de una novedad con más aire entre sí.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add -A -- src/styles src/components src/pages src/layouts tests/styles/legibilidad.test.ts
@@ -5434,7 +5434,7 @@ git commit -m "feat(legibilidad): enlaces subrayados, 12 px solo en anotaciones,
 - Modify: `scripts/verificar.ts` (hoja de impresión presente), `tests/styles/tokens.test.ts` (no cambia) 
 - Create: `tests/styles/impresion.test.ts`
 
-- [ ] **Step 1: Test**
+- [x] **Step 1: Test**
 
 Crear `tests/styles/impresion.test.ts`:
 
@@ -5456,12 +5456,12 @@ describe('impresión (pliego 61.7)', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y ver que falla**
+- [x] **Step 2: Correr y ver que falla**
 
 Run: `pnpm vitest run tests/styles/impresion.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: `src/styles/impresion.css`**
+- [x] **Step 3: `src/styles/impresion.css`**
 
 ```css
 /* Vista de impresión (pliego 61.7). Fondo blanco, texto negro, sin navegación ni animaciones; las URL visibles;
@@ -5487,7 +5487,7 @@ Expected: FAIL.
 
 En `src/styles/global.css` línea 5, después de `@import "./tarjetas.css";` agregar `@import "./impresion.css";`.
 
-- [ ] **Step 4: Base: datos para el encabezado de impresión y foco visible del destino del skip link**
+- [x] **Step 4: Base: datos para el encabezado de impresión y foco visible del destino del skip link**
 
 `src/layouts/Base.astro`:
 - Frontmatter: `import { config } from '@/lib/config';` y `const impreso = new Date().toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });`.
@@ -5495,7 +5495,7 @@ En `src/styles/global.css` línea 5, después de `@import "./tarjetas.css";` agr
 - Línea 41: quitar `outline-none` de `<main>`.
 - Líneas 54–55 (`<style is:global>`): agregar `#contenido:focus-visible { outline: 2px solid var(--color-acento); outline-offset: 4px; border-radius: var(--radius-sm); }`.
 
-- [ ] **Step 5: `verificar.ts`: la hoja de impresión llega al build**
+- [x] **Step 5: `verificar.ts`: la hoja de impresión llega al build**
 
 Después del bloque de páginas de estación (11) agregar:
 
@@ -5505,14 +5505,14 @@ const css = readdirSync(join(DIST, '_astro')).filter((f) => f.endsWith('.css')).
 if (!css.includes('@media print')) fallo('el CSS emitido no tiene la hoja de impresión (@media print)');
 ```
 
-- [ ] **Step 6: Tests y prueba manual**
+- [x] **Step 6: Tests y prueba manual**
 
 Run: `pnpm vitest run tests/styles && pnpm verificar`
 Expected: verde.
 
 Run: `pnpm dev`, en `/tarifas/` tocar "Imprimir el cuadro" y mirar la vista previa: fondo blanco, sin header, las tres tablas, las URL entre paréntesis, el encabezado "Covicen · … · impreso el …". En `/el-tramo/` la vista previa muestra las seis tarjetas. Cerrar.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/styles/impresion.css src/styles/global.css src/layouts/Base.astro scripts/verificar.ts tests/styles/impresion.test.ts tests/styles/colores-fijos.test.ts
@@ -5526,7 +5526,7 @@ git commit -m "feat(impresion): hoja de impresión del pliego y foco visible al 
 - Create: `.htmlvalidate.json`
 - Modify: `scripts/verificar.ts`
 
-- [ ] **Step 1: Instalar y configurar**
+- [x] **Step 1: Instalar y configurar**
 
 Run: `pnpm add -D html-validate`
 
@@ -5546,7 +5546,7 @@ Crear `.htmlvalidate.json`:
 
 (`no-inline-style` apagada porque Astro emite `style="--i: 0"` para el stagger y las coordenadas: son variables, no estilos de presentación. Cualquier otra regla que haya que apagar se justifica en un comentario en `scripts/verificar.ts`, al lado del validador.)
 
-- [ ] **Step 2: Validar cada página en `verificar.ts`**
+- [x] **Step 2: Validar cada página en `verificar.ts`**
 
 Agregar `import { HtmlValidate } from 'html-validate';` y, antes del `for (const ruta of paginas)`, `const validador = new HtmlValidate();`. Dentro del bucle, al final:
 
@@ -5560,12 +5560,12 @@ Agregar `import { HtmlValidate } from 'html-validate';` y, antes del `for (const
 
 Como el bucle pasa a usar `await`, envolver el recorrido en una función `async` o dejar el archivo como módulo con top-level await (Node ≥ 22 lo permite en `.ts` ejecutado con `node`): el archivo ya es ESM, así que el `await` a nivel superior funciona.
 
-- [ ] **Step 3: Correr y corregir lo que marque**
+- [x] **Step 3: Correr y corregir lo que marque**
 
 Run: `pnpm verificar`
 Expected: lista de errores de HTML, si los hay (por ejemplo: `<a>` dentro de `<svg>` sin `xlink`, atributos duplicados, `<p>` dentro de `<p>` en la prosa, IDs repetidos entre la tabla de tarifas de El tramo y las tarjetas). Corregir cada uno en su componente (nunca apagando la regla salvo justificación escrita) hasta `OK: N páginas verificadas, 0 fallos.`
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add package.json pnpm-lock.yaml .htmlvalidate.json scripts/verificar.ts
@@ -5580,7 +5580,7 @@ git commit -m "test(verificar): HTML válido en cada página con html-validate"
 - Create: `obsidian/Obligaciones del pliego para la web.md` (si no se creó en la Fase 4)
 - Modify: `README.md` (variables para el dominio)
 
-- [ ] **Step 1: `docs/guia-de-revision.md`**
+- [x] **Step 1: `docs/guia-de-revision.md`**
 
 Reescribir siguiendo la estructura actual (una sección por pantalla), con qué mirar ahora:
 
@@ -5594,7 +5594,7 @@ Reescribir siguiendo la estructura actual (una sección por pantalla), con qué 
 - **Cómo cargar lo que falta (sin tocar componentes)**: tabla campo → archivo → efecto: `empresa.json` (razonSocial, cuit, domicilioLegal, domicilioComercial, constanciaUrl, polizaRc), `contacto.json` (lineaGratuita, atencionUsuario, whatsapp.numero, redes, enlaces.oficinaVirtual, canales[].valor, cuentaRegularizacion), `tramo.json` (servicios por estación, telefono, horarioAtencion), `avisos.json`, `estado-ruta.json` (poner `ejemplo: false` cuando sean reales), `public/qr-afip.png`, `src/assets/institucional/organigrama.png`, `src/assets/institucional/<id>.svg` (logos), `src/assets/atmosfera/hero-ruta-diurna.jpg`, `TEMA_POR_DEFECTO` en `src/lib/tema.ts`.
 - **Migración a dominio propio** (pliego 61.7): en GitHub Pages, dominio personalizado `www.covicen.com.ar` (CNAME) para que el apex redirija al `www`; en Actions: `PUBLIC_SITE_URL=https://www.covicen.com.ar`, `PUBLIC_BASE_PATH=/`, `PUBLIC_INDEXABLE=true`. La URL va en la cartelería de las cabinas: no cambiarla después.
 
-- [ ] **Step 2: Vault**
+- [x] **Step 2: Vault**
 
 - `obsidian/Home.md`: línea de estado del día con el cierre de las seis fases, link a la spec y al plan, y la lista corta de pendientes de Covicen (spec §14).
 - `obsidian/Decisiones de arquitectura.md`: filas nuevas (tema con interruptor y default por constante; header de dos filas; esconder, no a confirmar; 679,03 del PETP; cuadro heredado y columna manual igual; asistencia sin simular envío; carrusel = destacadas, sin popup; contrato compartido solo con opcionales) y actualizar la fila "Marca" (sin descriptor).
@@ -5609,7 +5609,7 @@ Expected: verde. Anotar en el mensaje de cierre los números que imprime `verifi
 
 Revisión final de `rev-bro` sobre todo el diff desde el commit de la spec (`git diff 15791de..HEAD --stat` y el diff completo), contra la spec entera, con las tres verificaciones corridas por él. Atender hallazgos. Después, `superpowers:verification-before-completion` con los outputs pegados.
 
-- [ ] **Step 4: Commit y estado del repo**
+- [x] **Step 4: Commit y estado del repo**
 
 ```bash
 git add docs/guia-de-revision.md README.md obsidian
