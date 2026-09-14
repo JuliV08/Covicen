@@ -202,6 +202,8 @@ export const esquemaObra = z.object({
   inicio: fechaIso.optional(),
   finEstimado: fechaIso.optional(),
   descripcion: z.string().min(1),
+  /** Artículo del pliego que obliga la obra (PETP 5, 6, 7…). */
+  fuente: z.string().min(1).optional(),
   orden: z.number().int(),
 });
 export type Obra = z.infer<typeof esquemaObra>;

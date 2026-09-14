@@ -23,7 +23,7 @@ const futuras = [
   ['3', '3 ejes, más de 2,30 m, con rueda doble', '3'], ['4', '4 ejes', '4'], ['5', '5 ejes', '5'], ['6', '6 ejes', '6'],
   ['7', 'Más de 6 ejes', '7'], ['8', 'Más de 8 ejes', '9'], ['Especial', 'Con permiso de circulación especial', 'cantidad de ejes'],
 ] as const;
-const descuentos = [['36 a 44 pasadas por mes', '15 %'], ['45 a 60 pasadas por mes', '25 %'], ['61 pasadas o más por mes', '35 %']] as const;
+const descuentos = [['A partir de la pasada 36 en el mes', '15 %'], ['A partir de la pasada 45 en el mes', '25 %'], ['A partir de la pasada 61 en el mes', '35 %']] as const;
 const exentos = ['Ambulancias', 'Vehículos de las Fuerzas Armadas y de Seguridad de la Nación', 'Vehículos de servicio contra incendio (bomberos)', 'Vehículos y agentes al servicio de Vialidad Nacional', 'Vehículos de la Agencia Nacional de Seguridad Vial', 'Vehículos al servicio de la Cruz Roja (Ley 27.547)', 'Vehículos afectados a personas con discapacidad, según el reglamento de Vialidad Nacional', 'Vehículos afectados a ex combatientes de Malvinas, según el reglamento de Vialidad Nacional'];
 ---
 <Base titulo="Tarifas" descripcion={`Cuadro tarifario vigente en los peajes del Tramo Centro (Carcarañá, James Craik y Franck): ${precio !== null ? moneda(precio) : ''} por auto, Resolución 248/2026 de Vialidad Nacional. TelePASE, pago en la vía, descuentos por frecuencia y exenciones.`} migas={[{ nombre: 'Tarifas', href: '/tarifas' }]}>

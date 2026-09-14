@@ -31,7 +31,7 @@ const asumimos = [
       {e.enFormacion && <p>La sociedad está en formación. Cuando se complete la inscripción, publicamos acá y en el pie de página la razón social, el CUIT y los domicilios.</p>}
     </div>
     <div class="escalonar mt-12 grid gap-10 sm:grid-cols-2">
-      <div style="--i: 0"><Mojon valor={c.plazoAnios} unidad="años" etiqueta={`de concesión${c.prorrogaAnios ? ` (+${c.prorrogaAnios} prorrogables)` : ''}`} animar /></div>
+      <div style="--i: 0"><Mojon valor={c.plazoAnios} unidad="años" etiqueta={`de concesión desde el ${fechaLarga(c.inicioOperacion)}`} animar /></div>
       <div style="--i: 1"><Mojon valor={tramo.cabinas.length} unidad="peajes" etiqueta="en tres rutas y dos provincias" animar /></div>
     </div>
   </Seccion>

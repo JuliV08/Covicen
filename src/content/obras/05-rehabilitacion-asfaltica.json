@@ -6,5 +6,6 @@
   "estado": "planificada",
   "avance": null,
   "orden": 5,
-  "descripcion": "Toneladas mínimas de concreto asfáltico por sección y por año durante los veinte años, con medición semestral del avance en toneladas y en longitud de carril (PETP art. 7)."
+  "descripcion": "Toneladas mínimas de concreto asfáltico por sección y por año durante los veinte años, con medición semestral del avance en toneladas y en longitud de carril.",
+  "fuente": "PETP art. 7"
 }
