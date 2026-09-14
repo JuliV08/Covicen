@@ -17,3 +17,7 @@ export const fechaLarga = (iso: string): string => fmtFechaLarga.format(aFechaUt
 export const fechaCorta = (iso: string): string => fmtFechaCorta.format(aFechaUtc(iso));
 export const numero = (n: number, decimales = 0): string =>
   new Intl.NumberFormat('es-AR', { minimumFractionDigits: decimales, maximumFractionDigits: decimales }).format(n);
+
+const fmtFechaHora = new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Argentina/Buenos_Aires' });
+/** "13 de septiembre de 2026, 15:04" (hora Argentina). Para la fecha de última actualización del footer. */
+export const fechaHoraLarga = (d: Date): string => fmtFechaHora.format(d).replace(' a las ', ', ').replace(/,\s*(\d{2}:\d{2})$/, ', $1');
