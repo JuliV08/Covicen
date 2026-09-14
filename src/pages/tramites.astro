@@ -1,9 +1,10 @@
 ---
 import { ExternalLink } from '@lucide/astro';
 import Base from '@/layouts/Base.astro';
+import Formulario from '@/components/Formulario.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
-const tramites = await datos.tramites();
+const [tramites, contacto] = await Promise.all([datos.tramites(), datos.contacto()]);
 ---
 <Base titulo="Guía de trámites" descripcion="Trámites del usuario del Tramo Centro: tarifa diferencial para vecinos, frentistas y docentes, exención de peaje por discapacidad y para ex combatientes de Malvinas, y alta de TelePASE. Quién puede, requisitos y pasos." migas={[{ nombre: 'Guía de trámites', href: '/tramites' }]}>
   <Seccion nivel="h1" eyebrow="Guía de trámites" titulo="Quién puede, qué necesita y cómo se hace." intro="Los trámites que el pliego prevé para el usuario (PETG art. 61.5). Todos son gratuitos." class="pt-10">
@@ -24,6 +25,19 @@ const tramites = await datos.tramites();
           </div>
         </article>
       ))}
+    </div>
+    <div id="formulario" class="revelar mt-16 grid gap-12 lg:grid-cols-[1fr_1.3fr]">
+      <div><h2 class="text-2xl">Iniciá tu trámite</h2><p class="mt-3 text-texto-2">Dejanos tus datos y el trámite que querés hacer. La documentación se envía por correo cuando te la pidamos.</p></div>
+      <Formulario id="formulario-tramites" asunto="Trámite" whatsapp={contacto.whatsapp.numero} email={contacto.atencionUsuario ?? contacto.email.general} plazos="Acuse en 24 horas · Respuesta en 5 días hábiles" campos={[
+        { nombre: 'tramite', etiqueta: 'Trámite', tipo: 'select', opciones: tramites.map((t) => t.nombre), requerido: true },
+        { nombre: 'nombre', etiqueta: 'Nombre', requerido: true },
+        { nombre: 'apellido', etiqueta: 'Apellido', requerido: true },
+        { nombre: 'dni', etiqueta: 'DNI', requerido: true },
+        { nombre: 'domicilio', etiqueta: 'Domicilio' },
+        { nombre: 'patente', etiqueta: 'Patente', requerido: true },
+        { nombre: 'correo', etiqueta: 'Correo electrónico', tipo: 'email', requerido: true },
+        { nombre: 'telefono', etiqueta: 'Teléfono', tipo: 'tel' },
+      ]} />
     </div>
   </Seccion>
 </Base>

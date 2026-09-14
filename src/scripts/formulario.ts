@@ -19,10 +19,11 @@ const iniciar = () => {
       if (!valido) { form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus(); return; }
       const datos = new FormData(form);
       const lineas = [`Asunto: ${form.dataset.asunto ?? ''}`];
-      form.querySelectorAll<HTMLLabelElement>('label').forEach((l) => {
-        const nombre = l.htmlFor.replace('campo-', '');
-        const valor = String(datos.get(nombre) ?? '').trim();
-        if (valor) lineas.push(`${l.textContent?.replace('*', '').trim()}: ${valor}`);
+      // Recorre los CAMPOS (no las etiquetas): así entran también los de solo lectura que rellena un script (ubicación).
+      form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('.campo').forEach((campo) => {
+        const etiqueta = form.querySelector<HTMLLabelElement>(`label[for="${campo.id}"]`)?.textContent?.replace('*', '').trim() ?? campo.name;
+        const valor = String(datos.get(campo.name) ?? '').trim();
+        if (valor) lineas.push(`${etiqueta}: ${valor}`);
       });
       const texto = lineas.join('\n');
       const wa = form.dataset.whatsapp;

@@ -5,22 +5,24 @@ import { enlaceWhatsapp } from '@/lib/whatsapp';
 export interface Campo {
   nombre: string;
   etiqueta: string;
-  tipo?: 'text' | 'email' | 'tel' | 'textarea' | 'select';
+  tipo?: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'readonly';
+  /** Para `readonly`: lo rellena un script (la ubicación en Asistencia). */
+  valor?: string;
   opciones?: string[];
   requerido?: boolean;
   placeholder?: string;
 }
-interface Props { asunto: string; whatsapp: string | null; email: string | null; campos: Campo[]; textoBoton?: string }
-const { asunto, whatsapp, email, campos, textoBoton = 'Enviar por WhatsApp' } = Astro.props;
+interface Props { asunto: string; whatsapp: string | null; email: string | null; campos: Campo[]; textoBoton?: string; plazos?: string; id?: string }
+const { asunto, whatsapp, email, campos, textoBoton = 'Enviar por WhatsApp', plazos, id } = Astro.props;
 const action = whatsapp ? enlaceWhatsapp(whatsapp, `Asunto: ${asunto}`) : email ? `mailto:${email}?subject=${encodeURIComponent(asunto)}` : '#';
 const canal = whatsapp ? 'whatsapp' : email ? 'email' : 'a-confirmar';
 // Sin canal cargado, el formulario no puede enviar: se avisa ANTES de los campos y se deshabilitan.
 const deshabilitado = canal === 'a-confirmar';
 ---
-<form class="formulario grid gap-5" data-formulario data-asunto={asunto} data-whatsapp={whatsapp ?? ''} data-email={email ?? ''} data-canal={canal} action={action} method="get" target="_blank" novalidate>
+<form class="formulario grid gap-5" {id} data-formulario data-asunto={asunto} data-whatsapp={whatsapp ?? ''} data-email={email ?? ''} data-canal={canal} action={action} method="get" target="_blank" novalidate>
   {deshabilitado && (
     <p class="rounded-md border border-dashed border-borde-fuerte p-4 text-sm text-texto-2" role="status">
-      El canal de contacto se habilita antes del inicio de la operación: este formulario todavía no envía. Mientras tanto, guardá esta página.
+      Los formularios se habilitan con la toma de posesión, el 5 de octubre de 2026. Mientras, el <a href="tel:140">140</a> atiende emergencias las 24 horas.
     </p>
   )}
   <fieldset class="m-0 grid min-w-0 gap-5 border-0 p-0 disabled:opacity-60" disabled={deshabilitado}>
@@ -30,6 +32,8 @@ const deshabilitado = canal === 'a-confirmar';
         <label for={`campo-${c.nombre}`} class="text-sm font-semibold text-texto">{c.etiqueta}{c.requerido && <span class="text-vial-texto" aria-hidden="true"> *</span>}</label>
         {c.tipo === 'textarea' ? (
           <textarea id={`campo-${c.nombre}`} name={c.nombre} rows="5" required={c.requerido} placeholder={c.placeholder} class="campo" aria-describedby={`error-${c.nombre}`}></textarea>
+        ) : c.tipo === 'readonly' ? (
+          <input id={`campo-${c.nombre}`} name={c.nombre} type="text" readonly value={c.valor ?? ''} placeholder={c.placeholder} class="campo campo-lectura" aria-describedby={`error-${c.nombre}`} />
         ) : c.tipo === 'select' ? (
           <select id={`campo-${c.nombre}`} name={c.nombre} required={c.requerido} class="campo" aria-describedby={`error-${c.nombre}`}>{(c.opciones ?? []).map((o) => <option value={o}>{o}</option>)}</select>
         ) : (
@@ -45,9 +49,10 @@ const deshabilitado = canal === 'a-confirmar';
         {canal === 'whatsapp' ? <MessageCircle size={18} aria-hidden="true" /> : <Mail size={18} aria-hidden="true" />} {canal === 'whatsapp' ? textoBoton : 'Enviar por correo'}
       </button>
       {canal === 'whatsapp' && email && <a href={`mailto:${email}?subject=${encodeURIComponent(asunto)}`} class="link-crece text-sm text-texto-2">o escribinos a {email}</a>}
+      {plazos && <span class="text-sm text-texto-2">{plazos}</span>}
     </div>
   )}
-  <p class="text-xs text-texto-2">Los datos que envíes viajan por el canal que elijas (WhatsApp es un servicio de Meta). Ver <a href={ruta('/privacidad')} class="link-crece">política de privacidad</a>.</p>
+  <p class="text-sm text-texto-2">Los datos que envíes viajan por el canal que elijas (WhatsApp es un servicio de Meta). Ver <a href={ruta('/privacidad')} class="link-crece">política de privacidad</a>.</p>
 </form>
 <script src="../scripts/formulario.ts"></script>
 <style>
@@ -57,4 +62,5 @@ const deshabilitado = canal === 'a-confirmar';
   .campo[aria-invalid="true"] { border-color: var(--color-error); }
   .campo::placeholder { color: var(--color-texto-3); }
   fieldset:disabled .campo { cursor: not-allowed; }
+  .campo-lectura { background: var(--color-superficie); color: var(--color-texto-2); }
 </style>
