@@ -31,7 +31,7 @@ Regla de contenido que atraviesa todo: **esconder lo que no está, no publicar "
 | Tema | **Oscuro por defecto por ahora + interruptor claro/oscuro.** En claro, el hero usa la misma foto pero de día. El tema por defecto lo define el cliente después (constante). | El gerente dijo dos veces "muy oscura". El contraste del oscuro cumple el pliego de sobra (medido: texto 15,6:1), así que es gusto, no obligación; el interruptor permite decidir viendo. |
 | Orden del trabajo | **Tokens y tema primero (Fase 0)**, después todo lo demás sobre los dos temas. | Cada componente nuevo se hace una vez. Contenido primero implicaba retrabajo en cada pieza. |
 | Header | **Dos filas**: barra superior de 40 px (anuncios + TelePASE · Mi cuenta · tema) y header de 72 px (logo · menú completo desde 1024 px · 140). | Con una fila no entra: hoy quedan ~45 px libres en desktop. El cliente quiere el menú desplegado en desktop. |
-| Barra de anuncios | **Siempre visible**, rotativa, con avisos en el repo (`avisos.json`) detrás del contrato. Si la lista quedara vacía, no se muestra (robustez, no requisito). | Pedido del doc; Juli la quiere lista para que el módulo de novedades del backoffice la alimente. |
+| Barra de anuncios | **Siempre visible**, rotativa, con avisos en el repo (`avisos.json`) detrás del contrato. Si la lista quedara vacía, no se muestra la sección de anuncios; la barra queda con TelePASE, Mi cuenta y el interruptor (robustez, no requisito). | Pedido del doc; Juli la quiere lista para que el módulo de novedades del backoffice la alimente. |
 | Tarifas: qué cuadro | El **cuadro heredado de Corredores Viales** (Res. 248/2026, vigente desde el 26/02/2026), idéntico en las tres estaciones existentes, con origen y vigencia explícitos. | Es lo que el PETP art. 3 manda aplicar desde la toma de posesión, y lo que pidió el gerente. |
 | Tarifas: columna manual | **Dos columnas (TelePASE / Pago electrónico o manual) con el mismo valor hoy**, y la leyenda del sector al pie. | La Res. 248/2026 fija un solo precio ("Modalidad de Pago Manual y Automático"). El doble es el esquema propio de Corresur; publicarlo acá atribuiría a la resolución un valor que no fija. |
 | Tarifas: estimaciones | **No se publica** ninguna actualización estimada (el "~$1.900" de la reunión). | Dato de tercera mano, sin resolución. |
@@ -162,7 +162,7 @@ Todos los colores fijos que encontró el barrido (`tarjetas.css`, `Header.astro`
 
 ### 5.1 Barra superior (40 px, fija junto con el header)
 
-- **Izquierda: anuncios.** `datos.avisos()` (método nuevo en `FuenteDatos`, solo fuente local) lee `src/content/avisos.json`: `{ id, texto, url?, desde?, hasta?, tono: 'info' | 'vial' }[]`. Se filtran por fecha en el build (el workflow corre a diario, así que las vigencias entran y salen solas). Rotación con fundido cada 6 s; se detiene con `:hover`, foco y `prefers-reduced-motion` (ahí muestra el primero, con botón "siguiente"). Marcado como `<section aria-label="Anuncios">` con `aria-live="off"` (no interrumpe al lector de pantalla) y botones anterior/siguiente con nombre. Si la lista filtrada queda vacía, la barra no se renderiza.
+- **Izquierda: anuncios.** `datos.avisos()` (método nuevo en `FuenteDatos`, solo fuente local) lee `src/content/avisos.json`: `{ id, texto, url?, desde?, hasta?, tono: 'info' | 'vial' }[]`. Se filtran por fecha en el build (el workflow corre a diario, así que las vigencias entran y salen solas). Rotación con fundido cada 6 s; se detiene con `:hover`, foco y `prefers-reduced-motion` (ahí muestra el primero, con botón "siguiente"). Marcado como `<section aria-label="Anuncios">` con `aria-live="off"` (no interrumpe al lector de pantalla) y botones anterior/siguiente con nombre. Si la lista filtrada queda vacía, no se renderiza la sección de anuncios; la barra sigue, con los accesos de la derecha.
 - **Derecha (≥ 1024 px):** `TelePASE` (link externo a `contacto.enlaces.telepase`), `Mi cuenta` (link a `contacto.enlaces.oficinaVirtual` si existe; si es `null`, a `/medios-de-pago/#mi-cuenta`), interruptor de tema. En celular la barra muestra solo el anuncio; esos tres van dentro del menú.
 
 ### 5.2 Header (72 px)
@@ -188,8 +188,8 @@ Todos los colores fijos que encontró el barrido (`tarjetas.css`, `Header.astro`
 ### 6.1 Cambios en `src/content/`
 
 - `empresa.json`: se elimina `descriptor`; `concesion.km: 679.03`; `domicilioComercial: null` (nuevo). `tarifaOfertadaSinIva: 1399` queda como dato de la adjudicación (se usa para explicar cómo se fija la tarifa, nunca como precio).
-- `contacto.json`: `emergencias.telefono: "140"`; nuevos `lineaGratuita: null` (0800), `atencionUsuario: null` (correo), `enlaces: { telepase: "https://www.telepase.com.ar/", oficinaVirtual: null }`, `canales: [...]` (§9.2). `redes` puede sumar `facebook` y `youtube`.
-- `tramo.json`: `km: 679.03`; rutas con extremos oficiales, `pkInicial`/`pkFinal`, sin notas "a confirmar"; ciudades: se agregan `santo-tome` y `empalme-rn-19` (nodo del empalme; la localidad exacta se verifica al cargar los datos), Rafaela y Santa Fe quedan como referencia con `principal: true` pero fuera de los trazados; trazados: RN 19 `santo-tome → franck → san-francisco`, RN 34 `rosario → totoras → empalme-rn-19`; cabinas con km y vías oficiales, `operativa`, `servicios`, `freeFlow: true` en las tres nuevas; avisos actualizados con la fuente (PETP).
+- `contacto.json`: `emergencias.telefono: "140"`; nuevos `lineaGratuita: null` (0800), `atencionUsuario: null` (correo), `enlaces: { telepase: "https://www.telepase.com.ar/", oficinaVirtual: null, atencionDnv: null }` (`atencionDnv`: canales de atención al usuario de la DNV, PETG 61.6, cuando indiquen la URL), `canales: [...]` (§9.2). `redes` puede sumar `facebook` y `youtube`.
+- `tramo.json`: `km: 679.03`; rutas con extremos oficiales, `pkInicial`/`pkFinal`, sin notas "a confirmar"; ciudades: se agregan `santo-tome` y `empalme-rn-19` (nodo del empalme; la localidad exacta se verifica al cargar los datos), Rafaela y Santa Fe quedan como referencia con `principal: true` pero fuera de los trazados; trazados: RN 19 `santo-tome → franck → empalme-rn-19 → san-francisco` (el nodo del empalme es donde la RN 34 cierra sobre la RN 19), RN 34 `rosario → totoras → empalme-rn-19`; cabinas con km y vías oficiales, `operativa`, `servicios`, `freeFlow: true` en las tres nuevas; avisos actualizados con la fuente (PETP).
 - `tarifario.json`: cuadro de la Res. 248/2026 (§3.3), `origen: 'heredado'`, `resolucion`, `cabinas: ['carcarana','james-craik','franck']`, `categoriaDestacada: 'cat-1'`, cinco tarifas con `montoSinIva` con centavos y `montoManualSinIva` igual al de TelePASE, `descripcion` con el criterio, `avisos` con la leyenda literal del Anexo B.
 - Nuevos: `avisos.json`, `estado-ruta.json`, `servicios.json`, `normativa.json`, `tramites.json`, `consejos.json`. `obras/*.json` reemplazado por las obras obligatorias del PETP art. 6 y 7 (estado `planificada`). FAQ: 13 actualizadas + 4 nuevas. Novedades: 4 corregidas + 1 nueva.
 
@@ -200,6 +200,8 @@ Todos los colores fijos que encontró el barrido (`tarjetas.css`, `Header.astro`
 ```ts
 // Ruta
 pkInicial?: number; pkFinal?: number;
+// Ciudad
+tipo?: 'ciudad' | 'empalme';        // default 'ciudad'; el empalme RN 34 / RN 19 es un nodo del trazado, no una ciudad
 // Cabina
 vias?: number;                       // total de vías
 operativa?: boolean;                 // true = cobra hoy (verde). Default derivado: situacion === 'existente'
@@ -227,7 +229,7 @@ Reservado para cuando el sistema lo necesite (modelo de códigos de tarifa de la
 ```ts
 // Empresa: - descriptor; + domicilioComercial: string | null
 // Contacto: + lineaGratuita: string | null; + atencionUsuario: email | null;
-//           + enlaces: { telepase: url; oficinaVirtual: url | null };
+//           + enlaces: { telepase: url; oficinaVirtual: url | null; atencionDnv: url | null };
 //           + canales: Canal[]; redes += facebook?, youtube?
 // Canal { id, nombre, tipo: 'telefono'|'web'|'correo'|'whatsapp'|'presencial', valor: string|null,
 //         disponibilidad, acuse, respuesta, fuente }
@@ -391,7 +393,7 @@ Se mantienen los chequeos actuales y se agregan:
 - `tema`: el snippet inline fija `data-tema` según `localStorage` y `TEMA_POR_DEFECTO`; `'sistema'` respeta `prefers-color-scheme`.
 - `mapa`: seis enlaces con `aria-label`, `role="group"`, colores por estado, leyenda condicional, incidentes interpolados dentro del `viewBox`.
 - `tarifas`: cinco filas, dos columnas con el mismo valor, vigencia y resolución en la página, sin "a confirmar" ni "todavía no se cobra"; `categoriaDestacada` respetada; textos de operador pintados como texto (ya existe).
-- `avisos`: filtro por `desde`/`hasta`; lista vacía → sin barra.
+- `avisos`: filtro por `desde`/`hasta`; lista vacía → sin sección de anuncios (la barra queda con los accesos).
 - `estado-traza`: chip por peor severidad; cartel de ejemplo; orden por ruta.
 - `formulario`: campos `readonly` entran al mensaje; deshabilitado sin canal; plazos visibles.
 - `asistencia`: armado del mensaje con y sin ubicación (unit, sin `navigator`).

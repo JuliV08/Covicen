@@ -14,6 +14,7 @@ const DIST = 'dist';
 const fallos: string[] = [];
 const fallo = (m: string) => fallos.push(m);
 
+const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/];
 const paginas = paginasDe(DIST).filter((p) => !p.includes('404'));
 console.log(`Verificando ${paginas.length} páginas (base ${base}, indexable ${indexable})…`);
 
@@ -45,9 +46,10 @@ for (const ruta of paginas) {
   if (!/href="tel:140"/.test(html)) fallo(`${nombre}: falta el tel:140 de emergencias`);
   // 5. vigencia en tarifas
   if (nombre.startsWith('tarifas') && !html.includes('Vigencia')) fallo(`${nombre}: la tabla de tarifas debe mostrar la vigencia`);
-  // 10. textos prohibidos y datos oficiales (spec 2026-09-13 §2, §3): criterio "esconder", marca y 679 km
+  // 10. textos prohibidos y datos oficiales (spec 2026-09-13 §2, §3, §12.1.2): criterio "esconder", marca y 679 km.
+  // Los prohibidos se buscan en el HTML crudo (meta, alt, aria-label, JSON-LD incluidos); los obligatorios, en el texto visible.
+  for (const p of PROHIBIDOS) if (p.test(html)) fallo(`${nombre}: contiene ${p}`);
   const visible = textoVisible(html);
-  for (const p of [/a confirmar/i, /corredor vial del centro/i, /\b681\b/]) if (p.test(visible)) fallo(`${nombre}: el texto contiene ${p}`);
   if ((nombre === 'index.html' || nombre.startsWith('el-tramo')) && !/\b679\b/.test(visible)) fallo(`${nombre}: falta la longitud oficial (679 km)`);
   if (!visible.includes('Última actualización')) fallo(`${nombre}: falta "Última actualización" en el pie`);
   // 7. indexabilidad
@@ -69,6 +71,13 @@ for (const [tema, tokens] of Object.entries(temas)) {
     const r = contraste(tokens[a]!, tokens[b]!);
     if (r < 4.5) fallo(`tema ${tema}: contraste ${a}/${b} = ${r.toFixed(2)} < 4.5`);
   }
+}
+
+// 10b. textos prohibidos también en los json y xml emitidos (sitemap, datos): "ausentes en todo dist/"
+const archivosDe = (dir: string): string[] => readdirSync(dir).flatMap((n) => { const r = join(dir, n); return statSync(r).isDirectory() ? archivosDe(r) : [r]; });
+for (const archivo of archivosDe(DIST).filter((a) => /\.(json|xml)$/.test(a))) {
+  const contenido = readFileSync(archivo, 'utf8');
+  for (const p of PROHIBIDOS) if (p.test(contenido)) fallo(`${relative(DIST, archivo)}: contiene ${p}`);
 }
 
 // 11. páginas que tienen que existir (una por estación de peaje)

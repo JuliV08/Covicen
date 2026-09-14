@@ -6,6 +6,7 @@
 import { Bath, Coffee, ShieldCheck, Tag, TriangleAlert, Truck } from '@lucide/astro';
 import type { EstadoRuta, Tramo } from '@/lib/datos/esquemas';
 import { kmTexto } from '@/lib/formato';
+import { idEstable } from '@/lib/ids';
 import { ruta } from '@/lib/rutas';
 import { estadoCabina, leyendaServicios, puntoEnRuta, type ClaveServicio } from '@/lib/tramo';
 interface Props { tramo: Tramo; incidentes?: NonNullable<EstadoRuta['incidentes']>; modo?: 'scroll' | 'cargar'; class?: string }
@@ -25,7 +26,7 @@ const etiquetaRuta = (slugs: string[]) => {
 };
 const claseDibujar = modo === 'scroll' ? 'dibujar al-scroll' : 'dibujar al-cargar';
 const claseBaliza = modo === 'scroll' ? 'baliza' : 'baliza al-cargar';
-const idTitulo = `mapa-titulo-${Math.random().toString(36).slice(2, 8)}`;
+const idTitulo = idEstable('mapa-titulo');
 const titulo = `Mapa esquemático del Tramo Centro: ${tramo.rutas.map((r) => r.nombre).join(', ')} entre ${tramo.ciudades.filter((c) => c.principal).map((c) => c.nombre).join(', ')}, con ${tramo.cabinas.length} estaciones de peaje.`;
 const iconos: Record<ClaveServicio, typeof Coffee> = { areaDescanso: Coffee, detencionSegura: ShieldCheck, gruaGratuita: Truck, sanitarios: Bath, colocacionTelepase: Tag };
 const marcadores = incidentes.flatMap((inc) => { const p = inc.km === null ? null : puntoEnRuta(tramo, inc.ruta, inc.km); return p ? [{ ...inc, p }] : []; });

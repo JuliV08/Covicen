@@ -3,7 +3,7 @@
 import { Phone } from '@lucide/astro';
 import type { Contacto } from '@/lib/datos/esquemas';
 interface Props { contacto: Contacto }
-const { contacto } = Astro.props;
+const { contacto } = Astro.props as Props;
 const tel = contacto.emergencias.telefono;
 ---
 <div class="fixed inset-x-0 bottom-0 z-40 border-t border-borde bg-fondo-2/95 p-3 backdrop-blur sm:hidden" style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom))">

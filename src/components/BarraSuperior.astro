@@ -15,7 +15,7 @@ const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
 <div class="barra-superior h-10 border-b border-borde bg-fondo-2 text-sm">
   <div class="contenedor flex h-full items-center justify-between gap-4">
     {avisos.length > 0 ? (
-      <section class="anuncios flex min-w-0 flex-1 items-center gap-2" aria-label="Anuncios" data-anuncios>
+      <section class="anuncios flex min-w-0 flex-1 items-center gap-2" aria-label="Anuncios" aria-live="off" data-anuncios>
         <ul class="anuncios-lista min-w-0 flex-1">
           {avisos.map((a, i) => (
             <li class="anuncio flex items-center gap-2" data-anuncio hidden={i !== 0}>
