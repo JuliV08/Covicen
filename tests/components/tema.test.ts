@@ -45,3 +45,11 @@ describe('tema', () => {
     expect(html).toMatch(/<button[^>]*\shidden/);
   });
 });
+
+describe('InterruptorTema: el display lo decide el llamador', () => {
+  it('no trae inline-flex en su clase base, así el `hidden lg:inline-flex` del header vale en celular', async () => {
+    const c = await AstroContainer.create();
+    expect(await c.renderToString(InterruptorTema, {})).not.toMatch(/class="[^"]*inline-flex/);
+    expect(await c.renderToString(InterruptorTema, { props: { class: 'hidden lg:inline-flex' } })).toContain('hidden lg:inline-flex');
+  });
+});

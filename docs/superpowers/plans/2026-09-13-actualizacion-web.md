@@ -46,7 +46,7 @@ Resultado: el sitio se ve igual que hoy en oscuro, tiene un interruptor que lo p
 **Interfaces:**
 - Produces: tokens CSS `--color-vial-texto`, `--color-sobre-vial`, `--color-sobre-acento`, `--color-ok`, `--color-sobre-ok`, `--color-cabecera`, `--color-tarjeta-interior-1|2|3`, `--color-sombra`, `--color-plano`, `--color-luz`, variable `--brillo-foto`; selector `html[data-tema="claro"]`. Funciones `leerTokens(css): Record<string,string>` (oscuro), `leerTokensClaro(css)`, `leerTemas(css): { oscuro, claro }`, constante `paresContraste: Array<[string, string]>`.
 
-- [ ] **Step 1: Escribir la lista de pares compartida**
+- [x] **Step 1: Escribir la lista de pares compartida**
 
 Crear `scripts/lib/pares.ts`:
 
@@ -62,7 +62,7 @@ export const paresContraste: Array<[string, string]> = [
 ];
 ```
 
-- [ ] **Step 2: Escribir los tests que fallan (tokens en los dos temas, lectura por bloque)**
+- [x] **Step 2: Escribir los tests que fallan (tokens en los dos temas, lectura por bloque)**
 
 Reemplazar `tests/styles/tokens.test.ts`:
 
@@ -120,12 +120,12 @@ Agregar al final de `tests/scripts/contraste.test.ts`, dentro de `describe('leer
 
 y cambiar el import de ese archivo a `import { contraste, leerTemas, leerTokens, leerTokensClaro } from '../../scripts/lib/contraste.ts';`.
 
-- [ ] **Step 3: Correr los tests y ver que fallan**
+- [x] **Step 3: Correr los tests y ver que fallan**
 
 Run: `pnpm vitest run tests/styles/tokens.test.ts tests/scripts/contraste.test.ts`
 Expected: FAIL — `leerTemas is not a function` / `falta --color-vial-texto`.
 
-- [ ] **Step 4: Implementar la lectura por bloque**
+- [x] **Step 4: Implementar la lectura por bloque**
 
 Reemplazar desde el comentario `/** Devuelve { nombre: '#HEX' } …` hasta el final de `scripts/lib/contraste.ts`:
 
@@ -154,7 +154,7 @@ export const leerTokensClaro = (css: string): Record<string, string> => ({ ...le
 export const leerTemas = (css: string): { oscuro: Record<string, string>; claro: Record<string, string> } => ({ oscuro: leerTokens(css), claro: leerTokensClaro(css) });
 ```
 
-- [ ] **Step 5: Reescribir `src/styles/tokens.css`**
+- [x] **Step 5: Reescribir `src/styles/tokens.css`**
 
 Contenido completo del archivo (`@theme static` para que Tailwind emita **todos** los tokens, también los que solo se usan con `var()` dentro de `<style>` de componentes, que Tailwind no ve):
 
@@ -265,7 +265,7 @@ html[data-tema="claro"] {
 }
 ```
 
-- [ ] **Step 6: Hacer que `verificar.ts` chequee los dos temas**
+- [x] **Step 6: Hacer que `verificar.ts` chequee los dos temas**
 
 En `scripts/verificar.ts`, cambiar el import de la línea 6 por `import { contraste, leerTemas } from './lib/contraste.ts';`, agregar `import { paresContraste } from './lib/pares.ts';`, y reemplazar el bloque `// 6. contraste de tokens usados` (líneas 58–67) por:
 
@@ -281,17 +281,17 @@ for (const [tema, tokens] of Object.entries(temas)) {
 }
 ```
 
-- [ ] **Step 7: Correr los tests y ver que pasan**
+- [x] **Step 7: Correr los tests y ver que pasan**
 
 Run: `pnpm vitest run tests/styles/tokens.test.ts tests/scripts/contraste.test.ts`
 Expected: PASS (7 + 23×2 casos de tokens; contraste 5 casos).
 
-- [ ] **Step 8: Typecheck y suite completa**
+- [x] **Step 8: Typecheck y suite completa**
 
 Run: `pnpm check && pnpm test`
 Expected: todo en verde (los tests existentes no dependen de los tokens nuevos).
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add src/styles/tokens.css scripts/lib/contraste.ts scripts/lib/pares.ts scripts/verificar.ts tests/styles/tokens.test.ts tests/scripts/contraste.test.ts
@@ -314,7 +314,7 @@ git commit -m "feat(tema): tokens semánticos nuevos, bloque del tema claro y co
 **Interfaces:**
 - Produces: `src/lib/tema.ts` → `type Tema = 'oscuro' | 'claro'`, `type PreferenciaTema = Tema | 'sistema'`, `TEMA_POR_DEFECTO: PreferenciaTema`, `CLAVE_TEMA: string`, `COLOR_TEMA: Record<Tema, string>`, `esTema(v): v is Tema`, `resolverTema(guardado, porDefecto, prefiereClaro): Tema`, `otroTema(t): Tema`. Evento DOM `tema:cambio` (`CustomEvent<{ tema: Tema }>`) en `document`. Atributo `data-tema-boton` en los botones. Componente `<InterruptorTema class? />`.
 
-- [ ] **Step 1: Test unitario de `resolverTema`**
+- [x] **Step 1: Test unitario de `resolverTema`**
 
 Crear `tests/lib/tema.test.ts`:
 
@@ -344,7 +344,7 @@ describe('resolverTema', () => {
 });
 ```
 
-- [ ] **Step 2: Test de componentes (snippet en el head, interruptor)**
+- [x] **Step 2: Test de componentes (snippet en el head, interruptor)**
 
 Crear `tests/components/tema.test.ts`:
 
@@ -374,12 +374,12 @@ describe('tema', () => {
 });
 ```
 
-- [ ] **Step 3: Correr y ver que fallan**
+- [x] **Step 3: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/lib/tema.test.ts tests/components/tema.test.ts`
 Expected: FAIL — no existe `@/lib/tema` ni `InterruptorTema.astro`.
 
-- [ ] **Step 4: Crear `src/lib/tema.ts`**
+- [x] **Step 4: Crear `src/lib/tema.ts`**
 
 ```ts
 /** Tema visual del sitio. El cliente elige el default cambiando TEMA_POR_DEFECTO ('sistema' sigue la preferencia del aparato).
@@ -406,7 +406,7 @@ export const otroTema = (t: Tema): Tema => (t === 'oscuro' ? 'claro' : 'oscuro')
 export const temaInicial = (): Tema => (TEMA_POR_DEFECTO === 'claro' ? 'claro' : 'oscuro');
 ```
 
-- [ ] **Step 5: Snippet inline en `Base.astro` y `theme-color` en `Seo.astro`**
+- [x] **Step 5: Snippet inline en `Base.astro` y `theme-color` en `Seo.astro`**
 
 En `src/layouts/Base.astro`, agregar al frontmatter `import { CLAVE_TEMA, COLOR_TEMA, TEMA_POR_DEFECTO } from '@/lib/tema';` y reemplazar el `<head>` (líneas 31–36) por:
 
@@ -437,7 +437,7 @@ En `src/layouts/Base.astro`, agregar al frontmatter `import { CLAVE_TEMA, COLOR_
 
 En `src/components/Seo.astro`: agregar `import { COLOR_TEMA, temaInicial } from '@/lib/tema';` después de la línea 3 y reemplazar la línea 33 por `<meta name="theme-color" content={COLOR_TEMA[temaInicial()]} />`.
 
-- [ ] **Step 6: Script del interruptor `src/scripts/tema.ts`**
+- [x] **Step 6: Script del interruptor `src/scripts/tema.ts`**
 
 ```ts
 // Interruptor claro/oscuro. El snippet inline de Base.astro ya aplicó el tema antes de pintar; acá solo se conmuta,
@@ -474,7 +474,7 @@ document.addEventListener('astro:page-load', iniciar);
 export {};
 ```
 
-- [ ] **Step 7: Componente `src/components/InterruptorTema.astro`**
+- [x] **Step 7: Componente `src/components/InterruptorTema.astro`**
 
 ```astro
 ---
@@ -496,7 +496,7 @@ const { class: clase = '' } = Astro.props;
 </style>
 ```
 
-- [ ] **Step 8: Colocar el interruptor en el header (provisorio hasta la Fase 1)**
+- [x] **Step 8: Colocar el interruptor en el header (provisorio hasta la Fase 1)**
 
 En `src/components/Header.astro`: agregar `import InterruptorTema from '@/components/InterruptorTema.astro';` después de la línea 3. En el `div` de la línea 57 (`<div class="flex items-center gap-3">`), insertar `<InterruptorTema class="hidden lg:inline-flex" />` justo antes del `<button type="button" … popovertarget="menu-mobile"` (línea 67). En el menú mobile, reemplazar la línea 75 (`<span class="eyebrow">Menú</span>`) por:
 
@@ -504,20 +504,20 @@ En `src/components/Header.astro`: agregar `import InterruptorTema from '@/compon
       <div class="flex items-center gap-3"><span class="eyebrow">Menú</span><InterruptorTema /></div>
 ```
 
-- [ ] **Step 9: Sumar el script al presupuesto**
+- [x] **Step 9: Sumar el script al presupuesto**
 
 En `tests/presupuesto.test.ts` línea 7: `const todos = [...animacion, 'src/scripts/menu.ts', 'src/scripts/cuenta-regresiva.ts', 'src/scripts/formulario.ts', 'src/scripts/tema.ts'];`
 
-- [ ] **Step 10: Correr los tests y ver que pasan**
+- [x] **Step 10: Correr los tests y ver que pasan**
 
 Run: `pnpm vitest run tests/lib/tema.test.ts tests/components/tema.test.ts tests/presupuesto.test.ts tests/components/layout.test.ts`
 Expected: PASS.
 
-- [ ] **Step 11: Probar a mano el destello y la persistencia**
+- [x] **Step 11: Probar a mano el destello y la persistencia**
 
 Run: `pnpm dev`, abrir `http://localhost:4321/`, tocar el interruptor: el sitio pasa a claro (todavía con colores fijos en tarjetas y botones: se arreglan en la 0.3), recargar la página y comprobar que **arranca en claro sin parpadeo oscuro**, navegar a `/tarifas/` y comprobar que sigue en claro. Volver a oscuro. Cerrar el dev server.
 
-- [ ] **Step 12: Commit**
+- [x] **Step 12: Commit**
 
 ```bash
 git add src/lib/tema.ts src/scripts/tema.ts src/components/InterruptorTema.astro src/layouts/Base.astro src/components/Seo.astro src/components/Header.astro tests/presupuesto.test.ts tests/lib/tema.test.ts tests/components/tema.test.ts
@@ -536,7 +536,7 @@ git commit -m "feat(tema): interruptor claro/oscuro sin destello, persistente y 
 **Interfaces:**
 - Produces: `src/scripts/lib/color.ts` → `type Rgb = { r; g; b }`, `type Color = Rgb & { a }`, `hexARgb(hex): Rgb`, `colorDeToken(nombre): Rgb`, `conAlfa(rgb, a): string`, `mezcla(a: Color, b: Color, t): string`. Clase global `.btn-vial` en `global.css`.
 
-- [ ] **Step 1: Escribir la guarda de colores fijos**
+- [x] **Step 1: Escribir la guarda de colores fijos**
 
 Crear `tests/styles/colores-fijos.test.ts`:
 
@@ -560,7 +560,7 @@ describe('colores fijos', () => {
 });
 ```
 
-- [ ] **Step 2: Test del helper de color para canvas**
+- [x] **Step 2: Test del helper de color para canvas**
 
 Crear `tests/scripts/color.test.ts`:
 
@@ -584,12 +584,12 @@ describe('color (canvas)', () => {
 });
 ```
 
-- [ ] **Step 3: Correr y ver que fallan**
+- [x] **Step 3: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/styles/colores-fijos.test.ts tests/scripts/color.test.ts`
 Expected: FAIL — ~12 archivos con colores fijos; `@/scripts/lib/color` no existe.
 
-- [ ] **Step 4: Crear `src/scripts/lib/color.ts`**
+- [x] **Step 4: Crear `src/scripts/lib/color.ts`**
 
 ```ts
 // Colores para canvas, leídos de los tokens del tema activo. Es el ÚNICO módulo que arma cadenas rgb (ver tests/styles/colores-fijos.test.ts).
@@ -615,7 +615,7 @@ export const mezcla = (a: Color, b: Color, t: number): string =>
   conAlfa({ r: Math.round(lerp(a.r, b.r, t)), g: Math.round(lerp(a.g, b.g, t)), b: Math.round(lerp(a.b, b.b, t)) }, lerp(a.a, b.a, t));
 ```
 
-- [ ] **Step 5: La grilla cinética lee los tokens y se repinta al cambiar de tema**
+- [x] **Step 5: La grilla cinética lee los tokens y se repinta al cambiar de tema**
 
 En `src/scripts/grilla-cinetica.ts` reemplazar las líneas 1–11 por:
 
@@ -653,7 +653,7 @@ document.addEventListener('tema:cambio', () => { releerColores(); repintar.forEa
 
 Nota: `mezcla` ya no se define en este archivo (viene de `./lib/color`); borrar la definición local de la línea 10 si quedó.
 
-- [ ] **Step 6: `tarjetas.css` con tokens**
+- [x] **Step 6: `tarjetas.css` con tokens**
 
 Reemplazar todo `src/styles/tarjetas.css` por:
 
@@ -736,7 +736,7 @@ Reemplazar todo `src/styles/tarjetas.css` por:
 }
 ```
 
-- [ ] **Step 7: `global.css`: grilla, costura, y el `.btn-vial` global (una sola definición)**
+- [x] **Step 7: `global.css`: grilla, costura, y el `.btn-vial` global (una sola definición)**
 
 En `src/styles/global.css`:
 - Líneas 49–50: reemplazar los dos `rgb(255 255 255 / 0.04)` por `var(--color-plano)`.
@@ -758,7 +758,7 @@ En `src/styles/global.css`:
   @keyframes oscilar { 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
 ```
 
-- [ ] **Step 8: `Boton.astro`, `Header.astro`, `Hero.astro`, `TarifaDestacada.astro`, `Base.astro`, `BarraEmergencias.astro`**
+- [x] **Step 8: `Boton.astro`, `Header.astro`, `Hero.astro`, `TarifaDestacada.astro`, `Base.astro`, `BarraEmergencias.astro`**
 
 `src/components/ui/Boton.astro`, reemplazar las líneas 39–63 por:
 
@@ -805,7 +805,7 @@ El botón primario en claro: el texto blanco (`sobre-acento` claro) sobre el deg
 
 `src/components/BarraEmergencias.astro`: no tiene colores fijos; queda para la 0.5.
 
-- [ ] **Step 9: `MapaTramo.astro` y `HeroRuta.astro` (SVG con tokens)**
+- [x] **Step 9: `MapaTramo.astro` y `HeroRuta.astro` (SVG con tokens)**
 
 `src/components/ilustraciones/MapaTramo.astro`: línea 28, `stroke="rgb(255 255 255 / 0.05)"` → `stroke="var(--color-plano)"`; línea 40, `stroke="#E8EEF5"` → `stroke="var(--color-texto)"`.
 
@@ -818,18 +818,18 @@ El botón primario en claro: el texto blanco (`sobre-acento` claro) sobre el deg
 - Líneas 46 y 59: `#F0C419` → `var(--color-vial)`.
 - Líneas 51, 52, 62, 63: `#FF8A80` → `var(--color-error)`.
 
-- [ ] **Step 10: Presupuesto y tests**
+- [x] **Step 10: Presupuesto y tests**
 
 En `tests/presupuesto.test.ts` línea 7 agregar `'src/scripts/lib/color.ts'` a `todos`.
 
 Run: `pnpm vitest run tests/styles/colores-fijos.test.ts tests/scripts/color.test.ts tests/presupuesto.test.ts`
 Expected: PASS (si `colores-fijos` lista algún archivo, la salida dice archivo y línea: migrarlo al token que corresponda y volver a correr).
 
-- [ ] **Step 11: Verificación visual de los dos temas**
+- [x] **Step 11: Verificación visual de los dos temas**
 
 Run: `pnpm dev`. Recorrer `/`, `/tarifas/`, `/el-tramo/`, `/emergencias/`, `/contacto/` en oscuro (debe verse idéntico a antes) y en claro (tarjetas blancas, header gris claro al scrollear, botones navy con texto blanco, grilla cinética con trama navy). Cerrar.
 
-- [ ] **Step 12: Suite completa y commit**
+- [x] **Step 12: Suite completa y commit**
 
 Run: `pnpm check && pnpm test`
 Expected: PASS.
@@ -854,7 +854,7 @@ git commit -m "refactor(tema): todos los colores salen de los tokens; btn-vial �
 **Interfaces:**
 - Produces: `variantesHero(hayNoche: boolean, hayDia: boolean, porDefecto?: PreferenciaTema): VarianteHero[]` con `VarianteHero = { nombre: string; clase: '' | 'solo-oscuro' | 'solo-claro'; prioridad: boolean }`. Clases globales `.solo-oscuro` y `.solo-claro`. Prop `prioridad?: boolean` en `ParallaxProfundidad`. La prop `brillo` de `ParallaxProfundidad` e `ImagenAtmosfera` pasa a ser opcional sin default (usa `--brillo-foto`).
 
-- [ ] **Step 1: Test de `variantesHero`**
+- [x] **Step 1: Test de `variantesHero`**
 
 Crear `tests/lib/atmosfera.test.ts`:
 
@@ -880,12 +880,12 @@ describe('variantesHero', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y ver que falla**
+- [x] **Step 2: Correr y ver que falla**
 
 Run: `pnpm vitest run tests/lib/atmosfera.test.ts`
 Expected: FAIL — `variantesHero` no existe.
 
-- [ ] **Step 3: Implementar en `src/lib/atmosfera.ts`**
+- [x] **Step 3: Implementar en `src/lib/atmosfera.ts`**
 
 Agregar al final del archivo:
 
@@ -909,7 +909,7 @@ export const variantesHero = (hayNoche: boolean, hayDia: boolean, porDefecto: Pr
 
 (Mover el `import` junto a los demás imports del archivo, arriba de `const todas`.)
 
-- [ ] **Step 4: Hero con una foto por tema**
+- [x] **Step 4: Hero con una foto por tema**
 
 En `src/components/home/Hero.astro`: línea 9 → `import { imagenAtmosfera, variantesHero } from '@/lib/atmosfera';`. Reemplazar las líneas 14–16 por:
 
@@ -933,7 +933,7 @@ y las líneas 19–25 por:
   )}
 ```
 
-- [ ] **Step 5: `ParallaxProfundidad` e `ImagenAtmosfera` con brillo del tema y prioridad**
+- [x] **Step 5: `ParallaxProfundidad` e `ImagenAtmosfera` con brillo del tema y prioridad**
 
 `src/components/ilustraciones/ParallaxProfundidad.astro`:
 - Líneas 7–8 → `interface Props { nombre: string; profundidad: string; alt?: string; brillo?: number; vp?: [number, number]; prioridad?: boolean }` y `const { nombre, profundidad, alt = '', brillo, vp = [0.78, 0.595], prioridad = true } = Astro.props;`
@@ -948,7 +948,7 @@ y las líneas 19–25 por:
 
 `src/components/home/Consorcio.astro` línea 16: quitar `brillo={0.5}` (el velo `from-fondo` ya asegura la legibilidad y en claro no queda una foto negra).
 
-- [ ] **Step 6: Reglas `.solo-oscuro` / `.solo-claro` y parallax remontable**
+- [x] **Step 6: Reglas `.solo-oscuro` / `.solo-claro` y parallax remontable**
 
 En `src/styles/global.css`, después del bloque `@layer base { … }` (línea 42) y antes de `@layer components`, agregar (sin layer):
 
@@ -974,14 +974,14 @@ document.addEventListener('astro:page-load', iniciarTodo);
 document.addEventListener('tema:cambio', iniciarTodo);
 ```
 
-- [ ] **Step 7: Tests y prueba manual**
+- [x] **Step 7: Tests y prueba manual**
 
 Run: `pnpm vitest run tests/lib/atmosfera.test.ts tests/components/home.test.ts tests/presupuesto.test.ts`
 Expected: PASS.
 
 Run: `pnpm dev`. En `/`: oscuro igual que antes; claro → la foto nocturna sin oscurecer con el velo claro (hasta que exista `hero-ruta-diurna.jpg`). Copiar temporalmente `src/assets/atmosfera/hero-ruta-nocturna.jpg` como `hero-ruta-diurna.jpg`, recargar: en claro el parallax se monta al cambiar de tema (canvas visible, `.activo`), en oscuro sigue el original. **Borrar la copia** antes de seguir. Cerrar.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/lib/atmosfera.ts src/components/home/Hero.astro src/components/ilustraciones/ParallaxProfundidad.astro src/components/ilustraciones/ImagenAtmosfera.astro src/components/home/Consorcio.astro src/scripts/parallax-2d.ts src/styles/global.css tests/lib/atmosfera.test.ts
@@ -994,7 +994,7 @@ git commit -m "feat(tema): brillo de fotos por tema y hero con foto de día cuan
 - Create: `tests/styles/semantica.test.ts`
 - Modify: `src/components/ui/Senal.astro:5`, `src/components/BarraEmergencias.astro:10,14-15`, `src/components/Formulario.astro:30,44`, `src/pages/emergencias.astro:19-26`, `src/components/ilustraciones/MapaTramo.astro:70,79`, `src/components/home/TarifaDestacada.astro:40,63`, `src/components/home/AccesosRapidos.astro:22`
 
-- [ ] **Step 1: Guarda de semántica**
+- [x] **Step 1: Guarda de semántica**
 
 Crear `tests/styles/semantica.test.ts`:
 
@@ -1017,12 +1017,12 @@ describe('semántica de color', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y ver que falla**
+- [x] **Step 2: Correr y ver que falla**
 
 Run: `pnpm vitest run tests/styles/semantica.test.ts`
 Expected: FAIL en Senal, BarraEmergencias, Formulario, emergencias, MapaTramo.
 
-- [ ] **Step 3: Corregir cada uso**
+- [x] **Step 3: Corregir cada uso**
 
 - `src/components/ui/Senal.astro` línea 5: `'bg-vial text-fondo'` → `'bg-vial text-sobre-vial'`.
 - `src/components/BarraEmergencias.astro`: línea 10 `text-fondo` → `text-sobre-vial`; línea 14 `text-fondo` → `text-sobre-vial`.
@@ -1045,14 +1045,14 @@ Expected: FAIL en Senal, BarraEmergencias, Formulario, emergencias, MapaTramo.
 - `src/components/home/TarifaDestacada.astro`: líneas 40 y 63, `text-texto-3` → `text-texto-2` (están dentro de `.tarjeta`, cuyo interior arranca en `superficie`; `texto-3` no llega a 4.5 ahí).
 - `src/components/home/AccesosRapidos.astro` línea 22: `a.vial && 'text-vial'` → `a.vial && 'text-vial-texto'`.
 
-- [ ] **Step 4: Tests y verificación visual de `/emergencias/`**
+- [x] **Step 4: Tests y verificación visual de `/emergencias/`**
 
 Run: `pnpm vitest run tests/styles/semantica.test.ts tests/components`
 Expected: PASS.
 
 Run: `pnpm dev`, abrir `/emergencias/`: el bloque amarillo ahora es una tarjeta con halo vial, texto legible en los dos temas. Cerrar.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tests/styles/semantica.test.ts src/components/ui/Senal.astro src/components/BarraEmergencias.astro src/components/Formulario.astro src/pages/emergencias.astro src/components/ilustraciones/MapaTramo.astro src/components/home/TarifaDestacada.astro src/components/home/AccesosRapidos.astro
@@ -1061,20 +1061,20 @@ git commit -m "fix(tema): texto sobre amarillo y acento con sus tokens; tarjeta 
 
 ### Tarea 0.6: Cierre de la Fase 0
 
-- [ ] **Step 1: Todo en verde**
+- [x] **Step 1: Todo en verde**
 
 Run: `pnpm check && pnpm test && pnpm verificar`
 Expected: `astro check` sin errores; vitest todo PASS; `verificar` termina con `OK: N páginas verificadas, 0 fallos.` (incluye contraste de los dos temas y presupuesto de JS ≤ 30 KB).
 
-- [ ] **Step 2: Revisión en carril separado**
+- [x] **Step 2: Revisión en carril separado**
 
 Dispatch de `rev-bro` con: la spec (§4), este plan (Fase 0), `git diff <commit anterior a la fase>..HEAD`, y la instrucción de correr él mismo `pnpm check && pnpm test && pnpm verificar`. Atender los hallazgos; volver a correr.
 
-- [ ] **Step 3: Vault**
+- [x] **Step 3: Vault**
 
 En `obsidian/Sistema de diseno.md` agregar la sección "Tema claro (2026-09-13)": mecanismo `data-tema`, tokens nuevos y sus valores, `TEMA_POR_DEFECTO`, regla de no colores fijos. En `obsidian/Home.md`, línea de estado: "Fase 0 (tema y tokens) cerrada".
 
-- [ ] **Step 4: Commit (si no se hizo por tarea)**
+- [x] **Step 4: Commit (si no se hizo por tarea)**
 
 ```bash
 git add -A -- src scripts tests obsidian
@@ -1095,7 +1095,7 @@ Resultado: el sitio dice 679 km y los extremos oficiales, muestra el 140 en todo
 **Interfaces:**
 - Produces (tipos exportados desde `@/lib/datos/esquemas`): `Empresa` sin `descriptor`, con `domicilioComercial: string | null` y `constanciaUrl: string | null`; `Contacto.emergencias.telefono: string` (ya no nulo), `Contacto.lineaGratuita: string | null`, `Contacto.atencionUsuario: string | null`, `Contacto.enlaces: { telepase: string; oficinaVirtual: string | null; atencionDnv: string | null }`, `Contacto.canales: Canal[]`, `Contacto.redes` con `facebook?` y `youtube?`; `Canal = { id, nombre, tipo: 'telefono'|'web'|'correo'|'whatsapp'|'presencial', valor: string | null, disponibilidad, acuse, respuesta, fuente }`; `Ruta.pkInicial?`, `Ruta.pkFinal?`; `Ciudad.tipo?: 'ciudad' | 'empalme'`; `Cabina.vias?`, `Cabina.operativa?`, `Cabina.sentido?`, `Cabina.telefono?`, `Cabina.horarioAtencion?`, `Cabina.servicios?: { areaDescanso?, detencionSegura?, gruaGratuita?, sanitarios?, colocacionTelepase? }`; `Tarifa.montoManualSinIva?: number | null`, `Tarifa.multiplicador?`; `Tarifario.origen: 'oferta' | 'homologada' | 'heredado'`, `Tarifario.resolucion?`, `Tarifario.cabinas?: string[]`, `Tarifario.categoriaDestacada?`, `Tarifario.excepciones?: { cabina, categoria, montoSinIva: number | null, montoManualSinIva?: number | null }[]`. Helper `cabinaOperativa(c: Cabina): boolean`.
 
-- [ ] **Step 1: Tests del contrato**
+- [x] **Step 1: Tests del contrato**
 
 En `tests/lib/datos/esquemas.test.ts` reemplazar el `describe('esquemaCabina', …)` (líneas 27–36) y el `describe('esquemaContacto', …)` (38–46) y el `describe('esquemaEmpresa', …)` (48–57) por:
 
@@ -1194,12 +1194,12 @@ En `tests/lib/contrato.test.ts`, agregar al final del `describe`:
   });
 ```
 
-- [ ] **Step 2: Correr y ver que fallan**
+- [x] **Step 2: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/lib/datos/esquemas.test.ts tests/lib/contrato.test.ts`
 Expected: FAIL (`cabinaOperativa` no existe; `descriptor` sigue siendo obligatorio; `lineaGratuita` desconocido, etc.).
 
-- [ ] **Step 3: Cambiar `src/lib/datos/esquemas.ts`**
+- [x] **Step 3: Cambiar `src/lib/datos/esquemas.ts`**
 
 Reemplazar `esquemaEmpresa` (líneas 13–34) por:
 
@@ -1381,17 +1381,17 @@ export const esquemaTarifario = z.object({
 export type Tarifario = z.infer<typeof esquemaTarifario>;
 ```
 
-- [ ] **Step 4: Regenerar el contrato exportado**
+- [x] **Step 4: Regenerar el contrato exportado**
 
 Run: `pnpm contrato`
 Expected: `Contrato exportado a docs/contrato/`. `git diff --stat docs/contrato` muestra los dos archivos cambiados.
 
-- [ ] **Step 5: Correr los tests**
+- [x] **Step 5: Correr los tests**
 
 Run: `pnpm vitest run tests/lib/datos/esquemas.test.ts tests/lib/contrato.test.ts`
 Expected: PASS. (`pnpm check` va a fallar hasta la 1.2 porque `contacto.json` y `empresa.json` todavía no tienen la forma nueva: se arregla ahí.)
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/lib/datos/esquemas.ts docs/contrato/tramo.schema.json docs/contrato/tarifario.schema.json tests/lib/datos/esquemas.test.ts tests/lib/contrato.test.ts
@@ -1404,7 +1404,7 @@ git commit -m "feat(contrato): campos opcionales para estaciones, rutas y tarifa
 - Modify: `src/content/empresa.json`, `src/content/contacto.json`, `src/content/tramo.json` (los tres completos)
 - Modify: `tests/lib/datos/local-json.test.ts:5-21`
 
-- [ ] **Step 1: Tests de los datos**
+- [x] **Step 1: Tests de los datos**
 
 En `tests/lib/datos/local-json.test.ts` reemplazar los dos primeros `it` (líneas 5–21) por:
 
@@ -1451,12 +1451,12 @@ En `tests/lib/datos/local-json.test.ts` reemplazar los dos primeros `it` (línea
 
 Cambiar el import de la línea 2 por `import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';` más `import { cabinaOperativa } from '@/lib/datos/esquemas';`.
 
-- [ ] **Step 2: Correr y ver que fallan**
+- [x] **Step 2: Correr y ver que fallan**
 
 Run: `pnpm vitest run tests/lib/datos/local-json.test.ts`
 Expected: FAIL (el JSON viejo no valida contra el contrato nuevo).
 
-- [ ] **Step 3: `src/content/empresa.json`**
+- [x] **Step 3: `src/content/empresa.json`**
 
 ```json
 {
@@ -1492,7 +1492,7 @@ Expected: FAIL (el JSON viejo no valida contra el contrato nuevo).
 }
 ```
 
-- [ ] **Step 4: `src/content/contacto.json`**
+- [x] **Step 4: `src/content/contacto.json`**
 
 ```json
 {
@@ -1514,7 +1514,7 @@ Expected: FAIL (el JSON viejo no valida contra el contrato nuevo).
 }
 ```
 
-- [ ] **Step 5: `src/content/tramo.json`**
+- [x] **Step 5: `src/content/tramo.json`**
 
 Las coordenadas son del SVG (viewBox 820×520). `santo-tome` queda al sudoeste de Santa Fe; `empalme-rn-19` es la intersección de los trazos RN 34 (Totoras→Rafaela) y RN 19 (Franck→San Francisco) calculada sobre el dibujo: (624, 136). Rafaela y Santa Fe siguen como referencia, fuera de los trazos.
 
@@ -1566,12 +1566,12 @@ Las coordenadas son del SVG (viewBox 820×520). `santo-tome` queda al sudoeste d
 
 Nota para quien ejecuta: la provincia de la estación San Francisco queda "Córdoba" hasta que Covicen confirme (por progresiva, km 120 < límite km 127,19, estaría en Santa Fe). Es un pendiente de la spec §14, no lo cambies.
 
-- [ ] **Step 6: Correr tests y typecheck**
+- [x] **Step 6: Correr tests y typecheck**
 
 Run: `pnpm vitest run tests/lib/datos && pnpm check`
 Expected: los tests de datos PASS. `pnpm check` va a marcar errores en los componentes que usaban `empresa.descriptor` o el `telefono` nulo (`Footer.astro`, `Header.astro`, `BarraEmergencias.astro`, `Seo`/`seo.ts`, `privacidad.astro`, `quienes-somos.astro`, `contacto.astro`, `emergencias.astro`): se arreglan en las tareas 1.4–1.7. Si `check` corta por eso, seguir con la 1.3; al cerrar la 1.7 tiene que quedar en verde.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/content/empresa.json src/content/contacto.json src/content/tramo.json tests/lib/datos/local-json.test.ts

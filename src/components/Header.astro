@@ -74,7 +74,7 @@ const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
 
   <nav id="menu-mobile" popover class="menu-mobile" aria-label="Menú">
     <div class="flex items-center justify-between border-b border-borde p-5">
-      <div class="flex items-center gap-3"><span class="eyebrow">Menú</span><InterruptorTema /></div>
+      <div class="flex items-center gap-3"><span class="eyebrow">Menú</span><InterruptorTema class="inline-flex" /></div>
       <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-md border border-borde hover:bg-superficie" popovertarget="menu-mobile" popovertargetaction="hide" aria-label="Cerrar menú">
         <X size={22} aria-hidden="true" />
       </button>
