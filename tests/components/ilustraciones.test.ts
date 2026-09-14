@@ -39,11 +39,11 @@ describe('MapaTramo', () => {
 });
 
 describe('IconoVehiculo', () => {
-  it('renderiza cada categoría y falla con una desconocida', async () => {
+  it('renderiza cada tipo y falla con uno desconocido', async () => {
     const c = await AstroContainer.create();
-    for (const cat of ['cat-1', 'cat-2', 'cat-3', 'cat-4', 'cat-5', 'cat-6']) {
-      expect(await c.renderToString(IconoVehiculo, { props: { categoria: cat } })).toContain('<svg');
+    for (const icono of ['moto', 'auto', 'camioneta', 'camion-2', 'camion-3-4', 'camion-5-6', 'camion-7']) {
+      expect(await c.renderToString(IconoVehiculo, { props: { icono } })).toContain('<svg');
     }
-    await expect(c.renderToString(IconoVehiculo, { props: { categoria: 'cat-9' } })).rejects.toThrow();
+    await expect(c.renderToString(IconoVehiculo, { props: { icono: 'nave' } })).rejects.toThrow();
   });
 });
