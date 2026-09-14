@@ -9,13 +9,23 @@ import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
 const render = async (C: unknown, props: Record<string, unknown>) => (await AstroContainer.create()).renderToString(C as never, { props });
 
 describe('Hero', () => {
-  it('tiene un solo h1, la fecha de inicio y CTAs a tarifas y tramo', async () => {
-    const html = await render(Hero, { empresa: await fuenteLocalJson.empresa() });
+  it('sin destacadas: un h1, la fecha de inicio, CTAs y sin carrusel', async () => {
+    const html = await render(Hero, { empresa: await fuenteLocalJson.empresa(), novedades: [] });
     expect(html.match(/<h1/g)?.length).toBe(1);
     expect(html).toContain('5 de octubre de 2026');
     expect(html).toContain('href="/tarifas/"');
-    expect(html).toContain('href="/el-tramo/"');
-    expect(html).toContain('class="entrada');
+    expect(html).not.toContain('data-carrusel');
+  });
+  it('con destacadas: carrusel con el slide fijo primero, las destacadas después (máximo 3), controles y puntos', async () => {
+    const novedades = ['a', 'b', 'c', 'd'].map((s, i) => ({ slug: s, titulo: `Nota ${s}`, fecha: `2026-09-0${i + 1}`, resumen: 'r', etiquetas: [], destacada: i < 4 }));
+    const html = await render(Hero, { empresa: await fuenteLocalJson.empresa(), novedades });
+    expect(html).toContain('data-carrusel');
+    expect(html.match(/data-slide="/g)?.length).toBe(4);
+    expect(html.match(/<h1/g)?.length).toBe(1);
+    expect(html).toContain('aria-roledescription="carrusel"');
+    expect(html).toContain('data-slide-siguiente');
+    expect(html.match(/data-slide-ir="/g)?.length).toBe(4);
+    expect(html).toContain('href="/novedades/a/"');
   });
 });
 
