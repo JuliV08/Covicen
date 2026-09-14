@@ -54,6 +54,21 @@ describe('contenido del repo', () => {
     expect(t.tarifas.map((x) => x.icono)).toEqual(['auto', 'camioneta', 'camion-3-4', 'camion-5-6', 'camion-7']);
     expect(t.avisos.some((a) => a.includes('en oportunidad de contar con todas las vías automáticas'))).toBe(true);
   });
+  it('servicios: gratuitos con los tiempos del pliego y onerosos separados', async () => {
+    const s = await fuenteLocalJson.servicios();
+    const grua = s.find((x) => x.id === 'grua-y-remolque')!;
+    expect(grua.gratuito).toBe(true);
+    expect(grua.tiempos).toEqual(['Vehículos livianos: 30 minutos en al menos el 90 % de los casos, y nunca más de 40.', 'Vehículos pesados: 60 minutos en al menos el 90 % de los casos, y nunca más de 72.']);
+    expect(s.filter((x) => !x.gratuito).map((x) => x.id)).toEqual(['mecanica-general', 'remolque-extendido']);
+  });
+  it('normativa, trámites y consejos cargan y tienen ids únicos', async () => {
+    const [n, tr, co] = await Promise.all([fuenteLocalJson.normativa(), fuenteLocalJson.tramites(), fuenteLocalJson.consejos()]);
+    expect(n.map((x) => x.id)).toContain('resolucion-248-2026');
+    expect(n.filter((x) => x.descargable).every((x) => x.url !== null)).toBe(true);
+    expect(tr.map((x) => x.id)).toEqual(['tarifa-diferencial-vecinal', 'tarifa-diferencial-docente', 'exencion-discapacidad', 'exencion-malvinas', 'alta-telepase']);
+    expect(co.filter((c) => c.categoria === 'emergencia').length).toBeGreaterThanOrEqual(4);
+    expect(new Set(co.map((c) => c.id)).size).toBe(co.length);
+  });
   it('obras y faq: ordenadas y con slugs únicos', async () => {
     const obras = await fuenteLocalJson.obras();
     expect(obras.map((o) => o.orden)).toEqual([...obras.map((o) => o.orden)].sort((a, b) => a - b));

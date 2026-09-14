@@ -1,0 +1,80 @@
+[
+  {
+    "id": "distancia",
+    "categoria": "conducir",
+    "titulo": "Distancia de seguimiento",
+    "texto": "En autopista, tres segundos respecto del vehículo de adelante. Con lluvia o niebla, el doble."
+  },
+  {
+    "id": "velocidad",
+    "categoria": "conducir",
+    "titulo": "Velocidad",
+    "texto": "Máxima 130 km/h en autopista y 110 en ruta convencional para autos; menos con lluvia, viento o niebla. La mínima en autopista es 60."
+  },
+  {
+    "id": "luces",
+    "categoria": "conducir",
+    "titulo": "Luces bajas siempre",
+    "texto": "Es obligatorio circular con luces bajas encendidas de día y de noche en rutas nacionales."
+  },
+  {
+    "id": "niebla",
+    "categoria": "conducir",
+    "titulo": "Niebla",
+    "texto": "La zona de Leones, Marcos Juárez y la RN 34 tienen niebla frecuente en otoño e invierno. Bajá la velocidad, luces bajas, no frenes de golpe."
+  },
+  {
+    "id": "animales",
+    "categoria": "conducir",
+    "titulo": "Animales sueltos",
+    "texto": "Son frecuentes en RN 19 y RN 34. De noche, atención a los ojos que reflejan la luz. Avisá al 140."
+  },
+  {
+    "id": "cansancio",
+    "categoria": "conducir",
+    "titulo": "Cansancio",
+    "texto": "Cada dos horas, parada. Si cabeceás, no se pasa con música: se pasa durmiendo veinte minutos."
+  },
+  {
+    "id": "sobrepaso",
+    "categoria": "conducir",
+    "titulo": "Sobrepaso",
+    "texto": "Solo con línea discontinua y visibilidad completa. En autopista, por la izquierda; después volvé al carril derecho."
+  },
+  {
+    "id": "cinturon",
+    "categoria": "conducir",
+    "titulo": "Cinturón y sillas",
+    "texto": "Todos los ocupantes con cinturón; menores de diez años atrás, con sistema de retención según edad."
+  },
+  {
+    "id": "sali-de-la-calzada",
+    "categoria": "emergencia",
+    "titulo": "Salí de la calzada",
+    "texto": "Detenete en la banquina, lo más a la derecha posible, y encendé las balizas."
+  },
+  {
+    "id": "protegete",
+    "categoria": "emergencia",
+    "titulo": "Protegete",
+    "texto": "Bajá por el lado contrario al tránsito y esperá detrás del guardarraíl si lo hay. De noche, chaleco reflectivo. No cruces la calzada a pie."
+  },
+  {
+    "id": "llama-al-140",
+    "categoria": "emergencia",
+    "titulo": "Llamá al 140",
+    "texto": "Es gratis y funciona sin crédito. Decí ruta, sentido y kilómetro (los mojones están cada kilómetro) y qué pasó. Quedate en línea."
+  },
+  {
+    "id": "espera-el-auxilio",
+    "categoria": "emergencia",
+    "titulo": "Esperá el auxilio",
+    "texto": "El móvil o la grúa llegan, aseguran el lugar y te asisten. No aceptes remolques no identificados: el servicio de Covicen es gratuito y lleva el 140 pintado."
+  },
+  {
+    "id": "comparti-tu-ubicacion",
+    "categoria": "emergencia",
+    "titulo": "Compartí tu ubicación",
+    "texto": "Si no sabés el kilómetro, el botón de asistencia de este sitio toma la ubicación de tu celular para que se la dictes al operador."
+  }
+]

@@ -13,5 +13,6 @@
     { "id": "correo", "nombre": "Correo de atención al usuario", "tipo": "correo", "valor": null, "disponibilidad": "Siempre disponible; se gestiona en días hábiles", "acuse": "24 horas", "respuesta": "5 días hábiles", "fuente": "PETG art. 58 y 61.5" },
     { "id": "linea-0800", "nombre": "Línea gratuita 0800", "tipo": "telefono", "valor": null, "disponibilidad": "Al menos 8 horas en días hábiles, entre las 8 y las 20", "acuse": "Inmediato", "respuesta": "5 días hábiles", "fuente": "PETG art. 58 y 61.1" },
     { "id": "whatsapp", "nombre": "WhatsApp", "tipo": "whatsapp", "valor": null, "disponibilidad": "Se habilita a los 90 días de la toma de posesión", "acuse": "24 horas", "respuesta": "5 días hábiles", "fuente": "PETG art. 58 y 61.5" }
-  ]
+  ],
+  "cuentaRegularizacion": null
 }

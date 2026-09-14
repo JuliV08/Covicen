@@ -1,0 +1,90 @@
+[
+  {
+    "id": "tarifa-diferencial-vecinal",
+    "nombre": "Tarifa diferencial para vecinos y frentistas",
+    "quien": "Personas con domicilio permanente cerca de una estación de peaje, con vehículo de categoría 1 a su nombre.",
+    "requisitos": [
+      "DNI con el domicilio de vivienda permanente actualizado.",
+      "Escritura o contrato de alquiler de la vivienda.",
+      "Una boleta de servicio público a nombre del solicitante.",
+      "Cédula verde del vehículo a nombre del solicitante (o cédula azul y constancia del vínculo).",
+      "Dispositivo TelePASE habilitado."
+    ],
+    "pasos": [
+      "Reunís la documentación.",
+      "Hacés la solicitud por Trámites a Distancia (TAD) con tu CUIT o CUIL y clave, eligiendo la estación de peaje.",
+      "Te avisamos por el canal que indiques cuando esté aprobada.",
+      "Cada año hay que reempadronarse: el beneficio vence si no se renueva."
+    ],
+    "plazo": "El beneficio es anual y se renueva.",
+    "fuente": "PETP art. 4; PETG art. 56.1 y 61.5 c"
+  },
+  {
+    "id": "tarifa-diferencial-docente",
+    "nombre": "Tarifa diferencial para docentes",
+    "quien": "Docentes que cruzan una estación de peaje para ir a su lugar de trabajo, con vehículo de categoría 1.",
+    "requisitos": [
+      "DNI.",
+      "Constancia de servicios o recibo de sueldo del establecimiento.",
+      "Cédula del vehículo a nombre del solicitante.",
+      "Dispositivo TelePASE habilitado."
+    ],
+    "pasos": [
+      "Reunís la documentación.",
+      "Hacés la solicitud por Trámites a Distancia (TAD), eligiendo la estación de peaje.",
+      "Cada año hay que reempadronarse."
+    ],
+    "plazo": "El beneficio es anual y se renueva.",
+    "fuente": "PETP art. 4; PETG art. 61.5 c"
+  },
+  {
+    "id": "exencion-discapacidad",
+    "nombre": "Exención de peaje para personas con discapacidad",
+    "quien": "Titulares del Certificado Único de Discapacidad (CUD) con vehículo afectado a su uso.",
+    "requisitos": [
+      "Certificado Único de Discapacidad vigente.",
+      "DNI.",
+      "Cédula del vehículo (o del vehículo afectado al traslado).",
+      "Dispositivo TelePASE habilitado a este efecto."
+    ],
+    "pasos": [
+      "Presentás la solicitud ante Vialidad Nacional según su reglamento vigente de exentos.",
+      "Con la exención otorgada, se habilita el TelePASE en los sectores de detención segura de las estaciones."
+    ],
+    "fuente": "PETG art. 52 y 56.1"
+  },
+  {
+    "id": "exencion-malvinas",
+    "nombre": "Exención de peaje para ex combatientes de Malvinas",
+    "quien": "Veteranos de la guerra de Malvinas con certificación oficial.",
+    "requisitos": [
+      "Certificado de veterano de guerra.",
+      "DNI.",
+      "Cédula del vehículo.",
+      "Dispositivo TelePASE habilitado a este efecto."
+    ],
+    "pasos": [
+      "Hacés el trámite nacional en argentina.gob.ar.",
+      "Con la exención otorgada, se habilita el TelePASE en los sectores de detención segura de las estaciones."
+    ],
+    "url": "https://www.argentina.gob.ar/servicio/exencion-de-pago-de-peaje-ex-combatientes-de-malvinas",
+    "fuente": "PETG art. 52 y 56.1"
+  },
+  {
+    "id": "alta-telepase",
+    "nombre": "Alta de TelePASE",
+    "quien": "Cualquier usuario. Es gratuito: adhesión, primer dispositivo, colocación, renovación y reposición.",
+    "requisitos": [
+      "DNI.",
+      "Cédula del vehículo.",
+      "Un medio de pago (prepago o pospago con tarjeta)."
+    ],
+    "pasos": [
+      "Te adherís en telepase.com.ar o en un punto de colocación.",
+      "Elegís prepago (cargás saldo) o pospago (se factura a mes vencido con el detalle de pasadas).",
+      "Retirás y colocás el dispositivo, sin cargo."
+    ],
+    "url": "https://www.telepase.com.ar/",
+    "fuente": "PETG art. 50.1.3, 50.5 y 51.1"
+  }
+]

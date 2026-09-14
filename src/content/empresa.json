@@ -5,6 +5,7 @@
   "domicilioLegal": null,
   "domicilioComercial": null,
   "constanciaUrl": null,
+  "polizaRc": null,
   "enFormacion": true,
   "consorcio": [
     { "nombre": "AFEMA S.A.", "descripcion": "Constructora vial con base en Córdoba." },

@@ -1,27 +1,39 @@
 // Fuente v1: JSON del repo, validado contra el contrato. Sin `astro:content` (eso vive en local-novedades.ts).
 import { z } from 'astro/zod';
 import avisosJson from '@/content/avisos.json';
+import consejosJson from '@/content/consejos.json';
 import empresaJson from '@/content/empresa.json';
+import normativaJson from '@/content/normativa.json';
+import serviciosJson from '@/content/servicios.json';
 import contactoJson from '@/content/contacto.json';
 import tramoJson from '@/content/tramo.json';
 import tarifarioJson from '@/content/tarifario.json';
+import tramitesJson from '@/content/tramites.json';
 import { avisosVigentes, hoyArgentina } from '@/lib/avisos';
 import {
   esquemaAviso,
+  esquemaConsejo,
   esquemaContacto,
   esquemaEmpresa,
   esquemaEstadoRuta,
+  esquemaNorma,
   esquemaObra,
   esquemaPregunta,
+  esquemaServicio,
   esquemaTarifario,
+  esquemaTramite,
   esquemaTramo,
   type Aviso,
+  type Consejo,
   type Contacto,
   type Empresa,
   type EstadoRuta,
+  type Norma,
   type Obra,
   type Pregunta,
+  type Servicio,
   type Tarifario,
+  type Tramite,
   type Tramo,
 } from '../esquemas';
 import type { FuenteDatos } from '../fuente';
@@ -53,4 +65,8 @@ export const fuenteLocalJson: Omit<FuenteDatos, 'novedades' | 'novedad'> = {
   estadoRutas: async (): Promise<EstadoRuta> => esquemaEstadoRuta.parse({ disponible: false }),
   // Barra superior: solo los vigentes hoy (el sitio se reconstruye a diario, así las fechas entran y salen solas).
   avisos: async (): Promise<Aviso[]> => avisosVigentes(z.array(esquemaAviso).parse(avisosJson), hoyArgentina()),
+  servicios: async (): Promise<Servicio[]> => z.array(esquemaServicio).parse(serviciosJson),
+  normativa: async (): Promise<Norma[]> => z.array(esquemaNorma).parse(normativaJson),
+  tramites: async (): Promise<Tramite[]> => z.array(esquemaTramite).parse(tramitesJson),
+  consejos: async (): Promise<Consejo[]> => z.array(esquemaConsejo).parse(consejosJson),
 };

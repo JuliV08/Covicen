@@ -19,6 +19,8 @@ export const esquemaEmpresa = z.object({
   domicilioComercial: z.string().min(1).nullable(),
   /** Adónde lleva el QR de Data Fiscal (constancia de inscripción). */
   constanciaUrl: url.nullable(),
+  /** Póliza de responsabilidad civil (PETG 61.6). null hasta que Covicen la mande. */
+  polizaRc: z.object({ aseguradora: z.string().min(1), numero: z.string().min(1), vigenciaHasta: fechaIso, url: url.nullable() }).nullable(),
   enFormacion: z.boolean(),
   consorcio: z.array(z.object({ nombre: z.string().min(1), descripcion: z.string().min(1) })).min(1),
   concesion: z.object({
@@ -70,6 +72,8 @@ export const esquemaContacto = z.object({
   /** oficinaVirtual: Telepeaje Plus, cuando exista. atencionDnv: canales de atención al usuario de la DNV (PETG 61.6), cuando indiquen la URL. */
   enlaces: z.object({ telepase: url, oficinaVirtual: url.nullable(), atencionDnv: url.nullable() }),
   canales: z.array(esquemaCanal),
+  /** Cuenta bancaria para regularizar peajes impagos (PETG 51.1.4 c). */
+  cuentaRegularizacion: z.string().min(1).nullable(),
 });
 export type Contacto = z.infer<typeof esquemaContacto>;
 
@@ -248,3 +252,47 @@ export const esquemaAviso = z.object({
   tono: z.enum(['info', 'vial']).default('info'),
 });
 export type Aviso = z.infer<typeof esquemaAviso>;
+
+/** Servicio al usuario (PETG 54 y 55). Los gratuitos publican alcance y tiempos comprometidos. */
+export const esquemaServicio = z.object({
+  id: slug,
+  nombre: z.string().min(1),
+  gratuito: z.boolean(),
+  descripcion: z.string().min(1),
+  alcance: z.string().optional(),
+  tiempos: z.array(z.string().min(1)).optional(),
+  fuente: z.string().min(1),
+});
+export type Servicio = z.infer<typeof esquemaServicio>;
+
+/** Normativa aplicable (PETG 61.6: "disponible para descargar"). descargable=false: se cita y se dice por qué no está. */
+export const esquemaNorma = z.object({
+  id: slug,
+  titulo: z.string().min(1),
+  descripcion: z.string().min(1),
+  url: url.nullable(),
+  descargable: z.boolean(),
+});
+export type Norma = z.infer<typeof esquemaNorma>;
+
+/** Trámite del usuario (PETG 61.5 c). */
+export const esquemaTramite = z.object({
+  id: slug,
+  nombre: z.string().min(1),
+  quien: z.string().min(1),
+  requisitos: z.array(z.string().min(1)),
+  pasos: z.array(z.string().min(1)),
+  plazo: z.string().optional(),
+  url: url.optional(),
+  fuente: z.string().min(1),
+});
+export type Tramite = z.infer<typeof esquemaTramite>;
+
+/** Consejo de seguridad vial o de qué hacer ante una emergencia. */
+export const esquemaConsejo = z.object({
+  id: slug,
+  titulo: z.string().min(1),
+  texto: z.string().min(1),
+  categoria: z.enum(['conducir', 'emergencia']),
+});
+export type Consejo = z.infer<typeof esquemaConsejo>;

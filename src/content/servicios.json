@@ -1,0 +1,64 @@
+[
+  {
+    "id": "emergencias-140",
+    "nombre": "Emergencias 140",
+    "gratuito": true,
+    "descripcion": "Número corto de emergencia, gratuito desde cualquier celular, aun sin crédito o con señal solo de emergencia. Atendido por personas las 24 horas, los 365 días.",
+    "fuente": "PETG art. 59 y 60.4"
+  },
+  {
+    "id": "grua-y-remolque",
+    "nombre": "Grúa y remolque para despejar la calzada",
+    "gratuito": true,
+    "descripcion": "Si tu vehículo queda detenido en la calzada por un accidente o un desperfecto, lo retiramos sin cargo.",
+    "alcance": "Traslado hasta la localidad más próxima, o hasta cualquier punto anterior a esa localidad o estación de servicio más cercana, para que puedas conseguir asistencia mecánica.",
+    "tiempos": [
+      "Vehículos livianos: 30 minutos en al menos el 90 % de los casos, y nunca más de 40.",
+      "Vehículos pesados: 60 minutos en al menos el 90 % de los casos, y nunca más de 72."
+    ],
+    "fuente": "PETG art. 54.1, 54.2 y 54.5"
+  },
+  {
+    "id": "moviles-de-seguridad-vial",
+    "nombre": "Móviles de seguridad vial",
+    "gratuito": true,
+    "descripcion": "Vehículos identificados con el 140 que recorren el tramo, asisten en la ruta y aseguran el lugar de un incidente.",
+    "alcance": "Un móvil sobre la RN 9 y otro sobre la RN 19.",
+    "fuente": "PETG art. 70; PETP art. 13"
+  },
+  {
+    "id": "telepase-gratuito",
+    "nombre": "TelePASE sin costo",
+    "gratuito": true,
+    "descripcion": "La adhesión, el primer dispositivo por vehículo, su colocación, la renovación, la cancelación, la reposición y los gastos administrativos son gratuitos para el usuario.",
+    "fuente": "PETG art. 50.5"
+  },
+  {
+    "id": "atencion-al-usuario",
+    "nombre": "Atención al usuario",
+    "gratuito": true,
+    "descripcion": "Reclamos, consultas y sugerencias con acuse en 24 horas y respuesta en 5 días hábiles, por formulario web, correo, 0800 y WhatsApp.",
+    "fuente": "PETG art. 58 y 61"
+  },
+  {
+    "id": "sanitarios",
+    "nombre": "Sanitarios públicos",
+    "gratuito": true,
+    "descripcion": "Donde existan, el ingreso es libre y gratuito, con cambiador y sanitario para niños.",
+    "fuente": "PETG art. 57"
+  },
+  {
+    "id": "mecanica-general",
+    "nombre": "Mecánica general",
+    "gratuito": false,
+    "descripcion": "Reparaciones de alguna complejidad, que requieran repuestos o demoras. Se cobra.",
+    "fuente": "PETG art. 55"
+  },
+  {
+    "id": "remolque-extendido",
+    "nombre": "Remolque más allá del punto gratuito",
+    "gratuito": false,
+    "descripcion": "Traslado de un vehículo detenido más allá de la localidad o estación de servicio más próxima. Se cobra.",
+    "fuente": "PETG art. 55"
+  }
+]

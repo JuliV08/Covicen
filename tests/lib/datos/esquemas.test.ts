@@ -59,6 +59,7 @@ describe('esquemaContacto', () => {
     email: { general: null, rrhh: null, proveedores: null, etica: null }, redes: {},
     enlaces: { telepase: 'https://www.telepase.com.ar/', oficinaVirtual: null, atencionDnv: null },
     canales: [{ id: 'emergencias-140', nombre: 'Emergencias 140', tipo: 'telefono', valor: '140', disponibilidad: '24 horas, los 365 días', acuse: 'Inmediato', respuesta: 'Inmediata', fuente: 'PETG art. 58 y 59' }],
+    cuentaRegularizacion: null,
   };
   it('admite los canales comerciales en null, pero el 140 es obligatorio', () => {
     expect(esquemaContacto.parse(vacio).whatsapp.numero).toBeNull();
@@ -72,13 +73,18 @@ describe('esquemaContacto', () => {
 
 describe('esquemaEmpresa', () => {
   const base = {
-    marca: 'Covicen', razonSocial: null, cuit: null, domicilioLegal: null, domicilioComercial: null, constanciaUrl: null, enFormacion: true,
+    marca: 'Covicen', razonSocial: null, cuit: null, domicilioLegal: null, domicilioComercial: null, constanciaUrl: null, polizaRc: null, enFormacion: true,
     consorcio: [{ nombre: 'AFEMA S.A.', descripcion: 'Constructora vial.' }],
     concesion: { tramo: 'Centro', km: 679.03, rutas: ['RN 9'], provincias: ['Córdoba'], plazoAnios: 20, prorrogaAnios: 10, inicioOperacion: '2026-10-05', adjudicacion: { fecha: '2026-08-24', resolucion: 'R', url: 'https://x' }, tarifaOfertadaSinIva: 1399, tarifaTopeSinIva: 3200, tramosEtapa: 8 },
   };
   it('exige consorcio no vacío y ya no acepta descriptor', () => {
     expect(() => esquemaEmpresa.parse({ ...base, consorcio: [] })).toThrow();
     expect(esquemaEmpresa.parse(base)).not.toHaveProperty('descriptor');
+  });
+  it('la póliza de RC es opcional (null) y, si viene, exige aseguradora, número y vigencia', () => {
+    expect(esquemaEmpresa.parse(base).polizaRc).toBeNull();
+    expect(() => esquemaEmpresa.parse({ ...base, polizaRc: { aseguradora: 'X Seguros', numero: '1', vigenciaHasta: '2027-10-05', url: null } })).not.toThrow();
+    expect(() => esquemaEmpresa.parse({ ...base, polizaRc: { aseguradora: 'X Seguros' } })).toThrow();
   });
 });
 
