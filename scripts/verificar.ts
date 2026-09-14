@@ -1,5 +1,5 @@
 // Chequeos sobre dist/ sin navegador. Uso: pnpm verificar (hace build antes).
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { loadEnv } from 'vite';
@@ -69,6 +69,11 @@ for (const [tema, tokens] of Object.entries(temas)) {
     const r = contraste(tokens[a]!, tokens[b]!);
     if (r < 4.5) fallo(`tema ${tema}: contraste ${a}/${b} = ${r.toFixed(2)} < 4.5`);
   }
+}
+
+// 11. páginas que tienen que existir (una por estación de peaje)
+for (const slug of ['carcarana', 'james-craik', 'franck', 'leones', 'san-francisco', 'totoras']) {
+  if (!existsSync(join(DIST, 'peajes', slug, 'index.html'))) fallo(`falta la página /peajes/${slug}/`);
 }
 
 // 9. presupuesto de JS enviado

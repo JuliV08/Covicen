@@ -1,0 +1,40 @@
+---
+import Base from '@/layouts/Base.astro';
+import TarjetaEstacion from '@/components/TarjetaEstacion.astro';
+import Boton from '@/components/ui/Boton.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import { datos } from '@/lib/datos';
+import type { Cabina } from '@/lib/datos/esquemas';
+import { kmTexto } from '@/lib/formato';
+import { absoluta, ruta } from '@/lib/rutas';
+import { estadoCabina } from '@/lib/tramo';
+
+export async function getStaticPaths() {
+  const tramo = await datos.tramo();
+  return tramo.cabinas.map((cabina) => ({ params: { slug: cabina.slug }, props: { cabina } }));
+}
+const { cabina } = Astro.props as { cabina: Cabina };
+const estado = estadoCabina(cabina);
+const titulo = `Peaje ${cabina.nombre}`;
+const ubicacion = `${cabina.ruta}${cabina.km !== null ? ` km ${kmTexto(cabina.km)}` : ''}`;
+const descripcion = `Estación de peaje ${cabina.nombre}, ${ubicacion}, ${cabina.localidad} (${cabina.provincia}). ${estado.etiqueta}. Tarifas, servicios y emergencias: 140.`;
+const jsonLd = [{
+  '@context': 'https://schema.org', '@type': 'Place', name: `Estación de peaje ${cabina.nombre}`, description: descripcion, url: absoluta(`/peajes/${cabina.slug}`),
+  address: { '@type': 'PostalAddress', addressLocality: cabina.localidad, addressRegion: cabina.provincia, addressCountry: 'AR' },
+}];
+---
+<Base titulo={titulo} descripcion={descripcion} jsonLd={jsonLd} migas={[{ nombre: 'El tramo', href: '/el-tramo' }, { nombre: titulo, href: `/peajes/${cabina.slug}` }]}>
+  <Seccion nivel="h1" eyebrow={ubicacion} titulo={titulo} intro={`${cabina.localidad}, ${cabina.provincia}. ${estado.etiqueta}.`} class="pt-10">
+    <div class="revelar grid gap-8 lg:grid-cols-[1fr_1.3fr] lg:items-start">
+      <TarjetaEstacion {cabina} completa nivel="h2" />
+      <div class="flex flex-col gap-6" data-tarifas-estacion>
+        {estado.clave === 'operativa' ? (
+          <p class="text-lg text-texto-2">El cuadro tarifario vigente de esta estación está en <a href={ruta('/tarifas')} class="font-semibold">Tarifas</a>.</p>
+        ) : (
+          <p class="text-lg text-texto-2">Esta estación todavía no cobra: la habilita Vialidad Nacional cuando esté construida. Va a operar con Free Flow, sin barreras, y con el mismo cuadro tarifario que Carcarañá.</p>
+        )}
+        <div class="flex flex-wrap gap-3"><Boton href="/medios-de-pago" variante="secundario">Cómo pagar</Boton><Boton href="/emergencias" variante="vial">Emergencias 140</Boton></div>
+      </div>
+    </div>
+  </Seccion>
+</Base>
