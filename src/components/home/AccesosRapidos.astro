@@ -7,7 +7,7 @@ const { contacto } = Astro.props;
 const tel = contacto.emergencias.telefono;
 const accesos = [
   { Icono: Banknote, titulo: 'Tarifas', texto: 'Cuánto cuesta y desde cuándo.', href: ruta('/tarifas'), vial: false },
-  { Icono: Phone, titulo: 'Emergencias', texto: tel ? `Llamá al ${tel}` : 'Auxilio y asistencia en ruta.', href: tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : ruta('/emergencias'), vial: true },
+  { Icono: Phone, titulo: `Emergencias ${tel}`, texto: `Llamá al ${tel} o pedí asistencia con tu ubicación.`, href: `tel:${tel.replace(/[^\d+]/g, '')}`, vial: true },
   { Icono: Map, titulo: 'El tramo', texto: 'Rutas, ciudades y peajes.', href: ruta('/el-tramo'), vial: false },
   { Icono: CreditCard, titulo: 'Medios de pago', texto: 'TelePASE, efectivo y Free Flow.', href: ruta('/medios-de-pago'), vial: false },
 ];

@@ -39,6 +39,7 @@ const sentidos = { ambos: 'Cobra en ambos sentidos', ascendente: 'Cobra en senti
   <div class="mt-5 flex flex-wrap gap-4 text-sm font-semibold">
     {estado.clave === 'operativa' && <a href={ruta(`/tarifas#${c.slug}`)}>Ver su cuadro tarifario</a>}
     {!completa && <a href={ruta(`/peajes/${c.slug}`)}>Ficha completa</a>}
+    <a href={ruta('/asistencia')}>Pedir asistencia</a>
     <a href="tel:140" class="inline-flex items-center gap-1 text-vial-texto" aria-label="Llamar a emergencias, 140"><Phone size={14} aria-hidden="true" /> 140</a>
   </div>
 </article>

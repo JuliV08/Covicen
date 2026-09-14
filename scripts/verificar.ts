@@ -86,6 +86,7 @@ for (const archivo of archivosDe(DIST).filter((a) => /\.(json|xml)$/.test(a))) {
 for (const slug of ['carcarana', 'james-craik', 'franck', 'leones', 'san-francisco', 'totoras']) {
   if (!existsSync(join(DIST, 'peajes', slug, 'index.html'))) fallo(`falta la página /peajes/${slug}/`);
 }
+for (const p of ['asistencia', 'tramites']) if (!existsSync(join(DIST, p, 'index.html'))) fallo(`falta la página /${p}/`);
 
 // 9. presupuesto de JS enviado
 const archivosJs = readdirSync(join(DIST, '_astro')).filter((f) => f.endsWith('.js'));
