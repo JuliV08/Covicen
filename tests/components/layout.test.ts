@@ -20,7 +20,7 @@ describe('Base', () => {
   });
   it('Home usa el título de marca', async () => {
     const html = await render('/', { titulo: 'Inicio', descripcion: 'x' });
-    expect(html).toContain('<title>Covicen — Corredor Vial del Centro</title>');
+    expect(html).toContain('<title>Covicen — Tramo Centro</title>');
   });
   it('incluye Organization y WebSite en JSON-LD y el skip link', async () => {
     const html = await render('/obras/', { titulo: 'Obras', descripcion: 'x' });

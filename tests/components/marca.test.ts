@@ -21,12 +21,12 @@ describe('Isotipo', () => {
 });
 
 describe('Logotipo', () => {
-  it('es un link a Home con nombre accesible y descriptor', async () => {
+  it('es un link a Home con nombre accesible, sin descriptor', async () => {
     const c = await AstroContainer.create();
-    const html = await c.renderToString(Logotipo, { props: { conDescriptor: true } });
+    const html = await c.renderToString(Logotipo, {});
     expect(html).toContain('aria-label="Covicen, inicio"');
     expect(html).toContain('href="/"');
     expect(html).toContain('COVICEN');
-    expect(html).toContain('Corredor Vial del Centro');
+    expect(html).not.toContain('Corredor Vial del Centro');
   });
 });

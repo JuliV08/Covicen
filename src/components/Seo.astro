@@ -18,7 +18,7 @@ interface Props {
 }
 const { titulo, descripcion, jsonLd, tipo, imagen, empresa, contacto } = Astro.props;
 const esHome = Astro.url.pathname === config.base;
-const tituloCompleto = esHome ? 'Covicen — Corredor Vial del Centro' : `${titulo} | Covicen`;
+const tituloCompleto = esHome ? 'Covicen — Tramo Centro' : `${titulo} | Covicen`;
 // pathname ya trae base y barra final (trailingSlash: always)
 const canonical = `${config.sitio}${Astro.url.pathname}`;
 const og = imagen ?? absoluta('/og.png');

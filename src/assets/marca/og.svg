@@ -13,7 +13,6 @@
   <path d="M-20 470 C 300 420, 500 520, 820 440 S 1150 380, 1220 410" fill="none" stroke="url(#hilo)" stroke-width="3"/>
   <path d="M-20 470 C 300 420, 500 520, 820 440 S 1150 380, 1220 410" fill="none" stroke="#F0C419" stroke-width="2" stroke-dasharray="14 22" opacity=".7"/>
   <g transform="translate(96 150) scale(0.24)">ISOTIPO</g>
-  <text x="330" y="240" font-family="Archivo" font-weight="800" font-size="96" fill="#E8EEF5" letter-spacing="2">COVICEN</text>
-  <text x="334" y="292" font-family="Archivo" font-weight="400" font-size="26" fill="#A9C4D8" letter-spacing="6">CORREDOR VIAL DEL CENTRO</text>
-  <text x="96" y="560" font-family="Archivo" font-weight="400" font-size="28" fill="#A9C4D8">Tramo Centro · RN 9 · RN 19 · RN 34 · 681 km · Córdoba y Santa Fe</text>
+  <text x="330" y="262" font-family="Archivo" font-weight="800" font-size="96" fill="#E8EEF5" letter-spacing="2">COVICEN</text>
+  <text x="96" y="560" font-family="Archivo" font-weight="400" font-size="28" fill="#A9C4D8">Tramo Centro de la Red Federal de Concesiones · RN 9 · RN 19 · RN 34 · 679 km</text>
 </svg>
