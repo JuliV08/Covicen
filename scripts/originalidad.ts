@@ -7,7 +7,12 @@ import { textoVisible } from './lib/html.ts';
 const normalizar = (t: string) => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9ñ\s]/g, ' ').split(/\s+/).filter(Boolean);
 const ngramas = (palabras: string[], n = 6) => new Set(palabras.slice(0, Math.max(0, palabras.length - n + 1)).map((_, i) => palabras.slice(i, i + n).join(' ')));
 
-const propio = ngramas(normalizar(textoVisible(readFileSync('dist/quienes-somos/index.html', 'utf8'))));
+// Solo el <main>: header y footer son cromo compartido (fecha de actualización, links institucionales), no texto propio.
+const pagina = readFileSync('dist/quienes-somos/index.html', 'utf8');
+const main = /<main[\s\S]*?<\/main>/.exec(pagina)?.[0] ?? pagina;
+// Nombres propios que inevitablemente se repiten entre concesionarias del mismo programa.
+const NOMBRES_PROPIOS = ['red federal de concesiones', 'direccion nacional de vialidad'];
+const propio = new Set([...ngramas(normalizar(textoVisible(main)))].filter((g) => !NOMBRES_PROPIOS.some((n) => g.includes(n))));
 const urls = process.argv.slice(2);
 if (urls.length === 0) { console.error('Pasá al menos una URL institucional para comparar.'); process.exit(2); }
 let coincidencias = 0;
