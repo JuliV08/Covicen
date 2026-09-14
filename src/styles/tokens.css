@@ -68,7 +68,7 @@
   --dur-entrada: 600ms;
   --dur-narrativa: 900ms;
   --stagger: 60ms;
-  --alto-header: 4.5rem;
+  --alto-header: 7rem; /* 2.5rem de barra superior + 4.5rem de header */
   --ancho-max: 80rem;
   --brillo-foto: 0.62; /* las fotos de atmósfera se oscurecen para que el texto gane */
   color-scheme: dark;

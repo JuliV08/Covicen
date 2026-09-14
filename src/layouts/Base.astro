@@ -22,7 +22,7 @@ interface Props {
   claseMain?: string;
 }
 const { titulo, descripcion, jsonLd = [], tipo = 'website', imagen, migas, claseMain = '' } = Astro.props;
-const [empresa, contacto] = await Promise.all([datos.empresa(), datos.contacto()]);
+const [empresa, contacto, avisos] = await Promise.all([datos.empresa(), datos.contacto(), datos.avisos()]);
 const bloques = migas
   ? [...jsonLd, jsonLdMigas([{ nombre: 'Inicio', url: absoluta('/') }, ...migas.map((m) => ({ nombre: m.nombre, url: absoluta(m.href) }))])]
   : jsonLd;
@@ -53,7 +53,7 @@ const bloques = migas
   </head>
   <body class="flex min-h-dvh flex-col bg-fondo pb-20 text-texto sm:pb-0">
     <a href="#contenido" class="salto">Saltar al contenido</a>
-    <Header {contacto} rutaActual={Astro.url.pathname} />
+    <Header {contacto} {avisos} rutaActual={Astro.url.pathname} />
     <HiloRuta />
     <main id="contenido" tabindex="-1" class:list={['flex-1 pt-[var(--alto-header)] outline-none', claseMain]}>
       {migas && <Breadcrumbs {migas} />}

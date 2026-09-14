@@ -36,20 +36,29 @@ describe('Base', () => {
     expect(html).toContain('"name":"Inicio"');
     expect(html).toContain('aria-current="page"');
   });
-  it('emergencias: toda página lleva el 140 como enlace tel:', async () => {
+  it('el 140 está en toda página, con tel:', async () => {
     const html = await render('/politicas/', { titulo: 'Políticas', descripcion: 'x' });
     expect(html).toContain('href="tel:140"');
+    expect(html).toContain('aria-label="Llamar a emergencias, 140"');
     expect(html).not.toContain('data-emergencias="a-confirmar"');
   });
 });
 
 describe('Header', () => {
-  it('marca la página actual y expone el CTA de emergencias con tel: cuando hay número', async () => {
+  const props = async (avisos: unknown[] = []) => ({ contacto: await fuenteLocalJson.contacto(), avisos, rutaActual: '/tarifas/' });
+  it('marca la página actual, tiene el 140 grande con tel: y el menú mobile', async () => {
     const c = await AstroContainer.create();
-    const contacto = { ...(await fuenteLocalJson.contacto()), emergencias: { telefono: '0800 555 0000', etiqueta: 'Emergencias' } };
-    const html = await c.renderToString(Header, { props: { contacto, rutaActual: '/tarifas/' } });
-    expect(html).toContain('href="tel:08005550000"');
+    const html = await c.renderToString(Header, { props: await props() });
+    expect(html).toContain('href="tel:140"');
     expect(html).toMatch(/href="\/tarifas\/"[^>]*aria-current="page"/);
     expect(html).toContain('popovertarget="menu-mobile"');
+  });
+  it('lleva la barra superior con los accesos y, en el menú mobile, TelePASE y Mi cuenta', async () => {
+    const c = await AstroContainer.create();
+    const html = await c.renderToString(Header, { props: await props([{ id: 'a', texto: 'Aviso', tono: 'info' }]) });
+    expect(html).toContain('data-anuncios');
+    expect(html.match(/>TelePASE</g)?.length).toBe(2);
+    expect(html.match(/>Mi cuenta</g)?.length).toBe(2);
+    expect(html).not.toContain('Corredor Vial del Centro');
   });
 });

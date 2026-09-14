@@ -1,12 +1,13 @@
 ---
 import { ChevronDown, Menu, Phone, X } from '@lucide/astro';
+import BarraSuperior from '@/components/BarraSuperior.astro';
 import InterruptorTema from '@/components/InterruptorTema.astro';
 import Logotipo from '@/components/marca/Logotipo.astro';
-import type { Contacto } from '@/lib/datos/esquemas';
+import type { Aviso, Contacto } from '@/lib/datos/esquemas';
 import { ruta } from '@/lib/rutas';
 
-interface Props { contacto: Contacto; rutaActual: string }
-const { contacto, rutaActual } = Astro.props;
+interface Props { contacto: Contacto; avisos: Aviso[]; rutaActual: string }
+const { contacto, avisos, rutaActual } = Astro.props;
 
 const items = [
   { nombre: 'Tarifas', href: '/tarifas' },
@@ -24,11 +25,14 @@ const nosotros = [
 const activo = (href: string) => rutaActual.startsWith(ruta(href));
 const nosotrosActivo = nosotros.some((n) => activo(n.href));
 const tel = contacto.emergencias.telefono;
-const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
+const telHref = `tel:${tel.replace(/[^\d+]/g, '')}`;
+const oficina = contacto.enlaces.oficinaVirtual;
+const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
 ---
-<header class="cabecera fixed inset-x-0 top-0 z-50 h-[var(--alto-header)] border-b" transition:animate="none">
-  <div class="contenedor flex h-full items-center justify-between gap-6">
-    <Logotipo conDescriptor={true} />
+<header class="cabecera fixed inset-x-0 top-0 z-50 border-b" transition:animate="none">
+  <BarraSuperior {avisos} {contacto} />
+  <div class="contenedor flex h-[4.5rem] items-center justify-between gap-6">
+    <Logotipo />
 
     <nav aria-label="Principal" class="hidden lg:block">
       <ul class="nav-lista flex items-center gap-1">
@@ -39,7 +43,7 @@ const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
         ))}
         <li>
           <details class="desplegable relative" data-desplegable>
-            <summary class:list={['nav-item cursor-pointer list-none', { 'is-activo': nosotrosActivo }]}>
+            <summary class:list={['nav-item cursor-pointer list-none', { 'is-activo': nosotrosActivo }]} aria-expanded="false">
               Nosotros <ChevronDown size={16} aria-hidden="true" class="chevron" />
             </summary>
             <ul class="absolute right-0 top-full mt-2 w-64 rounded-md border border-borde bg-superficie-2 p-2 shadow-2xl">
@@ -56,16 +60,14 @@ const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
     </nav>
 
     <div class="flex items-center gap-3">
-      {telHref ? (
-        <a href={telHref} class="btn-vial hidden sm:inline-flex" aria-label={`Llamar a emergencias: ${tel}`}>
-          <Phone size={18} aria-hidden="true" class="telefono" /> <span>Emergencias</span> <span class="font-extrabold tabular-nums">{tel}</span>
-        </a>
-      ) : (
-        <span class="btn-vial hidden sm:inline-flex opacity-90" data-emergencias="a-confirmar" title="Número a confirmar">
-          <Phone size={18} aria-hidden="true" /> <span>Emergencias</span> <span class="text-[0.7rem] font-medium uppercase tracking-wider">número a confirmar</span>
+      <!-- El 140 grande: número corto de emergencia del pliego (PETG 59). Debajo de 640 px lo muestra BarraEmergencias. -->
+      <a href={telHref} class="btn-vial btn-140 hidden sm:inline-flex" aria-label={`Llamar a emergencias, ${tel}`}>
+        <Phone size={22} aria-hidden="true" class="telefono" />
+        <span class="flex flex-col text-left leading-none">
+          <span class="eyebrow text-sobre-vial">{contacto.emergencias.etiqueta}</span>
+          <span class="text-2xl font-extrabold tabular-nums leading-none">{tel}</span>
         </span>
-      )}
-      <InterruptorTema class="hidden h-11 w-11 lg:inline-flex" />
+      </a>
       <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-md border border-borde text-texto hover:border-borde-fuerte hover:bg-superficie lg:hidden" popovertarget="menu-mobile" aria-label="Abrir menú">
         <Menu size={22} aria-hidden="true" />
       </button>
@@ -86,8 +88,22 @@ const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
         </li>
       ))}
     </ul>
+    <ul class="flex flex-col border-t border-borde p-3">
+      <li><a href={contacto.enlaces.telepase} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 hover:bg-superficie hover:text-texto" rel="noopener noreferrer" target="_blank">TelePASE</a></li>
+      <li><a href={miCuenta} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 hover:bg-superficie hover:text-texto" rel={oficina ? 'noopener noreferrer' : undefined} target={oficina ? '_blank' : undefined}>Mi cuenta</a></li>
+    </ul>
   </nav>
 </header>
+<script>
+  // El <summary> no expone aria-expanded solo: se sincroniza con el estado del <details>.
+  const sincronizar = () => document.querySelectorAll<HTMLDetailsElement>('details[data-desplegable]').forEach((d) => {
+    const s = d.querySelector('summary');
+    if (!s) return;
+    s.setAttribute('aria-expanded', String(d.open));
+    if (!d.dataset.listo) { d.dataset.listo = ''; d.addEventListener('toggle', () => s.setAttribute('aria-expanded', String(d.open))); }
+  });
+  document.addEventListener('astro:page-load', sincronizar);
+</script>
 
 <style>
   .cabecera { border-color: transparent; backdrop-filter: blur(12px); }
@@ -104,7 +120,7 @@ const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
 
   .nav-item {
     position: relative; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.7rem 0.75rem; border-radius: var(--radius-sm);
-    color: var(--color-texto-2); font-weight: 500; line-height: 1.2; text-decoration: none;
+    color: var(--color-texto-2); font-weight: 500; line-height: 1.2; text-decoration: none; white-space: nowrap;
     transition: color var(--dur-micro) var(--ease-salida);
   }
   .nav-item::after {
@@ -121,6 +137,7 @@ const telHref = tel ? `tel:${tel.replace(/[^\d+]/g, '')}` : null;
   @keyframes aparecer { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 
   /* .btn-vial vive en global.css (una sola definición para header, barra y botón). */
+  .btn-140 { padding: 0.35rem 0.9rem 0.35rem 0.75rem; }
 
   .menu-mobile {
     inset: unset; top: 0; right: 0; height: 100dvh; width: min(100%, 22rem); margin: 0; border: 0; border-left: 1px solid var(--color-borde);
