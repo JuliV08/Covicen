@@ -1,0 +1,43 @@
+---
+// Estado de la traza "tipo subte": una fila por ruta con su chip (Normal / Precaución / Corte) y los incidentes debajo.
+// Mientras los datos sean de muestra (estado.ejemplo), lo dice con un cartel inequívoco: nadie lee un corte inventado como real.
+import { Car, CloudFog, Construction, TriangleAlert } from '@lucide/astro';
+import Senal from '@/components/ui/Senal.astro';
+import type { EstadoRuta, Incidente, NombreRuta } from '@/lib/datos/esquemas';
+import { fechaHoraLarga } from '@/lib/formato';
+import { estadoPorRuta } from '@/lib/estado';
+interface Props { estado: EstadoRuta; rutas: NombreRuta[]; nivel?: 'h2' | 'h3' }
+const { estado, rutas, nivel = 'h3' } = Astro.props;
+const Titulo = nivel;
+const filas = estadoPorRuta(estado, rutas);
+const iconos: Record<Incidente['tipo'], typeof Car> = { transito: Car, obra: Construction, incidente: TriangleAlert, clima: CloudFog };
+const sentidos = { ambos: 'ambos sentidos', ascendente: 'sentido ascendente', descendente: 'sentido descendente' } as const;
+---
+<section class="estado-traza tarjeta p-6" aria-label="Estado de la traza">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <Titulo class="text-xl">Estado de la traza</Titulo>
+    {estado.ejemplo && <Senal variante="frio">Datos de ejemplo: el módulo se activa con la operación</Senal>}
+  </div>
+  <ul class="mt-4 divide-y divide-borde">
+    {filas.map((f) => (
+      <li class="py-4" data-ruta={f.ruta} data-nivel={f.nivel}>
+        <div class="flex items-center gap-3">
+          <span class:list={['chip h-3 w-3 shrink-0 rounded-full', f.nivel === 'corte' ? 'bg-error' : f.nivel === 'precaucion' ? 'bg-vial' : 'bg-ok']} aria-hidden="true"></span>
+          <span class="font-extrabold text-texto">{f.ruta}</span>
+          <span class="text-sm text-texto-2">{f.etiqueta}{f.incidentes.length > 0 && ` · ${f.incidentes.length} ${f.incidentes.length === 1 ? 'aviso' : 'avisos'}`}</span>
+        </div>
+        {f.incidentes.length > 0 && (
+          <ul class="mt-3 flex flex-col gap-3 pl-6">
+            {f.incidentes.map((i) => { const Icono = iconos[i.tipo]; return (
+              <li class="flex gap-3 text-sm">
+                <Icono size={18} aria-hidden="true" class="mt-0.5 shrink-0 text-texto-2" />
+                <div><p class="font-semibold text-texto">{i.km !== null && `km ${i.km}`}{i.sentido && ` · ${sentidos[i.sentido]}`}</p><p class="text-texto-2">{i.descripcion}</p></div>
+              </li>
+            ); })}
+          </ul>
+        )}
+      </li>
+    ))}
+  </ul>
+  {estado.actualizado && <p class="anotacion mt-4 text-xs text-texto-2">Última actualización: {fechaHoraLarga(new Date(estado.actualizado))}</p>}
+</section>

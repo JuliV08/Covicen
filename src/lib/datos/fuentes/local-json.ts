@@ -3,6 +3,7 @@ import { z } from 'astro/zod';
 import avisosJson from '@/content/avisos.json';
 import consejosJson from '@/content/consejos.json';
 import empresaJson from '@/content/empresa.json';
+import estadoJson from '@/content/estado-ruta.json';
 import normativaJson from '@/content/normativa.json';
 import serviciosJson from '@/content/servicios.json';
 import contactoJson from '@/content/contacto.json';
@@ -61,8 +62,8 @@ export const fuenteLocalJson: Omit<FuenteDatos, 'novedades' | 'novedad'> = {
       if (!r.success) throw new Error(`Pregunta inválida en ${origen}: ${r.error.message}`);
       return r.data;
     }).sort((a, b) => a.orden - b.orden),
-  // v1: no hay sistema de estado de rutas. El slot del layout lee esto y muestra el hueco.
-  estadoRutas: async (): Promise<EstadoRuta> => esquemaEstadoRuta.parse({ disponible: false }),
+  // Estado de la traza: hoy datos de ejemplo del repo (ejemplo: true); con estadoRutasEnVivo, una isla lo pide en runtime.
+  estadoRutas: async (): Promise<EstadoRuta> => esquemaEstadoRuta.parse(estadoJson),
   // Barra superior: solo los vigentes hoy (el sitio se reconstruye a diario, así las fechas entran y salen solas).
   avisos: async (): Promise<Aviso[]> => avisosVigentes(z.array(esquemaAviso).parse(avisosJson), hoyArgentina()),
   servicios: async (): Promise<Servicio[]> => z.array(esquemaServicio).parse(serviciosJson),

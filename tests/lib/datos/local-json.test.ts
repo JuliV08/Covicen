@@ -76,7 +76,11 @@ describe('contenido del repo', () => {
     expect(new Set(faq.map((p) => p.slug)).size).toBe(faq.length);
     expect(faq.filter((p) => p.enHome).length).toBeGreaterThanOrEqual(4);
   });
-  it('estadoRutas: no disponible en v1', async () => {
-    expect((await fuenteLocalJson.estadoRutas()).disponible).toBe(false);
+  it('estadoRutas: datos de ejemplo marcados como tales, con fecha y un incidente por tipo', async () => {
+    const e = await fuenteLocalJson.estadoRutas();
+    expect(e.disponible).toBe(true);
+    expect(e.ejemplo).toBe(true);
+    expect(e.actualizado).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(new Set(e.incidentes?.map((i) => i.tipo))).toEqual(new Set(['transito', 'obra', 'incidente', 'clima']));
   });
 });

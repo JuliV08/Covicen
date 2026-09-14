@@ -226,19 +226,24 @@ export const esquemaPregunta = z.object({
 });
 export type Pregunta = z.infer<typeof esquemaPregunta>;
 
+export const esquemaIncidente = z.object({
+  ruta: esquemaNombreRuta,
+  km: z.number().nullable(),
+  descripcion: z.string(),
+  severidad: z.enum(['info', 'precaucion', 'corte']),
+  tipo: z.enum(['transito', 'obra', 'incidente', 'clima']).default('incidente'),
+  sentido: z.enum(['ambos', 'ascendente', 'descendente']).optional(),
+  desde: z.iso.datetime().optional(),
+  hasta: z.iso.datetime().optional(),
+});
+export type Incidente = z.infer<typeof esquemaIncidente>;
+
 export const esquemaEstadoRuta = z.object({
   disponible: z.boolean(),
+  /** true = datos de muestra para ver el módulo funcionando; el componente lo dice con un cartel. */
+  ejemplo: z.boolean().default(false),
   actualizado: z.iso.datetime().optional(),
-  incidentes: z
-    .array(
-      z.object({
-        ruta: esquemaNombreRuta,
-        km: z.number().nullable(),
-        descripcion: z.string(),
-        severidad: z.enum(['info', 'precaucion', 'corte']),
-      }),
-    )
-    .optional(),
+  incidentes: z.array(esquemaIncidente).optional(),
 });
 export type EstadoRuta = z.infer<typeof esquemaEstadoRuta>;
 

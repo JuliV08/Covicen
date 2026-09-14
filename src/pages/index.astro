@@ -13,7 +13,7 @@ import TarifaDestacada from '@/components/home/TarifaDestacada.astro';
 import Divisor from '@/components/ui/Divisor.astro';
 import { datos } from '@/lib/datos';
 
-const [empresa, contacto, tramo, tarifario, obras, novedades, faq] = await Promise.all([
+const [empresa, contacto, tramo, tarifario, obras, novedades, faq, estado] = await Promise.all([
   datos.empresa(),
   datos.contacto(),
   datos.tramo(),
@@ -21,6 +21,7 @@ const [empresa, contacto, tramo, tarifario, obras, novedades, faq] = await Promi
   datos.obras(),
   datos.novedades(),
   datos.faq(),
+  datos.estadoRutas(),
 ]);
 ---
 <Base titulo="Inicio" descripcion="Covicen, concesionaria del Tramo Centro de la Red Federal de Concesiones: 679 km sobre RN 9, RN 19 y RN 34 en Córdoba y Santa Fe. Tarifas, peajes, emergencias y obras.">
@@ -29,7 +30,7 @@ const [empresa, contacto, tramo, tarifario, obras, novedades, faq] = await Promi
   <AccesosRapidos {contacto} />
   <TarifaDestacada {tarifario} />
   <ElTramo {tramo} />
-  <ObrasYEstado {obras} />
+  <ObrasYEstado {obras} {estado} rutas={tramo.rutas.map((r) => r.nombre)} />
   <Servicios />
   <NovedadesRecientes {novedades} />
   <Consorcio {empresa} />

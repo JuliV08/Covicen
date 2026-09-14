@@ -1,12 +1,14 @@
 ---
 import Base from '@/layouts/Base.astro';
+import EstadoTraza from '@/components/EstadoTraza.astro';
 import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
 import ImagenAtmosfera from '@/components/ilustraciones/ImagenAtmosfera.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import Senal from '@/components/ui/Senal.astro';
 import { datos } from '@/lib/datos';
 import { fechaLarga } from '@/lib/formato';
-const obras = await datos.obras();
+const [obras, estado, tramo] = await Promise.all([datos.obras(), datos.estadoRutas(), datos.tramo()]);
+const rutas = tramo.rutas.map((r) => r.nombre);
 const estados = { planificada: 'Planificada', 'en-ejecucion': 'En ejecución', terminada: 'Terminada' } as const;
 ---
 <Base titulo="Obras y avance" descripcion="Obras de Covicen en el Tramo Centro: puesta en valor inicial, losas de hormigón en RN 9 y RN 19, banquinas entre Rosario y Carcarañá, puente sobre el Carcarañá, rehabilitación asfáltica y estaciones Free Flow. Estado y avance." migas={[{ nombre: 'Obras', href: '/obras' }]}>
@@ -27,6 +29,6 @@ const estados = { planificada: 'Planificada', 'en-ejecucion': 'En ejecución', t
         </li>
       ))}
     </ol>
-    <div class="mt-12"><HuecoCapacidad capacidad="estadoRutasEnVivo" titulo="Estado de las rutas en tiempo real" descripcion="Cortes, desvíos por obra y clima, por ruta y kilómetro." alternativaHref="/novedades" alternativaTexto="Ver novedades de obras" /></div>
+    <div class="mt-12">{estado.disponible ? <EstadoTraza {estado} {rutas} nivel="h2" /> : <HuecoCapacidad capacidad="estadoRutasEnVivo" titulo="Estado de las rutas en tiempo real" descripcion="Cortes, desvíos por obra y clima, por ruta y kilómetro." alternativaHref="/novedades" alternativaTexto="Ver novedades de obras" />}</div>
   </Seccion>
 </Base>

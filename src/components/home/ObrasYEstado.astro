@@ -1,11 +1,12 @@
 ---
+import EstadoTraza from '@/components/EstadoTraza.astro';
 import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
 import Card from '@/components/ui/Card.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import Senal from '@/components/ui/Senal.astro';
-import type { Obra } from '@/lib/datos/esquemas';
-interface Props { obras: Obra[] }
-const { obras } = Astro.props;
+import type { EstadoRuta, NombreRuta, Obra } from '@/lib/datos/esquemas';
+interface Props { obras: Obra[]; estado: EstadoRuta; rutas: NombreRuta[] }
+const { obras, estado, rutas } = Astro.props;
 const estados = { planificada: 'Planificada', 'en-ejecucion': 'En ejecución', terminada: 'Terminada' } as const;
 ---
 <Seccion id="obras" indice="03" eyebrow="Obras y estado" titulo="Primero las obras. Después, el peaje pleno." intro="El contrato no permite cobrar la tarifa ofertada hasta alcanzar la transitabilidad óptima que verifica Vialidad Nacional. Acá se sigue el avance.">
@@ -20,8 +21,8 @@ const estados = { planificada: 'Planificada', 'en-ejecucion': 'En ejecución', t
         </li>
       ))}
     </ul>
-    <div class="revelar lg:sticky lg:top-28 lg:self-start">
-      <HuecoCapacidad capacidad="estadoRutasEnVivo" titulo="Estado de las rutas en tiempo real" descripcion="Cortes, desvíos y clima por ruta y kilómetro. Este espacio se conecta al centro de operaciones cuando entre en servicio." alternativaHref="/emergencias" alternativaTexto="Mientras tanto: emergencias y auxilio" />
+    <div class="revelar lg:sticky lg:top-32 lg:self-start">
+      {estado.disponible ? <EstadoTraza {estado} {rutas} /> : <HuecoCapacidad capacidad="estadoRutasEnVivo" titulo="Estado de las rutas en tiempo real" descripcion="Cortes, desvíos y clima por ruta y kilómetro." alternativaHref="/emergencias" alternativaTexto="Emergencias y auxilio" />}
     </div>
   </div>
 </Seccion>
