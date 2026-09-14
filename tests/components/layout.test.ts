@@ -36,9 +36,10 @@ describe('Base', () => {
     expect(html).toContain('"name":"Inicio"');
     expect(html).toContain('aria-current="page"');
   });
-  it('emergencias: sin número muestra el slot a confirmar en toda página', async () => {
+  it('emergencias: toda página lleva el 140 como enlace tel:', async () => {
     const html = await render('/politicas/', { titulo: 'Políticas', descripcion: 'x' });
-    expect(html).toContain('data-emergencias="a-confirmar"');
+    expect(html).toContain('href="tel:140"');
+    expect(html).not.toContain('data-emergencias="a-confirmar"');
   });
 });
 
