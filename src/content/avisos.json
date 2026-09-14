@@ -1,0 +1,5 @@
+[
+  { "id": "toma-de-posesion", "texto": "Covicen opera el Tramo Centro desde el 5 de octubre de 2026. Conocé el tramo y las estaciones.", "url": "/el-tramo", "tono": "vial", "hasta": "2026-10-05" },
+  { "id": "emergencias-140", "texto": "Emergencias en la ruta: llamá al 140, las 24 horas.", "url": "/emergencias", "tono": "info" },
+  { "id": "tarifas", "texto": "Consultá el cuadro tarifario vigente por estación de peaje.", "url": "/tarifas", "tono": "info" }
+]

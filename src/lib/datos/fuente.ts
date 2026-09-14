@@ -1,4 +1,4 @@
-import type { Contacto, Empresa, EstadoRuta, Novedad, Obra, Pregunta, Tarifario, Tramo } from './esquemas';
+import type { Aviso, Contacto, Empresa, EstadoRuta, Novedad, Obra, Pregunta, Tarifario, Tramo } from './esquemas';
 
 /** Async desde el día 1: hoy se resuelve en build; mañana una isla lo consume en runtime. */
 export interface FuenteDatos {
@@ -11,4 +11,5 @@ export interface FuenteDatos {
   novedad(slug: string): Promise<Novedad | null>;
   faq(): Promise<Pregunta[]>;
   estadoRutas(): Promise<EstadoRuta>;
+  avisos(): Promise<Aviso[]>;
 }

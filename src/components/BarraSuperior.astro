@@ -1,0 +1,53 @@
+---
+// Barra de 40 px pegada arriba del header: a la izquierda los anuncios rotando (uno visible, los demás `hidden`;
+// scripts/anuncios.ts los rota), a la derecha TelePASE · Mi cuenta · interruptor de tema (solo desktop; en celular
+// esos tres viven en el menú). Sin anuncios vigentes, la izquierda queda vacía y la barra sigue (los accesos).
+import { ChevronLeft, ChevronRight } from '@lucide/astro';
+import InterruptorTema from '@/components/InterruptorTema.astro';
+import type { Aviso, Contacto } from '@/lib/datos/esquemas';
+import { ruta } from '@/lib/rutas';
+interface Props { avisos: Aviso[]; contacto: Contacto }
+const { avisos, contacto } = Astro.props;
+const enlace = (u: string) => (u.startsWith('/') ? ruta(u) : u);
+const oficina = contacto.enlaces.oficinaVirtual;
+const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
+---
+<div class="barra-superior h-10 border-b border-borde bg-fondo-2 text-sm">
+  <div class="contenedor flex h-full items-center justify-between gap-4">
+    {avisos.length > 0 ? (
+      <section class="anuncios flex min-w-0 flex-1 items-center gap-2" aria-label="Anuncios" data-anuncios>
+        <ul class="anuncios-lista min-w-0 flex-1">
+          {avisos.map((a, i) => (
+            <li class="anuncio flex items-center gap-2" data-anuncio hidden={i !== 0}>
+              <span class:list={['h-2 w-2 shrink-0 rounded-full', a.tono === 'vial' ? 'bg-vial' : 'bg-acento']} aria-hidden="true"></span>
+              {a.url ? <a href={enlace(a.url)} class="truncate text-texto">{a.texto}</a> : <span class="truncate text-texto">{a.texto}</span>}
+            </li>
+          ))}
+        </ul>
+        {avisos.length > 1 && (
+          <div class="flex shrink-0 items-center gap-1">
+            <button type="button" class="control" data-anuncio-anterior aria-label="Anuncio anterior"><ChevronLeft size={16} aria-hidden="true" /></button>
+            <button type="button" class="control" data-anuncio-siguiente aria-label="Anuncio siguiente"><ChevronRight size={16} aria-hidden="true" /></button>
+          </div>
+        )}
+      </section>
+    ) : (
+      <span class="flex-1" aria-hidden="true"></span>
+    )}
+    <nav aria-label="Accesos" class="hidden shrink-0 items-center gap-1 lg:flex">
+      <a href={contacto.enlaces.telepase} class="acceso" rel="noopener noreferrer" target="_blank">TelePASE</a>
+      <a href={miCuenta} class="acceso" rel={oficina ? 'noopener noreferrer' : undefined} target={oficina ? '_blank' : undefined}>Mi cuenta</a>
+      <InterruptorTema class="ml-1 inline-flex h-8 w-8" />
+    </nav>
+  </div>
+</div>
+<script src="../scripts/anuncios.ts"></script>
+<style>
+  .anuncio { animation: aparecer-suave var(--dur-ui) var(--ease-salida) both; }
+  @keyframes aparecer-suave { from { opacity: 0; } to { opacity: 1; } }
+  .acceso { display: inline-flex; align-items: center; min-height: 2rem; padding: 0 0.6rem; border-radius: var(--radius-sm); color: var(--color-texto-2); font-weight: 600; text-decoration: none; }
+  .acceso:hover, .acceso:focus-visible { color: var(--color-texto); background: var(--color-superficie); }
+  .control { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: var(--radius-sm); color: var(--color-texto-2); }
+  .control:hover, .control:focus-visible { color: var(--color-texto); background: var(--color-superficie); }
+  @media (prefers-reduced-motion: reduce) { .anuncio { animation: none; } }
+</style>

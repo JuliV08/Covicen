@@ -232,3 +232,14 @@ export const esquemaEstadoRuta = z.object({
     .optional(),
 });
 export type EstadoRuta = z.infer<typeof esquemaEstadoRuta>;
+
+/** Aviso de la barra superior. `url` interna ('/tarifas') o externa (https). Sin fechas = siempre vigente. */
+export const esquemaAviso = z.object({
+  id: slug,
+  texto: z.string().min(1).max(160),
+  url: z.string().regex(/^(\/|https?:\/\/)/).optional(),
+  desde: fechaIso.optional(),
+  hasta: fechaIso.optional(),
+  tono: z.enum(['info', 'vial']).default('info'),
+});
+export type Aviso = z.infer<typeof esquemaAviso>;

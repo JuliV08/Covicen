@@ -1,9 +1,13 @@
 // Fuente v1: JSON del repo, validado contra el contrato. Sin `astro:content` (eso vive en local-novedades.ts).
+import { z } from 'astro/zod';
+import avisosJson from '@/content/avisos.json';
 import empresaJson from '@/content/empresa.json';
 import contactoJson from '@/content/contacto.json';
 import tramoJson from '@/content/tramo.json';
 import tarifarioJson from '@/content/tarifario.json';
+import { avisosVigentes, hoyArgentina } from '@/lib/avisos';
 import {
+  esquemaAviso,
   esquemaContacto,
   esquemaEmpresa,
   esquemaEstadoRuta,
@@ -11,6 +15,7 @@ import {
   esquemaPregunta,
   esquemaTarifario,
   esquemaTramo,
+  type Aviso,
   type Contacto,
   type Empresa,
   type EstadoRuta,
@@ -46,4 +51,6 @@ export const fuenteLocalJson: Omit<FuenteDatos, 'novedades' | 'novedad'> = {
     }).sort((a, b) => a.orden - b.orden),
   // v1: no hay sistema de estado de rutas. El slot del layout lee esto y muestra el hueco.
   estadoRutas: async (): Promise<EstadoRuta> => esquemaEstadoRuta.parse({ disponible: false }),
+  // Barra superior: solo los vigentes hoy (el sitio se reconstruye a diario, así las fechas entran y salen solas).
+  avisos: async (): Promise<Aviso[]> => avisosVigentes(z.array(esquemaAviso).parse(avisosJson), hoyArgentina()),
 };
