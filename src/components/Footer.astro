@@ -33,7 +33,7 @@ const actualizado = fechaHoraLarga(ahora);
       {(Object.keys(contacto.redes).length > 0) && (
         <ul class="mt-5 flex flex-wrap gap-2" aria-label="Redes sociales">
           {redes.map(([clave, nombre]) => contacto.redes[clave] && (
-            <li><a href={contacto.redes[clave]} class="inline-flex h-9 items-center rounded-md border border-borde px-3 text-sm font-semibold text-texto-2 hover:border-borde-fuerte hover:bg-superficie hover:text-texto" rel="noopener noreferrer" target="_blank" aria-label={`${nombre} (se abre en otra pestaña)`}>{nombre}</a></li>
+            <li><a href={contacto.redes[clave]} class="inline-flex h-9 items-center rounded-md border border-borde px-3 text-sm font-semibold text-texto-2 no-underline hover:border-borde-fuerte hover:bg-superficie hover:text-texto" rel="noopener noreferrer" target="_blank" aria-label={`${nombre} (se abre en otra pestaña)`}>{nombre}</a></li>
           ))}
         </ul>
       )}
@@ -42,19 +42,19 @@ const actualizado = fechaHoraLarga(ahora);
       <nav aria-label={c.titulo}>
         <h2 class="eyebrow mb-4 text-texto">{c.titulo}</h2>
         <ul class="flex flex-col gap-2">
-          {c.links.map(([n, h]) => <li><a href={ruta(h)} class="inline-block py-1 text-texto-2 hover:text-texto">{n}</a></li>)}
+          {c.links.map(([n, h]) => <li><a href={ruta(h)} class="inline-block py-1 text-texto-2 no-underline hover:text-texto hover:underline">{n}</a></li>)}
         </ul>
       </nav>
     ))}
     <div>
       <h2 class="eyebrow mb-4 text-texto">Contacto</h2>
       <ul class="flex flex-col gap-2 text-texto-2">
-        <li><a href={`tel:${soloDigitos(tel)}`} class="inline-flex items-center gap-2 py-1 font-semibold text-texto" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={16} aria-hidden="true" /> {contacto.emergencias.etiqueta} {tel}</a></li>
-        {contacto.lineaGratuita && <li><a href={`tel:${soloDigitos(contacto.lineaGratuita)}`} class="inline-block py-1">Atención al usuario {contacto.lineaGratuita}</a></li>}
-        {contacto.atencionUsuario && <li><a href={`mailto:${contacto.atencionUsuario}`} class="inline-block py-1">{contacto.atencionUsuario}</a></li>}
-        {contacto.whatsapp.numero && <li><a href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen')} class="inline-block py-1" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>}
-        <li><a href={ruta('/contacto')} class="inline-block py-1">Formulario de contacto</a></li>
-        <li><a href={ruta('/proveedores')} class="inline-block py-1">Proveedores</a></li>
+        <li><a href={`tel:${soloDigitos(tel)}`} class="inline-flex items-center gap-2 py-1 font-semibold text-texto no-underline hover:underline" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={16} aria-hidden="true" /> {contacto.emergencias.etiqueta} {tel}</a></li>
+        {contacto.lineaGratuita && <li><a href={`tel:${soloDigitos(contacto.lineaGratuita)}`} class="inline-block py-1 no-underline hover:underline">Atención al usuario {contacto.lineaGratuita}</a></li>}
+        {contacto.atencionUsuario && <li><a href={`mailto:${contacto.atencionUsuario}`} class="inline-block py-1 no-underline hover:underline">{contacto.atencionUsuario}</a></li>}
+        {contacto.whatsapp.numero && <li><a href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen')} class="inline-block py-1 no-underline hover:underline" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>}
+        <li><a href={ruta('/contacto')} class="inline-block py-1 no-underline hover:underline">Formulario de contacto</a></li>
+        <li><a href={ruta('/proveedores')} class="inline-block py-1 no-underline hover:underline">Proveedores</a></li>
       </ul>
       {registrales && (
         <>
@@ -66,7 +66,7 @@ const actualizado = fechaHoraLarga(ahora);
             {empresa.domicilioComercial && <><dt>Domicilio comercial</dt><dd>{empresa.domicilioComercial}</dd></>}
           </dl>
           {hayQr && (
-            <a href={empresa.constanciaUrl ?? undefined} class="mt-4 inline-block" rel={empresa.constanciaUrl ? 'noopener noreferrer' : undefined} target={empresa.constanciaUrl ? '_blank' : undefined}>
+            <a href={empresa.constanciaUrl ?? undefined} class="mt-4 inline-block no-underline" rel={empresa.constanciaUrl ? 'noopener noreferrer' : undefined} target={empresa.constanciaUrl ? '_blank' : undefined}>
               <img src={ruta('/qr-afip.png')} alt="Código QR de Data Fiscal de AFIP: constancia de inscripción de Covicen" width="96" height="96" loading="lazy" class="rounded-sm bg-white p-1" />
             </a>
           )}
@@ -78,7 +78,7 @@ const actualizado = fechaHoraLarga(ahora);
     <ul class="contenedor flex flex-wrap items-center justify-center gap-x-8 gap-y-4 py-8" aria-label="Sitios institucionales">
       {enlacesInstitucionales.map((e) => (
         <li>
-          <a href={e.url} rel="noopener noreferrer" target="_blank" class="institucional inline-flex items-center gap-2 text-texto-2 hover:text-texto" aria-label={`${e.nombre} (se abre en otra pestaña)`}>
+          <a href={e.url} rel="noopener noreferrer" target="_blank" class="institucional inline-flex items-center gap-2 text-texto-2 no-underline hover:text-texto" aria-label={`${e.nombre} (se abre en otra pestaña)`}>
             {logoInstitucional(e.id) ? <span class="logo-institucional" set:html={logoInstitucional(e.id)} /> : <span class="eyebrow border-l-2 border-borde-fuerte pl-2 text-texto-2">{e.nombre}</span>}
           </a>
         </li>

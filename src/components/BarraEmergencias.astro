@@ -11,5 +11,5 @@ const tel = contacto.emergencias.telefono;
   <a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="btn-vial flex h-12 flex-1 items-center justify-center gap-3" aria-label={`Llamar a emergencias, ${tel}`}>
     <Phone size={20} aria-hidden="true" class="telefono" /> <span class="eyebrow text-sobre-vial">{contacto.emergencias.etiqueta}</span> <span class="text-2xl font-extrabold tabular-nums leading-none">{tel}</span>
   </a>
-  <a href={ruta('/asistencia')} class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-md border border-borde-fuerte text-texto" aria-label="Pedir asistencia en ruta con mi ubicación"><LocateFixed size={20} aria-hidden="true" /></a>
+  <a href={ruta('/asistencia')} class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-md border border-borde-fuerte text-texto no-underline" aria-label="Pedir asistencia en ruta con mi ubicación"><LocateFixed size={20} aria-hidden="true" /></a>
 </div>

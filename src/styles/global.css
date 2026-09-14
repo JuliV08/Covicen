@@ -31,8 +31,10 @@
   h2 { font-size: clamp(1.9rem, 1.4rem + 2.2vw, 3.25rem); }
   h3 { font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.75rem); }
   p { text-wrap: pretty; }
-  a { @apply text-acento; transition: color var(--dur-micro) var(--ease-salida); }
-  a:hover { @apply text-acento-hover; }
+  /* Pliego 61.7: los enlaces de texto van subrayados. Menú, botones y tarjetas-enlace tienen otra forma de verse:
+     usan `no-underline` (utilidad) o definen text-decoration: none en su propio estilo. */
+  a:not(.btn):not(.btn-vial):not(.nav-item) { @apply text-acento; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em; transition: color var(--dur-micro) var(--ease-salida), text-decoration-thickness var(--dur-micro); }
+  a:not(.btn):not(.btn-vial):not(.nav-item):hover, a:not(.btn):not(.btn-vial):not(.nav-item):focus-visible { @apply text-acento-hover; text-decoration-thickness: 2px; }
   a, button, summary, [role="button"] { touch-action: manipulation; }
 
   @media (prefers-reduced-motion: reduce) {
@@ -72,18 +74,15 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
   /* resplandor que "derrama" la grilla hacia la sección vecina */
   .costura::after { content: ""; position: absolute; left: 20%; right: 20%; top: 50%; height: 120px; transform: translateY(-50%); pointer-events: none;
     background: radial-gradient(60% 100% at 50% 50%, var(--color-luz), transparent 70%); }
-  /* link con subrayado que crece desde la izquierda */
-  .link-crece {
-    background-image: linear-gradient(currentColor, currentColor);
-    background-repeat: no-repeat; background-size: 0% 1px; background-position: 0 100%;
-    transition: background-size var(--dur-ui) var(--ease-salida), color var(--dur-micro);
-  }
-  .link-crece:hover, .link-crece:focus-visible { background-size: 100% 1px; }
   .eyebrow { @apply font-medium uppercase text-texto-2; letter-spacing: var(--tracking-eyebrow); font-size: 0.75rem; }
   /* texto largo (privacidad, novedades) */
   .prose-covicen h2 { margin-top: 2rem; font-size: 1.35rem; color: var(--color-texto); }
   .prose-covicen h3 { margin-top: 1.5rem; font-size: 1.15rem; color: var(--color-texto); }
+  /* Pliego 61.7 (WCAG 1.4.8): separación entre párrafos = 1,5 veces el interlineado. `lh` donde existe; 2.4em (1.5 × 1.6) si no.
+     El fallback va en @supports porque el minificador borra una declaración repetida y se quedaría solo el `lh`. */
   .prose-covicen p { margin-top: 0.75rem; }
+  .prose-covicen p + p { margin-block-start: 1.5lh; }
+  @supports not (margin-block-start: 1lh) { .prose-covicen p + p { margin-block-start: 2.4em; } }
   .prose-covicen ul, .prose-covicen ol { margin-top: 0.75rem; padding-left: 1.25rem; }
   .prose-covicen ul { list-style: disc; }
   .prose-covicen ol { list-style: decimal; }

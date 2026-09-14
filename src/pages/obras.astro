@@ -23,8 +23,8 @@ const estados = { planificada: 'Planificada', 'en-ejecucion': 'En ejecución', t
             <div class="flex flex-wrap items-center gap-3"><span class="eyebrow">{o.tipo} · {o.ruta}</span><Senal variante={o.estado === 'en-ejecucion' ? 'vial' : 'frio'}>{estados[o.estado]}</Senal></div>
             <h2 class="mt-3 text-2xl">{o.titulo}</h2>
             <p class="mt-2 max-w-prose text-texto-2">{o.descripcion}</p>
-            {o.avance !== null && <div class="mt-4"><div class="h-1.5 w-full overflow-hidden rounded-full bg-fondo-2"><div class="h-full bg-vial" style={`width: ${o.avance}%`}></div></div><p class="mt-1 text-xs text-texto-2 tabular-nums">{o.avance}% de avance</p></div>}
-            {o.inicio && <p class="mt-3 text-xs text-texto-2">Inicio: {fechaLarga(o.inicio)}{o.finEstimado && ` · Fin estimado: ${fechaLarga(o.finEstimado)}`}</p>}
+            {o.avance !== null && <div class="mt-4"><div class="h-1.5 w-full overflow-hidden rounded-full bg-fondo-2"><div class="h-full bg-vial" style={`width: ${o.avance}%`}></div></div><p class="anotacion mt-1 text-xs text-texto-2 tabular-nums">{o.avance}% de avance</p></div>}
+            {o.inicio && <p class="anotacion mt-3 text-xs text-texto-2">Inicio: {fechaLarga(o.inicio)}{o.finEstimado && ` · Fin estimado: ${fechaLarga(o.finEstimado)}`}</p>}
             {o.fuente && <p class="anotacion mt-3 text-xs text-texto-2">Fuente: {o.fuente}</p>}
           </div>
         </li>

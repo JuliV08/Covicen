@@ -50,7 +50,7 @@ const exentos = ['Ambulancias', 'Vehículos de las Fuerzas Armadas y de Segurida
     </div>
 
     <nav aria-label="Estaciones" class="revelar mb-8 flex flex-wrap gap-2">
-      {cabinas.map((c) => <a href={`#${c.slug}`} class="rounded-md border border-borde px-3 py-2 text-sm font-semibold text-texto-2 no-underline hover:border-borde-fuerte hover:bg-superficie hover:text-texto">{c.nombre}</a>)}
+      {cabinas.map((c) => <a href={`#${c.slug}`} class="rounded-md border border-borde px-3 py-2 text-sm font-semibold text-texto-2 no-underline hover:border-borde-fuerte hover:bg-superficie hover:text-texto hover:underline">{c.nombre}</a>)}
     </nav>
     <div class="flex flex-col gap-14">
       {cabinas.map((c) => <TablaTarifas {tarifario} cabina={c} id={c.slug} />)}

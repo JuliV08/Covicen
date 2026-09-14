@@ -97,7 +97,8 @@ const marcadores = incidentes.flatMap((inc) => { const p = inc.km === null ? nul
   .ruta-etiqueta { font-size: 13px; font-weight: 800; letter-spacing: 0.12em; fill: var(--color-acento); }
   .ciudad-etiqueta { font-size: 15px; font-weight: 600; fill: var(--color-texto); }
   .cabina-etiqueta { font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0; transition: opacity var(--dur-ui) var(--ease-salida); }
-  .baliza { cursor: pointer; outline: none; }
+  /* Los <a> del SVG son botones del mapa: sin el subrayado de la regla global de enlaces (llegaría a la etiqueta de texto). */
+  .baliza { cursor: pointer; outline: none; text-decoration: none; }
   /* Los selectores por estado (0,3,0) le ganan a `.mapa text` (0,1,1): antes `.cabina-etiqueta` perdía y nunca se coloreaba. */
   .baliza[data-estado-operativo="operativa"] .baliza-halo, .baliza[data-estado-operativo="operativa"] .baliza-punto { fill: var(--color-ok); }
   .baliza[data-estado-operativo="operativa"] .cabina-etiqueta { fill: var(--color-ok); }

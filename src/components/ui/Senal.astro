@@ -1,7 +1,7 @@
 ---
 interface Props { variante?: 'vial' | 'frio' | 'ok'; class?: string }
 const { variante = 'vial', class: clase = '' } = Astro.props;
-// text-xs = 12 px: el mínimo del pliego para anotaciones (PETG 61.7).
+// text-xs = 12 px: el mínimo del pliego para anotaciones (PETG 61.7). Un chip de 12 px es una anotacion por definición: lleva la clase que lo marca.
 const colores = { vial: 'bg-vial text-sobre-vial', frio: 'border border-borde-fuerte bg-superficie-2 text-texto', ok: 'bg-ok text-sobre-ok' };
 ---
-<span class:list={['senal inline-flex items-center gap-1.5 rounded-sm px-2 py-1 text-xs font-extrabold uppercase tracking-[0.12em]', colores[variante], clase]}><slot /></span>
+<span class:list={['senal anotacion inline-flex items-center gap-1.5 rounded-sm px-2 py-1 text-xs font-extrabold uppercase tracking-[0.12em]', colores[variante], clase]}><slot /></span>

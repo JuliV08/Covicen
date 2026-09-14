@@ -49,7 +49,7 @@ const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
             <ul class="absolute right-0 top-full mt-2 w-64 rounded-md border border-borde bg-superficie-2 p-2 shadow-2xl">
               {nosotros.map((n) => (
                 <li>
-                  <a href={ruta(n.href)} class="block rounded-sm px-3 py-2 text-texto transition-colors hover:bg-superficie hover:text-acento-hover" aria-current={activo(n.href) ? 'page' : undefined}>{n.nombre}</a>
+                  <a href={ruta(n.href)} class="block rounded-sm px-3 py-2 text-texto no-underline transition-colors hover:bg-superficie hover:text-acento-hover" aria-current={activo(n.href) ? 'page' : undefined}>{n.nombre}</a>
                 </li>
               ))}
             </ul>
@@ -84,13 +84,13 @@ const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
     <ul class="flex flex-col p-3">
       {[...items, ...nosotros, { nombre: 'Contacto', href: '/contacto' }, { nombre: 'Preguntas frecuentes', href: '/preguntas-frecuentes' }].map((i) => (
         <li>
-          <a href={ruta(i.href)} class="block rounded-sm px-3 py-3 text-lg font-semibold text-texto hover:bg-superficie hover:text-acento-hover" aria-current={activo(i.href) ? 'page' : undefined}>{i.nombre}</a>
+          <a href={ruta(i.href)} class="block rounded-sm px-3 py-3 text-lg font-semibold text-texto no-underline hover:bg-superficie hover:text-acento-hover" aria-current={activo(i.href) ? 'page' : undefined}>{i.nombre}</a>
         </li>
       ))}
     </ul>
     <ul class="flex flex-col border-t border-borde p-3">
-      <li><a href={contacto.enlaces.telepase} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 hover:bg-superficie hover:text-texto" rel="noopener noreferrer" target="_blank">TelePASE</a></li>
-      <li><a href={miCuenta} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 hover:bg-superficie hover:text-texto" rel={oficina ? 'noopener noreferrer' : undefined} target={oficina ? '_blank' : undefined}>Mi cuenta</a></li>
+      <li><a href={contacto.enlaces.telepase} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 no-underline hover:bg-superficie hover:text-texto" rel="noopener noreferrer" target="_blank">TelePASE</a></li>
+      <li><a href={miCuenta} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 no-underline hover:bg-superficie hover:text-texto" rel={oficina ? 'noopener noreferrer' : undefined} target={oficina ? '_blank' : undefined}>Mi cuenta</a></li>
     </ul>
   </nav>
 </header>

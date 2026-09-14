@@ -8,7 +8,7 @@ const [tramites, contacto] = await Promise.all([datos.tramites(), datos.contacto
 ---
 <Base titulo="Guía de trámites" descripcion="Trámites del usuario del Tramo Centro: tarifa diferencial para vecinos, frentistas y docentes, exención de peaje por discapacidad y para ex combatientes de Malvinas, y alta de TelePASE. Quién puede, requisitos y pasos." migas={[{ nombre: 'Guía de trámites', href: '/tramites' }]}>
   <Seccion nivel="h1" eyebrow="Guía de trámites" titulo="Quién puede, qué necesita y cómo se hace." intro="Los trámites que el pliego prevé para el usuario (PETG art. 61.5). Todos son gratuitos." class="pt-10">
-    <nav aria-label="Trámites" class="revelar mb-10 flex flex-wrap gap-2">{tramites.map((t) => <a href={`#${t.id}`} class="rounded-md border border-borde px-3 py-1.5 text-sm text-texto-2 no-underline transition-colors hover:border-borde-fuerte hover:text-texto">{t.nombre}</a>)}</nav>
+    <nav aria-label="Trámites" class="revelar mb-10 flex flex-wrap gap-2">{tramites.map((t) => <a href={`#${t.id}`} class="rounded-md border border-borde px-3 py-1.5 text-sm text-texto-2 no-underline transition-colors hover:border-borde-fuerte hover:text-texto hover:underline">{t.nombre}</a>)}</nav>
     <div class="escalonar grid gap-6">
       {tramites.map((t, i) => (
         <article id={t.id} class="tarjeta scroll-mt-32 p-8" style={`--i: ${i}`}>
