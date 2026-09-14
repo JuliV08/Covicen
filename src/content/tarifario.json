@@ -1,27 +1,29 @@
 {
-  "publicadoEl": "2026-08-27",
+  "publicadoEl": "2026-09-13",
   "vigencia": {
-    "desde": null,
-    "descripcion": "A partir de la habilitación del cobro por Vialidad Nacional. La tarifa ofertada no se aplica hasta alcanzar las condiciones de transitabilidad óptima que exige el contrato."
+    "desde": "2026-02-26",
+    "descripcion": "Cuadro tarifario de Corredores Viales S.A. aprobado por la Resolución 248/2026 de Vialidad Nacional, que Covicen aplica desde la toma de posesión (PETP art. 3). Rige el mismo cuadro en Carcarañá, James Craik y Franck."
   },
   "moneda": "ARS",
   "alicuotaIva": 0.21,
-  "origen": "oferta",
+  "origen": "heredado",
+  "resolucion": "Resolución 248/2026 de la Dirección Nacional de Vialidad",
+  "cabinas": ["carcarana", "james-craik", "franck"],
+  "categoriaDestacada": "cat-1",
   "tarifas": [
-    { "categoria": "cat-1", "nombre": "Motos", "descripcion": "Motocicletas y ciclomotores.", "montoSinIva": null },
-    { "categoria": "cat-2", "nombre": "Autos y camionetas", "descripcion": "Vehículos de 2 ejes y hasta 2,10 m de altura.", "montoSinIva": 1399, "nota": "Tarifa ofertada en la adjudicación (Res. 1379/2026)." },
-    { "categoria": "cat-3", "nombre": "Autos con remolque y vehículos de 2 ejes de más de 2,10 m", "descripcion": "Autos y camionetas con remolque o acoplado; camiones y ómnibus de 2 ejes.", "montoSinIva": null },
-    { "categoria": "cat-4", "nombre": "Camiones y ómnibus de 3 y 4 ejes", "descripcion": "Vehículos pesados de 3 o 4 ejes.", "montoSinIva": null },
-    { "categoria": "cat-5", "nombre": "Camiones de 5 y 6 ejes", "descripcion": "Vehículos pesados de 5 o 6 ejes.", "montoSinIva": null },
-    { "categoria": "cat-6", "nombre": "Camiones de 7 o más ejes", "descripcion": "Vehículos pesados de 7 ejes o más.", "montoSinIva": null }
+    { "categoria": "cat-1", "icono": "auto", "nombre": "Categoría 1", "descripcion": "Vehículos de hasta 2 ejes y hasta 2,30 m de altura, sin rueda doble.", "montoSinIva": 1239.67, "montoManualSinIva": 1239.67 },
+    { "categoria": "cat-2", "icono": "camioneta", "nombre": "Categoría 2", "descripcion": "Hasta 2 ejes y más de 2,30 m de altura y/o con rueda doble; o más de 2 y hasta 4 ejes, menos de 2,30 m, sin rueda doble.", "montoSinIva": 2479.34, "montoManualSinIva": 2479.34 },
+    { "categoria": "cat-3", "icono": "camion-3-4", "nombre": "Categoría 3", "descripcion": "Más de 2 y hasta 4 ejes, más de 2,30 m de altura y/o con rueda doble.", "montoSinIva": 3719.01, "montoManualSinIva": 3719.01 },
+    { "categoria": "cat-4", "icono": "camion-5-6", "nombre": "Categoría 4", "descripcion": "Más de 4 y hasta 6 ejes.", "montoSinIva": 4958.68, "montoManualSinIva": 4958.68 },
+    { "categoria": "cat-5", "icono": "camion-7", "nombre": "Categoría 5", "descripcion": "Más de 6 ejes.", "montoSinIva": 6198.35, "montoManualSinIva": 6198.35 }
   ],
   "fuente": {
-    "nombre": "Resolución 1379/2026 — Boletín Oficial",
-    "url": "https://www.boletinoficial.gob.ar/detalleAviso/primera/346271/20260824"
+    "nombre": "Resolución 248/2026 — Boletín Oficial, 24/02/2026",
+    "url": "https://www.boletinoficial.gob.ar/detalleAviso/primera/338657/20260224"
   },
   "avisos": [
-    "Las categorías son las de referencia habitual en la red nacional; el cuadro tarifario definitivo lo homologa Vialidad Nacional.",
-    "Los valores sin dato se publican cuando exista el cuadro homologado. No publicamos estimaciones.",
-    "La tarifa se actualiza por índices oficiales según el contrato de concesión."
+    "Pago electrónico manual: modalidad de pago manual electrónico (medios de pago electrónicos en punto de cobro, distintos de TelePASE), en oportunidad de contar con todas las vías automáticas y/o mixtas.",
+    "La tarifa se actualiza por índices oficiales según el contrato de concesión, cada tres meses.",
+    "El criterio de las categorías es el del esquema de cinco categorías de la red nacional; el cuadro definitivo de Covicen lo homologa Vialidad Nacional."
   ]
 }

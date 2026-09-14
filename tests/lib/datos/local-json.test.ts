@@ -41,12 +41,18 @@ describe('contenido del repo', () => {
     expect(t.trazados.find((x) => x.ruta === 'RN 19')?.ciudades[0]).toBe('santo-tome');
     for (const c of t.cabinas) expect(c.fuente?.url).toMatch(/^https:\/\//);
   });
-  it('tarifario: solo la categoría auto tiene valor; el resto es null (a confirmar)', async () => {
+  it('tarifario: el cuadro heredado de la Res. 248/2026, cinco categorías con precio, igual en las tres estaciones', async () => {
     const t = await fuenteLocalJson.tarifario();
-    expect(t.origen).toBe('oferta');
-    expect(t.tarifas.find((x) => x.categoria === 'cat-2')?.montoSinIva).toBe(1399);
-    expect(t.tarifas.filter((x) => x.montoSinIva !== null)).toHaveLength(1);
-    expect(t.vigencia.descripcion.length).toBeGreaterThan(10);
+    expect(t.origen).toBe('heredado');
+    expect(t.vigencia.desde).toBe('2026-02-26');
+    expect(t.resolucion).toContain('248/2026');
+    expect(t.cabinas).toEqual(['carcarana', 'james-craik', 'franck']);
+    expect(t.categoriaDestacada).toBe('cat-1');
+    expect(t.tarifas).toHaveLength(5);
+    expect(t.tarifas.every((x) => x.montoSinIva !== null && x.montoManualSinIva === x.montoSinIva)).toBe(true);
+    expect(t.tarifas.map((x) => Math.round(x.montoSinIva! * 1.21))).toEqual([1500, 3000, 4500, 6000, 7500]);
+    expect(t.tarifas.map((x) => x.icono)).toEqual(['auto', 'camioneta', 'camion-3-4', 'camion-5-6', 'camion-7']);
+    expect(t.avisos.some((a) => a.includes('en oportunidad de contar con todas las vías automáticas'))).toBe(true);
   });
   it('obras y faq: ordenadas y con slugs únicos', async () => {
     const obras = await fuenteLocalJson.obras();

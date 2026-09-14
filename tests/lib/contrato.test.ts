@@ -48,6 +48,7 @@ describe('contrato exportado (docs/contrato)', () => {
       expect(tarifario.required).not.toContain(campo);
     }
     expect(tarifario.properties.tarifas.items.required).not.toContain('montoManualSinIva');
+    expect(tarifario.properties.tarifas.items.required).not.toContain('icono');
     expect(tarifario.properties.origen.enum).toEqual(['oferta', 'homologada', 'heredado']);
   });
 });

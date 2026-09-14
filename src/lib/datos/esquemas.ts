@@ -144,10 +144,15 @@ export const esquemaTramo = z.object({
 });
 export type Tramo = z.infer<typeof esquemaTramo>;
 
+/** Familia propia de íconos de vehículo (IconoVehiculo). Opcional: si falta, se deriva de la categoría. */
+export const ICONOS_VEHICULO = ['moto', 'auto', 'camioneta', 'camion-2', 'camion-3-4', 'camion-5-6', 'camion-7'] as const;
+export type IconoVehiculo = (typeof ICONOS_VEHICULO)[number];
+
 export const esquemaTarifa = z.object({
   categoria: slug,
   nombre: z.string().min(1),
   descripcion: z.string().min(1),
+  icono: z.enum(ICONOS_VEHICULO).optional(),
   /** Con TelePASE (la columna principal). */
   montoSinIva: z.number().positive().nullable(),
   /** Lo calcula el sistema (IVA + redondeo). La UI sigue formateando con lib/formato.ts. */

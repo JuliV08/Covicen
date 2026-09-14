@@ -80,6 +80,18 @@
             "type": "string",
             "minLength": 1
           },
+          "icono": {
+            "type": "string",
+            "enum": [
+              "moto",
+              "auto",
+              "camioneta",
+              "camion-2",
+              "camion-3-4",
+              "camion-5-6",
+              "camion-7"
+            ]
+          },
           "montoSinIva": {
             "anyOf": [
               {
