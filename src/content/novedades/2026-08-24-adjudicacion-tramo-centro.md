@@ -7,7 +7,7 @@ destacada: true
 ---
 El 24 de agosto de 2026 el Ministerio de Economía publicó en el Boletín Oficial la **Resolución 1379/2026**, que adjudica los ocho tramos de la Etapa III de la Red Federal de Concesiones: más de 3.900 km de rutas nacionales en once provincias.
 
-El **Tramo Centro** —681,92 km sobre las rutas nacionales 9, 19 y 34, en Córdoba y Santa Fe— fue adjudicado al consorcio integrado por **AFEMA S.A., Pablo Federico e Hijos S.A. y Guido Mogetta S.A.**, que opera bajo la marca Covicen.
+El **Tramo Centro** —679 km sobre las rutas nacionales 9, 19 y 34, en Córdoba y Santa Fe— fue adjudicado al consorcio integrado por **AFEMA S.A., Pablo Federico e Hijos S.A. y Guido Mogetta S.A.**, que opera bajo la marca Covicen.
 
 ## La tarifa más baja de los ocho tramos
 

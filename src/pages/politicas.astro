@@ -20,7 +20,7 @@ const politicas = [
           <ul class="mt-4 flex flex-col gap-3 text-texto-2">{p.puntos.map((t) => <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-acento" aria-hidden="true"></span>{t}</li>)}</ul>
           {p.id === 'anticorrupcion' && (
             <div class="mt-6">
-              <HuecoCapacidad capacidad="canalEticoAnonimo" titulo="Canal ético anónimo" descripcion="Denuncias anónimas con seguimiento. Hasta entonces, el canal es por correo y no es anónimo: lo decimos para que lo sepas antes de escribir." alternativaHref={contacto.email.etica ? `mailto:${contacto.email.etica}` : '/contacto'} alternativaTexto={contacto.email.etica ? `Escribir a ${contacto.email.etica}` : 'Contacto (correo de ética a confirmar)'} />
+              <HuecoCapacidad capacidad="canalEticoAnonimo" titulo="Canal ético anónimo" descripcion="Denuncias anónimas con seguimiento. Hasta entonces, el canal es por correo y no es anónimo: lo decimos para que lo sepas antes de escribir." alternativaHref={contacto.email.etica ? `mailto:${contacto.email.etica}` : '/contacto'} alternativaTexto={contacto.email.etica ? `Escribir a ${contacto.email.etica}` : 'Escribir por el formulario de contacto'} />
             </div>
           )}
         </article>

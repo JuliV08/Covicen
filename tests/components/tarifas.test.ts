@@ -5,7 +5,7 @@ import TablaTarifas from '@/components/TablaTarifas.astro';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
 
 describe('TablaTarifas', () => {
-  it('tabla accesible con vigencia visible, 6 filas y "a confirmar" donde no hay valor', async () => {
+  it('tabla accesible con vigencia visible, 6 filas y un guion (sin relleno "a confirmar") donde no hay valor', async () => {
     const c = await AstroContainer.create();
     // Intl separa "$" del número con un espacio no separable (U+00A0 o U+202F): se normaliza con escapes, no con literales.
     const html = (await c.renderToString(TablaTarifas, { props: { tarifario: await fuenteLocalJson.tarifario() } })).replace(/[\u00A0\u202F]/g, ' ');
@@ -14,7 +14,8 @@ describe('TablaTarifas', () => {
     expect(html.match(/<tr class="fila/g)?.length).toBe(6);
     expect(html).toContain('Vigencia');
     expect(html).toContain('$ 1.399');
-    expect(html.match(/a confirmar/g)?.length).toBe(5);
+    expect(html.match(/aria-label="Sin valor publicado"/g)?.length).toBe(5);
+    expect(html).not.toMatch(/a confirmar/i);
   });
 });
 

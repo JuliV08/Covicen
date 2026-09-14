@@ -27,7 +27,7 @@ const esHttp = (url: string) => /^https?:\/\//i.test(url);
           <tr class="fila transition-colors hover:bg-superficie">
             <th scope="row" class="px-4 py-4 font-semibold text-texto"><span class="flex items-center gap-3"><IconoVehiculo categoria={f.categoria} class="icono text-texto-2" /> {f.nombre}</span></th>
             <td class="px-4 py-4 text-texto-2">{f.descripcion}{f.nota && <span class="mt-1 block text-xs text-texto-2">{f.nota}</span>}</td>
-            <td class="px-4 py-4 text-right tabular-nums text-texto">{f.montoSinIva === null ? <span class="text-texto-2">— <span class="text-xs uppercase tracking-wider">a confirmar</span></span> : moneda(f.montoSinIva)}</td>
+            <td class="px-4 py-4 text-right tabular-nums text-texto">{f.montoSinIva === null ? <span class="text-texto-2" aria-label="Sin valor publicado">—</span> : moneda(f.montoSinIva)}</td>
             <td class="px-4 py-4 text-right tabular-nums text-texto">{f.montoSinIva === null ? <span class="text-texto-2">—</span> : moneda(f.montoConIva ?? conIva(f.montoSinIva, t.alicuotaIva))}</td>
           </tr>
         ))}

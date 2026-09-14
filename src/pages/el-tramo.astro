@@ -10,14 +10,14 @@ import { datos } from '@/lib/datos';
 import { numero } from '@/lib/formato';
 const tramo = await datos.tramo();
 const paneles = [
-  { valor: Math.floor(tramo.km), unidad: 'km', etiqueta: 'de rutas nacionales', texto: `Desde Rosario hasta Pilar por la autopista, y hacia San Francisco, Rafaela y Santa Fe. ${numero(tramo.km, 2)} km bajo una misma concesión.` },
+  { valor: Math.floor(tramo.km), unidad: 'km', etiqueta: 'de rutas nacionales', texto: `Desde Rosario hasta Pilar por la autopista, y desde Santo Tomé hasta el límite con Córdoba por la RN 19. ${numero(tramo.km, 2)} km bajo una misma concesión, según el pliego del Tramo Centro.` },
   { valor: tramo.rutas.length, unidad: 'rutas', etiqueta: 'RN 9, RN 19 y RN 34', texto: tramo.rutas.map((r) => `${r.nombre}: ${r.desde} → ${r.hasta}${r.km ? ` (${r.km} km)` : ''}.`).join(' ') },
   { valor: tramo.provincias.length, unidad: 'provincias', etiqueta: tramo.provincias.join(' y '), texto: 'El límite provincial queda a la altura de Leones, sobre la autopista.' },
   { valor: tramo.cabinas.length, unidad: 'peajes', etiqueta: `${tramo.cabinas.filter((c) => c.situacion === 'existente').length} existentes y ${tramo.cabinas.filter((c) => c.situacion === 'nueva').length} nuevos`, texto: 'Las estaciones nuevas nacen con cobro electrónico y Free Flow.' },
 ];
 ---
-<Base titulo="El tramo" descripcion="El Tramo Centro de la Red Federal de Concesiones: 681,92 km sobre RN 9 (autopista Rosario–Córdoba), RN 19 y RN 34, en Córdoba y Santa Fe. Mapa, ciudades y estaciones de peaje." migas={[{ nombre: 'El tramo', href: '/el-tramo' }]}>
-  <Seccion nivel="h1" eyebrow="El tramo" titulo="681 kilómetros de centro." intro="Un corredor que une Rosario con Córdoba y se abre hacia San Francisco, Rafaela y Santa Fe." class="pt-10 pb-0" />
+<Base titulo="El tramo" descripcion="El Tramo Centro de la Red Federal de Concesiones: 679,03 km sobre RN 9 (autopista Rosario–Córdoba), RN 19 y RN 34, en Córdoba y Santa Fe. Mapa, ciudades y estaciones de peaje." migas={[{ nombre: 'El tramo', href: '/el-tramo' }]}>
+  <Seccion nivel="h1" eyebrow="El tramo" titulo="679 kilómetros de centro." intro="Un corredor que une Rosario con Córdoba por la autopista y se abre hacia Santo Tomé, Franck y San Francisco por la RN 19." class="pt-10 pb-0" />
 
   <!-- Narrativa: el mapa fijo en un panel a la izquierda; a la derecha, cuatro tarjetas con mojones que pasan al scrollear. -->
   <section class="contenedor grid gap-8 pb-24 lg:grid-cols-[1.15fr_1fr] lg:gap-12">
