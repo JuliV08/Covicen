@@ -4,7 +4,7 @@ import { join, relative } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { loadEnv } from 'vite';
 import { contraste, leerTemas } from './lib/contraste.ts';
-import { existeDestino, jsonLdDe, linksInternos, paginasDe } from './lib/html.ts';
+import { existeDestino, jsonLdDe, linksInternos, paginasDe, textoVisible } from './lib/html.ts';
 import { paresContraste } from './lib/pares.ts';
 
 const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
@@ -41,10 +41,15 @@ for (const ruta of paginas) {
   if (!tipos.includes('Organization')) fallo(`${nombre}: falta Organization`);
   if (nombre.startsWith('preguntas-frecuentes') && !tipos.includes('FAQPage')) fallo(`${nombre}: falta FAQPage`);
   for (const b of bloques) if (!(b as Record<string, unknown>)['@context']) fallo(`${nombre}: bloque JSON-LD sin @context`);
-  // 4. emergencias en toda página
-  if (!/href="tel:/.test(html) && !/data-emergencias="a-confirmar"/.test(html)) fallo(`${nombre}: sin tel: de emergencias ni slot a confirmar`);
+  // 4. emergencias: el 140 (número corto del pliego) en toda página
+  if (!/href="tel:140"/.test(html)) fallo(`${nombre}: falta el tel:140 de emergencias`);
   // 5. vigencia en tarifas
   if (nombre.startsWith('tarifas') && !html.includes('Vigencia')) fallo(`${nombre}: la tabla de tarifas debe mostrar la vigencia`);
+  // 10. textos prohibidos y datos oficiales (spec 2026-09-13 §2, §3): criterio "esconder", marca y 679 km
+  const visible = textoVisible(html);
+  for (const p of [/a confirmar/i, /corredor vial del centro/i, /\b681\b/]) if (p.test(visible)) fallo(`${nombre}: el texto contiene ${p}`);
+  if ((nombre === 'index.html' || nombre.startsWith('el-tramo')) && !/\b679\b/.test(visible)) fallo(`${nombre}: falta la longitud oficial (679 km)`);
+  if (!visible.includes('Última actualización')) fallo(`${nombre}: falta "Última actualización" en el pie`);
   // 7. indexabilidad
   const tieneNoindex = html.includes('content="noindex, nofollow"');
   if (indexable && tieneNoindex) fallo(`${nombre}: noindex presente con PUBLIC_INDEXABLE=true`);

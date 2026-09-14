@@ -32,3 +32,7 @@ export const existeDestino = (dist: string, base: string, href: string): boolean
 
 export const jsonLdDe = (html: string): unknown[] =>
   [...html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]!));
+
+/** Solo lo que un lector ve: sin <script>, <style> ni etiquetas (los atributos y los hashes de assets no cuentan). */
+export const textoVisible = (html: string): string =>
+  html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g, ' ');
