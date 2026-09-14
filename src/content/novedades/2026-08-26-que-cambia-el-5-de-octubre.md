@@ -15,7 +15,7 @@ El 5 de octubre de 2026 Covicen toma la operación del Tramo Centro. Esto es lo 
 
 ## La tarifa
 
-La tarifa ofertada es de $1.399 más IVA por auto. **No se aplica desde el primer día**: el contrato exige antes alcanzar la transitabilidad óptima. Cuando Vialidad Nacional lo habilite, se publica acá con fecha de vigencia.
+Desde el primer día rige el **cuadro vigente** en estas estaciones, el de la Resolución 248/2026 de Vialidad Nacional: $1.500 por auto con IVA, igual con TelePASE que en la vía. La tarifa que Covicen ofertó en la licitación se aplica recién cuando terminen las obras iniciales de puesta en valor y Vialidad Nacional homologue el cuadro propio; cada cambio se publica acá con fecha de vigencia.
 
 ## TelePASE
 
@@ -23,4 +23,4 @@ Si ya tenés el dispositivo, funciona: es único para toda la red nacional. No e
 
 ## Emergencias
 
-Un número para todo el tramo, visible en cada página de este sitio, para auxilio mecánico, accidentes, animales u objetos en la calzada.
+El **140**, gratis desde cualquier celular y visible en cada página de este sitio, para auxilio mecánico, accidentes, animales u objetos en la calzada.

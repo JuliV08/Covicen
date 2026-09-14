@@ -9,10 +9,16 @@ Una de las reglas centrales del contrato es simple: **no se cobra la tarifa ofer
 
 ## Qué viene primero
 
-1. **Plan de contingencia inicial:** los sectores más deteriorados de calzada, banquinas y drenajes.
-2. **Rehabilitación de pavimento** en RN 9, RN 19 y RN 34.
-3. **Señalización, iluminación y seguridad:** horizontal, vertical, accesos e intersecciones, más el sistema de auxilio.
-4. **Cobro electrónico:** TelePASE en todas las estaciones y Free Flow en las nuevas.
+Las obras que fija el pliego del Tramo Centro, en este orden:
+
+1. **Puesta en valor inicial:** los sectores más deteriorados de calzada, banquinas, drenajes y señalización.
+2. **Losas de hormigón** reconstruidas en la RN 9 y en la RN 19.
+3. **Banquinas pavimentadas** en la RN 9 entre Rosario y Carcarañá.
+4. **Puente sobre el río Carcarañá** (RN 34), con su plan de conservación.
+5. **Rehabilitación asfáltica** por secciones, con toneladas mínimas por año.
+6. **Estaciones nuevas con Free Flow** en Leones, San Francisco y Totoras.
+
+El detalle de cada frente está en [Obras](../../obras/).
 
 ## Cómo vamos a informar
 
