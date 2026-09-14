@@ -8,7 +8,7 @@ describe('/asistencia/', () => {
     expect(html.indexOf('href="tel:140"')).toBeLessThan(html.indexOf('data-ubicar'));
     expect(html).toContain('data-asistencia');
     expect(html).toContain('data-copiar');
-    expect(html).toMatch(/<input[^>]*id="campo-ubicacion"[^>]*readonly/);
+    expect(html).toMatch(/<input[^>]*id="formulario-asistencia-campo-ubicacion"[^>]*readonly/);
     expect(html).toContain('Llamá al 140 y dictá tu ubicación');
     expect(html).toContain('no se guarda');
   });

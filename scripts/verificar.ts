@@ -2,6 +2,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { gzipSync } from 'node:zlib';
+import { FileSystemConfigLoader, HtmlValidate } from 'html-validate';
 import { loadEnv } from 'vite';
 import { contraste, leerTemas } from './lib/contraste.ts';
 import { existeDestino, jsonLdDe, linksInternos, paginasDe, textoVisible } from './lib/html.ts';
@@ -17,6 +18,20 @@ const fallo = (m: string) => fallos.push(m);
 const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/];
 const paginas = paginasDe(DIST).filter((p) => !p.includes('404'));
 console.log(`Verificando ${paginas.length} páginas (base ${base}, indexable ${indexable})…`);
+
+// Validador de HTML (pliego 61.7: estándares W3C). `new HtmlValidate()` a secas usa un loader estático que ignora el
+// disco; con FileSystemConfigLoader busca .htmlvalidate.json desde la carpeta de cada página hacia arriba y toma el de
+// la raíz del repo. JSON no admite comentarios, así que lo que ahí se apaga o se afina se justifica acá:
+// - no-inline-style: Astro emite `style="--i: 0"` (escalonado) y las coordenadas del mapa; son variables, no presentación.
+// - no-trailing-whitespace: espacios al final de línea del HTML emitido; cosmético, el lector no lo ve.
+// - require-sri: no se cargan scripts ni hojas de terceros (la fuente es autoalojada); no hay nada que firmar.
+// - long-title 90 (por defecto 70): los títulos de las novedades llevan además el sufijo " · Covicen".
+// - tel-non-breaking con ignoreClasses ["tel-prosa"]: la regla exige &nbsp; en TODO espacio dentro de un <a href="tel:">.
+//   Vale para "Emergencias 140" o "Llamar al 140" (se usa &nbsp;), pero la tarjeta de accesos rápidos de la home es
+//   un enlace tel: con una frase entera ("Llamá al 140 o pedí asistencia…"): sin cortes de línea desbordaría en el
+//   celular, y el número (140) es una sola palabra que no puede partirse. Esos enlaces llevan la clase `tel-prosa`
+//   y la regla los saltea. Nada más se apaga.
+const validador = new HtmlValidate(new FileSystemConfigLoader());
 
 for (const ruta of paginas) {
   const html = readFileSync(ruta, 'utf8');
@@ -61,6 +76,11 @@ for (const ruta of paginas) {
   for (const m of html.matchAll(/<img\b(?![^>]*\balt(?:[\s=>/]))[^>]*>/g)) fallo(`${nombre}: <img> sin alt → ${m[0].slice(0, 60)}`);
   if (!html.includes('href="#contenido"')) fallo(`${nombre}: falta skip link`);
   if (/[\u{1F300}-\u{1FAFF}]/u.test(html)) fallo(`${nombre}: hay emojis en la UI`);
+  // 13. HTML válido (pliego 61.7: estándares W3C). Reglas apagadas y por qué: ver .htmlvalidate.json.
+  const reporte = await validador.validateString(html, ruta);
+  for (const r of reporte.results) for (const m of r.messages) fallo(`${nombre}: HTML ${m.ruleId} (${m.line}:${m.column}) ${m.message}`);
+  // 14. ningún enlace externo abre en otra pestaña sin rel="noopener"
+  for (const m of html.matchAll(/<a\b[^>]*target="_blank"[^>]*>/g)) if (!/rel="[^"]*noopener/.test(m[0])) fallo(`${nombre}: target=_blank sin noopener → ${m[0].slice(0, 80)}`);
 }
 
 // 6. contraste de tokens usados, en los dos temas (la lista de pares vive en scripts/lib/pares.ts)

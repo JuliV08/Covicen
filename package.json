@@ -31,6 +31,7 @@
     "@astrojs/check": "^0.9.10",
     "@resvg/resvg-js": "^2.6.2",
     "@types/node": "^26.4.0",
+    "html-validate": "^11.15.0",
     "linkedom": "^0.18.13",
     "sharp": "^0.35.4",
     "svgo": "^4.1.0",

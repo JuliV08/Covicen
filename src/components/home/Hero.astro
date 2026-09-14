@@ -31,9 +31,9 @@ const hayFoto = fotos.length > 0;
   <div class:list={['absolute inset-0 -z-10 bg-gradient-to-r from-fondo', hayFoto ? 'via-fondo/70 to-fondo/10' : 'via-fondo/85 to-fondo/20']} aria-hidden="true"></div>
   <div class="hero-luz absolute inset-0 -z-10" aria-hidden="true"></div>
   <div class="contenedor flex min-h-[calc(100dvh-var(--alto-header))] flex-col justify-center py-20">
-    <div class:list={['carrusel', hayCarrusel && 'con-slides']} data-carrusel={hayCarrusel ? '' : undefined} aria-roledescription={hayCarrusel ? 'carrusel' : undefined} aria-label={hayCarrusel ? 'Destacados' : undefined}>
+    <section class:list={['carrusel', hayCarrusel && 'con-slides']} data-carrusel={hayCarrusel ? '' : undefined} aria-roledescription={hayCarrusel ? 'carrusel' : undefined} aria-label={hayCarrusel ? 'Destacados' : undefined}>
       <div class="carrusel-pista">
-        <div class="entrada slide" data-slide="inicio" aria-roledescription={hayCarrusel ? 'diapositiva' : undefined} aria-label={hayCarrusel ? 'Covicen' : undefined}>
+        <div class="entrada slide" data-slide="inicio" role={hayCarrusel ? 'group' : undefined} aria-roledescription={hayCarrusel ? 'diapositiva' : undefined} aria-label={hayCarrusel ? 'Covicen' : undefined}>
           <div style="--i: 0"><Eyebrow>Concesionaria del Tramo Centro · {c.rutas.join(' · ')}</Eyebrow></div>
           <h1 class="mt-6 max-w-4xl" style="--i: 1">Las rutas del centro del país tienen quién responda.</h1>
           <p class="mt-6 max-w-2xl text-lg text-texto-2 md:text-xl" style="--i: 2">
@@ -46,7 +46,7 @@ const hayFoto = fotos.length > 0;
           <div class="mt-10" style="--i: 4"><CuentaRegresiva fecha={c.inicioOperacion} /></div>
         </div>
         {destacadas.map((n) => (
-          <div class="slide" data-slide={n.slug} hidden aria-roledescription="diapositiva" aria-label={n.titulo}>
+          <div class="slide" data-slide={n.slug} role="group" hidden aria-roledescription="diapositiva" aria-label={n.titulo}>
             <div><Eyebrow>Destacado · {fechaLarga(n.fecha)}</Eyebrow></div>
             <p class="mt-6 max-w-4xl font-extrabold text-texto" style="font-size: clamp(2rem, 1.5rem + 3vw, 4.5rem); line-height: 1.05; letter-spacing: var(--tracking-titulo)">{n.titulo}</p>
             <p class="mt-6 max-w-2xl text-lg text-texto-2 md:text-xl">{n.resumen}</p>
@@ -63,7 +63,7 @@ const hayFoto = fotos.length > 0;
           <button type="button" class="control" data-slide-siguiente aria-label="Siguiente"><ChevronRight size={18} aria-hidden="true" /></button>
         </div>
       )}
-    </div>
+    </section>
   </div>
   <p class="scrollea eyebrow absolute bottom-6 left-1/2 hidden -translate-x-1/2 items-center gap-2 text-texto-3 md:inline-flex" aria-hidden="true">Scrolleá <span class="scrollea-flecha">↓</span></p>
 </section>

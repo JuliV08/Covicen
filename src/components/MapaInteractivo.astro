@@ -9,8 +9,8 @@ const { tramo, incidentes = [], modo = 'scroll', disposicion = 'lado' } = Astro.
 ---
 <div class:list={['mapa-interactivo grid gap-8', disposicion === 'lado' && 'lg:grid-cols-[1.6fr_1fr] lg:items-start']} data-mapa-interactivo>
   <MapaTramo {tramo} {incidentes} {modo} />
-  <div class="grid gap-4" aria-live="polite" aria-label="Estación seleccionada">
+  <section class="grid gap-4" aria-live="polite" aria-label="Estación seleccionada">
     {tramo.cabinas.map((c) => <div data-tarjeta-estacion={c.slug}><TarjetaEstacion cabina={c} /></div>)}
-  </div>
+  </section>
 </div>
 <script src="../scripts/mapa.ts"></script>

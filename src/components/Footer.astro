@@ -49,7 +49,7 @@ const actualizado = fechaHoraLarga(ahora);
     <div>
       <h2 class="eyebrow mb-4 text-texto">Contacto</h2>
       <ul class="flex flex-col gap-2 text-texto-2">
-        <li><a href={`tel:${soloDigitos(tel)}`} class="inline-flex items-center gap-2 py-1 font-semibold text-texto no-underline hover:underline" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={16} aria-hidden="true" /> {contacto.emergencias.etiqueta} {tel}</a></li>
+        <li><a href={`tel:${soloDigitos(tel)}`} class="inline-flex items-center gap-2 py-1 font-semibold text-texto no-underline hover:underline" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={16} aria-hidden="true" /> {contacto.emergencias.etiqueta}&nbsp;{tel}</a></li>
         {contacto.lineaGratuita && <li><a href={`tel:${soloDigitos(contacto.lineaGratuita)}`} class="inline-block py-1 no-underline hover:underline">Atención al usuario {contacto.lineaGratuita}</a></li>}
         {contacto.atencionUsuario && <li><a href={`mailto:${contacto.atencionUsuario}`} class="inline-block py-1 no-underline hover:underline">{contacto.atencionUsuario}</a></li>}
         {contacto.whatsapp.numero && <li><a href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen')} class="inline-block py-1 no-underline hover:underline" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>}

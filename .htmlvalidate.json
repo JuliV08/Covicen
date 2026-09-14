@@ -1,0 +1,10 @@
+{
+  "extends": ["html-validate:recommended"],
+  "rules": {
+    "no-inline-style": "off",
+    "no-trailing-whitespace": "off",
+    "long-title": ["error", { "maxlength": 90 }],
+    "require-sri": "off",
+    "tel-non-breaking": ["error", { "ignoreClasses": ["tel-prosa"] }]
+  }
+}

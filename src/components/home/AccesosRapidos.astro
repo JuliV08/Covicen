@@ -5,9 +5,11 @@ import { ruta } from '@/lib/rutas';
 interface Props { contacto: Contacto }
 const { contacto } = Astro.props;
 const tel = contacto.emergencias.telefono;
+// La tarjeta de emergencias es un enlace tel: con una frase entera: lleva la clase `tel-prosa` para que html-validate
+// (tel-non-breaking) no exija &nbsp; en cada espacio. Justificación completa en scripts/verificar.ts.
 const accesos = [
   { Icono: Banknote, titulo: 'Tarifas', texto: 'Cuánto cuesta y desde cuándo.', href: ruta('/tarifas'), vial: false },
-  { Icono: Phone, titulo: `Emergencias ${tel}`, texto: `Llamá al ${tel} o pedí asistencia con tu ubicación.`, href: `tel:${tel.replace(/[^\d+]/g, '')}`, vial: true },
+  { Icono: Phone, titulo: `Emergencias\u00A0${tel}`, texto: `Llamá al ${tel} o pedí asistencia con tu ubicación.`, href: `tel:${tel.replace(/[^\d+]/g, '')}`, vial: true },
   { Icono: Map, titulo: 'El tramo', texto: 'Rutas, ciudades y peajes.', href: ruta('/el-tramo'), vial: false },
   { Icono: CreditCard, titulo: 'Medios de pago', texto: 'TelePASE, efectivo y Free Flow.', href: ruta('/medios-de-pago'), vial: false },
 ];
@@ -16,7 +18,7 @@ const accesos = [
   <ul class="contenedor escalonar grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
     {accesos.map(({ Icono, ...a }, i) => (
       <li style={`--i: ${i}`}>
-        <a href={a.href} class:list={['tarjeta flex h-full items-start gap-4 p-5 text-texto no-underline', a.vial && 'tarjeta-vial']}>
+        <a href={a.href} class:list={['tarjeta flex h-full items-start gap-4 p-5 text-texto no-underline', a.vial && 'tarjeta-vial', a.href.startsWith('tel:') && 'tel-prosa']}>
           <span class="tarjeta-icono shrink-0"><Icono size={22} aria-hidden="true" /></span>
           <span>
             <span class:list={['block font-extrabold', a.vial && 'text-vial-texto']}>{a.titulo}</span>

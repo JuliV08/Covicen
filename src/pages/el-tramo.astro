@@ -33,7 +33,7 @@ const conServicios = tramo.cabinas.filter((c) => serviciosDeCabina(c).length > 0
   </section>
 
   <Seccion id="rutas" indice="01" eyebrow="Rutas y longitudes" titulo="Tres rutas nacionales bajo una misma concesión." intro={`${numero(tramo.km, 2)} km en total, según el pliego del Tramo Centro.`} fondo="fondo-2">
-    <div class="revelar overflow-x-auto rounded-md border border-borde" tabindex="0" role="region" aria-label="Rutas del tramo">
+    <section class="revelar overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label="Rutas del tramo">
       <table class="w-full border-collapse text-left">
         <caption class="sr-only">Rutas del Tramo Centro con extremos, progresivas y longitud en kilómetros.</caption>
         <thead class="bg-fondo text-sm uppercase tracking-wider text-texto-2"><tr><th scope="col" class="px-4 py-3">Ruta</th><th scope="col" class="px-4 py-3">Desde</th><th scope="col" class="px-4 py-3">Hasta</th><th scope="col" class="px-4 py-3 text-right">Progresivas</th><th scope="col" class="px-4 py-3 text-right">Longitud</th></tr></thead>
@@ -43,7 +43,7 @@ const conServicios = tramo.cabinas.filter((c) => serviciosDeCabina(c).length > 0
           ))}
         </tbody>
       </table>
-    </div>
+    </section>
     <div class="escalonar mt-10 grid gap-8 sm:grid-cols-3">
       <div style="--i: 0"><Mojon valor={Math.floor(tramo.km)} unidad="km" etiqueta="de rutas nacionales" animar /></div>
       <div style="--i: 1"><Mojon valor={tramo.provincias.length} unidad="provincias" etiqueta={tramo.provincias.join(' y ')} animar /></div>

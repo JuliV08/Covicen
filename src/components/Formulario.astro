@@ -18,6 +18,11 @@ const action = whatsapp ? enlaceWhatsapp(whatsapp, `Asunto: ${asunto}`) : email 
 const canal = whatsapp ? 'whatsapp' : email ? 'email' : 'a-confirmar';
 // Sin canal cargado, el formulario no puede enviar: se avisa ANTES de los campos y se deshabilitan.
 const deshabilitado = canal === 'a-confirmar';
+// Con dos formularios en la misma página (Contacto: reclamos y TelePASE) los ids de campos y errores chocarían:
+// se prefijan con el id del formulario cuando lo tiene.
+const prefijo = id ? `${id}-` : '';
+// Todo <form> lleva su botón de envío (WCAG H32). Sin canal queda deshabilitado, sin ícono, sin nombrar canal ni plazos.
+const textoEnviar = canal === 'whatsapp' ? textoBoton : canal === 'email' ? 'Enviar por correo' : 'Enviar';
 ---
 <form class="formulario grid gap-5" {id} data-formulario data-asunto={asunto} data-whatsapp={whatsapp ?? ''} data-email={email ?? ''} data-canal={canal} action={action} method="get" target="_blank" novalidate>
   {deshabilitado && (
@@ -29,29 +34,27 @@ const deshabilitado = canal === 'a-confirmar';
     <legend class="sr-only">{asunto}</legend>
     {campos.map((c) => (
       <div class="grid gap-2">
-        <label for={`campo-${c.nombre}`} class="text-sm font-semibold text-texto">{c.etiqueta}{c.requerido && <span class="text-vial-texto" aria-hidden="true"> *</span>}</label>
+        <label for={`${prefijo}campo-${c.nombre}`} class="text-sm font-semibold text-texto">{c.etiqueta}{c.requerido && <span class="text-vial-texto" aria-hidden="true"> *</span>}</label>
         {c.tipo === 'textarea' ? (
-          <textarea id={`campo-${c.nombre}`} name={c.nombre} rows="5" required={c.requerido} placeholder={c.placeholder} class="campo" aria-describedby={`error-${c.nombre}`}></textarea>
+          <textarea id={`${prefijo}campo-${c.nombre}`} name={c.nombre} rows="5" required={c.requerido} placeholder={c.placeholder} class="campo" aria-describedby={`${prefijo}error-${c.nombre}`}></textarea>
         ) : c.tipo === 'readonly' ? (
-          <input id={`campo-${c.nombre}`} name={c.nombre} type="text" readonly value={c.valor ?? ''} placeholder={c.placeholder} class="campo campo-lectura" aria-describedby={`error-${c.nombre}`} />
+          <input id={`${prefijo}campo-${c.nombre}`} name={c.nombre} type="text" readonly value={c.valor ?? ''} placeholder={c.placeholder} class="campo campo-lectura" aria-describedby={`${prefijo}error-${c.nombre}`} />
         ) : c.tipo === 'select' ? (
-          <select id={`campo-${c.nombre}`} name={c.nombre} required={c.requerido} class="campo" aria-describedby={`error-${c.nombre}`}>{(c.opciones ?? []).map((o) => <option value={o}>{o}</option>)}</select>
+          <select id={`${prefijo}campo-${c.nombre}`} name={c.nombre} required={c.requerido} class="campo" aria-describedby={`${prefijo}error-${c.nombre}`}>{(c.opciones ?? []).map((o) => <option value={o}>{o}</option>)}</select>
         ) : (
-          <input id={`campo-${c.nombre}`} name={c.nombre} type={c.tipo ?? 'text'} required={c.requerido} placeholder={c.placeholder} class="campo" aria-describedby={`error-${c.nombre}`} autocomplete={c.tipo === 'email' ? 'email' : c.tipo === 'tel' ? 'tel' : c.nombre === 'nombre' ? 'name' : 'off'} />
+          <input id={`${prefijo}campo-${c.nombre}`} name={c.nombre} type={c.tipo ?? 'text'} required={c.requerido} placeholder={c.placeholder} class="campo" aria-describedby={`${prefijo}error-${c.nombre}`} autocomplete={c.tipo === 'email' ? 'email' : c.tipo === 'tel' ? 'tel' : c.nombre === 'nombre' ? 'name' : 'off'} />
         )}
-        <p id={`error-${c.nombre}`} class="text-sm text-error" data-error-de={c.nombre} aria-live="polite" hidden></p>
+        <p id={`${prefijo}error-${c.nombre}`} class="text-sm text-error" data-error-de={c.nombre} aria-live="polite" hidden></p>
       </div>
     ))}
   </fieldset>
-  {!deshabilitado && (
-    <div class="flex flex-wrap items-center gap-4">
-      <button type="submit" class="btn-enviar inline-flex min-h-11 items-center gap-2 rounded-md bg-acento px-5 py-3 font-semibold text-sobre-acento transition hover:-translate-y-px hover:bg-acento-hover hover:shadow-[0_10px_28px_-10px_var(--color-glow)]">
-        {canal === 'whatsapp' ? <MessageCircle size={18} aria-hidden="true" /> : <Mail size={18} aria-hidden="true" />} {canal === 'whatsapp' ? textoBoton : 'Enviar por correo'}
-      </button>
-      {canal === 'whatsapp' && email && <a href={`mailto:${email}?subject=${encodeURIComponent(asunto)}`} class="text-sm text-texto-2">o escribinos a {email}</a>}
-      {plazos && <span class="text-sm text-texto-2">{plazos}</span>}
-    </div>
-  )}
+  <div class="flex flex-wrap items-center gap-4">
+    <button type="submit" disabled={deshabilitado} class="btn-enviar inline-flex min-h-11 items-center gap-2 rounded-md bg-acento px-5 py-3 font-semibold text-sobre-acento transition hover:-translate-y-px hover:bg-acento-hover hover:shadow-[0_10px_28px_-10px_var(--color-glow)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:bg-acento disabled:hover:shadow-none">
+      {canal === 'whatsapp' ? <MessageCircle size={18} aria-hidden="true" /> : canal === 'email' ? <Mail size={18} aria-hidden="true" /> : null} {textoEnviar}
+    </button>
+    {!deshabilitado && canal === 'whatsapp' && email && <a href={`mailto:${email}?subject=${encodeURIComponent(asunto)}`} class="text-sm text-texto-2">o escribinos a {email}</a>}
+    {!deshabilitado && plazos && <span class="text-sm text-texto-2">{plazos}</span>}
+  </div>
   <p class="text-sm text-texto-2">Los datos que envíes viajan por el canal que elijas (WhatsApp es un servicio de Meta). Ver <a href={ruta('/privacidad')}>política de privacidad</a>.</p>
 </form>
 <script src="../scripts/formulario.ts"></script>
