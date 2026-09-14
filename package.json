@@ -16,7 +16,8 @@
     "test:watch": "vitest",
     "verificar": "pnpm build && node scripts/verificar.ts",
     "og": "node scripts/generar-og.ts",
-    "contrato": "node scripts/exportar-contrato.ts"
+    "contrato": "node scripts/exportar-contrato.ts",
+    "originalidad": "node scripts/originalidad.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

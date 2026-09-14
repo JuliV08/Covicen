@@ -21,3 +21,8 @@ export const variantesHero = (hayNoche: boolean, hayDia: boolean, porDefecto: Pr
     { nombre: 'hero-ruta-diurna', clase: 'solo-claro', prioridad: claroPrimero },
   ];
 };
+
+const institucionales = import.meta.glob<{ default: ImageMetadata }>('/src/assets/institucional/*.{jpg,jpeg,png,webp}', { eager: true });
+/** Imágenes institucionales opcionales (organigrama). Sin archivo, la sección no se renderiza. */
+export const imagenInstitucional = (nombre: string): ImageMetadata | undefined =>
+  Object.entries(institucionales).find(([ruta]) => ruta.replace(/^.*\//, '').replace(/\.[^.]+$/, '') === nombre)?.[1].default;
