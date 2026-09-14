@@ -1,44 +1,49 @@
 ---
+// Cuadro tarifario de UNA estación (o el general si no se pasa cabina): categoría, tipo de vehículo, TelePASE y pago
+// electrónico o manual, precio al público (con IVA, como en la cabina) y sin IVA en anotación. Los textos del operador
+// (avisos, vigencia, fuente) se pintan como texto, nunca set:html; la URL de la fuente solo se enlaza si es http(s).
 import IconoVehiculo from '@/components/ilustraciones/IconoVehiculo.astro';
-import Senal from '@/components/ui/Senal.astro';
-import type { Tarifario } from '@/lib/datos/esquemas';
-import { conIva, fechaCorta, fechaLarga, moneda } from '@/lib/formato';
-interface Props { tarifario: Tarifario }
-const { tarifario: t } = Astro.props;
+import type { Cabina, Tarifario } from '@/lib/datos/esquemas';
+import { fechaCorta, fechaLarga, kmTexto, moneda } from '@/lib/formato';
+import { iconoDeTarifa, publico, tarifasParaCabina } from '@/lib/tarifas';
+interface Props { tarifario: Tarifario; cabina?: Cabina; id?: string; compacta?: boolean }
+const { tarifario: t, cabina, id, compacta = false } = Astro.props;
+const filas = tarifasParaCabina(t, cabina?.slug ?? '');
 const vigencia = t.vigencia.desde ? `Vigencia: desde el ${fechaLarga(t.vigencia.desde)}.` : `Vigencia: ${t.vigencia.descripcion}`;
-// La URL de la fuente la carga un operador: solo se enlaza si es http(s). `z.url()` acepta `javascript:`.
 const esHttp = (url: string) => /^https?:\/\//i.test(url);
-// El "con IVA" lo calcula el sistema con su redondeo (al peso o al centavo); el cálculo local es el respaldo del JSON del repo.
+const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km !== null ? ` km ${kmTexto(cabina.km)}` : ''}` : 'Todas las estaciones operativas';
 ---
-<div class="revelar">
-  <div class="mb-6 flex flex-wrap items-center gap-3">
-    <Senal>{t.origen === 'oferta' ? 'Tarifa ofertada' : 'Tarifa homologada'}</Senal>
-    <p class="text-texto-2">{vigencia}</p>
+<div class="revelar" {id}>
+  <div class="mb-4 flex flex-wrap items-baseline justify-between gap-3">
+    <h3 class="text-xl">{titulo}</h3>
+    <p class="text-sm text-texto-2">{vigencia}{t.resolucion && ` ${t.resolucion}.`}</p>
   </div>
-  <!-- Región con foco: en 360 px la tabla desborda y el scroll horizontal tiene que ser alcanzable por teclado. -->
-  <div class="overflow-x-auto rounded-md border border-borde" tabindex="0" role="region" aria-label="Tabla de tarifas por categoría de vehículo">
+  <div class="overflow-x-auto rounded-md border border-borde" tabindex="0" role="region" aria-label={`Tabla de tarifas, ${titulo}`}>
     <table class="w-full border-collapse text-left">
-      <caption class="sr-only">Tarifas de peaje del Tramo Centro por categoría de vehículo, en pesos argentinos. {vigencia}</caption>
+      <caption class="sr-only">Tarifas de peaje, {titulo}, en pesos argentinos con IVA incluido. {vigencia} {t.vigencia.descripcion}</caption>
       <thead class="bg-fondo-2 text-sm uppercase tracking-wider text-texto-2">
-        <tr><th scope="col" class="px-4 py-3">Categoría</th><th scope="col" class="px-4 py-3">Vehículos</th><th scope="col" class="px-4 py-3 text-right">Sin IVA</th><th scope="col" class="px-4 py-3 text-right">Con IVA</th></tr>
+        <tr><th scope="col" class="px-4 py-3">Categoría</th><th scope="col" class="px-4 py-3">Tipo de vehículo</th><th scope="col" class="px-4 py-3 text-right">TelePASE</th><th scope="col" class="px-4 py-3 text-right">Pago electrónico o manual</th></tr>
       </thead>
       <tbody class="divide-y divide-borde">
-        {t.tarifas.map((f) => (
-          <tr class="fila transition-colors hover:bg-superficie">
-            <th scope="row" class="px-4 py-4 font-semibold text-texto"><span class="flex items-center gap-3"><IconoVehiculo categoria={f.categoria} class="icono text-texto-2" /> {f.nombre}</span></th>
-            <td class="px-4 py-4 text-texto-2">{f.descripcion}{f.nota && <span class="mt-1 block text-xs text-texto-2">{f.nota}</span>}</td>
-            <td class="px-4 py-4 text-right tabular-nums text-texto">{f.montoSinIva === null ? <span class="text-texto-2" aria-label="Sin valor publicado">—</span> : moneda(f.montoSinIva)}</td>
-            <td class="px-4 py-4 text-right tabular-nums text-texto">{f.montoSinIva === null ? <span class="text-texto-2">—</span> : moneda(f.montoConIva ?? conIva(f.montoSinIva, t.alicuotaIva))}</td>
-          </tr>
-        ))}
+        {filas.map((f) => {
+          const telepase = publico(f.telepaseSinIva, f.montoConIva, t.alicuotaIva);
+          const manual = publico(f.manualSinIva, undefined, t.alicuotaIva);
+          return (
+            <tr class="fila transition-colors hover:bg-superficie">
+              <th scope="row" class="px-4 py-4 font-semibold text-texto"><span class="flex items-center gap-3"><IconoVehiculo icono={iconoDeTarifa(f)} class="icono text-texto-2" /> {f.nombre}</span></th>
+              <td class="px-4 py-4 text-texto-2">{f.descripcion}{f.nota && <span class="anotacion mt-1 block text-xs text-texto-2">{f.nota}</span>}</td>
+              <td class="px-4 py-4 text-right tabular-nums text-texto">{telepase === null ? <span class="text-texto-2"><span aria-hidden="true">—</span><span class="sr-only">Sin valor publicado</span></span> : <><span class="text-lg font-extrabold">{moneda(telepase)}</span>{f.telepaseSinIva !== null && <span class="anotacion block text-xs text-texto-2">{moneda(f.telepaseSinIva)} sin IVA</span>}</>}</td>
+              <td class="px-4 py-4 text-right tabular-nums text-texto">{manual === null ? <span class="text-texto-2"><span aria-hidden="true">—</span><span class="sr-only">Sin valor publicado</span></span> : <><span class="text-lg font-extrabold">{moneda(manual)}</span>{f.manualSinIva !== null && <span class="anotacion block text-xs text-texto-2">{moneda(f.manualSinIva)} sin IVA</span>}</>}</td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   </div>
-  <p class="mt-2 text-xs text-texto-3 sm:hidden">Deslizá la tabla hacia el costado para ver todas las columnas.</p>
-  <ul class="mt-6 flex flex-col gap-2 text-sm text-texto-2">{t.avisos.map((a) => <li class="flex gap-2"><span aria-hidden="true">—</span>{a}</li>)}</ul>
-  <p class="mt-4 text-xs text-texto-3">Publicado el {fechaCorta(t.publicadoEl)}. Fuente: {esHttp(t.fuente.url) ? <a href={t.fuente.url} rel="noopener noreferrer" target="_blank" aria-label={`${t.fuente.nombre} (se abre en otra pestaña)`}>{t.fuente.nombre}</a> : t.fuente.nombre}.</p>
+  <p class="mt-2 text-sm text-texto-2 sm:hidden">Deslizá la tabla hacia el costado para ver todas las columnas.</p>
+  {!compacta && <ul class="mt-6 flex flex-col gap-2 text-sm text-texto-2">{t.avisos.map((a) => <li class="flex gap-2"><span aria-hidden="true">—</span>{a}</li>)}</ul>}
+  {!compacta && <p class="anotacion mt-4 text-xs text-texto-2">Publicado el {fechaCorta(t.publicadoEl)}. Fuente: {esHttp(t.fuente.url) ? <a href={t.fuente.url} rel="noopener noreferrer" target="_blank" aria-label={`${t.fuente.nombre} (se abre en otra pestaña)`}>{t.fuente.nombre}</a> : t.fuente.nombre}.</p>}
 </div>
 <style>
-  /* El ícono lo renderiza IconoVehiculo (componente hijo): no lleva el atributo de scope, va con :global. */
   .fila:hover :global(.icono) { color: var(--color-acento); }
 </style>

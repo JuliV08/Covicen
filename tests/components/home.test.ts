@@ -20,13 +20,15 @@ describe('Hero', () => {
 });
 
 describe('TarifaDestacada', () => {
-  it('muestra la tarifa con y sin IVA, el origen y la vigencia', async () => {
+  it('muestra la categoría destacada al público, la vigencia y la resolución', async () => {
     // Intl separa "$" del número con un espacio no separable (U+00A0 o U+202F): se normaliza con escapes, no con literales.
     const html = (await render(TarifaDestacada, { tarifario: await fuenteLocalJson.tarifario(), empresa: await fuenteLocalJson.empresa() })).replace(/[  ]/g, ' ');
-    expect(html).toContain('$ 1.399');
-    expect(html).toContain('$ 1.693');
-    expect(html).toContain('Vigencia');
-    expect(html).toContain('Tarifa ofertada');
+    expect(html).toContain('$ 1.500');
+    expect(html).toContain('$ 1.239,67');
+    expect(html).toContain('26 de febrero de 2026');
+    expect(html).toContain('Cuadro vigente');
+    expect(html).toContain('248/2026');
+    expect(html).not.toContain('Tarifa ofertada');
   });
 });
 

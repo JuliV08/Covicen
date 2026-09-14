@@ -8,7 +8,7 @@ describe('/peajes/[slug]/', () => {
     expect(rutas.map((r) => r.params.slug).sort()).toEqual(['carcarana', 'franck', 'james-craik', 'leones', 'san-francisco', 'totoras']);
     const c = await AstroContainer.create();
     const html = await c.renderToString(Peaje, { request: new Request('https://covicen.test/peajes/carcarana/'), params: { slug: 'carcarana' }, props: rutas.find((r) => r.params.slug === 'carcarana')!.props });
-    expect(html).toContain('<title>Peaje Carcarañá | Covicen</title>');
+    expect(html).toContain('<title>Peaje Carcarañá — RN 9 km 340 | Covicen</title>');
     expect(html.match(/<h1/g)?.length).toBe(1);
     expect(html).toContain('"@type":"Place"');
     expect(html).toContain('href="tel:140"');

@@ -1,0 +1,10 @@
+---
+import Base from '@/layouts/Base.astro';
+import Boton from '@/components/ui/Boton.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+---
+<Base titulo="Guía de trámites" descripcion="Requisitos y pasos de los trámites del usuario de Covicen: exenciones, tarifa diferencial para vecinos, frentistas y docentes, y reclamos." migas={[{ nombre: 'Guía de trámites', href: '/tramites' }]}>
+  <Seccion nivel="h1" eyebrow="Trámites" titulo="Guía de trámites." intro="Requisitos y pasos de los trámites del usuario." class="pt-10">
+    <div class="revelar"><Boton href="/contacto" variante="secundario">Consultar por el formulario de contacto</Boton></div>
+  </Seccion>
+</Base>

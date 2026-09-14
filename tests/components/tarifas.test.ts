@@ -5,17 +5,32 @@ import TablaTarifas from '@/components/TablaTarifas.astro';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
 
 describe('TablaTarifas', () => {
-  it('tabla accesible con vigencia visible, 6 filas y un guion (sin relleno "a confirmar") donde no hay valor', async () => {
+  it('por estación: cinco filas, TelePASE y pago manual con el mismo precio hoy, público grande y sin IVA como anotación', async () => {
     const c = await AstroContainer.create();
+    const [tarifario, tramo] = await Promise.all([fuenteLocalJson.tarifario(), fuenteLocalJson.tramo()]);
+    const cabina = tramo.cabinas.find((x) => x.slug === 'franck')!;
     // Intl separa "$" del número con un espacio no separable (U+00A0 o U+202F): se normaliza con escapes, no con literales.
-    const html = (await c.renderToString(TablaTarifas, { props: { tarifario: await fuenteLocalJson.tarifario() } })).replace(/[\u00A0\u202F]/g, ' ');
+    const html = (await c.renderToString(TablaTarifas, { props: { tarifario, cabina, id: 'franck' } })).replace(/[\u00A0\u202F]/g, ' ');
+    expect(html).toContain('id="franck"');
+    expect(html).toContain('Estación Franck · RN 19 km 19,95');
     expect(html).toContain('<caption');
-    expect(html).toContain('scope="col"');
-    expect(html.match(/<tr class="fila/g)?.length).toBe(6);
-    expect(html).toContain('Vigencia');
-    expect(html).toContain('$ 1.399');
-    expect(html.match(/aria-label="Sin valor publicado"/g)?.length).toBe(5);
+    expect(html).toContain('>TelePASE<');
+    expect(html).toContain('>Pago electrónico o manual<');
+    expect(html.match(/<tr class="fila/g)?.length).toBe(5);
+    expect(html.match(/\$ 1\.500</g)?.length).toBe(2);
+    expect(html).toContain('$ 1.239,67 sin IVA');
+    expect(html).toContain('Vigencia: desde el 26 de febrero de 2026');
+    expect(html).toContain('Resolución 248/2026');
+    expect(html).toContain('en oportunidad de contar con todas las vías automáticas');
     expect(html).not.toMatch(/a confirmar/i);
+  });
+  it('sin valor publicado: guion visible y texto solo para lectores, sin aria-label en spans', async () => {
+    const c = await AstroContainer.create();
+    const tarifario = await fuenteLocalJson.tarifario();
+    const nulo = { ...tarifario, tarifas: [{ ...tarifario.tarifas[0]!, montoSinIva: null, montoManualSinIva: null }] };
+    const html = await c.renderToString(TablaTarifas, { props: { tarifario: nulo } });
+    expect(html.match(/sr-only[^>]*>Sin valor publicado</g)?.length).toBe(2);
+    expect(html).not.toContain('aria-label="Sin valor publicado"');
   });
 });
 

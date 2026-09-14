@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 const gz = (p: string) => (existsSync(p) ? gzipSync(readFileSync(p)).length : 0);
 const animacion = ['src/scripts/revelar.ts', 'src/scripts/spotlight.ts', 'src/scripts/contador.ts', 'src/scripts/parallax-2d.ts', 'src/scripts/grilla-cinetica.ts', 'src/scripts/flip.ts'];
-const todos = [...animacion, 'src/scripts/menu.ts', 'src/scripts/cuenta-regresiva.ts', 'src/scripts/formulario.ts', 'src/scripts/tema.ts', 'src/scripts/lib/color.ts', 'src/scripts/anuncios.ts', 'src/scripts/mapa.ts'];
+const todos = [...animacion, 'src/scripts/menu.ts', 'src/scripts/cuenta-regresiva.ts', 'src/scripts/formulario.ts', 'src/scripts/tema.ts', 'src/scripts/lib/color.ts', 'src/scripts/anuncios.ts', 'src/scripts/mapa.ts', 'src/scripts/imprimir.ts'];
 
 describe('presupuesto', () => {
   // 6 → 9 KB al sumar la grilla cinética y el flip (pedidos de Juli, 2026-08-27). Sigue muy por debajo de los 30 KB del spec.
