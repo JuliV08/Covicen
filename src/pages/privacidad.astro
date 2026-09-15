@@ -2,6 +2,7 @@
 import Base from '@/layouts/Base.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
+import { ruta } from '@/lib/rutas';
 const [e, contacto] = await Promise.all([datos.empresa(), datos.contacto()]);
 ---
 <Base titulo="Política de privacidad" descripcion="Cómo trata Covicen los datos personales que recibe por sus canales de contacto, según la Ley 25.326 de Protección de Datos Personales." migas={[{ nombre: 'Privacidad', href: '/privacidad' }]}>
@@ -11,6 +12,8 @@ const [e, contacto] = await Promise.all([datos.empresa(), datos.contacto()]);
       <p>{e.marca}{e.enFormacion ? ', sociedad en formación' : `, ${e.razonSocial}, CUIT ${e.cuit}`}. Los datos de contacto del responsable se publican en el pie de página cuando se complete la inscripción.</p>
       <h2>Qué datos recibimos</h2>
       <p>Este sitio no tiene cuentas de usuario, no usa cookies de terceros ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos por WhatsApp o por correo desde los formularios: nombre, contacto y el contenido de tu mensaje.</p>
+      <h2>Ubicación</h2>
+      <p>La página de <a href={ruta('/asistencia')}>asistencia en ruta</a> puede usar la ubicación de tu celular. Se pide solo ahí, solo si tocás el botón y le das permiso al navegador. No se guarda en ningún lado ni se envía sola: aparece en pantalla para que se la dictes al operador del 140 y viaja únicamente dentro del mensaje que vos decidas mandar. Si negás el permiso, el resto de la página funciona igual.</p>
       <h2>Para qué</h2>
       <p>Para responder consultas y reclamos, gestionar postulaciones laborales y altas de proveedores. No los usamos con otros fines ni los cedemos a terceros, salvo obligación legal.</p>
       <h2>Canales de terceros</h2>

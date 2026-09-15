@@ -29,7 +29,9 @@ const hayCanal = Boolean(contacto.whatsapp.numero || contacto.atencionUsuario ||
         <h2 class="text-2xl">Contanos qué pasó</h2>
         {!hayCanal && <p class="mt-3 text-texto-2"><strong class="text-texto">Llamá al 140 y dictá tu ubicación.</strong> El envío por mensaje se habilita con la toma de posesión; mientras, este formulario te arma el texto para que lo copies.</p>}
         <div class="mt-4">
-          <Formulario id="formulario-asistencia" asunto="Asistencia en ruta" whatsapp={contacto.whatsapp.numero} email={contacto.atencionUsuario ?? contacto.email.general} textoBoton="Pedir asistencia por WhatsApp" plazos="Respuesta inmediata" campos={[
+          {/* sinCanal="copiar": mientras no haya WhatsApp ni correo, el formulario igual se escribe y arma el texto
+              para copiar (spec §10.2 punto 3). Es lo que promete el párrafo de arriba. */}
+          <Formulario id="formulario-asistencia" asunto="Asistencia en ruta" whatsapp={contacto.whatsapp.numero} email={contacto.atencionUsuario ?? contacto.email.general} textoBoton="Pedir asistencia por WhatsApp" plazos="Respuesta inmediata" sinCanal="copiar" campos={[
             { nombre: 'que-paso', etiqueta: 'Qué pasó', tipo: 'select', opciones: ['Avería o desperfecto', 'Accidente', 'Obstáculo o animal en la calzada', 'Otro'], requerido: true },
             { nombre: 'vehiculo', etiqueta: 'Vehículo', tipo: 'select', opciones: ['Liviano (auto, camioneta, moto)', 'Pesado (camión, ómnibus)'], requerido: true },
             { nombre: 'personas', etiqueta: 'Cuántas personas viajan', requerido: true },

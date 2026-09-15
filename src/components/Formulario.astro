@@ -1,7 +1,6 @@
 ---
-import { Mail, MessageCircle } from '@lucide/astro';
+import { Copy, Mail, MessageCircle } from '@lucide/astro';
 import { ruta } from '@/lib/rutas';
-import { enlaceWhatsapp } from '@/lib/whatsapp';
 export interface Campo {
   nombre: string;
   etiqueta: string;
@@ -12,24 +11,40 @@ export interface Campo {
   requerido?: boolean;
   placeholder?: string;
 }
-interface Props { asunto: string; whatsapp: string | null; email: string | null; campos: Campo[]; textoBoton?: string; plazos?: string; id?: string }
-const { asunto, whatsapp, email, campos, textoBoton = 'Enviar por WhatsApp', plazos, id } = Astro.props;
-const action = whatsapp ? enlaceWhatsapp(whatsapp, `Asunto: ${asunto}`) : email ? `mailto:${email}?subject=${encodeURIComponent(asunto)}` : '#';
+interface Props { asunto: string; whatsapp: string | null; email: string | null; campos: Campo[]; textoBoton?: string; plazos?: string; id?: string; sinCanal?: 'aviso' | 'copiar' }
+const { asunto, whatsapp, email, campos, textoBoton = 'Enviar por WhatsApp', plazos, id, sinCanal = 'aviso' } = Astro.props;
 const canal = whatsapp ? 'whatsapp' : email ? 'email' : 'a-confirmar';
-// Sin canal cargado, el formulario no puede enviar: se avisa ANTES de los campos y se deshabilitan.
-const deshabilitado = canal === 'a-confirmar';
+// Sin canal cargado hay dos modos. Por defecto, el aviso de siempre con el formulario deshabilitado. Donde el pliego
+// pide que algo funcione igual (asistencia, spec §10.2 punto 3), `sinCanal="copiar"`: los campos se escriben y el
+// botón arma el texto para que el usuario lo copie y lo mande o lo dicte por su cuenta. Nada se simula en ninguno.
+const modoCopiar = canal === 'a-confirmar' && sinCanal === 'copiar';
+const deshabilitado = canal === 'a-confirmar' && !modoCopiar;
 // Con dos formularios en la misma página (Contacto: reclamos y TelePASE) los ids de campos y errores chocarían:
 // se prefijan con el id del formulario cuando lo tiene.
 const prefijo = id ? `${id}-` : '';
 // Todo <form> lleva su botón de envío (WCAG H32). Sin canal queda deshabilitado, sin ícono, sin nombrar canal ni plazos.
-const textoEnviar = canal === 'whatsapp' ? textoBoton : canal === 'email' ? 'Enviar por correo' : 'Enviar';
+const textoEnviar = canal === 'whatsapp' ? textoBoton : canal === 'email' ? 'Enviar por correo' : modoCopiar ? 'Armar el texto para copiar' : 'Enviar';
+// El <form> NO lleva action/method/target a propósito: con method="get" el algoritmo de envío del navegador pisa la
+// query del action con los campos serializados, así que los datos personales (DNI, domicilio, patente, teléfono, las
+// coordenadas) viajarían en la URL a un servidor ajeno y el ?text= preparado se perdería: el mensaje nunca llegaría.
+// El envío lo hace siempre formulario.ts; sin JS manda el <noscript>, con el 140 y los canales pelados.
 ---
-<form class="formulario grid gap-5" {id} data-formulario data-asunto={asunto} data-whatsapp={whatsapp ?? ''} data-email={email ?? ''} data-canal={canal} action={action} method="get" target="_blank" novalidate>
+<form class="formulario grid gap-5" {id} data-formulario data-asunto={asunto} data-whatsapp={whatsapp ?? ''} data-email={email ?? ''} data-canal={canal} data-modo={modoCopiar ? 'copiar' : 'enviar'} novalidate>
   {deshabilitado && (
     <p class="rounded-md border border-dashed border-borde-fuerte p-4 text-sm text-texto-2" role="status">
       Los formularios se habilitan con la toma de posesión, el 5 de octubre de 2026. Mientras, el <a href="tel:140">140</a> atiende emergencias las 24 horas.
     </p>
   )}
+  <noscript>
+    <p class="rounded-md border border-dashed border-borde-fuerte p-4 text-sm text-texto-2">
+      Con JavaScript desactivado este formulario no puede armar el mensaje. Para emergencias, llamá al <a href="tel:140">140</a>, las 24 horas.
+      {(whatsapp || email) && (
+        <span>
+          Para el resto, escribinos {whatsapp && <a href={`https://wa.me/${whatsapp}`}>por WhatsApp</a>}{whatsapp && email && ' o '}{email && <a href={`mailto:${email}`}>a {email}</a>} y contanos el caso.
+        </span>
+      )}
+    </p>
+  </noscript>
   <fieldset class="m-0 grid min-w-0 gap-5 border-0 p-0 disabled:opacity-60" disabled={deshabilitado}>
     <legend class="sr-only">{asunto}</legend>
     {campos.map((c) => (
@@ -40,7 +55,9 @@ const textoEnviar = canal === 'whatsapp' ? textoBoton : canal === 'email' ? 'Env
         ) : c.tipo === 'readonly' ? (
           <input id={`${prefijo}campo-${c.nombre}`} name={c.nombre} type="text" readonly value={c.valor ?? ''} placeholder={c.placeholder} class="campo campo-lectura" aria-describedby={`${prefijo}error-${c.nombre}`} />
         ) : c.tipo === 'select' ? (
-          <select id={`${prefijo}campo-${c.nombre}`} name={c.nombre} required={c.requerido} class="campo" aria-describedby={`${prefijo}error-${c.nombre}`}>{(c.opciones ?? []).map((o) => <option value={o}>{o}</option>)}</select>
+          // La opción vacía va primero y deshabilitada: si no, el primer valor real queda elegido de entrada y
+          // `required` nunca falla (el "Motivo" viajaba como "Reclamo" aunque el usuario no hubiera elegido nada).
+          <select id={`${prefijo}campo-${c.nombre}`} name={c.nombre} required={c.requerido} class="campo" aria-describedby={`${prefijo}error-${c.nombre}`}>{c.requerido && <option value="" selected disabled>Elegí una opción</option>}{(c.opciones ?? []).map((o) => <option value={o}>{o}</option>)}</select>
         ) : (
           <input id={`${prefijo}campo-${c.nombre}`} name={c.nombre} type={c.tipo ?? 'text'} required={c.requerido} placeholder={c.placeholder} class="campo" aria-describedby={`${prefijo}error-${c.nombre}`} autocomplete={c.tipo === 'email' ? 'email' : c.tipo === 'tel' ? 'tel' : c.nombre === 'nombre' ? 'name' : 'off'} />
         )}
@@ -50,11 +67,21 @@ const textoEnviar = canal === 'whatsapp' ? textoBoton : canal === 'email' ? 'Env
   </fieldset>
   <div class="flex flex-wrap items-center gap-4">
     <button type="submit" disabled={deshabilitado} class="btn-enviar inline-flex min-h-11 items-center gap-2 rounded-md bg-acento px-5 py-3 font-semibold text-sobre-acento transition hover:-translate-y-px hover:bg-acento-hover hover:shadow-[0_10px_28px_-10px_var(--color-glow)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:bg-acento disabled:hover:shadow-none">
-      {canal === 'whatsapp' ? <MessageCircle size={18} aria-hidden="true" /> : canal === 'email' ? <Mail size={18} aria-hidden="true" /> : null} {textoEnviar}
+      {canal === 'whatsapp' ? <MessageCircle size={18} aria-hidden="true" /> : canal === 'email' ? <Mail size={18} aria-hidden="true" /> : modoCopiar ? <Copy size={18} aria-hidden="true" /> : null} {textoEnviar}
     </button>
     {!deshabilitado && canal === 'whatsapp' && email && <a href={`mailto:${email}?subject=${encodeURIComponent(asunto)}`} class="text-sm text-texto-2">o escribinos a {email}</a>}
-    {!deshabilitado && plazos && <span class="text-sm text-texto-2">{plazos}</span>}
+    {/* En modo copiar no hay canal: prometer plazos de respuesta sería simular que a alguien le llega. */}
+    {!deshabilitado && !modoCopiar && plazos && <span class="text-sm text-texto-2">{plazos}</span>}
   </div>
+  {/* Pliego 61.7 (spec §11): cada interacción con respuesta visible. Lo escribe formulario.ts. */}
+  <p class="text-sm text-texto-2" role="status" data-envio hidden></p>
+  {modoCopiar && (
+    <div class="grid gap-3" data-copia hidden>
+      <p class="text-sm text-texto-2">Este es el texto con lo que cargaste. Copialo y mandalo por donde quieras, o dictáselo al operador del 140.</p>
+      <pre class="texto-copia rounded-md border border-borde bg-superficie p-4 text-texto" data-texto></pre>
+      <div><button type="button" class="inline-flex min-h-11 items-center gap-2 rounded-md border border-borde px-4 py-2 font-semibold text-texto hover:border-borde-fuerte hover:bg-superficie" data-copiar-texto><Copy size={16} aria-hidden="true" /> Copiar el texto</button></div>
+    </div>
+  )}
   <p class="text-sm text-texto-2">Los datos que envíes viajan por el canal que elijas (WhatsApp es un servicio de Meta). Ver <a href={ruta('/privacidad')}>política de privacidad</a>.</p>
 </form>
 <script src="../scripts/formulario.ts"></script>
@@ -66,4 +93,6 @@ const textoEnviar = canal === 'whatsapp' ? textoBoton : canal === 'email' ? 'Env
   .campo::placeholder { color: var(--color-texto-3); }
   fieldset:disabled .campo { cursor: not-allowed; }
   .campo-lectura { background: var(--color-superficie); color: var(--color-texto-2); }
+  /* El texto armado se lee como texto del sitio, no como código, pero conserva los saltos de línea del mensaje. */
+  .texto-copia { font-family: inherit; white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
 </style>
