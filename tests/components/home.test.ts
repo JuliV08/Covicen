@@ -27,7 +27,7 @@ describe('Hero', () => {
     expect(html.match(/data-slide-ir="/g)?.length).toBe(4);
     expect(html).toContain('href="/novedades/a/"');
   });
-  // El h1 no puede vivir dentro de una diapositiva: carrusel.ts las esconde con `hidden` y el home se quedaría sin h1
+  // El h1 no puede vivir dentro de una diapositiva: rotacion.ts las esconde con `hidden` y el home se quedaría sin h1
   // en el árbol de accesibilidad a los 8 segundos. Va en la portada fija, antes de la primera [data-slide].
   it('el h1 queda fuera de las diapositivas, en la portada fija, con y sin carrusel', async () => {
     for (const novedades of [[], destacadas]) {

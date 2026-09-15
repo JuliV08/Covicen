@@ -21,6 +21,7 @@
 - **Colores solo desde tokens.** Prohibido `#hex`/`rgb(`/`hsl(` fuera de `src/styles/tokens.css`, `src/components/marca/Isotipo.astro`, `src/scripts/lib/color.ts` y `src/lib/tema.ts`. Ningún `text-fondo` ni `text-vial` como color de texto: `text-sobre-vial`, `text-sobre-acento`, `text-vial-texto`.
 - **Legibilidad (pliego 61.7):** párrafos ≥ 16 px, contenido ≥ 14 px, anotaciones 12 px con `.anotacion`; enlaces de texto subrayados en reposo; sin `text-align: justify`; contraste ≥ 4,5:1 en los dos temas.
 - **Presupuestos:** JS emitido ≤ 30 KB gz (`scripts/verificar.ts`), scripts fuente ≤ 12 KB gz (`tests/presupuesto.test.ts`), `og.png` ≤ 300 KB. Se mantienen.
+  - **Corregido en la ejecución (2026-09-14): los scripts fuente pasaron de 12 a 16 KB gz** (`tests/presupuesto.test.ts`, tope 16.384 bytes). Al cierre de la revisión final van **16.244 bytes = 15,86 KB gz**, o sea 140 bytes de margen. Motivo: sobre una base que ya pesaba ~10 KB, la actualización sumó tema, barra de anuncios, mapa interactivo, carrusel y asistencia (~4 KB gz previstos en la spec §10.5). **El gate real sigue siendo el JS emitido** (30 KB gz, `verificar.ts`): al cierre van 5,4 KB gz. Quien agregue código de cliente va a rozar el tope de fuente: subirlo es una decisión, no un trámite.
 - **Convenciones:** español rioplatense en código, comentarios y copy (voseo sobrio: "Consultá", nunca "Consulte"); nombres en castellano; cero emojis en la UI; un `h1` por página; `alt` en toda imagen; todo interactivo con hover/focus definidos.
 - **Scripts de cliente:** `<script src="…">` (bundleado) salvo el snippet de tema, que es `is:inline` en el `<head>`. Todo registra `document.addEventListener('astro:page-load', …)` y es idempotente (bandera `data-*` o `let instalado`).
 - **Comandos:** `pnpm check` (astro check), `pnpm test` (vitest), `pnpm verificar` (build + `scripts/verificar.ts`), `pnpm contrato`, `pnpm og`. Ejecutar desde `C:\Users\Villex\dev\Covicen`.
@@ -4571,12 +4572,12 @@ Cuando terminen las obras iniciales de puesta en valor y Vialidad Nacional homol
 La resolución está en el [Boletín Oficial](https://www.boletinoficial.gob.ar/detalleAviso/primera/338657/20260224) y la lista completa de normas, en [Transparencia](../../transparencia/).
 ```
 
-- [ ] **Step 4: Verificar todo**
+- [x] **Step 4: Verificar todo**
 
 Run: `pnpm check && pnpm test && pnpm verificar`
 Expected: verde. `local-json.test` sigue exigiendo obras ordenadas y FAQ con slugs únicos y ≥ 4 en home.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add -A -- src/content/obras src/content/faq src/content/novedades src/pages/obras.astro
@@ -5330,8 +5331,8 @@ git commit -m "feat(home): carrusel del hero con las novedades destacadas, acces
 ### Tarea 5.5: Cierre de la Fase 5
 
 - [x] **Step 1:** `pnpm check && pnpm test && pnpm verificar` en verde. Verificar el presupuesto de JS impreso por `verificar` (≤ 30 KB gz).
-- [ ] **Step 2:** Revisión de `sec-bro` sobre `src/pages/asistencia.astro`, `src/scripts/asistencia.ts`, `src/components/Formulario.astro`, `src/scripts/formulario.ts`, `src/pages/contacto.astro`, `src/pages/tramites.astro` (privacidad de la ubicación, inyección en el mensaje, `target=_blank` con `noopener`, sin datos guardados). Atender hallazgos.
-- [ ] **Step 3:** Revisión de `rev-bro` (spec §10, plan Fase 5, diff).
+- [x] **Step 2:** Revisión de `sec-bro` sobre `src/pages/asistencia.astro`, `src/scripts/asistencia.ts`, `src/components/Formulario.astro`, `src/scripts/formulario.ts`, `src/pages/contacto.astro`, `src/pages/tramites.astro` (privacidad de la ubicación, inyección en el mensaje, `target=_blank` con `noopener`, sin datos guardados). Atender hallazgos. **Evidencia: no se corrió al cerrar la Fase 5, se corrió en la revisión final del 14/9/2026**, donde un revisor de seguridad miró §10.2 y §10.4 (asistencia, formularios, privacidad). Sus cuatro hallazgos se aplicaron en el grupo A de esa tanda (commit `ee4f211`, "fix(formularios): asistencia arma el texto para copiar, envío solo por JS y selects que sí validan").
+- [x] **Step 3:** Revisión de `rev-bro` (spec §10, plan Fase 5, diff). **Evidencia: igual que el Step 2** — la revisión de la Fase 5 quedó absorbida por la revisión final del 14/9/2026 sobre `git diff 15791de..HEAD`, cuyos hallazgos se repartieron en seis grupos (formularios, hero/carrusel, mapa/estado, contrato/tarifas, impresión/legibilidad, documentación).
 - [x] **Step 4:** Vault: `Costura de datos.md` (estado-ruta.json y el flag `ejemplo`), `Decisiones de arquitectura.md` (asistencia sin simular envío; carrusel = destacadas; popup no). `Home.md`: "Fase 5 cerrada".
 - [x] **Step 5:** Commit de cierre si no se hizo por tarea.
 

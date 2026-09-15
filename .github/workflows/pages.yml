@@ -20,7 +20,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # Sin dominio: URL de Pages del repo. Cuando haya dominio: PUBLIC_SITE_URL=https://covicen.com.ar, PUBLIC_BASE_PATH=/, PUBLIC_INDEXABLE=true
+      # Sin dominio: URL de Pages del repo. Cuando haya dominio: PUBLIC_SITE_URL=https://www.covicen.com.ar (con www: el
+      # apex redirige 301 al www, lo pide el pliego), PUBLIC_BASE_PATH=/, PUBLIC_INDEXABLE=true. Paso a paso completo en
+      # README.md, "Migración al dominio propio". Esa URL termina en la cartelería de las cabinas: no cambiarla después.
       PUBLIC_SITE_URL: https://${{ github.repository_owner }}.github.io
       PUBLIC_BASE_PATH: /${{ github.event.repository.name }}/
       PUBLIC_INDEXABLE: "false"

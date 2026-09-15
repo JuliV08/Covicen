@@ -26,7 +26,7 @@ Dirección única de dependencia: `content/ → lib/datos/ → componentes/pági
 2. **La UI formatea, los datos no.** Nada de `"$1.399"` en JSON: `lib/formato.ts` (es-AR).
 3. **Interfaz async desde el día 1**, aunque hoy se resuelva en build.
 4. **`fuentes/api.ts` no mockea.** Lo que el sistema no tiene todavía no se simula: viene del repo. (Hasta el 2026-09-06 lanzaba `FuenteApi: no implementado`.)
-5. **Formularios reales sin backend**: link `wa.me` con mensaje estructurado; con `ticketingReclamos: true` el mismo componente hará POST.
+5. **Formularios reales sin backend**: link `wa.me` con mensaje estructurado. `ticketingReclamos` es **a futuro**: cuando exista el CRM hay que **implementar el POST en `Formulario.astro`**. Ojo: hoy el componente **no lee ese flag**; prenderlo solo esconde los dos `HuecoCapacidad` de "Seguimiento de reclamos" (`/contacto/` y `/servicios/`) y los formularios quedan igual.
 
 ## Capacidades (huecos reservados)
 
