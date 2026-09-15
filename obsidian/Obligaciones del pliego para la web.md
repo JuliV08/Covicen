@@ -26,7 +26,7 @@ Criterio general: **esconder, no "a confirmar"**. Lo que depende de un dato que 
 | Correo atencionalusuario@covicen.com.ar (61.5) | Slot `contacto.atencionUsuario`; no se publica hasta que la casilla funcione (decisión de Juli) | dominio |
 | Tres formularios (61.5) | `Formulario.astro`: reclamos/consultas/sugerencias y consultas de TelePASE en Contacto (con prioridad, 61.5 b), trámites en la Guía de trámites, más asistencia, trabajá con nosotros y proveedores; plazos del pliego junto al botón; **deshabilitados con aviso honesto** mientras no haya canal (WhatsApp o correo), sin inventar destino | envío real: canal / CRM |
 | Responsive, SEO, navegadores vigentes | Ya se cumplía: estático, canonical, description, JSON-LD, sitemap; `verificar.ts` lo controla en cada build | cumple |
-| Respuesta inmediata a cada interacción | Cada acción tiene respuesta visible: estado del pedido de ubicación (`aria-live`), "Ubicación copiada", foco y `aria-current` en el mapa, anuncios y carrusel con controles siempre | cumple |
+| Respuesta inmediata a cada interacción | Cada acción tiene respuesta visible: estado del pedido de ubicación (`aria-live`), "Ubicación copiada", foco y `aria-current` en el mapa, cinta de avisos con tres frenos (puntero, foco y boton) | cumple |
 | Datos de los usuarios seguros | El sitio no guarda nada: no hay cuentas, cookies de terceros ni seguimiento; la ubicación solo vive en la página; los formularios viajan por el canal que elige el usuario (Privacidad lo dice) | cumple |
 | Subtítulos en videos | No hay videos | no aplica |
 | Emergencias 140 (59) | `tel:140` en toda página (header, barra inferior, footer, tarjetas); `verificar.ts` lo exige | cumple |

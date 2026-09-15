@@ -9,7 +9,7 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 
 **Navegadores:** lo atado a scroll-driven animations (dibujo del mapa al scrollear, parallax del hero, fondo del header) anda en Chrome, Edge y Safari; en Firefox estable aparece ya dibujado o fijo.
 
-**Si tenés "reducir movimiento" activado en Windows** (Configuración › Accesibilidad › Efectos visuales): todo queda estático, y **el carrusel del hero y los anuncios arrancan quietos con el botón diciendo "Reanudar"** — si lo apretás, empiezan a rotar. Antes no había forma de largarlos. Si no usás esa opción, ignorá este punto.
+**Si tenés "reducir movimiento" activado en Windows** (Configuración › Accesibilidad › Efectos visuales): todo queda estático, **la cinta de avisos no desfila** (se recorre a mano, de costado) y el botón de pausa ni aparece, porque no hay nada que frenar. El cambio de tema también es instantáneo, sin la disolvencia. Si no usás esa opción, ignorá este punto.
 
 ---
 
@@ -22,7 +22,9 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 | `/asistencia/` | **El cambio más grande.** Los campos del formulario ahora se escriben (antes estaban grises y bloqueados) y hay un botón "Armar el texto para copiar" que deja el mensaje completo a la vista. | Cargá los datos, pedí la ubicación y armá el texto. Pegalo en WhatsApp o en las notas. |
 | Todos los formularios | Los desplegables arrancan en "Elegí una opción" y marcan error si no los tocás. Antes se mandaba la primera opción sin que la hubieras elegido. | Mandá uno vacío y mirá el error en rojo. |
 | `/privacidad/` | Sección nueva **"Ubicación"**. | Leela y decí si te cierra cómo está redactada. |
-| Home (hero) y barra de anuncios | **Botón de pausa** en los dos; el título grande salió de adentro del carrusel. | Pausá y reanudá; cambiá de diapositiva con flechitas y puntitos y mirá que no quede un título de más ni salte el texto. |
+| Hero de la home | **Ya no rota**: el carrusel que alternaba el título con las novedades destacadas se sacó. La primera pantalla dice una sola cosa y la dice quieta. | Quedate mirando el hero medio minuto: no se tiene que mover nada más que la foto. Las destacadas siguen estando, más abajo, en Novedades. |
+| Cinta de avisos | Los avisos salieron de la barra de arriba del navbar y ahora **desfilan en una cinta**, con la etiqueta amarilla fija a la izquierda. En la home va pegada al borde de abajo del hero; en el resto de las páginas, arriba del contenido. | Mirala desfilar; pasale el mouse por encima (se frena); tocá el botón de pausa de la derecha; entrá a un aviso. |
+| Tarjetas en tema claro | **El cambio más grande de esta tanda.** El fondo de la página sigue claro, pero las tarjetas, las tablas y los paneles pasan al navy oscuro del backoffice. | Prendé el tema claro y recorré la home, /tarifas/ y /el-tramo/. Es una decisión de identidad: decime si te cierra. |
 | `/el-tramo/` | Cartel **"DATOS DE EJEMPLO"** arriba del mapa; bloque "Estado de la traza" debajo; cada severidad con su forma (triángulo / rombo / círculo); letras del mapa más grandes. | Que el cartel se vea bien: abajo hay un corte inventado en la RN 34. Que ningún nombre del mapa se pise. |
 | `/tarifas/` | Bloque nuevo **"Exceso de carga" (05)**; el de categorías futuras pasó a 06 y cambió de fondo. | Que ninguna sección quede con el mismo fondo que la de al lado. |
 | Home (tarjeta que gira) | Con el teclado se queda dada vuelta; con el mouse, un clic la fija hasta que hagas clic afuera. | Probala con Tab y con clic. |
@@ -32,12 +34,12 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 | `/transparencia/` | Los botones de la **Ley 27.742** y el **Decreto 97/2025** abrían avisos del Boletín Oficial que no eran esas normas. Ahora abren la norma que dicen. | Tocá los dos y mirá que el Boletín muestre la ley y el decreto. |
 | `/servicios/`, `/contacto/`, `/quienes-somos/` | El **0800** figuraba con acuse "24 horas" y el pliego le da acuse **inmediato**; la prórroga de respuesta ya no dice "una sola vez" (el pliego no lo pone); los **tiempos de grúa** se publican como los compromete el pliego (30 minutos en al menos el 90 % de los casos, nunca más de 40) y no como promesa lisa. | Que el 0800 diga "inmediato" arriba y abajo en la misma página. |
 | `/el-tramo/` | Los cuatro links de la sub-navegación dejaban el título de la sección tapado detrás de las barras de arriba. Ahora aterrizan bien. El mapa, además, tiene su propio encabezado para lectores de pantalla. | Tocá los cuatro links de la sub-navegación y mirá que se vea el título de cada bloque. |
-| Tema claro (hero y panel del Consorcio) | **Lo más visible de esta última tanda.** Como la foto del hero es de noche y no hay versión de día, en tema claro el texto encima quedaba flojo de contraste. Ahora el hero y el panel del Consorcio se ven **oscuros también en tema claro**, igual que en el tema oscuro. | Prendé el tema claro: el hero tiene que verse como en oscuro, con el resto de la página clara. Decime si te gusta así. |
+| Tema claro (panel del Consorcio) | La foto del Consorcio es de noche y no tiene versión de día, así que ese panel se sigue viendo oscuro en los dos temas. El hero ya salió de ese caso: tiene una foto por tema. | Prendé el tema claro: el único bloque que se ve "de noche" sin ser una tarjeta es el del Consorcio. |
 | Tema claro (botón amarillo del 140) | El anillo que marca dónde está el foco cuando navegás con Tab era amarillo sobre fondo claro: no se veía. Ahora es ocre. | En tema claro, tabulá hasta el botón "140" del encabezado y mirá el recuadro. |
 | `/el-tramo/` (mapa, tema claro) | Los puntos de las **estaciones próximas** y los rombos de "Precaución" eran amarillo claro sobre panel casi blanco. Ahora usan el mismo ocre que la leyenda: el mapa y la leyenda por fin coinciden. | En tema claro, mirá que Leones, San Francisco y Totoras se distingan en el mapa. |
 | Mapa (RN 9) | La línea de la RN 9 seguía **35 km más allá de donde termina la concesión** (llegaba a Córdoba capital, y la concesión termina en Pilar). Se cortó en Pilar; Córdoba sigue dibujada como ciudad de referencia, sin línea, igual que Rafaela y Santa Fe. | Que la línea celeste de la RN 9 termine antes de Córdoba y que el marcador del aviso de James Craik caiga sobre la estación. |
 | Estado de la traza (dato de ejemplo) | El aviso inventado de niebla nombraba **Rafaela**, que no está sobre la RN 19 ni dentro del tramo. Ahora dice "entre San Carlos Centro y el empalme con la RN 34". | Leelo en la home y en El tramo. |
-| Hero y barra de anuncios | Con el mouse encima o el foco puesto, **tocar las flechitas ya no vuelve a largar la rotación**. Antes se te cambiaba el texto solo a los 6 u 8 segundos mientras lo estabas leyendo. | Dejá el mouse encima, tocá "siguiente" y esperá 10 segundos: no se tiene que mover. |
+| Fotos del hero al cambiar de tema | **Bug que encontraste vos, arreglado.** La foto del tema al que cambiabas no se descargaba nunca: nacía escondida y el navegador la difería para siempre. En escritorio no se notaba (el efecto de profundidad la dibuja por su lado), pero en el celular el hero se quedaba liso. | Cambiá de tema varias veces, en la compu y en el celular: la foto tiene que estar siempre. |
 
 ### Lo que se revisó y se dejó como estaba
 
@@ -56,11 +58,15 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Todas las páginas
 
-**Barra superior (40 px, siempre visible junto al header)**
-- A la izquierda, los anuncios de `src/content/avisos.json` (hoy tres: el de la toma de posesión, que **vence el 5 de octubre** y desaparece solo en el build de ese día; emergencias 140; tarifas). Rotan cada 6 s con fundido; se frenan con el mouse encima o con el foco; los botones anterior/siguiente funcionan siempre. Cada anuncio es un link a su página.
-- **Botón de pausa** (antes de las dos flechitas): lo frena y pasa a mostrar el triangulito de play. Una vez pausado **no rearranca solo** aunque saques el mouse; vuelve con play o recargando.
-- Los botones anterior/siguiente miden **32 px** (la barra de 40 px no da para los 44 px recomendados). Decisión a tu criterio: ver al final.
-- A la derecha, solo desde 1024 px de ancho: **TelePASE** (abre telepase.com.ar en otra pestaña), **Mi cuenta** (hoy lleva a Medios de pago › Mi cuenta; cuando exista la URL de la oficina virtual, la abre en otra pestaña) y el **sol/luna**. En el celular esos tres están adentro del menú (el interruptor arriba, al lado de la palabra "Menú").
+**Cinta de avisos** (reemplaza a los anuncios que rotaban arriba del navbar)
+- Los avisos de `src/content/avisos.json` (hoy tres: el de la toma de posesión, que **vence el 5 de octubre** y desaparece solo en el build de ese día; emergencias 140; tarifas) **desfilan en una sola línea continua**, con la etiqueta amarilla "AVISOS" fija a la izquierda. Cada aviso es un link a su página.
+- **Dónde está**: en la home, apoyada en el borde de abajo del hero (como en la referencia de Corresur que me pasaste). En el resto de las páginas, arriba del contenido, abajo del header.
+- **Cómo se frena**: con el mouse encima, con el foco adentro (si vas con Tab) y con el botón de pausa de la derecha, que es el que manda: una vez pausado **no rearranca solo**.
+- El contenido sale del mismo archivo de siempre, así que el día que exista el backoffice se edita desde ahí sin tocar la web.
+
+**Barra superior (40 px, solo en escritorio)**
+- Quedó con **TelePASE** (abre telepase.com.ar en otra pestaña), **Mi cuenta** (hoy lleva a Medios de pago › Mi cuenta; cuando exista la URL de la oficina virtual, la abre en otra pestaña) y el **sol/luna**.
+- **En el celular ya no existe**: esos tres accesos viven en el menú y, sin los avisos, la barra quedaba vacía comiendo 40 px de pantalla. El header pasa a medir 72 px en vez de 112.
 
 **Header (72 px)**
 - Logo **sin descriptor** (ya no dice "Corredor Vial del Centro" en ningún lado: ni en el header, ni en el título, ni en la imagen para redes).
@@ -91,7 +97,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 **Legibilidad (pliego 61.7), en cualquier página**
 - Los links dentro del texto van **subrayados** (1 px; en hover 2 px). Menú, botones, tarjetas-enlace, navs de anclas y footer no (el pliego lo permite).
 - Ningún texto menor de 14 px, salvo las **anotaciones** de 12 px: "sin IVA" bajo los precios, "Fuente: PETG art. …", "Publicado el…", las etiquetas de las novedades, los chips ("Cuadro vigente", "Gratis", "Operativa"). Nada justificado.
-- Teclado: apretá Tab al entrar → aparece "Saltar al contenido" (amarillo) → Enter → un **anillo celeste hacia adentro** marca el contenido. Seguí con Tab por menú, 140, anuncios, mapa (cada estación), carrusel, formularios: siempre se ve dónde estás.
+- Teclado: apretá Tab al entrar → aparece "Saltar al contenido" (amarillo) → Enter → un **anillo celeste hacia adentro** marca el contenido. Seguí con Tab por menú, 140, cinta de avisos, mapa (cada estación), formularios: siempre se ve dónde estás. La cinta se frena sola cuando el foco entra en ella.
 - **Imprimir** (Ctrl+P en cualquier página): papel blanco, tinta negra, sin header ni barras ni footer de navegación ni botones ni fondos animados; arriba el encabezado **"Covicen · <sitio> · impreso el <fecha de hoy>"**; los enlaces externos muestran su URL entre paréntesis; las migas quedan. El detalle en Tarifas, abajo.
 - Al navegar entre páginas hay un fundido suave; el header no parpadea y el tema no cambia.
 - 404: `/lo-que-sea/` muestra la página de error con los accesos.
@@ -100,8 +106,9 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Home `/`
 
-- **Hero con carrusel**: tres diapositivas. La fija de Covicen (volanta, título, "679,03 km sobre RN 9, RN 19, RN 34", botones Ver tarifas / Conocer el tramo, cuenta regresiva al 5 de octubre) y las dos novedades marcadas como destacadas (la adjudicación y "Qué cambia el 5 de octubre"), cada una con su fecha, título grande, resumen y "Leer más". Pasa cada **8 s**, se frena con el mouse encima o con el foco; **botón de pausa**, flechas y puntos (44 px) siempre disponibles; el punto activo se marca. Una vez que pausaste **no rearranca solo**: vuelve con play o recargando. Sin novedades destacadas no habría carrusel: quedaría el hero de siempre. **No hay popup** de bienvenida a propósito.
-- **El título grande vive fuera del carrusel** ("Las rutas del centro del país tienen quien responda"): se ve mientras está la diapositiva de Covicen y desaparece cuando pasa a una novedad destacada, que trae el suyo. En pantalla se ve igual que antes; lo que hay que mirar es que al cambiar de diapositiva **no quede un título de más colgado arriba ni salte el texto de lugar**, y que la novedad destacada se vea sola. Probalo con las flechitas y con los puntitos, no solo esperando que pase solo.
+- **Hero fijo** (cambió el 15/09/2026, pedido tuyo): volanta, el título "Las rutas del centro del país tienen quien responda", el párrafo con "679,03 km sobre RN 9, RN 19, RN 34", los botones Ver tarifas / Conocer el tramo y la cuenta regresiva al 5 de octubre. **No rota nada**: el carrusel que alternaba esto con las novedades destacadas se sacó. Las destacadas siguen en la home, en la sección Novedades. **No hay popup** de bienvenida a propósito.
+- Lo que hay que mirar es justamente que **no se mueva**: quedate medio minuto en la home y lo único que se tiene que mover es la foto (avance lento) y la cuenta regresiva.
+- Abajo del todo del hero, pegada al borde, está la **cinta de avisos**. Fijate que no le tape nada al texto ni a la cuenta regresiva, ni en la compu ni en el celular.
 - **Foto del hero, una por tema** (nueva, 15/09/2026): la nocturna en tema oscuro y la diurna en tema claro, mismo encuadre. Parallax 2.5D en desktop (movete con el mouse); en el celular, la foto con un zoom lento.
 - **La disolvencia al cambiar de tema** es lo nuevo que hay que mirar, y conviene hacerlo despacio: parate en el home, tocá el sol/luna y seguí el hero. Tiene que **fundirse al color del tema que viene** (se apaga, texto incluido), cambiar la foto por debajo y **volver a aparecer**, un poco más lento de lo que se fue. En total algo más de medio segundo. Lo que NO tiene que pasar: ver el corte de una foto a la otra, ver un parpadeo blanco o negro que no sea el color del tema, ni que el texto quede ilegible en el medio. Probalo en los dos sentidos, y también en el celular.
 - **El resto de la página cambia en el medio de esa disolvencia**, no al instante de tocar el botón: es a propósito, así el corte queda escondido. Si te parece que el botón responde lento, avisame y bajo los tiempos.
@@ -117,7 +124,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 - **Obras y estado (03)**: izquierda, las **seis obras del pliego** (todas "Planificada"); derecha, pegado al scrollear, el **Estado de la traza**: cartel **"Datos de ejemplo: el módulo se activa con la operación"**, una fila por ruta con su chip: RN 9 Precaución (2 avisos), RN 19 Precaución (1 aviso), RN 34 **Corte** (1 aviso), cada aviso con km, sentido y texto; abajo "Última actualización: 13 de septiembre de 2026…". **Todo eso es inventado a modo de muestra** (`src/content/estado-ruta.json`, `ejemplo: true`): que nadie lo lea como real. Cuando exista el centro de operaciones, el sistema manda la misma forma con `ejemplo: false` y el cartel desaparece.
 - Servicios; Novedades (las 3 últimas); **Consorcio (06)**: el panel usa de fondo la foto `consorcio.jpg` **oscurecida al 62 % en oscuro** (antes estaba al 50 %; se aclaró para que la foto se vea): mirá que los mojones "20 años · 3 empresas" y los nombres de las tres empresas se lean bien encima. En tema claro el panel se ve igual que en oscuro (zona oscura fija) porque esa foto no tiene versión de día; el hero ya salió de ese caso, el panel es el único que queda. Decisión a tu criterio: ver al final.
 - FAQ corto (cinco preguntas en acordeón, con botón a todas) y el CTA de contacto. **Al imprimir la home** salen con su respuesta, aunque en pantalla estén cerradas (ver Preguntas frecuentes, más abajo).
-- **Imprimir la home** (Ctrl+P): tienen que salir el título grande y **todas las diapositivas del carrusel**, una abajo de la otra. Los botones (pausa, flechitas, puntitos) no salen: eso está bien.
+- **Imprimir la home** (Ctrl+P): tiene que salir el título grande y, más abajo, la **cinta de avisos quieta y una sola vez** (en pantalla va duplicada para que el desfile empalme). El botón de pausa no sale: eso está bien.
 
 ## Tarifas `/tarifas/`
 
@@ -228,7 +235,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Novedades `/novedades/` y detalle
 
-- Listado de **cinco** con fecha y etiquetas (12 px, anotación); las dos destacadas son las del carrusel. La más nueva (13/9) explica qué cuadro tarifario rige desde el 5 de octubre.
+- Listado de **cinco** con fecha y etiquetas (12 px, anotación). La más nueva (13/9) explica qué cuadro tarifario rige desde el 5 de octubre. Las marcadas como destacadas ya no suben al hero (que dejó de rotar): se ven acá y en la sección Novedades de la home.
 - Detalle: prosa con **más aire entre párrafos** (1,5 veces el interlineado, como pide el pliego), links subrayados, botón volver.
 
 ## Políticas, Privacidad, Trabajá con nosotros, Proveedores
@@ -281,13 +288,13 @@ Nada de esto dice "a confirmar" ni "próximamente" en el sitio: directamente no 
 | `cabinas[].telefono`, `horarioAtencion` | `src/content/tramo.json` | Filas en la tarjeta de la estación. |
 | `cabinas[].servicios { detencionSegura, sanitarios, colocacionTelepase, areaDescanso, gruaGratuita }` | `src/content/tramo.json` | Chips en la tarjeta, leyenda del mapa, "Dónde se coloca" el TelePASE. |
 | `cabinas[].operativa: true` | `src/content/tramo.json` | La estación pasa a verde, con tabla de tarifas y botón Imprimir en su página. |
-| Un aviso `{ id, texto, url?, tono, desde?, hasta? }` | `src/content/avisos.json` | Entra a la barra superior en el build; sale solo al vencer `hasta`. |
+| Un aviso `{ id, texto, url?, tono, desde?, hasta? }` | `src/content/avisos.json` | Entra a la cinta de avisos en el build; sale solo al vencer `hasta`. |
 | `ejemplo: false` (cuando sean reales) | `src/content/estado-ruta.json` | Desaparece el cartel "Datos de ejemplo". |
 | `src/assets/institucional/organigrama.png` | imagen | Sección Organigrama en Quiénes somos. |
 | `src/assets/institucional/<id>.svg` (`vialidad-nacional`, `transporte`, `presidencia`, `red-federal`, `telepase`), monocromos | imagen | Reemplazan los rótulos de texto de la fila institucional. |
 | ~~`src/assets/atmosfera/hero-ruta-diurna.jpg`~~ | imagen | **Ya está cargada** (15/09/2026). El hero usa la nocturna en tema oscuro y la diurna en claro. |
 | `TEMA_POR_DEFECTO` | `src/lib/tema.ts` | Tema con el que arranca quien nunca eligió: `'oscuro'`, `'claro'` o `'sistema'`. |
-| Nueva novedad (`destacada: true` para el carrusel, máximo 3) | `src/content/novedades/*.md` | Listado, home y carrusel. |
+| Nueva novedad | `src/content/novedades/*.md` | Listado y home. `destacada: true` ya no cambia nada en el hero: quedó sin uso desde que el hero dejó de rotar. |
 | `avance` (0–100), `estado`, `inicio`, `finEstimado` | `src/content/obras/*.json` | Barra y fechas en Obras. |
 | Valores del cuadro | `src/content/tarifario.json` (o la API con `FUENTE_DATOS=api`) | Todas las tablas y la home. |
 
@@ -303,11 +310,14 @@ Backoffice y sistemas (repo aparte), estado de rutas en vivo (datos de ejemplo h
 
 ## Decisiones tomadas en la ejecución que quedan a tu criterio
 
+- **El pie de página quedó claro.** Las tarjetas, las tablas y los paneles pasaron al navy oscuro en tema claro, pero el cromo de la página —header, barra superior, barra de emergencias y pie— se quedó como estaba, porque es el marco y no el contenido. Si querés que el pie también sea oscuro (queda bastante bien: cierra la página con un bloque parejo), es un renglón.
+- **Los campos de formulario siguen claros** por el mismo criterio: son para escribir, no para leer. Si te resultan un salto muy grande al lado de las tarjetas oscuras, se pasan también.
+- **La etiqueta de la cinta dice "AVISOS".** En Corresur dice "ESTADO DE LA RUTA" porque ahí la cinta muestra el estado de la traza; la nuestra muestra los avisos generales de `avisos.json`. Si preferís que muestre el estado de la ruta, es otro contenido y hay que decidir de dónde sale (hoy los datos del estado son de ejemplo).
+
 - **Brillo de las fotos de fondo en oscuro: 62 %** (antes 50 %). Afecta la foto del hero y la del panel de Consorcio (la de Obras tiene su propio 80 %). Si el texto encima te parece justo de contraste, se baja en `--brillo-foto` de `src/styles/tokens.css`.
 - **Foto de día del hero: ya está** (15/09/2026). El hero dejó de ser una zona oscura fija: en claro se ve la foto de día y en oscuro la nocturna. El panel del Consorcio sigue oscuro en los dos temas porque esa foto no tiene versión de día; si querés, se genera igual que la del hero y se saca la clase.
 - **Cómo se ve el cambio de tema en la home.** Tocar el sol/luna en el home ya no corta la foto de golpe: el hero se funde al color del tema que viene (0,2 s), las fotos se cambian por debajo y la nueva aparece (0,4 s). El resto de la página cambia en el medio de esa disolvencia. Si el navegador está en "menos movimiento", el cambio es instantáneo, como antes. En el resto de las páginas no hay nada que disolver y el cambio es instantáneo siempre.
 - **Interruptor de tema oculto sin JS**: sin JavaScript no puede cambiar nada, así que no se muestra. La alternativa (mostrarlo siempre) dejaría un botón que no hace nada.
-- **Controles anterior/siguiente de la barra de anuncios: 32 px** (la barra mide 40 px). Los del carrusel del hero sí miden 44 px.
 - **Nombres de las estaciones sobre el mapa en el celular**: solo al tocar una (o al enfocarla); desde 768 px se ven siempre. El nombre está en la tarjeta que aparece debajo.
 - **Estado de la traza e incidentes del mapa son datos de ejemplo** con cartel. Si preferís que no se vea nada hasta tener datos reales, es `disponible: false` en `estado-ruta.json` (aparece el hueco "Próximamente").
 - **Categorías futuras 7 y 8 de la tabla de Tarifas se solapan** ("Más de 6 ejes" ×7 y "Más de 8 ejes" ×9): así lo escribe el PETG 53.2 y se publica literal con la cita, antes que corregir al pliego por nuestra cuenta.
@@ -317,7 +327,7 @@ Backoffice y sistemas (repo aparte), estado de rutas en vivo (datos de ejemplo h
 - **`verificar.ts` no busca los textos prohibidos en js/css/svg**: en esos archivos "681" haría match en hashes de assets, y ningún texto de usuario vive ahí. Sí los busca en el HTML crudo (meta, alt, JSON-LD incluidos), en los JSON y en el sitemap.
 - **Fila del tarifario sin valor** (si algún día una categoría no tiene precio): muestra un guion con texto para lectores de pantalla, no "a confirmar".
 - **El mapa sin JavaScript no usa `:target`** (la spec lo pedía así y no se hizo): sin JS quedan listadas las seis tarjetas de estación debajo del mapa y **cada baliza es un enlace a `/peajes/<slug>/`**, la ficha completa de esa estación. Quedó mejor que lo especificado — una URL compartible y una página real, en vez de un salto dentro de la misma pantalla —, así que se deja como está y se anota la diferencia.
-- **El `scroll-snap` del carrusel se dio de baja** (la spec lo pedía para deslizar con el dedo): pelea con el arreglo que saca el título grande del carrusel (que necesita esconder las diapositivas) y con la hoja de impresión, que justamente las destapa. Con él salieron del marcado tres clases que no tenían CSS en ningún lado.
+- **El carrusel del hero se dio de baja entero** (lo pediste el 15/09/2026). Con él se fueron el `scroll-snap` que la spec pedía para deslizar con el dedo, los controles, los puntos y el script que los movía. El JS de cliente bajó de 6,3 a 5,4 KB.
 - **Las respuestas de las preguntas frecuentes se imprimen con un truco de CSS moderno**, no con JavaScript: en navegadores viejos pueden no salir. Es un límite conocido, no un bug; si te pasa, se rehace con JS (ver Preguntas frecuentes).
 - **En el celular, las letras del mapa siguen chicas**: el dibujo entero se achica con la pantalla. En desktop ya se agrandaron; arreglarlo en celular pide cambiar cómo se dibuja el mapa en pantallas chicas, y se encara aparte si te molesta al verlo.
 - **El exceso de carga se publica con los dos tramos** (50× entre 10 % y 30 %, 100× arriba del 30 %) y no como "50x y 100x" a secas, que es lo que decía la spec: el pliego parte el exceso así y sin los tramos el número no se entiende.
