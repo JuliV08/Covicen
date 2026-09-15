@@ -27,6 +27,16 @@ describe('impresión (pliego 61.7)', () => {
     expect(css).toMatch(regla(String.raw`\[data-tarjeta-estacion\]\[hidden\]`, String.raw`display:\s*block\s*!important`));
     expect(css).toMatch(regla(String.raw`\[data-slide\]\[hidden\]`, String.raw`display:\s*block\s*!important`));
   });
+  it('las preguntas frecuentes salen con su respuesta: en papel no hay dónde hacer clic', () => {
+    // El navegador imprime los <details> cerrados. Se esconden de tres formas y hay que destapar las tres: el display
+    // del user agent, el ::details-content de los navegadores nuevos y el grid de 0fr con el que Faq.astro los anima.
+    expect(css).toMatch(regla(String.raw`details > \*:not\(summary\)`, String.raw`display:\s*revert\s*!important`));
+    expect(css).toMatch(regla('details::details-content', String.raw`content-visibility:\s*visible\s*!important`));
+    expect(css).toMatch(regla('details::details-content', String.raw`block-size:\s*auto\s*!important`));
+    expect(css).toMatch(regla(String.raw`\.faq-cuerpo`, String.raw`overflow:\s*visible\s*!important`));
+    // el ::details-content tiene que vivir en su propia regla: si el navegador no lo conoce, tira la regla entera
+    expect(css).not.toMatch(/[^\n{}]+,\s*details::details-content|details::details-content[^{]*,/);
+  });
   it('la tabla de tarifas se imprime completa: sin scroll horizontal ni corte de página adentro', () => {
     expect(css).toMatch(regla(String.raw`\.overflow-x-auto`, String.raw`overflow:\s*visible`));
     expect(css).toMatch(regla('table', String.raw`break-inside:\s*avoid`));

@@ -6,8 +6,9 @@ const listar = (dir: string): string[] => readdirSync(dir).flatMap((n) => { cons
 const archivos = ['src/components', 'src/pages', 'src/layouts', 'src/styles'].flatMap(listar).map((p) => p.replace(/\\/g, '/')).filter((p) => /\.(astro|css)$/.test(p));
 const lineasCon = (archivo: string, re: RegExp) => readFileSync(archivo, 'utf8').split('\n').map((l, i) => (re.test(l) ? `${archivo}:${i + 1}: ${l.trim()}` : null)).filter(Boolean) as string[];
 
-// Pliego 61.7: cuerpo ≥ 14 px en contenido, 12 px solo en anotaciones (clase .anotacion), sin justificado, enlaces subrayados.
-// "Menor a 12 px" = hasta 0,749rem o hasta 11px; 0,75rem (= 12 px, lo que usa .eyebrow) es válido y queda afuera a propósito.
+// Pliego 61.7: cuerpo ≥ 14 px en contenido, 12 px solo en anotaciones (clase .anotacion) y volantas (.eyebrow: una
+// volanta es una anotación por definición), sin justificado, enlaces subrayados.
+// "Menor a 12 px" = hasta 0,749rem o hasta 11px; 0,75rem (= 12 px) es válido, pero solo en esas dos clases.
 const menorA12px = String.raw`0\.[0-6]\d*rem|0\.7[0-4]\d*rem|0\.7rem\b|1[01]px|[0-9]px`;
 describe('legibilidad (pliego 61.7)', () => {
   it('no hay tamaños menores a 12 px', () => {
@@ -16,6 +17,13 @@ describe('legibilidad (pliego 61.7)', () => {
   });
   it('text-xs (12 px) solo en anotaciones', () => {
     const culpables = archivos.flatMap((a) => lineasCon(a, /\btext-xs\b/)).filter((l) => !/\banotacion\b/.test(l));
+    expect(culpables, culpables.join('\n')).toEqual([]);
+  });
+  // Misma regla del lado del CSS: sin esto, `font-size: 0.75rem` a mano se cuela sin marcar el texto como anotación.
+  it('los 12 px escritos en CSS (0,75rem) solo en .anotacion o .eyebrow', () => {
+    const culpables = archivos
+      .flatMap((a) => lineasCon(a, /font-size:\s*0\.75rem|text-\[0\.75rem\]|text-\[12px\]/))
+      .filter((l) => !/\b(anotacion|eyebrow)\b/.test(l));
     expect(culpables, culpables.join('\n')).toEqual([]);
   });
   // El mapa es un SVG con viewBox de 820 unidades de ancho que el CSS escala: sus font-size NO son píxeles.

@@ -43,7 +43,10 @@ const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
         ))}
         <li>
           <details class="desplegable relative" data-desplegable>
-            <summary class:list={['nav-item cursor-pointer list-none', { 'is-activo': nosotrosActivo }]} aria-expanded="false">
+            {/* Sin aria-expanded en el marcado: el summary nativo ya expone si el details está abierto. Escrito a mano
+                quedaría fijo en "false" cuando no hay JS que lo sincronice, y el lector anunciaría "contraído" sobre un
+                menú abierto: peor que no ponerlo. Lo pone y lo mantiene al día sincronizar(), abajo. */}
+            <summary class:list={['nav-item cursor-pointer list-none', { 'is-activo': nosotrosActivo }]}>
               Nosotros <ChevronDown size={16} aria-hidden="true" class="chevron" />
             </summary>
             <ul class="absolute right-0 top-full mt-2 w-64 rounded-md border border-borde bg-superficie-2 p-2 shadow-2xl">

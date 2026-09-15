@@ -64,6 +64,16 @@ describe('Header', () => {
     expect(html).toMatch(/href="\/tarifas\/"[^>]*aria-current="page"/);
     expect(html).toContain('popovertarget="menu-mobile"');
   });
+  it('el desplegable Nosotros no sale con aria-expanded fijo: sin JS mentiría', async () => {
+    // El <summary> nativo ya expone si el <details> está abierto. Un aria-expanded="false" en el marcado lo pisa y,
+    // sin JS que lo sincronice, el lector anuncia "contraído" sobre un menú abierto: peor que no poner nada.
+    const c = await AstroContainer.create();
+    const html = await c.renderToString(Header, { props: await props() });
+    expect(html).toMatch(/<summary[^>]*>/);
+    expect(html).not.toMatch(/<summary[^>]*aria-expanded/);
+    // con JS sí lo pone y lo mantiene al día con el estado del <details>
+    expect(readFileSync('src/components/Header.astro', 'utf8')).toMatch(/setAttribute\('aria-expanded', String\(d\.open\)\)/);
+  });
   it('lleva la barra superior con los accesos y, en el menú mobile, TelePASE y Mi cuenta', async () => {
     const c = await AstroContainer.create();
     const html = await c.renderToString(Header, { props: await props([{ id: 'a', texto: 'Aviso', tono: 'info' }]) });

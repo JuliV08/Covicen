@@ -66,6 +66,17 @@
      Tailwind pone `display: none !important` en [hidden]; esta excepción es más específica y también importante. */
   [data-tarjeta-estacion][hidden], [data-slide][hidden] { display: block !important; }
 
+  /* Los <details> cerrados se imprimen cerrados: /preguntas-frecuentes/ y el bloque de FAQ del home saldrían con todas
+     las preguntas y ninguna respuesta. En papel no hay dónde hacer clic, así que salen abiertos. Se esconden de tres
+     formas y hay que destapar las tres: el `display` del user agent sobre lo que no es el <summary>, el grid de 0fr con
+     el que Faq.astro anima la apertura (`revert` descarta las dos, porque vuelve al valor del user agent) y el
+     ::details-content de los navegadores nuevos. Ese último va en su propia regla a propósito: un navegador que no
+     conozca el pseudo-elemento tira la regla entera, y si compartiera selector se llevaría puesto lo demás. */
+  details > *:not(summary) { display: revert !important; }
+  details::details-content { content-visibility: visible !important; block-size: auto !important; overflow: visible !important; transition: none !important; }
+  .faq-cuerpo, .faq-cuerpo > * { overflow: visible !important; }
+  details { break-inside: avoid; }
+
   /* Tablas completas: sin scroll horizontal, sin corte de página adentro, encabezado repetido si igual se corta. */
   .overflow-x-auto { overflow: visible !important; }
   table { break-inside: avoid; width: 100%; }
