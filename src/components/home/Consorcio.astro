@@ -7,10 +7,12 @@ import { imagenAtmosfera } from '@/lib/atmosfera';
 interface Props { empresa: Empresa }
 const { empresa } = Astro.props;
 // Con la foto del consorcio (src/assets/atmosfera/consorcio.jpg) el panel la usa de fondo, oscurecida, detrás de los mojones.
+// La foto es nocturna y no tiene versión de día: con `zona-noche` (tokens.css) el panel usa los tokens del tema oscuro
+// también en claro, que es lo que sostiene el 4,5:1 del texto encima (sin eso, en claro caía a 3,6:1).
 const hayFoto = imagenAtmosfera('consorcio') !== undefined;
 ---
 <Seccion id="consorcio" indice="06" eyebrow="Quiénes somos" titulo="Un consorcio de constructoras viales, con contrato a 20 años." intro="Covicen es la sociedad que integran las tres empresas adjudicatarias del Tramo Centro. Inversión 100% privada, sin subsidios, bajo supervisión de Vialidad Nacional." fondo="fondo-2">
-  <div class="revelar tarjeta tarjeta-panel overflow-hidden">
+  <div class:list={['revelar tarjeta tarjeta-panel overflow-hidden', hayFoto && 'zona-noche']}>
     {hayFoto && (
       <div class="absolute inset-0 overflow-hidden rounded-[calc(var(--tarjeta-radio)-1.5px)]" aria-hidden="true">
         <ImagenAtmosfera nombre="consorcio" alt="" sizes="(min-width: 80rem) 80rem, 100vw" />

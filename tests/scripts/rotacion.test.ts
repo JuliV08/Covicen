@@ -82,6 +82,48 @@ describe('rotacion (carrusel y anuncios)', () => {
     expect(visible()).toBe(1);
   });
 
+  // Spec §5.1 y §10.3: la rotación se detiene con el puntero encima y con el foco adentro. Antes el freno se perdía al
+  // tocar «anterior»/«siguiente», porque `ir()` rearrancaba el reloj sin mirar si el puntero o el foco seguían ahí.
+  it('con el foco adentro no vuelve a rotar aunque uses los controles', async () => {
+    const { visible, click, disparar } = await montar();
+    disparar('[data-carrusel]', 'focusin');
+    vi.advanceTimersByTime(24000);
+    expect(visible()).toBe(0);
+    click('[data-siguiente]');
+    expect(visible()).toBe(1);
+    vi.advanceTimersByTime(24000);
+    expect(visible()).toBe(1);
+    // al sacar el foco de la barra vuelve a girar
+    disparar('[data-carrusel]', 'focusout');
+    vi.advanceTimersByTime(8000);
+    expect(visible()).toBe(2);
+  });
+
+  it('con el puntero encima tampoco, y se larga al sacarlo', async () => {
+    const { visible, click, disparar } = await montar();
+    disparar('[data-carrusel]', 'pointerenter');
+    click('[data-siguiente]');
+    vi.advanceTimersByTime(24000);
+    expect(visible()).toBe(1);
+    disparar('[data-carrusel]', 'pointerleave');
+    vi.advanceTimersByTime(8000);
+    expect(visible()).toBe(2);
+  });
+
+  // El botón de pausa manda sobre las pausas implícitas: al clickearlo el navegador le da el foco, así que "Reanudar"
+  // tiene que limpiarlas. Si no, el botón diría "Pausar" con la rotación frenada: mentiría sobre su estado.
+  it('«Reanudar» larga de verdad aunque el foco haya quedado adentro de la barra', async () => {
+    const { $, visible, click, disparar } = await montar();
+    disparar('[data-carrusel]', 'focusin');
+    click('[data-pausa]');
+    expect($('[data-pausa]').hasAttribute('data-pausado')).toBe(true);
+    click('[data-pausa]');
+    expect($('[data-pausa]').getAttribute('aria-label')).toBe('Pausar el carrusel');
+    expect($('[data-pausa]').hasAttribute('data-pausado')).toBe(false);
+    vi.advanceTimersByTime(8000);
+    expect(visible()).toBe(1);
+  });
+
   it('la pista anuncia el cambio a mano ("polite") y calla el automático ("off")', async () => {
     const { $, visible, click } = await montar();
     vi.advanceTimersByTime(8000);

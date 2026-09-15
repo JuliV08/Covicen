@@ -103,7 +103,9 @@ const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
     const s = d.querySelector('summary');
     if (!s) return;
     s.setAttribute('aria-expanded', String(d.open));
-    if (!d.dataset.listo) { d.dataset.listo = ''; d.addEventListener('toggle', () => s.setAttribute('aria-expanded', String(d.open))); }
+    // `dataset.listo = ''` se lee como falsy: la guarda con `!d.dataset.listo` no guardaba nada y el listener se
+    // enganchaba de nuevo en cada page-load. Con hasAttribute se pregunta por el atributo, no por su valor.
+    if (!d.hasAttribute('data-listo')) { d.setAttribute('data-listo', ''); d.addEventListener('toggle', () => s.setAttribute('aria-expanded', String(d.open))); }
   });
   document.addEventListener('astro:page-load', sincronizar);
 </script>

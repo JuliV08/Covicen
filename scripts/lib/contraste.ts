@@ -39,8 +39,19 @@ const hexDe = (css: string): Record<string, string> => {
 export const bloqueTheme = (css: string): string => bloque(css, /@theme(?:\s+static)?\s*\{/);
 export const bloqueClaro = (css: string): string => bloque(css, /html\[data-tema="claro"\]\s*\{/);
 
+/** Texto crudo del bloque `:root` y del de `.zona-noche` (la zona que vuelve al tema oscuro dentro del tema claro). */
+export const bloqueRoot = (css: string): string => bloque(css, /^:root\s*\{/m);
+export const bloqueNoche = (css: string): string => bloque(css, /\.zona-noche\s*\{/);
+
 /** Nombres de TODAS las variables (`--nombre:`) de un bloque: hex, rgb o números. `--color-*` (el reset) no cuenta. */
 export const nombresDeTokens = (texto: string): string[] => [...texto.matchAll(/--([\w-]+):/g)].map((m) => m[1]!);
+
+/** `{ nombre: 'valor' }` de cada `--nombre: valor;` de un bloque, sin el comentario que venga después. */
+export const declaracionesDe = (texto: string): Record<string, string> => {
+  const d: Record<string, string> = {};
+  for (const m of texto.matchAll(/--([\w-]+):\s*([^;]+);/g)) d[m[1]!] = m[2]!.replace(/\/\*[\s\S]*$/, '').trim();
+  return d;
+};
 
 /** Tokens del tema oscuro: `{ nombre: '#HEX' }` por cada `--color-<nombre>: #hex` del bloque `@theme`. Ignora valores no hex. */
 export const leerTokens = (css: string): Record<string, string> => hexDe(bloqueTheme(css));

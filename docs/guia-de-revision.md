@@ -1,11 +1,11 @@
 # Guía de revisión — web de Covicen (actualización de septiembre de 2026)
 
-Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/superpowers/plans/2026-09-13-actualizacion-web.md`, más la **revisión final del 14 de septiembre**) se hizo **sin pruebas visuales**: esta guía es la lista de lo que hay que mirar a mano, pantalla por pantalla, más lo que quedó oculto a propósito y cómo cargarlo.
+Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/superpowers/plans/2026-09-13-actualizacion-web.md`, más la **revisión final del 14 y 15 de septiembre**) se hizo **sin pruebas visuales**: esta guía es la lista de lo que hay que mirar a mano, pantalla por pantalla, más lo que quedó oculto a propósito y cómo cargarlo.
 
 **Cómo levantarlo:** `pnpm dev` → http://localhost:4321/ (con `.env` copiado de `.env.example` y `PUBLIC_BASE_PATH=/`; sin `.env` también anda). Para verlo en el celular, `pnpm dev --host` y la IP que imprime. **Ojo con Asistencia:** el celular solo entrega la ubicación en sitios con HTTPS (o `localhost`), así que por `http://IP` el botón "Obtener mi ubicación" no va a funcionar; probalo en la compu (localhost vale) o en la URL de Pages después del deploy.
 **URL de Pages:** https://juliv08.github.io/Covicen/ (se publica al pushear a `main`; el push lo decidís vos).
 
-**Lo que ya verificó la máquina** (no hace falta mirarlo), al cierre de la revisión final: `astro check` sin errores (158 archivos); **414 tests** en 46 archivos; `pnpm verificar` sobre las 30 páginas: links internos, un solo `<h1>`, `description`, `canonical`, JSON-LD, `tel:140` en toda página, textos prohibidos ausentes ("a confirmar", "Corredor Vial del Centro", "681"), 679 km en la home y en El tramo, "Última actualización" en el pie, `noindex` según entorno, `alt` en toda imagen, sin emojis, HTML válido (html-validate), `target=_blank` con `noopener`, **ningún `href` con un esquema raro** (ni `javascript:` ni `data:`), contraste 4,5:1 de todos los pares en los dos temas, hoja de impresión emitida, **JS 6,2 KB gz** (tope 30). Lo que sigue es lo que un script no puede juzgar: cómo se ve y cómo se siente.
+**Lo que ya verificó la máquina** (no hace falta mirarlo), al cierre de la revisión final: `astro check` sin errores (160 archivos); **434 tests** en 48 archivos; `pnpm verificar` sobre las 30 páginas: links internos, un solo `<h1>`, `description`, `canonical`, JSON-LD, `tel:140` en toda página, textos prohibidos ausentes ("a confirmar", "Corredor Vial del Centro", "681"), 679 km en la home y en El tramo, "Última actualización" en el pie, `noindex` según entorno, `alt` en toda imagen, sin emojis, HTML válido (html-validate), `target=_blank` con `noopener`, **ningún `href` con un esquema raro** (ni `javascript:` ni `data:`), contraste 4,5:1 de todos los pares en los dos temas, hoja de impresión emitida, **JS 6,3 KB gz** (tope 30). Lo que sigue es lo que un script no puede juzgar: cómo se ve y cómo se siente.
 
 **Navegadores:** lo atado a scroll-driven animations (dibujo del mapa al scrollear, parallax del hero, fondo del header) anda en Chrome, Edge y Safari; en Firefox estable aparece ya dibujado o fijo.
 
@@ -13,9 +13,9 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 
 ---
 
-## Lo que cambió en la revisión final (14 de septiembre) — mirá esto primero
+## Lo que cambió en la revisión final (14 y 15 de septiembre) — mirá esto primero
 
-Después de cerrar las seis fases se revisó todo de punta a punta y se aplicaron los hallazgos en seis tandas. Lo que sigue es lo nuevo respecto de lo que ya habías visto; cada punto está explicado en su pantalla, más abajo.
+Después de cerrar las seis fases se revisó todo de punta a punta, sección por sección de la spec, y los hallazgos se aplicaron en tandas; la última es la del 15 de septiembre. Antes de tocar nada, cada hallazgo pasó por tres lentes que trabajan por separado: una intenta refutarlo, otra chequea si lo que pide está escrito en la spec o en el pliego, y otra calibra qué tan grave es y si el arreglo no rompe otra cosa. Uno se descartó con ese filtro (abajo, en «Lo que se revisó y se dejó como estaba»). Lo que sigue es lo nuevo respecto de lo que ya habías visto; cada punto está explicado en su pantalla, más abajo.
 
 | Dónde | Qué cambió | Lo que hay que mirar |
 |---|---|---|
@@ -28,6 +28,29 @@ Después de cerrar las seis fases se revisó todo de punta a punta y se aplicaro
 | Home (tarjeta que gira) | Con el teclado se queda dada vuelta; con el mouse, un clic la fija hasta que hagas clic afuera. | Probala con Tab y con clic. |
 | `/preguntas-frecuentes/` y home | **Al imprimir salen las respuestas** (antes solo las preguntas). | Ctrl+P y mirá la vista previa, sin gastar papel. |
 | Menú "Nosotros" | Corrección invisible para lectores de pantalla. | Que siga abriendo y cerrando igual, con mouse y con teclado. |
+| `/tarifas/` y home | Si alguna vez una estación tiene un cuadro propio, la tabla ya no mezcla su precio con el general; con el mismo precio sin IVA, TelePASE y pago en la vía muestran el mismo número. La tarjeta grande del home se esconde si la categoría destacada no tiene precio, en vez de romper la página. | Que las tres tablas sigan iguales y que la tarjeta del home muestre $ 1.500. |
+| `/transparencia/` | Los botones de la **Ley 27.742** y el **Decreto 97/2025** abrían avisos del Boletín Oficial que no eran esas normas. Ahora abren la norma que dicen. | Tocá los dos y mirá que el Boletín muestre la ley y el decreto. |
+| `/servicios/`, `/contacto/`, `/quienes-somos/` | El **0800** figuraba con acuse "24 horas" y el pliego le da acuse **inmediato**; la prórroga de respuesta ya no dice "una sola vez" (el pliego no lo pone); los **tiempos de grúa** se publican como los compromete el pliego (30 minutos en al menos el 90 % de los casos, nunca más de 40) y no como promesa lisa. | Que el 0800 diga "inmediato" arriba y abajo en la misma página. |
+| `/el-tramo/` | Los cuatro links de la sub-navegación dejaban el título de la sección tapado detrás de las barras de arriba. Ahora aterrizan bien. El mapa, además, tiene su propio encabezado para lectores de pantalla. | Tocá los cuatro links de la sub-navegación y mirá que se vea el título de cada bloque. |
+| Tema claro (hero y panel del Consorcio) | **Lo más visible de esta última tanda.** Como la foto del hero es de noche y no hay versión de día, en tema claro el texto encima quedaba flojo de contraste. Ahora el hero y el panel del Consorcio se ven **oscuros también en tema claro**, igual que en el tema oscuro. | Prendé el tema claro: el hero tiene que verse como en oscuro, con el resto de la página clara. Decime si te gusta así. |
+| Tema claro (botón amarillo del 140) | El anillo que marca dónde está el foco cuando navegás con Tab era amarillo sobre fondo claro: no se veía. Ahora es ocre. | En tema claro, tabulá hasta el botón "140" del encabezado y mirá el recuadro. |
+| `/el-tramo/` (mapa, tema claro) | Los puntos de las **estaciones próximas** y los rombos de "Precaución" eran amarillo claro sobre panel casi blanco. Ahora usan el mismo ocre que la leyenda: el mapa y la leyenda por fin coinciden. | En tema claro, mirá que Leones, San Francisco y Totoras se distingan en el mapa. |
+| Mapa (RN 9) | La línea de la RN 9 seguía **35 km más allá de donde termina la concesión** (llegaba a Córdoba capital, y la concesión termina en Pilar). Se cortó en Pilar; Córdoba sigue dibujada como ciudad de referencia, sin línea, igual que Rafaela y Santa Fe. | Que la línea celeste de la RN 9 termine antes de Córdoba y que el marcador del aviso de James Craik caiga sobre la estación. |
+| Estado de la traza (dato de ejemplo) | El aviso inventado de niebla nombraba **Rafaela**, que no está sobre la RN 19 ni dentro del tramo. Ahora dice "entre San Carlos Centro y el empalme con la RN 34". | Leelo en la home y en El tramo. |
+| Hero y barra de anuncios | Con el mouse encima o el foco puesto, **tocar las flechitas ya no vuelve a largar la rotación**. Antes se te cambiaba el texto solo a los 6 u 8 segundos mientras lo estabas leyendo. | Dejá el mouse encima, tocá "siguiente" y esperá 10 segundos: no se tiene que mover. |
+
+### Lo que se revisó y se dejó como estaba
+
+- **La provincia de la estación San Francisco (RN 19 km 120) sigue diciendo "Córdoba" — y hay que preguntarle a
+  Covicen.** El pliego ubica el km 120 dentro del ejido de **Frontera, que es Santa Fe**: la RN 19 concesionada termina
+  en el límite entre las dos provincias en el km 127,19, o sea siete kilómetros más adelante. El sitio lo publica como
+  hecho firme en la página de la estación (`/peajes/san-francisco/`), en el texto que ve Google y en la tarjeta de El
+  tramo. **No se cambió a propósito**: la spec dice textual "no se cambia sin confirmación", y acá inventar el dato es
+  peor que dejar el que vino de la fuente periodística. Es un dato de una sola palabra: apenas Covicen conteste, se
+  corrige en un minuto. **Es lo primero de la lista para preguntarles.**
+- **Las marcas viales amarillas de las rutas del mapa quedan como están.** Se propuso oscurecerlas junto con las
+  balizas, y se midió que sería peor: esas rayitas van *arriba* de la línea celeste (el asfalto), no sobre el fondo, así
+  que en ocre casi desaparecerían. El amarillo ahí está bien.
 
 ---
 
@@ -50,7 +73,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta y se aplicaro
 - Nace oculto y **aparece con JavaScript**: sin JS no puede funcionar, así que no se muestra un botón muerto. Si lo ves sin JS habilitado, es un bug.
 - Tocarlo cambia todo el sitio de una: el ícono pasa de sol (en oscuro) a luna (en claro); en el celular cambia el color de la barra del navegador (`theme-color`: navy `#0B1526` en oscuro, gris `#EEF1F4` en claro).
 - **Recargar en claro:** no tiene que haber un destello oscuro antes de pintar (el tema se aplica en el `<head>`, antes del primer frame). Navegar entre páginas en claro: se mantiene (queda en `localStorage`, clave `covicen:tema`). En modo privado dura la visita.
-- Qué mirar en **tema claro**: el amarillo vial como texto pasa a ocre (`#6E5A00`), no es un error; las tarjetas con halo sobre gris claro; las tablas; los chips verdes "Operativa"/"Gratis" (verde `#1B6B35`); los links celestes se leen (acento `#2C688F`); el **hero usa la misma foto nocturna sin oscurecer** (brillo 100 %) hasta que exista la de día (`src/assets/atmosfera/hero-ruta-diurna.jpg`, la generás vos con el prompt del Anexo A de la spec). Con esa foto en su lugar, el hero cambia de foto con el tema.
+- Qué mirar en **tema claro**: el amarillo vial como texto pasa a ocre (`#6E5A00`), no es un error; las tarjetas con halo sobre gris claro; las tablas; los chips verdes "Operativa"/"Gratis" (verde `#1B6B35`); los links celestes se leen (acento `#2C688F`); el **hero se ve oscuro igual que en el tema oscuro** (la foto nocturna, al 62 %, con el texto claro encima) porque todavía no existe la foto de día (`src/assets/atmosfera/hero-ruta-diurna.jpg`, la generás vos con el prompt del Anexo A de la spec); el panel del Consorcio, en la home, hace lo mismo y por el mismo motivo. Con la foto de día en su lugar, el hero vuelve a cambiar con el tema y deja de ser una isla oscura.
 - El tema con el que arranca quien nunca eligió es `TEMA_POR_DEFECTO` en `src/lib/tema.ts` (hoy `'oscuro'`; puede ser `'claro'` o `'sistema'`). Lo decide Covicen.
 
 **Footer**
@@ -89,7 +112,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta y se aplicaro
 - Leyenda: rutas, estación operativa, estación próxima, ciudad, y solo los servicios que alguna estación tiene (área de descanso, grúa gratuita). En la home el mapa **no** muestra incidentes (sí en El tramo).
 - Mojones: **679 km · 3 rutas · 3 estaciones operativas de 6**; cuentan al entrar en pantalla.
 - **Obras y estado (03)**: izquierda, las **seis obras del pliego** (todas "Planificada"); derecha, pegado al scrollear, el **Estado de la traza**: cartel **"Datos de ejemplo: el módulo se activa con la operación"**, una fila por ruta con su chip: RN 9 Precaución (2 avisos), RN 19 Precaución (1 aviso), RN 34 **Corte** (1 aviso), cada aviso con km, sentido y texto; abajo "Última actualización: 13 de septiembre de 2026…". **Todo eso es inventado a modo de muestra** (`src/content/estado-ruta.json`, `ejemplo: true`): que nadie lo lea como real. Cuando exista el centro de operaciones, el sistema manda la misma forma con `ejemplo: false` y el cartel desaparece.
-- Servicios; Novedades (las 3 últimas); **Consorcio (06)**: el panel usa de fondo la foto `consorcio.jpg` **oscurecida al 62 % en oscuro** (antes estaba al 50 %; se aclaró para que la foto se vea): mirá que los mojones "20 años · 3 empresas" y los nombres de las tres empresas se lean bien encima. En claro la foto va al 100 %. Decisión a tu criterio: ver al final.
+- Servicios; Novedades (las 3 últimas); **Consorcio (06)**: el panel usa de fondo la foto `consorcio.jpg` **oscurecida al 62 % en oscuro** (antes estaba al 50 %; se aclaró para que la foto se vea): mirá que los mojones "20 años · 3 empresas" y los nombres de las tres empresas se lean bien encima. En tema claro el panel se ve igual que en oscuro (es zona oscura fija, como el hero) porque esa foto tampoco tiene versión de día. Decisión a tu criterio: ver al final.
 - FAQ corto (cinco preguntas en acordeón, con botón a todas) y el CTA de contacto. **Al imprimir la home** salen con su respuesta, aunque en pantalla estén cerradas (ver Preguntas frecuentes, más abajo).
 - **Imprimir la home** (Ctrl+P): tienen que salir el título grande y **todas las diapositivas del carrusel**, una abajo de la otra. Los botones (pausa, flechitas, puntitos) no salen: eso está bien.
 
@@ -278,7 +301,7 @@ Backoffice y sistemas (repo aparte), estado de rutas en vivo (datos de ejemplo h
 ## Decisiones tomadas en la ejecución que quedan a tu criterio
 
 - **Brillo de las fotos de fondo en oscuro: 62 %** (antes 50 %). Afecta la foto del hero y la del panel de Consorcio (la de Obras tiene su propio 80 %). Si el texto encima te parece justo de contraste, se baja en `--brillo-foto` de `src/styles/tokens.css`.
-- **Foto de día del hero**: no existe todavía; la generás vos (Anexo A de la spec) y va en `src/assets/atmosfera/hero-ruta-diurna.jpg` con el mismo encuadre que la nocturna (comparten el mapa de profundidad). Hasta entonces, en claro se ve la nocturna al 100 %.
+- **Foto de día del hero**: no existe todavía; la generás vos (Anexo A de la spec) y va en `src/assets/atmosfera/hero-ruta-diurna.jpg` con el mismo encuadre que la nocturna (comparten el mapa de profundidad). **Hasta entonces, el hero y el panel del Consorcio se ven oscuros también en tema claro.** Se probó el camino de aclarar la foto con un velo más fuerte y no sirve: para que el texto llegue al contraste que pide el pliego en el celular había que taparla casi entera, o sea quedarse sin foto. Cuando cargues la de día, la parte oscura se desactiva sola. Si preferís que en claro no haya foto en vez de una zona oscura, se cambia.
 - **Interruptor de tema oculto sin JS**: sin JavaScript no puede cambiar nada, así que no se muestra. La alternativa (mostrarlo siempre) dejaría un botón que no hace nada.
 - **Controles anterior/siguiente de la barra de anuncios: 32 px** (la barra mide 40 px). Los del carrusel del hero sí miden 44 px.
 - **Nombres de las estaciones sobre el mapa en el celular**: solo al tocar una (o al enfocarla); desde 768 px se ven siempre. El nombre está en la tarjeta que aparece debajo.

@@ -38,6 +38,9 @@ describe('contenido del repo', () => {
     const slugs = new Set(t.ciudades.map((c) => c.slug));
     for (const tr of t.trazados) for (const s of tr.ciudades) expect(slugs.has(s), `ciudad ${s} no existe`).toBe(true);
     expect(t.trazados.find((x) => x.ruta === 'RN 34')?.ciudades.at(-1)).toBe('empalme-rn-19');
+    // El trazado termina donde termina la concesión: puntoEnRuta interpola entre pkInicial y pkFinal a lo largo de la
+    // polilínea, así que un nodo de más corre de lugar todos los incidentes de esa ruta.
+    expect(t.trazados.find((x) => x.ruta === 'RN 9')?.ciudades.at(-1)).toBe('pilar');
     expect(t.trazados.find((x) => x.ruta === 'RN 19')?.ciudades[0]).toBe('santo-tome');
     for (const c of t.cabinas) expect(c.fuente?.url).toMatch(/^https:\/\//);
   });

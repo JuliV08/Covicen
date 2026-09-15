@@ -2,6 +2,9 @@
 // (6 s). Se ve un item por vez (el resto con `hidden`) y la rotación se frena con el puntero encima, el foco adentro y
 // el botón de pausa, que manda (WCAG 2.2.2): mientras esté pausado no vuelve a arrancar ni al sacar el puntero, y la
 // elección dura lo que dure la página. "Menos movimiento" arranca ya pausado: el botón dice "Reanudar" y funciona.
+// Los tres frenos son estado (`pausado`, `puntero`, `foco`) y los mira `arrancar`: `ir()` rearranca al tocar
+// «anterior»/«siguiente» y para entonces el pointerenter/focusin ya pasó, así que sin recordarlos la rotación se
+// escapaba con el puntero encima o el foco en el botón. «Reanudar» es explícito y limpia los dos implícitos.
 // El aria-live de la pista sigue el patrón de carrusel del APG: "off" antes de cada vuelta automática (con "polite"
 // fijo el lector cantaría el hero entero cada 8 s) y "polite" antes de cada cambio a mano, que es el que sí anuncia.
 // Ganchos en la raíz: [data-pista], [data-anterior], [data-siguiente] y [data-pausa] con data-pausar/data-reanudar.
@@ -19,20 +22,23 @@ const rotar = (raiz: HTMLElement, selector: string, ms: number, alCambiar?: (i: 
     items[actual]!.hidden = false;
     alCambiar?.(actual);
   };
+  let puntero = false, foco = false;
   const parar = () => window.clearInterval(timer);
   const arrancar = () => {
     parar();
-    if (!pausado) timer = window.setInterval(() => { pista?.setAttribute('aria-live', 'off'); mostrar(actual + 1); }, ms);
+    if (!pausado && !puntero && !foco) timer = window.setInterval(() => { pista?.setAttribute('aria-live', 'off'); mostrar(actual + 1); }, ms);
   };
   const ir = (n: number) => { pista?.setAttribute('aria-live', 'polite'); mostrar(n); arrancar(); };
   raiz.querySelector('[data-anterior]')?.addEventListener('click', () => ir(actual - 1));
   raiz.querySelector('[data-siguiente]')?.addEventListener('click', () => ir(actual + 1));
   const rotular = () => { pausa?.toggleAttribute('data-pausado', pausado); pausa?.setAttribute('aria-label', pausa.dataset[pausado ? 'reanudar' : 'pausar'] ?? ''); };
-  pausa?.addEventListener('click', () => { pausado = !pausado; rotular(); arrancar(); });
-  raiz.addEventListener('pointerenter', parar);
-  raiz.addEventListener('pointerleave', arrancar);
-  raiz.addEventListener('focusin', parar);
-  raiz.addEventListener('focusout', arrancar);
+  // El click deja el foco en el propio botón: sin limpiar los implícitos, «Reanudar» diría "Pausar" con todo frenado.
+  pausa?.addEventListener('click', () => { pausado = !pausado; if (!pausado) puntero = foco = false; rotular(); arrancar(); });
+  raiz.addEventListener('pointerenter', () => { puntero = true; parar(); });
+  raiz.addEventListener('pointerleave', () => { puntero = false; arrancar(); });
+  raiz.addEventListener('focusin', () => { foco = true; parar(); });
+  // relatedTarget dice a dónde va el foco: saltar de un control al de al lado no es salir de la barra.
+  raiz.addEventListener('focusout', (e) => { const a = (e as FocusEvent).relatedTarget as Node | null; if (!a || !raiz.contains(a)) { foco = false; arrancar(); } });
   document.addEventListener('astro:before-swap', parar, { once: true });
   rotular();
   arrancar();

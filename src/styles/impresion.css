@@ -13,11 +13,12 @@
     --color-tarjeta-interior-1: var(--color-papel); --color-tarjeta-interior-2: var(--color-papel); --color-tarjeta-interior-3: var(--color-papel);
     --color-texto: var(--color-tinta); --color-texto-2: var(--color-tinta); --color-texto-3: var(--color-tinta-2);
     --color-acento: var(--color-tinta); --color-acento-hover: var(--color-tinta);
-    --color-ok: var(--color-tinta); --color-error: var(--color-tinta); --color-vial-texto: var(--color-tinta);
-    /* el amarillo vial pasa a gris medio: en el mapa las estaciones próximas se distinguen de las operativas (negras)
-       también en blanco y negro. Lo que va sobre un fondo de color se escribe en tinta: si el navegador no imprime fondos,
-       el texto sigue ahí. */
-    --color-vial: var(--color-tinta-media);
+    --color-ok: var(--color-tinta); --color-error: var(--color-tinta);
+    /* el amarillo vial pasa a gris medio, como fondo Y como tinta: en el mapa las estaciones próximas (punto, anillo y
+       nombre) se distinguen de las operativas (negras) también en blanco y negro. Gris medio sobre papel da 5,7:1, así
+       que el nombre se lee igual. Lo que va sobre un fondo de color se escribe en tinta: si el navegador no imprime
+       fondos, el texto sigue ahí. */
+    --color-vial: var(--color-tinta-media); --color-vial-texto: var(--color-tinta-media);
     --color-sobre-vial: var(--color-tinta); --color-sobre-ok: var(--color-tinta); --color-sobre-acento: var(--color-tinta); --color-sobre-marca: var(--color-tinta);
     --color-borde: var(--color-tinta-suave); --color-borde-fuerte: var(--color-tinta-media);
     --color-glow: transparent; --color-sombra: transparent; --color-plano: transparent; --color-luz: transparent;

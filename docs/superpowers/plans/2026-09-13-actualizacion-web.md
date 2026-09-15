@@ -5603,12 +5603,29 @@ Reescribir siguiendo la estructura actual (una sección por pantalla), con qué 
 - `obsidian/Sistema de diseno.md`: sección "Tema claro" (si no se escribió en la Fase 0) y "Legibilidad e impresión (pliego 61.7)".
 - `obsidian/Obligaciones del pliego para la web.md`: el checklist de la spec §13 con el estado real al cierre y el enlace a la spec.
 
-- [ ] **Step 3: Cierre general**
+- [x] **Step 3: Cierre general**
 
 Run: `pnpm check && pnpm test && pnpm verificar`
 Expected: verde. Anotar en el mensaje de cierre los números que imprime `verificar` (páginas, KB de JS).
 
 Revisión final de `rev-bro` sobre todo el diff desde el commit de la spec (`git diff 15791de..HEAD --stat` y el diff completo), contra la spec entera, con las tres verificaciones corridas por él. Atender hallazgos. Después, `superpowers:verification-before-completion` con los outputs pegados.
+
+**Hecho (15/09/2026).** La revisión final se corrió por secciones de la spec los días 14 y 15 de septiembre de 2026, y
+cada hallazgo pasó por verificación adversarial de tres lentes independientes (una intenta refutarlo, otra revisa la
+exigencia contra spec y pliego, otra calibra la severidad y el arreglo) antes de aplicarse. Los arreglos entraron en
+`ee4f211`, `23d3e19`, `755089b`, `4af2473`, `4f51767`, `31b4bc1`, `fbc7ca4`, `ef01a0b`, `92647f0` y la tanda de cierre
+del 15/09 (foco del botón vial en tema claro, hero y panel del consorcio como zona noche, balizas del mapa con
+`vial-texto`, trazado de la RN 9 hasta Pilar, incidente de ejemplo de la RN 19, rotación que no se escapa con el puntero
+o el foco, guarda muerta de `data-listo` en el header).
+
+Verificación al cierre: `pnpm check` 160 archivos, 0 errores / 0 warnings / 0 hints; `pnpm test` 434 tests en 48
+archivos, 0 fallos; `pnpm verificar` 30 páginas, 0 fallos, JS 6,3 KB gz (tope 30).
+
+Dos cosas que **no** se aplicaron y por qué:
+- **Provincia de la estación San Francisco** (el pliego la ubicaría en Frontera, Santa Fe, por progresiva): la spec §3.2
+  y este plan (nota de la Tarea 1.2) mandan no tocarla sin confirmación de Covicen. Sigue como pendiente de la spec §14.
+- **Foto de día del hero** (`hero-ruta-diurna.jpg`, Anexo A de la spec): no existe; hasta que exista, el hero se resuelve
+  con la zona noche y no con un velo que taparía la foto. La genera Juli.
 
 - [x] **Step 4: Commit y estado del repo**
 

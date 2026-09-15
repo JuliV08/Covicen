@@ -102,6 +102,9 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
   }
   .btn-vial:hover { box-shadow: 0 8px 24px -6px color-mix(in srgb, var(--color-vial) 45%, transparent); transform: translateY(-1px); }
   .btn-vial:hover .telefono { animation: oscilar 0.5s var(--ease-suave) 1; }
-  .btn-vial:focus-visible { outline-color: var(--color-vial); }
+  /* El anillo de foco se dibuja 2 px AFUERA del botón (outline-offset de la regla base), o sea sobre el fondo de la
+     página: va con vial-texto, el amarillo como tinta. Con --color-vial daba 1,47:1 en claro (el token no cambia entre
+     temas) y el anillo desaparecía justo en el botón del 140. En oscuro vial-texto es el mismo amarillo: no se mueve. */
+  .btn-vial:focus-visible { outline-color: var(--color-vial-texto); }
   @keyframes oscilar { 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
 }

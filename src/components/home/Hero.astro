@@ -21,8 +21,12 @@ const hayCarrusel = destacadas.length > 0;
 // Sin foto: la calzada vectorial en perspectiva. Luces sintéticas sobre la foto se veían como glitch: fuera.
 const fotos = variantesHero(imagenAtmosfera('hero-ruta-nocturna') !== undefined, imagenAtmosfera('hero-ruta-diurna') !== undefined);
 const hayFoto = fotos.length > 0;
+// Con una sola foto (la nocturna) el hero se ve igual en los dos temas, así que en claro el texto quedaba sobre una
+// foto de noche sin oscurecer: `zona-noche` (tokens.css) revierte los semánticos al tema oscuro dentro de la sección.
+// Con la foto de día cargada, cada tema tiene la suya y la clase no va: el hero vuelve a seguir el tema.
+const soloNocturna = fotos.length === 1;
 ---
-<section class="hero plano relative isolate overflow-hidden" style="min-height: calc(100dvh - var(--alto-header))" data-spotlight>
+<section class:list={['hero plano relative isolate overflow-hidden', soloNocturna && 'zona-noche']} style="min-height: calc(100dvh - var(--alto-header))" data-spotlight>
   {hayFoto ? fotos.map((f) => (
     <div class:list={['parallax absolute inset-0 -z-20', f.clase]} aria-hidden="true">
       <ParallaxProfundidad nombre={f.nombre} profundidad="hero-ruta-nocturna.profundidad" vp={[0.78, 0.595]} prioridad={f.prioridad} />

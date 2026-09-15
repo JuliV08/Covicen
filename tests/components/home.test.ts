@@ -51,6 +51,13 @@ describe('Hero', () => {
     expect(html).not.toContain('data-pausa');
     expect(html).not.toContain('data-siguiente');
   });
+  // Mientras la única foto sea la nocturna, en tema claro se muestra esa misma foto: la sección va como zona noche para
+  // que el texto encima siga en 4,5:1 (pliego 61.7). Cuando exista hero-ruta-diurna.jpg, variantesHero devuelve dos y la
+  // clase se cae sola: tests/lib/atmosfera.test.ts cubre ese cambio.
+  it('con una sola foto (la nocturna) la sección es zona noche también en tema claro', async () => {
+    const html = await render(Hero, { empresa: await fuenteLocalJson.empresa(), novedades: [] });
+    expect(html).toMatch(/<section[^>]*class="[^"]*zona-noche/);
+  });
 });
 
 describe('TarifaDestacada', () => {

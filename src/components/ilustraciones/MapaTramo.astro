@@ -116,8 +116,13 @@ const severidades = (['corte', 'precaucion', 'info'] as const).filter((s) => mar
   /* Los selectores por estado (0,3,0) le ganan a `.mapa text` (0,1,1): antes `.cabina-etiqueta` perdía y nunca se coloreaba. */
   .baliza[data-estado-operativo="operativa"] .baliza-halo, .baliza[data-estado-operativo="operativa"] .baliza-punto { fill: var(--color-ok); }
   .baliza[data-estado-operativo="operativa"] .cabina-etiqueta { fill: var(--color-ok); }
-  .baliza[data-estado-operativo="proxima"] .baliza-halo, .baliza[data-estado-operativo="proxima"] .baliza-punto { fill: var(--color-vial); }
-  .baliza[data-estado-operativo="proxima"] .baliza-anillo { stroke: var(--color-vial); }
+  /* Punto, halo y anillo van con vial-texto, no con vial: acá el amarillo es primer plano sobre el panel (en claro,
+     casi blanco), y --color-vial no cambia entre temas (1,47:1, por debajo del 3:1 de WCAG 1.4.11 para un objeto
+     gráfico). Con vial-texto el mapa coincide con la muestra de la leyenda, que ya usa border-vial-texto. En oscuro
+     los dos tokens son el mismo amarillo: no se mueve nada. Las marcas viales del trazado (arriba) siguen con
+     --color-vial a propósito: van sobre la línea del acento, o sea sobre asfalto, no sobre el fondo. */
+  .baliza[data-estado-operativo="proxima"] .baliza-halo, .baliza[data-estado-operativo="proxima"] .baliza-punto { fill: var(--color-vial-texto); }
+  .baliza[data-estado-operativo="proxima"] .baliza-anillo { stroke: var(--color-vial-texto); }
   .baliza[data-estado-operativo="proxima"] .cabina-etiqueta { fill: var(--color-vial-texto); }
   /* Foco de teclado y estación elegida: anillo con el acento (el outline no se dibuja en <a> de SVG). */
   .baliza-foco { stroke: var(--color-acento); opacity: 0; transition: opacity var(--dur-micro); }
@@ -126,7 +131,7 @@ const severidades = (['corte', 'precaucion', 'info'] as const).filter((s) => mar
   /* El halo late solo (movimiento.css); en hover se detiene y crece. */
   .baliza:hover .baliza-halo, .baliza:focus-visible .baliza-halo { animation-play-state: paused; transform: scale(1.5); opacity: 0.4; }
   .incidente-forma { fill: var(--color-acento); }
-  .incidente[data-severidad="precaucion"] .incidente-forma { fill: var(--color-vial); }
+  .incidente[data-severidad="precaucion"] .incidente-forma { fill: var(--color-vial-texto); }
   .incidente[data-severidad="corte"] .incidente-forma { fill: var(--color-error); }
   @media (min-width: 48rem) { .cabina-etiqueta { opacity: 0.9; } }
 </style>

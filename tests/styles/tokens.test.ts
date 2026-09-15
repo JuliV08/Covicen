@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { bloqueClaro, bloqueTheme, contraste, leerTemas, nombresDeTokens } from '../../scripts/lib/contraste.ts';
+import { bloqueClaro, bloqueNoche, bloqueRoot, bloqueTheme, contraste, declaracionesDe, leerTemas, nombresDeTokens } from '../../scripts/lib/contraste.ts';
 import { paresContraste } from '../../scripts/lib/pares.ts';
 
 const css = readFileSync('src/styles/tokens.css', 'utf8');
@@ -39,6 +39,26 @@ describe('tokens', () => {
     expect(temas.claro['acento']).toBe('#2C688F');
     expect(temas.claro['sobre-marca']).toBe('#FFFFFF');
   });
+  // `.zona-noche` es el hero (y el panel del consorcio) con la foto nocturna: en el tema claro la foto se muestra igual,
+  // así que adentro se vuelve al tema oscuro. Si revirtiera solo algunos tokens quedaría mitad y mitad, y si alguien
+  // cambia un color del oscuro sin copiarlo acá, la zona se desincroniza en silencio. Estas tres guardas lo impiden.
+  describe('zona noche', () => {
+    const oscuro = { ...declaracionesDe(bloqueTheme(css)), ...declaracionesDe(bloqueRoot(css)) };
+    const noche = declaracionesDe(bloqueNoche(css));
+    it('revierte todos los tokens que el tema claro redefine', () => {
+      const claro = nombresDeTokens(bloqueClaro(css));
+      expect(claro.length).toBeGreaterThan(20);
+      for (const n of claro) expect(Object.keys(noche), `falta --${n} en .zona-noche`).toContain(n);
+    });
+    it('y cada uno con el valor del tema oscuro', () => {
+      expect(Object.keys(noche).length).toBeGreaterThan(20);
+      for (const [n, v] of Object.entries(noche)) expect(v, `--${n}`).toBe(oscuro[n]);
+    });
+    it('vive dentro de @media screen: en papel manda impresion.css', () => {
+      expect(css).toMatch(/@media screen\s*\{\s*\.zona-noche\s*\{/);
+    });
+  });
+
   describe.each(Object.entries(temas))('tema %s', (_nombre, tokens) => {
     it.each(paresContraste)('%s sobre %s cumple AA (≥ 4.5)', (texto, fondo) => {
       expect(tokens[texto], `falta --color-${texto}`).toBeDefined();

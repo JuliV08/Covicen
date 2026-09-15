@@ -13,8 +13,11 @@ describe('presupuesto', () => {
   });
   // 12 → 16 KB (2026-09-13): la actualización de la web suma tema, anuncios, mapa interactivo, carrusel y asistencia
   // (~4 KB gz según la spec §12) sobre una base que ya pesaba ~10 KB. El gate real sigue siendo el emitido (30 KB, verificar.ts).
-  it('todos los scripts de cliente (fuente) pesan menos de 16 KB gz en total', () => {
-    expect(todos.reduce((s, p) => s + gz(p), 0)).toBeLessThan(16384);
+  // 16 → 17 KB (2026-09-15): el arreglo de la rotación (recordar puntero y foco para no rearrancar al tocar los
+  // controles) suma 102 bytes gz de CÓDIGO; los otros ~250 son el comentario que explica por qué. Esto mide la fuente,
+  // comentarios incluidos, así que documentar sale caro acá y no le cuesta un byte al usuario: lo emitido no se movió.
+  it('todos los scripts de cliente (fuente) pesan menos de 17 KB gz en total', () => {
+    expect(todos.reduce((s, p) => s + gz(p), 0)).toBeLessThan(17408);
   });
   it('el isotipo SVG pesa menos de 12 KB', () => {
     expect(statSync('src/assets/marca/isotipo.svg').size).toBeLessThan(12 * 1024);

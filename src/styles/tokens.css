@@ -112,3 +112,44 @@ html[data-tema="claro"] {
   --brillo-foto: 1;
   color-scheme: light;
 }
+
+/* Zona siempre oscura. La foto del hero es nocturna y, mientras no exista `hero-ruta-diurna.jpg` (spec §4.4), se
+   muestra también en el tema claro: ahí --brillo-foto es 1 y el velo aclara poco, así que el párrafo del hero quedaba
+   entre 2,8:1 y 4,4:1 sobre la foto, abajo del 4,5:1 que exige el pliego 61.7 en los DOS temas. En vez de inventar un
+   velo nuevo (para llegar a 4,5:1 en celular había que taparla casi entera), la zona revierte los semánticos a los del
+   tema oscuro: adentro se ve exactamente como en oscuro y el contraste es el que ya verifican pares.ts y verificar.ts.
+   Todo lo de adentro sale de tokens, así que ningún componente se toca. El día que exista la foto de día, el hero deja
+   de llevar la clase y cada tema usa la suya.
+   Va en @media screen a propósito: en papel manda impresion.css (blanco y negro) y acá le ganaría por especificidad.
+   tests/styles/tokens.test.ts exige que estén TODOS los que cambia el tema claro y con el valor del oscuro. */
+@media screen {
+  .zona-noche {
+    --color-fondo: #0B1526;
+    --color-fondo-2: #10203A;
+    --color-superficie: #16304E;
+    --color-superficie-2: #1E4870;
+    --color-texto: #E8EEF5;
+    --color-texto-2: #A9C4D8;
+    --color-texto-3: #8593A0;
+    --color-acento: #68BCE1;
+    --color-acento-hover: #8FCDE8;
+    --color-vial-texto: #F0C419;
+    --color-sobre-acento: #0B1526;
+    --color-sobre-marca: #FFFFFF;
+    --color-ok: #7BD389;
+    --color-sobre-ok: #0B1526;
+    --color-error: #FF8A80;
+    --color-cabecera: rgb(16 32 58 / 0.85);
+    --color-tarjeta-interior-1: #17334F;
+    --color-tarjeta-interior-2: #10203A;
+    --color-tarjeta-interior-3: #0B1526;
+    --color-borde: rgb(255 255 255 / 0.10);
+    --color-borde-fuerte: rgb(255 255 255 / 0.18);
+    --color-glow: rgb(104 188 225 / 0.35);
+    --color-sombra: rgb(0 0 0 / 0.6);
+    --color-plano: rgb(255 255 255 / 0.04);
+    --color-luz: rgb(104 188 225 / 0.09);
+    --brillo-foto: 0.62;
+    color-scheme: dark;
+  }
+}

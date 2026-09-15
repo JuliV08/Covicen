@@ -21,7 +21,9 @@ describe('puntoEnRuta', async () => {
   const ciudad = (slug: string) => t.ciudades.find((c) => c.slug === slug)!.mapa;
   it('en la progresiva inicial devuelve el primer nodo del trazado y en la final el último', () => {
     expect(puntoEnRuta(t, 'RN 9', 297)).toEqual(ciudad('rosario'));
-    expect(puntoEnRuta(t, 'RN 9', 660.16)).toEqual(ciudad('cordoba'));
+    // El PK final de la RN 9 es el inicio de la Red de Accesos a Córdoba, en Pilar: la concesión NO llega a la capital.
+    // Córdoba sigue dibujada como ciudad de referencia (principal), fuera del trazado, igual que Rafaela y Santa Fe.
+    expect(puntoEnRuta(t, 'RN 9', 660.16)).toEqual(ciudad('pilar'));
     expect(puntoEnRuta(t, 'RN 34', 188.68)).toEqual(ciudad('empalme-rn-19'));
   });
   it('recorta los km fuera del tramo y cae en el medio del trazo para un km intermedio', () => {
