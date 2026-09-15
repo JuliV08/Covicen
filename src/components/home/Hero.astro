@@ -1,5 +1,5 @@
 ---
-import { ArrowRight, ChevronLeft, ChevronRight } from '@lucide/astro';
+import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from '@lucide/astro';
 import CuentaRegresiva from '@/components/CuentaRegresiva.astro';
 import HeroRuta from '@/components/ilustraciones/HeroRuta.astro';
 import ParallaxProfundidad from '@/components/ilustraciones/ParallaxProfundidad.astro';
@@ -12,6 +12,8 @@ interface Props { empresa: Empresa; novedades?: Novedad[] }
 const { empresa, novedades = [] } = Astro.props;
 const c = empresa.concesion;
 // Carrusel: el slide fijo de Covicen primero y hasta tres novedades destacadas después. Sin destacadas, no hay carrusel.
+// La portada (volanta + h1) queda fuera de [data-slide]: rotacion.ts esconde las diapositivas con `hidden` y el h1 tiene
+// que estar SIEMPRE en el árbol de accesibilidad. Con una destacada a la vista se la recorta ([data-fuera]), no se esconde.
 const destacadas = novedades.filter((n) => n.destacada).slice(0, 3);
 const hayCarrusel = destacadas.length > 0;
 // Con foto: parallax 2.5D con mapa de profundidad (WebGL en desktop; en mobile, la foto con un dolly lento). Si existe
@@ -31,11 +33,13 @@ const hayFoto = fotos.length > 0;
   <div class:list={['absolute inset-0 -z-10 bg-gradient-to-r from-fondo', hayFoto ? 'via-fondo/70 to-fondo/10' : 'via-fondo/85 to-fondo/20']} aria-hidden="true"></div>
   <div class="hero-luz absolute inset-0 -z-10" aria-hidden="true"></div>
   <div class="contenedor flex min-h-[calc(100dvh-var(--alto-header))] flex-col justify-center py-20">
-    <section class:list={['carrusel', hayCarrusel && 'con-slides']} data-carrusel={hayCarrusel ? '' : undefined} aria-roledescription={hayCarrusel ? 'carrusel' : undefined} aria-label={hayCarrusel ? 'Destacados' : undefined}>
-      <div class="carrusel-pista">
-        <div class="entrada slide" data-slide="inicio" role={hayCarrusel ? 'group' : undefined} aria-roledescription={hayCarrusel ? 'diapositiva' : undefined} aria-label={hayCarrusel ? 'Covicen' : undefined}>
+    <section data-carrusel={hayCarrusel ? '' : undefined} aria-roledescription={hayCarrusel ? 'carrusel' : undefined} aria-label={hayCarrusel ? 'Destacados' : undefined}>
+      <div data-pista aria-live={hayCarrusel ? 'polite' : undefined} aria-atomic={hayCarrusel ? 'true' : undefined}>
+        <div class="entrada" data-portada>
           <div style="--i: 0"><Eyebrow>Concesionaria del Tramo Centro · {c.rutas.join(' · ')}</Eyebrow></div>
           <h1 class="mt-6 max-w-4xl" style="--i: 1">Las rutas del centro del país tienen quién responda.</h1>
+        </div>
+        <div class="entrada slide" data-slide="inicio" role={hayCarrusel ? 'group' : undefined} aria-roledescription={hayCarrusel ? 'diapositiva' : undefined} aria-label={hayCarrusel ? 'Covicen' : undefined}>
           <p class="mt-6 max-w-2xl text-lg text-texto-2 md:text-xl" style="--i: 2">
             Covicen es la nueva concesionaria del Tramo Centro de la Red Federal de Concesiones: <strong class="text-texto">{numero(c.km, 2)} km</strong> sobre {c.rutas.join(', ')}, entre {c.provincias.join(' y ')}. Operación desde el <strong class="text-texto">{fechaLarga(c.inicioOperacion)}</strong>.
           </p>
@@ -56,11 +60,12 @@ const hayFoto = fotos.length > 0;
       </div>
       {hayCarrusel && (
         <div class="mt-8 flex items-center gap-4">
-          <button type="button" class="control" data-slide-anterior aria-label="Anterior"><ChevronLeft size={18} aria-hidden="true" /></button>
+          <button type="button" class="control" data-pausa data-pausar="Pausar el carrusel" data-reanudar="Reanudar el carrusel" aria-label="Pausar el carrusel"><span data-icono-pausa><Pause size={18} aria-hidden="true" /></span><span data-icono-reanudar><Play size={18} aria-hidden="true" /></span></button>
+          <button type="button" class="control" data-anterior aria-label="Anterior"><ChevronLeft size={18} aria-hidden="true" /></button>
           <ul class="flex gap-2" aria-label="Ir a">
             {['inicio', ...destacadas.map((n) => n.slug)].map((s, i) => <li><button type="button" class:list={['punto', i === 0 && 'is-activo']} data-slide-ir={s} aria-label={i === 0 ? 'Covicen' : destacadas[i - 1]!.titulo} aria-current={i === 0 ? 'true' : undefined}></button></li>)}
           </ul>
-          <button type="button" class="control" data-slide-siguiente aria-label="Siguiente"><ChevronRight size={18} aria-hidden="true" /></button>
+          <button type="button" class="control" data-siguiente aria-label="Siguiente"><ChevronRight size={18} aria-hidden="true" /></button>
         </div>
       )}
     </section>
@@ -68,7 +73,7 @@ const hayFoto = fotos.length > 0;
   <p class="scrollea eyebrow absolute bottom-6 left-1/2 hidden -translate-x-1/2 items-center gap-2 text-texto-3 md:inline-flex" aria-hidden="true">Scrolleá <span class="scrollea-flecha">↓</span></p>
 </section>
 <script src="../../scripts/cuenta-regresiva.ts"></script>
-<script src="../../scripts/carrusel.ts"></script>
+<script src="../../scripts/rotacion.ts"></script>
 <style>
   /* Luz suave que sigue al cursor (spotlight.ts setea --mx/--my en la sección). */
   .hero { --mx: 70%; --my: 40%; }
@@ -83,5 +88,11 @@ const hayFoto = fotos.length > 0;
   .punto { width: 2.75rem; height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; }
   .punto::before { content: ""; width: 0.6rem; height: 0.6rem; border-radius: 999px; background: var(--color-borde-fuerte); transition: background var(--dur-micro), transform var(--dur-micro); }
   .punto.is-activo::before, .punto:hover::before { background: var(--color-acento); transform: scale(1.25); }
+  /* Un solo botón para las dos caras del pausado: se ve el ícono que corresponde al estado. */
+  [data-icono-reanudar], [data-pausado] [data-icono-pausa] { display: none; }
+  [data-pausado] [data-icono-reanudar] { display: inline-flex; }
+  /* La portada sale de la pantalla cuando hay una destacada, pero NO del árbol de accesibilidad: el h1 sigue ahí.
+     Solo en pantalla: en papel (impresion.css destapa las diapositivas) el pliego sale entero. */
+  @media screen { [data-portada][data-fuera] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } }
   @media (prefers-reduced-motion: reduce) { .slide { animation: none; } }
 </style>
