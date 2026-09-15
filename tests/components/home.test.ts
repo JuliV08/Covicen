@@ -58,6 +58,18 @@ describe('Hero', () => {
     // El velo tapa el hero entero, texto incluido: tiene que quedar fuera del árbol de accesibilidad y sin capturar el puntero.
     expect(readFileSync('src/styles/global.css', 'utf8')).toMatch(/\.velo-tema\s*\{[^}]*pointer-events:\s*none/);
   });
+  // Regresión medida en producción (15/09/2026): la foto del tema opuesto nace dentro de un `display: none` y, con
+  // carga diferida, el navegador no la baja NUNCA, ni siquiera cuando después se la muestra (quedaba en
+  // naturalWidth 0). Donde no corre el canvas del parallax —celular, ventana angosta, menos movimiento— el hero se
+  // quedaba sin foto al cambiar de tema. Las dos van `eager`; la que no se ve arranca con prioridad baja.
+  it('ninguna de las dos fotos del hero va con carga diferida', async () => {
+    const html = await render(Hero, { empresa: await fuenteLocalJson.empresa(), novedades: [] });
+    const fotos = (html.match(/<img[^>]*>/g) ?? []).filter((i) => i.includes('parallax-2d-img'));
+    expect(fotos.length, 'esperaba las dos fotos del hero').toBe(2);
+    fotos.forEach((img) => expect(img, 'una foto del hero quedó diferida').not.toContain('loading="lazy"'));
+    expect(fotos.filter((i) => i.includes('fetchpriority="high"')).length, 'solo la visible lleva prioridad alta').toBe(1);
+    expect(fotos.filter((i) => i.includes('fetchpriority="low"')).length, 'la oculta va en prioridad baja').toBe(1);
+  });
   // WCAG 2.2.2 (pausar, detener, ocultar) + spec §10.3: la pista anuncia el cambio y hay botón de pausa.
   it('con destacadas: pista con aria-live y botón de pausa con etiquetas para los dos estados', async () => {
     const html = await render(Hero, { empresa: await fuenteLocalJson.empresa(), novedades: destacadas });

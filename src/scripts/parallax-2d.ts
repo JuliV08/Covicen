@@ -70,21 +70,35 @@ const montar = (raiz: HTMLElement) => {
     const uZoom = gl.getUniformLocation(prog, 'zoom');
     const aspectoImg = foto.naturalWidth / foto.naturalHeight;
 
+    // objetivo (mouse + scroll + deriva) → actual (suavizado)
+    let mx = 0, my = 0, sy = 0, ax = 0, ay = 0, zoom = 1, visible = true, animando = false;
+    const pintar = () => {
+      gl.uniform2f(uDesp, ax, ay);
+      gl.uniform1f(uZoom, zoom);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    };
+
     const redimensionar = () => {
       const dpr = Math.min(devicePixelRatio || 1, 1.5);
-      canvas.width = Math.round(canvas.clientWidth * dpr);
-      canvas.height = Math.round(canvas.clientHeight * dpr);
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      const aspectoCv = canvas.width / canvas.height;
+      const w = Math.round(canvas.clientWidth * dpr);
+      const h = Math.round(canvas.clientHeight * dpr);
+      // Oculto por el tema, clientWidth/Height dan 0: tocar el buffer ahí lo dejaría en 0×0 (y el `esc` en NaN), y al
+      // volver a mostrarse la foto salía deformada. Se espera a que la caja exista de nuevo.
+      if (w === 0 || h === 0 || (w === canvas.width && h === canvas.height)) return;
+      canvas.width = w;
+      canvas.height = h;
+      gl.viewport(0, 0, w, h);
+      const aspectoCv = w / h;
       // cover exacto, igual que object-fit: cover de la foto de abajo
       const esc = aspectoCv > aspectoImg ? [1, aspectoImg / aspectoCv] : [aspectoCv / aspectoImg, 1];
       gl.uniform2f(uEsc, esc[0]!, esc[1]!);
+      pintar(); // cambiar canvas.width borra el buffer: si el bucle está frenado, sin esto queda en negro
     };
     redimensionar();
-    addEventListener('resize', redimensionar, { passive: true });
-
-    // objetivo (mouse + scroll + deriva) → actual (suavizado)
-    let mx = 0, my = 0, sy = 0, ax = 0, ay = 0, visible = true, animando = false;
+    // El hero cambia de alto sin que la ventana se mueva: al conmutar el tema se lo oculta y se lo vuelve a mostrar, y
+    // el contenido lo corre. Con `resize` de window el lienzo se quedaba con la medida del montaje y la foto salía
+    // recortada de otra manera que el <img> de abajo. ResizeObserver mira la caja real, incluida la vuelta de 0 a N.
+    new ResizeObserver(redimensionar).observe(canvas);
     raiz.closest('section')?.addEventListener('pointermove', (e) => {
       const r = raiz.getBoundingClientRect();
       mx = (e.clientX - r.left) / r.width - 0.5;
@@ -92,23 +106,23 @@ const montar = (raiz: HTMLElement) => {
     }, { passive: true });
     addEventListener('scroll', () => { sy = Math.min(1, scrollY / Math.max(1, raiz.clientHeight)); }, { passive: true });
 
+    // Un contexto perdido (la GPU lo recicla si el canvas pasa un rato oculto) deja el lienzo opaco y TAPA la foto.
+    // No se reconstruye nada: se vuelve al <img>, que está siempre abajo y ya descargado.
+    canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); raiz.classList.remove('activo', 'webgl'); });
+
     const cuadro = (t: number) => {
       animando = true;
-      if (!visible) { animando = false; return; }
+      if (!visible || gl.isContextLost()) { animando = false; return; }
       const deriva = Math.sin(t / 9000) * 0.012;
       ax = lerp(ax, mx * 0.03 + deriva, 0.04);
       ay = lerp(ay, my * 0.02 + sy * 0.03 + Math.sin(t / 7000) * 0.005, 0.04);
-      const zoom = 1 + (1 - Math.cos(t / 13000)) * 0.05; // dolly lento 1.00 → 1.10, arranca igual que la foto
-      gl.uniform2f(uDesp, ax, ay);
-      gl.uniform1f(uZoom, zoom);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      zoom = 1 + (1 - Math.cos(t / 13000)) * 0.05; // dolly lento 1.00 → 1.10, arranca igual que la foto
+      pintar();
       requestAnimationFrame(cuadro);
     };
     new IntersectionObserver(([en]) => { visible = !!en?.isIntersecting; if (visible && !animando) requestAnimationFrame(cuadro); }).observe(raiz);
     // Primer cuadro dibujado ANTES de mostrar el canvas: nunca se ve vacío.
-    gl.uniform2f(uDesp, 0, 0);
-    gl.uniform1f(uZoom, 1);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    pintar();
     raiz.classList.add('activo');
     requestAnimationFrame(cuadro);
   };

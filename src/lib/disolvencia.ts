@@ -15,15 +15,29 @@ export type Velo = {
 /** Cuánto tarda el velo en tapar el hero. Tiene que coincidir con la transición de `.velo-tema` en global.css. */
 export const ENTRADA_VELO = 200;
 
+/** Red de seguridad: si los frames nunca llegan, el velo se baja igual a esta altura.
+ *  Hace falta porque el navegador deja de entregar frames cuando la pestaña queda en segundo plano: si el usuario
+ *  cambia de tema y se va a otra pestaña, el velo se quedaba tapando el hero (un panel liso donde debería estar la
+ *  foto) y, peor, el cerrojo no se soltaba nunca más y la disolvencia moría para el resto de la visita. */
+export const TOPE_VELO = 1000;
+
 export const disolver = (cambiarTema: () => void, velo: Velo | null): void => {
   if (!velo) {
     cambiarTema();
     return;
   }
+  // `ocultar` se llama una sola vez, venga por los frames o por la red de seguridad.
+  let bajado = false;
+  const bajar = () => {
+    if (bajado) return;
+    bajado = true;
+    velo.ocultar();
+  };
   velo.mostrar();
   velo.esperar(ENTRADA_VELO, () => {
     cambiarTema();
     // Dos frames: el primero pinta el tema nuevo debajo del velo, el segundo recién empieza a destaparlo.
-    velo.frame(() => velo.frame(() => velo.ocultar()));
+    velo.frame(() => velo.frame(bajar));
   });
+  velo.esperar(TOPE_VELO, bajar);
 };
