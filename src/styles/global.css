@@ -148,9 +148,13 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
      color le queda igual en los dos temas. */
   html[data-tema="claro"] .bloque-oscuro { background-color: var(--fondo-bloque, var(--color-fondo)); }
 
-  .velo-tema { position: absolute; inset: 0; z-index: 40; opacity: 0; pointer-events: none; transition: opacity 200ms var(--ease-salida); }
-  .velo-tema[data-visible] { opacity: 1; }
-  /* La vuelta es más lenta que la ida: entrar en la disolvencia es un gesto, salir es la foto nueva apareciendo. */
-  .velo-tema:not([data-visible]) { transition-duration: 420ms; }
-  @media (prefers-reduced-motion: reduce) { .velo-tema { transition: none; } }
+  /* El velo NO depende de que el JS lo baje. Va y vuelve en una sola animación de CSS: si el script se cuelga, si la
+     pestaña se va a segundo plano o si pasa cualquier cosa rara, igual termina transparente. Lo peor que puede pasar
+     es que la disolvencia se vea fea, nunca que el hero quede tapado por un panel liso.
+     Los tiempos: tapa a los 200 ms (es cuando scripts/tema.ts aplica el tema, ENTRADA_VELO en lib/disolvencia.ts) y de
+     ahí se abre más lento, porque entrar en la disolvencia es un gesto y salir es la foto nueva apareciendo. */
+  .velo-tema { position: absolute; inset: 0; z-index: 40; opacity: 0; pointer-events: none; }
+  .velo-tema[data-visible] { animation: velo-tema 625ms var(--ease-salida) both; }
+  @keyframes velo-tema { 0% { opacity: 0; } 32% { opacity: 1; } 100% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .velo-tema[data-visible] { animation: none; } }
 }

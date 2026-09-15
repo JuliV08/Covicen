@@ -1,29 +1,26 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { disolver, ENTRADA_VELO, TOPE_VELO } from '@/lib/disolvencia';
+import { disolver, ENTRADA_VELO, SALIDA_VELO } from '@/lib/disolvencia';
 
-/** Doble del velo. Separa los diferidos por reloj de los diferidos por frame, porque lo que hay que poder probar es
- *  justamente qué pasa cuando los frames NO llegan (pestaña en segundo plano): ahí el navegador sigue disparando
- *  setTimeout pero no requestAnimationFrame. */
+const css = readFileSync('src/styles/global.css', 'utf8');
+
+/** Doble del velo: anota el orden de lo que pasa y corre los diferidos a la altura que uno le pida. */
 const doble = () => {
   const pasos: string[] = [];
   const relojes: Array<{ ms: number; fn: () => void }> = [];
-  const frames: Array<() => void> = [];
   const velo = {
     mostrar: () => { pasos.push('mostrar'); },
-    ocultar: () => { pasos.push('ocultar'); },
-    esperar: (ms: number, fn: () => void) => { pasos.push(`esperar:${ms}`); relojes.push({ ms, fn }); },
-    frame: (fn: () => void) => { pasos.push('frame'); frames.push(fn); },
+    ocultar: () => { pasos.push('soltar'); },
+    esperar: (ms: number, fn: () => void) => { relojes.push({ ms, fn }); },
   };
   /** Corre los relojes vencidos a los `ms` indicados, en orden. */
-  const correrRelojes = (ms: number) => {
+  const correr = (ms: number) => {
     for (let i = 0; i < relojes.length; i++) {
       const r = relojes[i]!;
       if (r.ms <= ms) { relojes.splice(i--, 1); r.fn(); }
     }
   };
-  /** Drena los frames pendientes, incluidos los que se encadenan. */
-  const correrFrames = () => { while (frames.length) frames.shift()!(); };
-  return { pasos, velo, correrRelojes, correrFrames };
+  return { pasos, velo, correr };
 };
 
 describe('disolvencia del hero al cambiar de tema', () => {
@@ -33,58 +30,54 @@ describe('disolvencia del hero al cambiar de tema', () => {
     expect(pasos).toEqual(['cambiar']);
   });
 
-  it('con velo: primero tapa, después cambia el tema, y recién al final destapa', () => {
-    const { pasos, velo, correrRelojes, correrFrames } = doble();
+  it('primero tapa, y el tema recién cambia cuando el velo tapó del todo', () => {
+    const { pasos, velo, correr } = doble();
     disolver(() => pasos.push('cambiar'), velo);
     // Antes de que venza nada, el tema NO cambió: si cambiara acá se vería el corte entre las dos fotos.
-    expect(pasos).toEqual(['mostrar', `esperar:${ENTRADA_VELO}`, `esperar:${TOPE_VELO}`]);
-    correrRelojes(ENTRADA_VELO);
-    expect(pasos).toContain('cambiar');
-    // Con el tema recién aplicado el velo sigue arriba: falta que el navegador pinte la foto nueva debajo.
-    expect(pasos).not.toContain('ocultar');
-    correrFrames();
-    expect(pasos).toContain('ocultar');
-    expect(pasos.indexOf('mostrar')).toBeLessThan(pasos.indexOf('cambiar'));
-    expect(pasos.indexOf('cambiar')).toBeLessThan(pasos.indexOf('ocultar'));
+    expect(pasos).toEqual(['mostrar']);
+    correr(ENTRADA_VELO - 1);
+    expect(pasos).toEqual(['mostrar']);
+    correr(ENTRADA_VELO);
+    expect(pasos).toEqual(['mostrar', 'cambiar']);
+  });
+
+  it('el cerrojo se suelta recién cuando termina la animación', () => {
+    const { pasos, velo, correr } = doble();
+    disolver(() => pasos.push('cambiar'), velo);
+    correr(ENTRADA_VELO);
+    expect(pasos).not.toContain('soltar');
+    correr(SALIDA_VELO);
+    expect(pasos).toEqual(['mostrar', 'cambiar', 'soltar']);
   });
 
   it('el tema se aplica una sola vez', () => {
-    const { pasos, velo, correrRelojes, correrFrames } = doble();
+    const { pasos, velo, correr } = doble();
     disolver(() => pasos.push('cambiar'), velo);
-    correrRelojes(TOPE_VELO);
-    correrFrames();
+    correr(SALIDA_VELO);
     expect(pasos.filter((p) => p === 'cambiar')).toHaveLength(1);
   });
 
-  // La razón de ser del tope: sin él, una pestaña que se va a segundo plano dejaba el velo tapando el hero para
-  // siempre (un panel liso donde va la foto) y la disolvencia no volvía a andar en toda la visita.
-  it('si los frames nunca llegan, el velo baja igual por el tope', () => {
-    const { pasos, velo, correrRelojes } = doble();
-    disolver(() => pasos.push('cambiar'), velo);
-    correrRelojes(ENTRADA_VELO);
-    expect(pasos).not.toContain('ocultar');
-    correrRelojes(TOPE_VELO);
-    expect(pasos.filter((p) => p === 'ocultar')).toHaveLength(1);
+  // La razón de ser de todo esto: el velo tapa el hero ENTERO, texto incluido. Si se quedara arriba, el usuario ve un
+  // panel liso donde va la foto — que es exactamente el bug que reportó Juli. Por eso bajarlo NO puede depender del
+  // JS: lo hace la animación de CSS sola, de 0 a 1 y de vuelta a 0.
+  it('la animación de CSS empieza y termina transparente: el JS no la puede dejar tapando', () => {
+    const fotogramas = /@keyframes velo-tema\s*\{([\s\S]*?)\n\s*\}/.exec(css)?.[1] ?? '';
+    expect(fotogramas, 'no encontré @keyframes velo-tema').not.toBe('');
+    expect(fotogramas).toMatch(/0%\s*\{\s*opacity:\s*0/);
+    expect(fotogramas).toMatch(/100%\s*\{\s*opacity:\s*0/);
   });
 
-  it('con frames y tope juntos, el velo se baja una sola vez', () => {
-    const { pasos, velo, correrRelojes, correrFrames } = doble();
-    disolver(() => pasos.push('cambiar'), velo);
-    correrRelojes(ENTRADA_VELO);
-    correrFrames();
-    correrRelojes(TOPE_VELO);
-    correrFrames();
-    expect(pasos.filter((p) => p === 'ocultar')).toHaveLength(1);
+  it('el momento de cambiar el tema es el fotograma en que el velo tapa del todo', () => {
+    const dur = /\.velo-tema\[data-visible\]\s*\{\s*animation:\s*velo-tema\s+(\d+)ms/.exec(css)?.[1];
+    const pico = /@keyframes velo-tema\s*\{[\s\S]*?(\d+)%\s*\{\s*opacity:\s*1/.exec(css)?.[1];
+    expect(dur, 'no encontré la animación de .velo-tema').toBeDefined();
+    expect(pico, 'no encontré el fotograma en que el velo tapa del todo').toBeDefined();
+    expect(Number(dur)).toBe(SALIDA_VELO);
+    expect(Math.round((Number(dur) * Number(pico)) / 100)).toBe(ENTRADA_VELO);
   });
 
-  it('el tope le da margen de sobra a la entrada del velo', () => {
-    expect(TOPE_VELO).toBeGreaterThan(ENTRADA_VELO * 2);
-  });
-
-  it('la espera coincide con la transición de .velo-tema en global.css', async () => {
-    const css = await import('node:fs').then((fs) => fs.readFileSync('src/styles/global.css', 'utf8'));
-    const ms = /\.velo-tema\s*\{[^}]*transition:\s*opacity\s+(\d+)ms/.exec(css)?.[1];
-    expect(ms, 'no encontré la transición de .velo-tema').toBeDefined();
-    expect(Number(ms)).toBe(ENTRADA_VELO);
+  it('el velo no captura el puntero ni se queda pintado sin la marca', () => {
+    expect(css).toMatch(/\.velo-tema\s*\{[^}]*pointer-events:\s*none/);
+    expect(css).toMatch(/\.velo-tema\s*\{[^}]*opacity:\s*0/);
   });
 });

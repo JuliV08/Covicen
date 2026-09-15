@@ -12,12 +12,20 @@ void main(){vec2 uv=(v-0.5)*esc+0.5;uv=(uv-vp)/zoom+vp;float d=texture2D(dep,uv)
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
+/** Lo montado, con su función de repintar. Al cambiar de tema el CSS alterna las dos fotos con `display`, y el buffer
+ *  de un canvas que estuvo oculto queda indefinido: hay que volver a dibujarlo en cuanto se lo vuelve a mostrar. */
+const montados = new Map<HTMLElement, () => void>();
+
 const montar = (raiz: HTMLElement) => {
   const img = raiz.querySelector<HTMLImageElement>('img');
   const canvas = raiz.querySelector<HTMLCanvasElement>('canvas');
   const urlDep = raiz.dataset.profundidad;
   if (!img || !canvas || !urlDep) return;
-  const opciones = { antialias: false, alpha: false, powerPreference: 'low-power' as const };
+  // alpha: true NO es decorativo. Con alpha:false el navegador compone el canvas como opaco, así que un buffer vacío
+  // —y queda vacío cada vez que el elemento pasa por `display: none`, que es lo que hace el cambio de tema— se ve NEGRO
+  // y tapa la foto de abajo. Con alpha:true, vacío es transparente y lo peor que puede pasar es que se vea el <img>,
+  // que es exactamente lo que se ve en un celular. Lo que dibuja el shader sale opaco igual (la textura es RGB).
+  const opciones = { antialias: false, alpha: true, powerPreference: 'low-power' as const };
   const gl = (canvas.getContext('webgl2', opciones) ?? canvas.getContext('webgl', opciones)) as WebGLRenderingContext | null;
   if (!gl) return;
   const es2 = gl instanceof WebGL2RenderingContext;
@@ -47,7 +55,8 @@ const montar = (raiz: HTMLElement) => {
   };
 
   // `foto` es la imagen a resolución completa (data-textura), no el candidato responsive que eligió el <img>.
-  const iniciar = (foto: HTMLImageElement, dep: HTMLImageElement) => {
+  // Devuelve la función de repintar, que es la que se llama al volver de un `display: none`.
+  const iniciar = (foto: HTMLImageElement, dep: HTMLImageElement): (() => void) => {
     const prog = gl.createProgram()!;
     gl.attachShader(prog, shader(gl.VERTEX_SHADER, VS));
     gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, FS));
@@ -78,13 +87,16 @@ const montar = (raiz: HTMLElement) => {
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     };
 
-    const redimensionar = () => {
+    const redimensionar = (forzar = false) => {
       const dpr = Math.min(devicePixelRatio || 1, 1.5);
       const w = Math.round(canvas.clientWidth * dpr);
       const h = Math.round(canvas.clientHeight * dpr);
       // Oculto por el tema, clientWidth/Height dan 0: tocar el buffer ahí lo dejaría en 0×0 (y el `esc` en NaN), y al
       // volver a mostrarse la foto salía deformada. Se espera a que la caja exista de nuevo.
-      if (w === 0 || h === 0 || (w === canvas.width && h === canvas.height)) return;
+      if (w === 0 || h === 0) return;
+      // `forzar` es para cuando el elemento vuelve de estar oculto con la MISMA medida: el buffer está vacío igual y
+      // hay que repintarlo, aunque no haya que redimensionarlo.
+      if (!forzar && w === canvas.width && h === canvas.height) return;
       canvas.width = w;
       canvas.height = h;
       gl.viewport(0, 0, w, h);
@@ -98,7 +110,7 @@ const montar = (raiz: HTMLElement) => {
     // El hero cambia de alto sin que la ventana se mueva: al conmutar el tema se lo oculta y se lo vuelve a mostrar, y
     // el contenido lo corre. Con `resize` de window el lienzo se quedaba con la medida del montaje y la foto salía
     // recortada de otra manera que el <img> de abajo. ResizeObserver mira la caja real, incluida la vuelta de 0 a N.
-    new ResizeObserver(redimensionar).observe(canvas);
+    new ResizeObserver(() => redimensionar()).observe(canvas);
     raiz.closest('section')?.addEventListener('pointermove', (e) => {
       const r = raiz.getBoundingClientRect();
       mx = (e.clientX - r.left) / r.width - 0.5;
@@ -125,6 +137,15 @@ const montar = (raiz: HTMLElement) => {
     pintar();
     raiz.classList.add('activo');
     requestAnimationFrame(cuadro);
+
+    return () => {
+      if (gl.isContextLost()) { raiz.classList.remove('activo', 'webgl'); return; }
+      redimensionar(true);
+      pintar();
+      // El bucle se frena solo cuando el elemento deja de verse; al volver hay que despertarlo sin esperar al
+      // observador de visibilidad, que es asíncrono y, si no despierta, deja el canvas con un solo cuadro.
+      if (!animando) requestAnimationFrame(cuadro);
+    };
   };
 
   // Se cargan la foto a resolución completa y el mapa; cuando están las dos, arranca.
@@ -133,7 +154,7 @@ const montar = (raiz: HTMLElement) => {
   let pendientes = 2;
   const listo = () => {
     if (--pendientes > 0) return;
-    try { iniciar(foto, dep); } catch { raiz.classList.remove('activo', 'webgl'); }
+    try { montados.set(raiz, iniciar(foto, dep)); } catch { raiz.classList.remove('activo', 'webgl'); }
   };
   const fallo = () => raiz.classList.remove('activo', 'webgl');
   foto.onload = listo; dep.onload = listo;
@@ -151,6 +172,9 @@ const iniciarTodo = () => {
     r.dataset.montado = '';
     montar(r);
   });
+  // Y lo que YA estaba montado y vuelve a verse se repinta en el acto: su buffer quedó indefinido mientras estuvo
+  // oculto. Sin esto se veía el canvas vacío encima de la foto hasta el próximo cuadro, que podía no llegar nunca.
+  montados.forEach((repintar, raiz) => { if (raiz.getClientRects().length > 0) repintar(); });
 };
 document.addEventListener('astro:page-load', iniciarTodo);
 document.addEventListener('tema:cambio', iniciarTodo);

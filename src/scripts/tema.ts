@@ -24,16 +24,22 @@ const aplicar = (tema: Tema) => {
 
 // Disolvencia del hero: intercambiar las dos fotos es un corte seco (el CSS las alterna con `display`) y encima el
 // canvas del parallax se vuelve a montar. Con un velo del color del fondo que VIENE, el hero se funde, cambia por
-// debajo y reaparece. El orden lo fija src/lib/disolvencia.ts; acá solo se arma el velo con el DOM.
+// debajo y reaparece. El velo se tapa y se destapa SOLO, con la animación `velo-tema` de global.css: acá solo se la
+// dispara y se suelta el cerrojo al final. El orden lo fija src/lib/disolvencia.ts.
 const veloDe = (destino: Tema): Velo | null => {
   const el = document.querySelector<HTMLElement>('[data-velo-tema]');
   // Sin velo en la página, con "menos movimiento" o si ya hay una disolvencia en curso: el cambio va instantáneo.
   if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches || el.dataset.visible !== undefined) return null;
+  const soltar = () => { delete el.dataset.visible; };
   return {
-    mostrar: () => { el.style.background = COLOR_TEMA[destino]; el.dataset.visible = ''; },
-    ocultar: () => { delete el.dataset.visible; },
+    mostrar: () => {
+      el.style.background = COLOR_TEMA[destino];
+      el.dataset.visible = '';
+      // El propio fin de la animación suelta el cerrojo: no depende de ningún reloj ni de que lleguen cuadros.
+      el.addEventListener('animationend', soltar, { once: true });
+    },
+    ocultar: soltar,
     esperar: (ms, fn) => { window.setTimeout(fn, ms); },
-    frame: (fn) => { requestAnimationFrame(fn); },
   };
 };
 

@@ -1,43 +1,37 @@
 // Orden de la disolvencia del hero al cambiar de tema. Vive acá, separado del DOM, porque lo que importa es la
 // SECUENCIA: si el tema se aplica antes de que el velo esté arriba, se ve el corte de una foto a la otra, que es
 // justo lo que la disolvencia viene a tapar. tests/lib/disolvencia.test.ts fija ese orden.
+//
+// Quién hace qué: el velo se tapa y se destapa SOLO, con una animación de CSS (`velo-tema`, en global.css). Este
+// módulo no lo baja: solo elige el momento de cambiar el tema (cuando la animación está tapando del todo) y suelta el
+// cerrojo cuando la animación terminó, para que el próximo cambio la pueda volver a disparar. La versión anterior
+// bajaba el velo desde JS con dos requestAnimationFrame, y eso lo hacía depender de que el navegador entregara
+// cuadros: con la pestaña en segundo plano el velo se quedaba tapando el hero y la disolvencia moría para el resto de
+// la visita. Ahora, aunque este código no corra nunca, el velo termina transparente.
 
 /** Lo que la disolvencia necesita del mundo real. `null` = no hay velo (o el usuario pidió menos movimiento). */
 export type Velo = {
+  /** Dispara la animación del velo. */
   mostrar: () => void;
+  /** Suelta el cerrojo para que la próxima disolvencia pueda disparar la animación de nuevo. No apaga nada. */
   ocultar: () => void;
   /** setTimeout, inyectado para poder probar la secuencia sin esperar. */
   esperar: (ms: number, fn: () => void) => void;
-  /** requestAnimationFrame: hace falta un frame para que el navegador pinte el tema nuevo antes de destapar. */
-  frame: (fn: () => void) => void;
 };
 
-/** Cuánto tarda el velo en tapar el hero. Tiene que coincidir con la transición de `.velo-tema` en global.css. */
+/** Cuándo el velo tapa del todo, y por lo tanto cuándo se puede cambiar el tema sin que se vea el corte.
+ *  Es el fotograma de opacidad 1 de `@keyframes velo-tema` en global.css; el test los mantiene atados. */
 export const ENTRADA_VELO = 200;
 
-/** Red de seguridad: si los frames nunca llegan, el velo se baja igual a esta altura.
- *  Hace falta porque el navegador deja de entregar frames cuando la pestaña queda en segundo plano: si el usuario
- *  cambia de tema y se va a otra pestaña, el velo se quedaba tapando el hero (un panel liso donde debería estar la
- *  foto) y, peor, el cerrojo no se soltaba nunca más y la disolvencia moría para el resto de la visita. */
-export const TOPE_VELO = 1000;
+/** Cuánto dura la animación entera. Cuando termina, el velo ya está transparente y el cerrojo se puede soltar. */
+export const SALIDA_VELO = 625;
 
 export const disolver = (cambiarTema: () => void, velo: Velo | null): void => {
   if (!velo) {
     cambiarTema();
     return;
   }
-  // `ocultar` se llama una sola vez, venga por los frames o por la red de seguridad.
-  let bajado = false;
-  const bajar = () => {
-    if (bajado) return;
-    bajado = true;
-    velo.ocultar();
-  };
   velo.mostrar();
-  velo.esperar(ENTRADA_VELO, () => {
-    cambiarTema();
-    // Dos frames: el primero pinta el tema nuevo debajo del velo, el segundo recién empieza a destaparlo.
-    velo.frame(() => velo.frame(bajar));
-  });
-  velo.esperar(TOPE_VELO, bajar);
+  velo.esperar(ENTRADA_VELO, cambiarTema);
+  velo.esperar(SALIDA_VELO, velo.ocultar);
 };
