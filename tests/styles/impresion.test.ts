@@ -22,10 +22,15 @@ describe('impresión (pliego 61.7)', () => {
     expect(global).toContain('@import "./impresion.css"');
     expect(global).not.toContain('@media print');
   });
-  it('las seis tarjetas de estación y las diapositivas del hero salen aunque el JS las haya escondido', () => {
+  it('las seis tarjetas de estación salen aunque el JS las haya escondido', () => {
     // Tailwind pone `display: none !important` en [hidden]: la excepción necesita !important y más especificidad.
     expect(css).toMatch(regla(String.raw`\[data-tarjeta-estacion\]\[hidden\]`, String.raw`display:\s*block\s*!important`));
-    expect(css).toMatch(regla(String.raw`\[data-slide\]\[hidden\]`, String.raw`display:\s*block\s*!important`));
+  });
+  // En papel la cinta de avisos no desfila: sale quieta, una sola vez (la copia existe para que el bucle empalme) y
+  // sin el botón de frenar, que impreso no significa nada.
+  it('la cinta de avisos se imprime quieta, sin la copia y sin el botón', () => {
+    expect(css).toMatch(regla(String.raw`\.marquesina-cinta`, String.raw`animation:\s*none\s*!important`));
+    expect(css).toMatch(/\.marquesina-grupo\[aria-hidden\][^{]*\.marquesina-pausa[^{]*\{[^}]*display:\s*none\s*!important/);
   });
   it('las preguntas frecuentes salen con su respuesta: en papel no hay dónde hacer clic', () => {
     // El navegador imprime los <details> cerrados. Se esconden de tres formas y hay que destapar las tres: el display

@@ -85,6 +85,13 @@
   --color-tinta-suave: #999999;
 }
 
+/* La barra superior (TelePASE · Mi cuenta · tema) solo se muestra en escritorio: en celular esos tres accesos viven
+   en el menú, así que abajo de 1024 px la barra no existe y el header mide solo sus 4,5rem. Todo lo que se apoya en
+   el alto del header —el relleno del <main>, el alto del hero, el scroll-margin de las anclas— sale de este token. */
+@media (width < 64rem) {
+  :root { --alto-header: 4.5rem; }
+}
+
 /* Tema claro: mismos nombres, valores del manual (gris-fondo, gris-texto, marca-900 en títulos, marca-700 en links).
    Sin @layer a propósito: lo no-layered le gana a la capa `theme` de Tailwind, y html[...] es más específico que :root. */
 html[data-tema="claro"] {

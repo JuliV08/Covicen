@@ -6,6 +6,7 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Footer from '@/components/Footer.astro';
 import Header from '@/components/Header.astro';
 import HiloRuta from '@/components/HiloRuta.astro';
+import Marquesina from '@/components/Marquesina.astro';
 import Seo from '@/components/Seo.astro';
 import { config } from '@/lib/config';
 import { datos } from '@/lib/datos';
@@ -21,8 +22,11 @@ interface Props {
   imagen?: string;
   migas?: Array<{ nombre: string; href: string }>;
   claseMain?: string;
+  /** La home apoya la cinta de avisos en el borde de abajo del hero (referencia de Corresur, pedido de Juli); el
+   *  resto de las páginas la lleva arriba del contenido. Es el mismo componente, cambia dónde se monta. */
+  marquesinaEnHero?: boolean;
 }
-const { titulo, descripcion, jsonLd = [], tipo = 'website', imagen, migas, claseMain = '' } = Astro.props;
+const { titulo, descripcion, jsonLd = [], tipo = 'website', imagen, migas, claseMain = '', marquesinaEnHero = false } = Astro.props;
 const [empresa, contacto, avisos] = await Promise.all([datos.empresa(), datos.contacto(), datos.avisos()]);
 const bloques = migas
   ? [...jsonLd, jsonLdMigas([{ nombre: 'Inicio', url: absoluta('/') }, ...migas.map((m) => ({ nombre: m.nombre, url: absoluta(m.href) }))])]
@@ -58,9 +62,10 @@ const impreso = new Date().toLocaleDateString('es-AR', { timeZone: 'America/Arge
   </head>
   <body class="flex min-h-dvh flex-col bg-fondo pb-20 text-texto sm:pb-0" data-sitio={sitio} data-fecha={impreso}>
     <a href="#contenido" class="salto">Saltar al contenido</a>
-    <Header {contacto} {avisos} rutaActual={Astro.url.pathname} />
+    <Header {contacto} rutaActual={Astro.url.pathname} />
     <HiloRuta />
     <main id="contenido" tabindex="-1" class:list={['flex-1 pt-[var(--alto-header)]', claseMain]}>
+      {!marquesinaEnHero && <Marquesina {avisos} />}
       {migas && <Breadcrumbs {migas} />}
       <slot />
     </main>

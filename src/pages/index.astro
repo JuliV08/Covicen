@@ -11,11 +11,13 @@ import ObrasYEstado from '@/components/home/ObrasYEstado.astro';
 import Servicios from '@/components/home/Servicios.astro';
 import TarifaDestacada from '@/components/home/TarifaDestacada.astro';
 import Divisor from '@/components/ui/Divisor.astro';
+import Marquesina from '@/components/Marquesina.astro';
 import { datos } from '@/lib/datos';
 
-const [empresa, contacto, tramo, tarifario, obras, novedades, faq, estado] = await Promise.all([
+const [empresa, contacto, avisos, tramo, tarifario, obras, novedades, faq, estado] = await Promise.all([
   datos.empresa(),
   datos.contacto(),
+  datos.avisos(),
   datos.tramo(),
   datos.tarifario(),
   datos.obras(),
@@ -24,8 +26,10 @@ const [empresa, contacto, tramo, tarifario, obras, novedades, faq, estado] = awa
   datos.estadoRutas(),
 ]);
 ---
-<Base titulo="Inicio" descripcion="Covicen, concesionaria del Tramo Centro de la Red Federal de Concesiones: 679 km sobre RN 9, RN 19 y RN 34 en Córdoba y Santa Fe. Tarifas, peajes, emergencias y obras.">
-  <Hero {empresa} {novedades} />
+<Base titulo="Inicio" descripcion="Covicen, concesionaria del Tramo Centro de la Red Federal de Concesiones: 679 km sobre RN 9, RN 19 y RN 34 en Córdoba y Santa Fe. Tarifas, peajes, emergencias y obras." marquesinaEnHero>
+  {/* En la home la cinta se apoya en el borde de abajo del hero; en el resto de las páginas la monta Base, arriba
+      del contenido. Por eso Base recibe `marquesinaEnHero` y acá va por el slot. */}
+  <Hero {empresa}><Marquesina slot="marquesina" {avisos} enHero /></Hero>
   <Divisor />
   <AccesosRapidos {contacto} />
   <TarifaDestacada {tarifario} />

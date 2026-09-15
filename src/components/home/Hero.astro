@@ -1,21 +1,20 @@
 ---
-import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from '@lucide/astro';
+import { ArrowRight } from '@lucide/astro';
 import CuentaRegresiva from '@/components/CuentaRegresiva.astro';
 import HeroRuta from '@/components/ilustraciones/HeroRuta.astro';
 import ParallaxProfundidad from '@/components/ilustraciones/ParallaxProfundidad.astro';
 import Boton from '@/components/ui/Boton.astro';
 import Eyebrow from '@/components/ui/Eyebrow.astro';
-import type { Empresa, Novedad } from '@/lib/datos/esquemas';
+import type { Empresa } from '@/lib/datos/esquemas';
 import { imagenAtmosfera, variantesHero } from '@/lib/atmosfera';
 import { fechaLarga, numero } from '@/lib/formato';
-interface Props { empresa: Empresa; novedades?: Novedad[] }
-const { empresa, novedades = [] } = Astro.props;
+interface Props { empresa: Empresa }
+const { empresa } = Astro.props;
 const c = empresa.concesion;
-// Carrusel: el slide fijo de Covicen primero y hasta tres novedades destacadas después. Sin destacadas, no hay carrusel.
-// La portada (volanta + h1) queda fuera de [data-slide]: rotacion.ts esconde las diapositivas con `hidden` y el h1 tiene
-// que estar SIEMPRE en el árbol de accesibilidad. Con una destacada a la vista se la recorta ([data-fuera]), no se esconde.
-const destacadas = novedades.filter((n) => n.destacada).slice(0, 3);
-const hayCarrusel = destacadas.length > 0;
+// El hero NO rota (decisión de Juli, 15/09/2026). Tuvo un carrusel que alternaba la portada con las novedades
+// destacadas y se sacó: la primera pantalla del sitio dice una sola cosa y la dice quieta. Las destacadas siguen
+// estando en la home, en NovedadesRecientes, que es donde el usuario las va a buscar. De paso se fue la causa de que
+// el hero cambiara de alto cada 8 segundos, que descuadraba el recorte de la foto.
 // Con foto: parallax 2.5D con mapa de profundidad (WebGL en desktop; en mobile, la foto con un dolly lento). Si existe
 // hero-ruta-diurna.jpg hay una foto por tema (mismo encuadre: el mapa de profundidad es procedural y sirve para las dos).
 // Sin foto: la calzada vectorial en perspectiva. Luces sintéticas sobre la foto se veían como glitch: fuera.
@@ -38,73 +37,31 @@ const hayDosFotos = fotos.length === 2;
   )}
   <div class:list={['absolute inset-0 -z-10', hayFoto ? 'velo-hero' : 'velo-hero-vector']} aria-hidden="true"></div>
   <div class="hero-luz absolute inset-0 -z-10" aria-hidden="true"></div>
-  <div class="contenedor flex min-h-[calc(100dvh-var(--alto-header))] flex-col justify-center py-20">
-    <section data-carrusel={hayCarrusel ? '' : undefined} aria-roledescription={hayCarrusel ? 'carrusel' : undefined} aria-label={hayCarrusel ? 'Destacados' : undefined}>
-      <div data-pista aria-live={hayCarrusel ? 'polite' : undefined} aria-atomic={hayCarrusel ? 'true' : undefined}>
-        <div class="entrada" data-portada>
-          <div style="--i: 0"><Eyebrow>Concesionaria del Tramo Centro · {c.rutas.join(' · ')}</Eyebrow></div>
-          <h1 class="mt-6 max-w-4xl" style="--i: 1">Las rutas del centro del país tienen quién responda.</h1>
-        </div>
-        <div class="entrada slide" data-slide="inicio" role={hayCarrusel ? 'group' : undefined} aria-roledescription={hayCarrusel ? 'diapositiva' : undefined} aria-label={hayCarrusel ? 'Covicen' : undefined}>
-          {/* En color pleno, no texto-2: es el único párrafo del sitio que cae sobre una foto a pantalla completa, y con
-              la foto de día en tema claro el gris quedaba en 3,1:1 sobre el asfalto (el pliego 61.7 pide 4,5:1). En
-              pleno da 7:1 sin tocar el velo, así que la foto se sigue viendo igual. Lo mide hero-foto.test.ts. */}
-          <p class="mt-6 max-w-2xl text-lg text-texto md:text-xl" style="--i: 2">
-            Covicen es la nueva concesionaria del Tramo Centro de la Red Federal de Concesiones: <strong>{numero(c.km, 2)} km</strong> sobre {c.rutas.join(', ')}, entre {c.provincias.join(' y ')}. Operación desde el <strong>{fechaLarga(c.inicioOperacion)}</strong>.
-          </p>
-          <div class="mt-10 flex flex-wrap items-center gap-4" style="--i: 3">
-            <Boton href="/tarifas">Ver tarifas <ArrowRight size={18} aria-hidden="true" /></Boton>
-            <Boton href="/el-tramo" variante="secundario">Conocer el tramo</Boton>
-          </div>
-          <div class="mt-10" style="--i: 4"><CuentaRegresiva fecha={c.inicioOperacion} /></div>
-        </div>
-        {destacadas.map((n) => (
-          <div class="slide" data-slide={n.slug} role="group" hidden aria-roledescription="diapositiva" aria-label={n.titulo}>
-            <div><Eyebrow>Destacado · {fechaLarga(n.fecha)}</Eyebrow></div>
-            <p class="mt-6 max-w-4xl font-extrabold text-texto" style="font-size: clamp(2rem, 1.5rem + 3vw, 4.5rem); line-height: 1.05; letter-spacing: var(--tracking-titulo)">{n.titulo}</p>
-            <p class="mt-6 max-w-2xl text-lg text-texto-2 md:text-xl">{n.resumen}</p>
-            <div class="mt-10"><Boton href={`/novedades/${n.slug}`}>Leer más <ArrowRight size={18} aria-hidden="true" /></Boton></div>
-          </div>
-        ))}
+  <div class="contenedor flex min-h-[calc(100dvh-var(--alto-header))] flex-col justify-center py-20 pb-32">
+    <div class="entrada">
+      <div style="--i: 0"><Eyebrow>Concesionaria del Tramo Centro · {c.rutas.join(' · ')}</Eyebrow></div>
+      <h1 class="mt-6 max-w-4xl" style="--i: 1">Las rutas del centro del país tienen quién responda.</h1>
+      {/* En color pleno, no texto-2: es el único párrafo del sitio que cae sobre una foto a pantalla completa, y con
+          la foto de día en tema claro el gris quedaba en 3,1:1 sobre el asfalto (el pliego 61.7 pide 4,5:1). En
+          pleno da 7:1 sin tocar el velo, así que la foto se sigue viendo igual. Lo mide hero-foto.test.ts. */}
+      <p class="mt-6 max-w-2xl text-lg text-texto md:text-xl" style="--i: 2">
+        Covicen es la nueva concesionaria del Tramo Centro de la Red Federal de Concesiones: <strong>{numero(c.km, 2)} km</strong> sobre {c.rutas.join(', ')}, entre {c.provincias.join(' y ')}. Operación desde el <strong>{fechaLarga(c.inicioOperacion)}</strong>.
+      </p>
+      <div class="mt-10 flex flex-wrap items-center gap-4" style="--i: 3">
+        <Boton href="/tarifas">Ver tarifas <ArrowRight size={18} aria-hidden="true" /></Boton>
+        <Boton href="/el-tramo" variante="secundario">Conocer el tramo</Boton>
       </div>
-      {hayCarrusel && (
-        <div class="mt-8 flex items-center gap-4">
-          <button type="button" class="control" data-pausa data-pausar="Pausar el carrusel" data-reanudar="Reanudar el carrusel" aria-label="Pausar el carrusel"><span data-icono-pausa><Pause size={18} aria-hidden="true" /></span><span data-icono-reanudar><Play size={18} aria-hidden="true" /></span></button>
-          <button type="button" class="control" data-anterior aria-label="Anterior"><ChevronLeft size={18} aria-hidden="true" /></button>
-          <ul class="flex gap-2" aria-label="Ir a">
-            {['inicio', ...destacadas.map((n) => n.slug)].map((s, i) => <li><button type="button" class:list={['punto', i === 0 && 'is-activo']} data-slide-ir={s} aria-label={i === 0 ? 'Covicen' : destacadas[i - 1]!.titulo} aria-current={i === 0 ? 'true' : undefined}></button></li>)}
-          </ul>
-          <button type="button" class="control" data-siguiente aria-label="Siguiente"><ChevronRight size={18} aria-hidden="true" /></button>
-        </div>
-      )}
-    </section>
+      <div class="mt-10" style="--i: 4"><CuentaRegresiva fecha={c.inicioOperacion} /></div>
+    </div>
   </div>
-  <p class="scrollea eyebrow absolute bottom-6 left-1/2 hidden -translate-x-1/2 items-center gap-2 text-texto-3 md:inline-flex" aria-hidden="true">Scrolleá <span class="scrollea-flecha">↓</span></p>
+  <slot name="marquesina" />
   {/* Tapa el hero entero, texto incluido, mientras se cambia de tema: si tapara solo la foto, en el medio de la
       disolvencia se vería el texto del tema viejo sobre el fondo del nuevo. Lo maneja scripts/tema.ts. */}
   {hayDosFotos && <div class="velo-tema" data-velo-tema aria-hidden="true"></div>}
 </section>
 <script src="../../scripts/cuenta-regresiva.ts"></script>
-<script src="../../scripts/rotacion.ts"></script>
 <style>
   /* Luz suave que sigue al cursor (spotlight.ts setea --mx/--my en la sección). */
   .hero { --mx: 70%; --my: 40%; }
-  .scrollea-flecha { display: inline-block; animation: bajar-flecha 1.8s var(--ease-suave) infinite; }
-  @keyframes bajar-flecha { 0%, 100% { transform: translateY(0); opacity: 0.6; } 50% { transform: translateY(4px); opacity: 1; } }
-  @media (prefers-reduced-motion: reduce) { .scrollea-flecha { animation: none; } }
   .hero-luz { background: radial-gradient(640px circle at var(--mx) var(--my), var(--color-luz), transparent 62%); transition: opacity var(--dur-entrada); }
-  .slide { animation: aparecer-suave var(--dur-ui) var(--ease-salida) both; }
-  @keyframes aparecer-suave { from { opacity: 0; } to { opacity: 1; } }
-  .control { display: inline-flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; border-radius: var(--radius-md); border: 1px solid var(--color-borde); color: var(--color-texto); }
-  .control:hover, .control:focus-visible { border-color: var(--color-borde-fuerte); background: var(--color-superficie); }
-  .punto { width: 2.75rem; height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; }
-  .punto::before { content: ""; width: 0.6rem; height: 0.6rem; border-radius: 999px; background: var(--color-borde-fuerte); transition: background var(--dur-micro), transform var(--dur-micro); }
-  .punto.is-activo::before, .punto:hover::before { background: var(--color-acento); transform: scale(1.25); }
-  /* Un solo botón para las dos caras del pausado: se ve el ícono que corresponde al estado. */
-  [data-icono-reanudar], [data-pausado] [data-icono-pausa] { display: none; }
-  [data-pausado] [data-icono-reanudar] { display: inline-flex; }
-  /* La portada sale de la pantalla cuando hay una destacada, pero NO del árbol de accesibilidad: el h1 sigue ahí.
-     Solo en pantalla: en papel (impresion.css destapa las diapositivas) el pliego sale entero. */
-  @media screen { [data-portada][data-fuera] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } }
-  @media (prefers-reduced-motion: reduce) { .slide { animation: none; } }
 </style>

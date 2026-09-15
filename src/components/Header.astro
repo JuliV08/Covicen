@@ -3,11 +3,11 @@ import { ChevronDown, Menu, Phone, X } from '@lucide/astro';
 import BarraSuperior from '@/components/BarraSuperior.astro';
 import InterruptorTema from '@/components/InterruptorTema.astro';
 import Logotipo from '@/components/marca/Logotipo.astro';
-import type { Aviso, Contacto } from '@/lib/datos/esquemas';
+import type { Contacto } from '@/lib/datos/esquemas';
 import { ruta } from '@/lib/rutas';
 
-interface Props { contacto: Contacto; avisos: Aviso[]; rutaActual: string }
-const { contacto, avisos, rutaActual } = Astro.props;
+interface Props { contacto: Contacto; rutaActual: string }
+const { contacto, rutaActual } = Astro.props;
 
 const items = [
   { nombre: 'Tarifas', href: '/tarifas' },
@@ -30,7 +30,7 @@ const oficina = contacto.enlaces.oficinaVirtual;
 const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
 ---
 <header class="cabecera fixed inset-x-0 top-0 z-50 border-b" transition:animate="none">
-  <BarraSuperior {avisos} {contacto} />
+  <BarraSuperior {contacto} />
   <div class="contenedor flex h-[4.5rem] items-center justify-between gap-6">
     <Logotipo />
 

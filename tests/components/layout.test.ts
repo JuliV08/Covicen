@@ -56,7 +56,7 @@ describe('Base', () => {
 });
 
 describe('Header', () => {
-  const props = async (avisos: unknown[] = []) => ({ contacto: await fuenteLocalJson.contacto(), avisos, rutaActual: '/tarifas/' });
+  const props = async () => ({ contacto: await fuenteLocalJson.contacto(), rutaActual: '/tarifas/' });
   it('marca la página actual, tiene el 140 grande con tel: y el menú mobile', async () => {
     const c = await AstroContainer.create();
     const html = await c.renderToString(Header, { props: await props() });
@@ -76,8 +76,9 @@ describe('Header', () => {
   });
   it('lleva la barra superior con los accesos y, en el menú mobile, TelePASE y Mi cuenta', async () => {
     const c = await AstroContainer.create();
-    const html = await c.renderToString(Header, { props: await props([{ id: 'a', texto: 'Aviso', tono: 'info' }]) });
-    expect(html).toContain('data-anuncios');
+    const html = await c.renderToString(Header, { props: await props() });
+    // Los avisos se fueron del header a la cinta (components/Marquesina.astro) el 15/09/2026.
+    expect(html).not.toContain('data-anuncios');
     expect(html.match(/>TelePASE</g)?.length).toBe(2);
     expect(html.match(/>Mi cuenta</g)?.length).toBe(2);
     expect(html).not.toContain('Corredor Vial del Centro');

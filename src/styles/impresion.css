@@ -63,9 +63,15 @@
   a { color: var(--color-tinta) !important; text-decoration: underline; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 12px; word-break: break-all; }
 
-  /* Lo que el JS esconde para mostrar de a uno sale completo: las seis tarjetas de estación y las diapositivas del hero.
+  /* Lo que el JS esconde para mostrar de a uno sale completo: las seis tarjetas de estación.
      Tailwind pone `display: none !important` en [hidden]; esta excepción es más específica y también importante. */
-  [data-tarjeta-estacion][hidden], [data-slide][hidden] { display: block !important; }
+  [data-tarjeta-estacion][hidden] { display: block !important; }
+
+  /* La cinta de avisos en papel: quieta, una sola vez y sin el botón de frenar. */
+  .marquesina { overflow: visible !important; }
+  .marquesina-cinta { animation: none !important; width: auto !important; }
+  .marquesina-grupo[aria-hidden], .marquesina-pausa { display: none !important; }
+  .marquesina-grupo { flex-wrap: wrap !important; }
 
   /* Los <details> cerrados se imprimen cerrados: /preguntas-frecuentes/ y el bloque de FAQ del home saldrían con todas
      las preguntas y ninguna respuesta. En papel no hay dónde hacer clic, así que salen abiertos. Se esconden de tres
