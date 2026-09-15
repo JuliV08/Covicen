@@ -71,6 +71,10 @@
   --alto-header: 7rem; /* 2.5rem de barra superior + 4.5rem de header */
   --ancho-max: 80rem;
   --brillo-foto: 0.62; /* las fotos de atmósfera se oscurecen para que el texto gane */
+  /* Cuánto tapa el velo del hero del horizonte para abajo en pantallas angostas (global.css, .velo-hero). Ahí el texto
+     ocupa todo el ancho y cae sobre el asfalto: la foto nocturna ya es oscura y pide poco, la diurna pide bastante más.
+     Los dos valores los mide tests/styles/hero-foto.test.ts sobre las fotos reales; no se tocan a ojo. */
+  --velo-hero-abajo: 28%;
   color-scheme: dark;
   /* Solo para @media print (impresion.css): papel y tinta no dependen del tema. Grises: tinta-2 para el texto terciario
      (12,6:1 sobre papel), tinta-media para bordes de tarjetas y la regla del encabezado, tinta-suave para bordes finos. */
@@ -110,16 +114,17 @@ html[data-tema="claro"] {
   --color-plano: rgb(30 72 112 / 0.06);
   --color-luz: rgb(44 104 143 / 0.08);
   --brillo-foto: 1;
+  --velo-hero-abajo: 68%;
   color-scheme: light;
 }
 
-/* Zona siempre oscura. La foto del hero es nocturna y, mientras no exista `hero-ruta-diurna.jpg` (spec §4.4), se
-   muestra también en el tema claro: ahí --brillo-foto es 1 y el velo aclara poco, así que el párrafo del hero quedaba
-   entre 2,8:1 y 4,4:1 sobre la foto, abajo del 4,5:1 que exige el pliego 61.7 en los DOS temas. En vez de inventar un
-   velo nuevo (para llegar a 4,5:1 en celular había que taparla casi entera), la zona revierte los semánticos a los del
-   tema oscuro: adentro se ve exactamente como en oscuro y el contraste es el que ya verifican pares.ts y verificar.ts.
-   Todo lo de adentro sale de tokens, así que ningún componente se toca. El día que exista la foto de día, el hero deja
-   de llevar la clase y cada tema usa la suya.
+/* Zona siempre oscura, para las secciones cuya foto es nocturna y NO tiene versión de día: en el tema claro esa foto se
+   muestra igual, ahí --brillo-foto es 1 y el velo aclara poco, así que el texto encima quedaba entre 2,8:1 y 4,4:1,
+   abajo del 4,5:1 que exige el pliego 61.7 en los DOS temas. En vez de inventar un velo nuevo (para llegar a 4,5:1 en
+   celular había que taparla casi entera), la zona revierte los semánticos a los del tema oscuro: adentro se ve
+   exactamente como en oscuro y el contraste es el que ya verifican pares.ts y verificar.ts. Todo sale de tokens, así
+   que ningún componente se toca. Hoy la lleva el panel del Consorcio; el hero salió de acá cuando llegó la foto de día
+   (ahora cada tema usa la suya y el contraste lo mide tests/styles/hero-foto.test.ts).
    Va en @media screen a propósito: en papel manda impresion.css (blanco y negro) y acá le ganaría por especificidad.
    tests/styles/tokens.test.ts exige que estén TODOS los que cambia el tema claro y con el valor del oscuro. */
 @media screen {
@@ -150,6 +155,7 @@ html[data-tema="claro"] {
     --color-plano: rgb(255 255 255 / 0.04);
     --color-luz: rgb(104 188 225 / 0.09);
     --brillo-foto: 0.62;
+    --velo-hero-abajo: 28%;
     color-scheme: dark;
   }
 }

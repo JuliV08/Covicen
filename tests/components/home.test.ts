@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import Hero from '@/components/home/Hero.astro';
@@ -38,6 +39,25 @@ describe('Hero', () => {
       expect(html.indexOf('<h1')).toBeLessThan(html.indexOf('data-slide="'));
     }
   });
+  // El párrafo del hero cae sobre la foto a pantalla completa: en texto-2 (gris) daba 3,1:1 sobre el asfalto de la foto
+  // de día en tema claro. Va en color pleno, y quien mide que eso alcance es tests/styles/hero-foto.test.ts, que asume
+  // justamente --color-texto: si acá vuelve a texto-2, aquella guarda mediría el color equivocado y no se enteraría.
+  it('el párrafo del hero va en color pleno, no en texto-2', async () => {
+    const html = await render(Hero, { empresa: await fuenteLocalJson.empresa(), novedades: [] });
+    const parrafo = html.match(/<p class="mt-6 max-w-2xl[^"]*"/)?.[0] ?? '';
+    expect(parrafo, 'no encontré el párrafo del hero').toContain('text-texto');
+    expect(parrafo).not.toContain('text-texto-2');
+  });
+  // Con una foto por tema, conmutar es un corte seco (el CSS las alterna con `display`) y el canvas del parallax se
+  // remonta: el velo de la disolvencia lo tapa. scripts/tema.ts lo levanta antes de cambiar el tema y lo baja después.
+  it('con las dos fotos, el hero trae el velo de la disolvencia de tema', async () => {
+    const html = await render(Hero, { empresa: await fuenteLocalJson.empresa(), novedades: [] });
+    expect(html).toContain('data-velo-tema');
+    expect(html).toContain('class="velo-tema"');
+    expect(html).toMatch(/data-velo-tema[^>]*aria-hidden="true"|aria-hidden="true"[^>]*data-velo-tema/);
+    // El velo tapa el hero entero, texto incluido: tiene que quedar fuera del árbol de accesibilidad y sin capturar el puntero.
+    expect(readFileSync('src/styles/global.css', 'utf8')).toMatch(/\.velo-tema\s*\{[^}]*pointer-events:\s*none/);
+  });
   // WCAG 2.2.2 (pausar, detener, ocultar) + spec §10.3: la pista anuncia el cambio y hay botón de pausa.
   it('con destacadas: pista con aria-live y botón de pausa con etiquetas para los dos estados', async () => {
     const html = await render(Hero, { empresa: await fuenteLocalJson.empresa(), novedades: destacadas });
@@ -51,12 +71,16 @@ describe('Hero', () => {
     expect(html).not.toContain('data-pausa');
     expect(html).not.toContain('data-siguiente');
   });
-  // Mientras la única foto sea la nocturna, en tema claro se muestra esa misma foto: la sección va como zona noche para
-  // que el texto encima siga en 4,5:1 (pliego 61.7). Cuando exista hero-ruta-diurna.jpg, variantesHero devuelve dos y la
-  // clase se cae sola: tests/lib/atmosfera.test.ts cubre ese cambio.
-  it('con una sola foto (la nocturna) la sección es zona noche también en tema claro', async () => {
+  // `zona-noche` era el parche de cuando la única foto era la nocturna: en tema claro se mostraba esa misma foto, así
+  // que la sección entera volvía al tema oscuro para no perder el 4,5:1 del pliego 61.7. Con la foto de día cargada
+  // cada tema usa la suya y el parche sobra; el contraste de las dos lo mide tests/styles/hero-foto.test.ts.
+  // (El panel del Consorcio sí la sigue llevando: esa foto no tiene versión de día.)
+  it('con una foto por tema, el hero sigue el tema y ya no es zona noche', async () => {
     const html = await render(Hero, { empresa: await fuenteLocalJson.empresa(), novedades: [] });
-    expect(html).toMatch(/<section[^>]*class="[^"]*zona-noche/);
+    expect(html).not.toMatch(/<section[^>]*class="[^"]*zona-noche/);
+    // Una foto por tema: global.css muestra la que corresponde con `display` según html[data-tema].
+    expect(html.match(/parallax[^"]*solo-oscuro/g)?.length, 'falta la foto nocturna').toBe(1);
+    expect(html.match(/parallax[^"]*solo-claro/g)?.length, 'falta la foto de día').toBe(1);
   });
 });
 

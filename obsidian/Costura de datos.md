@@ -65,7 +65,7 @@ Criterio desde sept. 2026: **esconder, no "a confirmar"**. Un dato `null` no se 
 | `cuentaRegularizacion` | `contacto.json` | Cómo pagar la deuda en "Pasaste sin pagar" (Medios de pago). |
 | `cabinas[].telefono`, `horarioAtencion`, `vias`, `sentido`, `servicios.*` (`detencionSegura`, `sanitarios`, `colocacionTelepase` en ninguna todavía) | `tramo.json` | Filas de la tarjeta de estación; la leyenda del mapa y "Dónde se coloca" el TelePASE listan solo lo que alguna estación tiene. |
 | `ejemplo: true` | `estado-ruta.json` | Mientras sea `true`, cartel "Datos de ejemplo" en el estado de la traza; con `false` (datos del centro de operaciones) desaparece. |
-| Imágenes | `public/qr-afip.png`, `src/assets/institucional/organigrama.png`, `src/assets/institucional/<id>.svg` (logos monocromos de la fila institucional), `src/assets/atmosfera/hero-ruta-diurna.jpg` | QR, sección Organigrama en Quiénes somos, logos en vez de los lockups tipográficos, foto de día del hero en tema claro. |
+| Imágenes | `public/qr-afip.png`, `src/assets/institucional/organigrama.png`, `src/assets/institucional/<id>.svg` (logos monocromos de la fila institucional), `src/assets/atmosfera/consorcio-diurna.jpg` (opcional) | QR, sección Organigrama en Quiénes somos, logos en vez de los lockups tipográficos, y la versión de día del panel del Consorcio para que deje de ser zona oscura fija. La foto de día del hero **ya está cargada** (2026-09-15). |
 
 Ya no hay valores "a confirmar" en tarifas: el cuadro heredado de la Res. 248/2026 tiene las cinco categorías con precio. La tabla completa "campo → archivo → efecto", para quien cargue los datos, está en `docs/guia-de-revision.md` ("Cómo cargar lo que falta").
 

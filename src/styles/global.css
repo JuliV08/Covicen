@@ -107,4 +107,43 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
      temas) y el anillo desaparecía justo en el botón del 140. En oscuro vial-texto es el mismo amarillo: no se mueve. */
   .btn-vial:focus-visible { outline-color: var(--color-vial-texto); }
   @keyframes oscilar { 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+
+  /* Velo del hero: es lo único que deja leer el texto encima de la foto, así que los porcentajes de acá son contrato
+     con tests/styles/hero-foto.test.ts, que mide el contraste real del texto sobre cada foto en cada tamaño de
+     pantalla. Si se tocan, el test vuelve a medir y avisa; no se ajustan a ojo.
+     En escritorio el texto vive en la mitad izquierda: velo horizontal, fuerte a la izquierda y casi nulo sobre el
+     punto de fuga. Debajo de 1024 px el texto ocupa todo el ancho y el horizontal no alcanza (llegaba a 2,5:1 sobre el
+     asfalto con la foto de día): pasa a vertical, transparente sobre el cielo y firme del horizonte para abajo. */
+  .velo-hero {
+    background: linear-gradient(to right,
+      color-mix(in srgb, var(--color-fondo) 100%, transparent) 0%,
+      color-mix(in srgb, var(--color-fondo) 70%, transparent) 50%,
+      color-mix(in srgb, var(--color-fondo) 10%, transparent) 100%);
+  }
+  /* Sin foto (calzada vectorial): el dibujo aguanta más velo y el texto gana. */
+  .velo-hero-vector {
+    background: linear-gradient(to right,
+      color-mix(in srgb, var(--color-fondo) 100%, transparent) 0%,
+      color-mix(in srgb, var(--color-fondo) 85%, transparent) 50%,
+      color-mix(in srgb, var(--color-fondo) 20%, transparent) 100%);
+  }
+  @media (max-width: 63.9375rem) {
+    .velo-hero {
+      background: linear-gradient(to bottom,
+        color-mix(in srgb, var(--color-fondo) 12%, transparent) 0%,
+        color-mix(in srgb, var(--color-fondo) 12%, transparent) 50%,
+        color-mix(in srgb, var(--color-fondo) var(--velo-hero-abajo), transparent) 66%,
+        color-mix(in srgb, var(--color-fondo) var(--velo-hero-abajo), transparent) 100%);
+    }
+  }
+
+  /* Disolvencia del hero al cambiar de tema: el hero se funde al fondo del tema que viene, las fotos se intercambian
+     por debajo (que es un corte seco, y encima el canvas del parallax se vuelve a montar) y recién ahí reaparece.
+     scripts/tema.ts levanta el velo ANTES de aplicar el tema y lo baja después; sin JS no hay cambio de tema que
+     disolver, y con "menos movimiento" el cambio es instantáneo, como era antes. */
+  .velo-tema { position: absolute; inset: 0; z-index: 40; opacity: 0; pointer-events: none; transition: opacity 200ms var(--ease-salida); }
+  .velo-tema[data-visible] { opacity: 1; }
+  /* La vuelta es más lenta que la ida: entrar en la disolvencia es un gesto, salir es la foto nueva apareciendo. */
+  .velo-tema:not([data-visible]) { transition-duration: 420ms; }
+  @media (prefers-reduced-motion: reduce) { .velo-tema { transition: none; } }
 }

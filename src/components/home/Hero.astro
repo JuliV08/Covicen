@@ -25,6 +25,8 @@ const hayFoto = fotos.length > 0;
 // foto de noche sin oscurecer: `zona-noche` (tokens.css) revierte los semánticos al tema oscuro dentro de la sección.
 // Con la foto de día cargada, cada tema tiene la suya y la clase no va: el hero vuelve a seguir el tema.
 const soloNocturna = fotos.length === 1;
+// Con una foto por tema hay un intercambio que tapar al conmutar: el velo de la disolvencia (global.css, .velo-tema).
+const hayDosFotos = fotos.length === 2;
 ---
 <section class:list={['hero plano relative isolate overflow-hidden', soloNocturna && 'zona-noche']} style="min-height: calc(100dvh - var(--alto-header))" data-spotlight>
   {hayFoto ? fotos.map((f) => (
@@ -34,7 +36,7 @@ const soloNocturna = fotos.length === 1;
   )) : (
     <HeroRuta class="-z-10 parallax" />
   )}
-  <div class:list={['absolute inset-0 -z-10 bg-gradient-to-r from-fondo', hayFoto ? 'via-fondo/70 to-fondo/10' : 'via-fondo/85 to-fondo/20']} aria-hidden="true"></div>
+  <div class:list={['absolute inset-0 -z-10', hayFoto ? 'velo-hero' : 'velo-hero-vector']} aria-hidden="true"></div>
   <div class="hero-luz absolute inset-0 -z-10" aria-hidden="true"></div>
   <div class="contenedor flex min-h-[calc(100dvh-var(--alto-header))] flex-col justify-center py-20">
     <section data-carrusel={hayCarrusel ? '' : undefined} aria-roledescription={hayCarrusel ? 'carrusel' : undefined} aria-label={hayCarrusel ? 'Destacados' : undefined}>
@@ -44,8 +46,11 @@ const soloNocturna = fotos.length === 1;
           <h1 class="mt-6 max-w-4xl" style="--i: 1">Las rutas del centro del país tienen quién responda.</h1>
         </div>
         <div class="entrada slide" data-slide="inicio" role={hayCarrusel ? 'group' : undefined} aria-roledescription={hayCarrusel ? 'diapositiva' : undefined} aria-label={hayCarrusel ? 'Covicen' : undefined}>
-          <p class="mt-6 max-w-2xl text-lg text-texto-2 md:text-xl" style="--i: 2">
-            Covicen es la nueva concesionaria del Tramo Centro de la Red Federal de Concesiones: <strong class="text-texto">{numero(c.km, 2)} km</strong> sobre {c.rutas.join(', ')}, entre {c.provincias.join(' y ')}. Operación desde el <strong class="text-texto">{fechaLarga(c.inicioOperacion)}</strong>.
+          {/* En color pleno, no texto-2: es el único párrafo del sitio que cae sobre una foto a pantalla completa, y con
+              la foto de día en tema claro el gris quedaba en 3,1:1 sobre el asfalto (el pliego 61.7 pide 4,5:1). En
+              pleno da 7:1 sin tocar el velo, así que la foto se sigue viendo igual. Lo mide hero-foto.test.ts. */}
+          <p class="mt-6 max-w-2xl text-lg text-texto md:text-xl" style="--i: 2">
+            Covicen es la nueva concesionaria del Tramo Centro de la Red Federal de Concesiones: <strong>{numero(c.km, 2)} km</strong> sobre {c.rutas.join(', ')}, entre {c.provincias.join(' y ')}. Operación desde el <strong>{fechaLarga(c.inicioOperacion)}</strong>.
           </p>
           <div class="mt-10 flex flex-wrap items-center gap-4" style="--i: 3">
             <Boton href="/tarifas">Ver tarifas <ArrowRight size={18} aria-hidden="true" /></Boton>
@@ -75,6 +80,9 @@ const soloNocturna = fotos.length === 1;
     </section>
   </div>
   <p class="scrollea eyebrow absolute bottom-6 left-1/2 hidden -translate-x-1/2 items-center gap-2 text-texto-3 md:inline-flex" aria-hidden="true">Scrolleá <span class="scrollea-flecha">↓</span></p>
+  {/* Tapa el hero entero, texto incluido, mientras se cambia de tema: si tapara solo la foto, en el medio de la
+      disolvencia se vería el texto del tema viejo sobre el fondo del nuevo. Lo maneja scripts/tema.ts. */}
+  {hayDosFotos && <div class="velo-tema" data-velo-tema aria-hidden="true"></div>}
 </section>
 <script src="../../scripts/cuenta-regresiva.ts"></script>
 <script src="../../scripts/rotacion.ts"></script>
