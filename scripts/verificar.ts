@@ -16,6 +16,9 @@ const fallos: string[] = [];
 const fallo = (m: string) => fallos.push(m);
 
 const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/];
+// Mientras el estado de la traza se publique con datos de muestra, ninguna página puede mostrar marcadores de incidente
+// sin el cartel que lo aclara (spec §10.1): un corte de ruta inventado que se lee como real es el error más caro del sitio.
+const estadoDeMuestra = (JSON.parse(readFileSync('src/content/estado-ruta.json', 'utf8')) as { ejemplo?: boolean }).ejemplo === true;
 const paginas = paginasDe(DIST).filter((p) => !p.includes('404'));
 console.log(`Verificando ${paginas.length} páginas (base ${base}, indexable ${indexable})…`);
 
@@ -67,6 +70,11 @@ for (const ruta of paginas) {
   const visible = textoVisible(html);
   if ((nombre === 'index.html' || nombre.startsWith('el-tramo')) && !/\b679\b/.test(visible)) fallo(`${nombre}: falta la longitud oficial (679 km)`);
   if (!visible.includes('Última actualización')) fallo(`${nombre}: falta "Última actualización" en el pie`);
+  // El cartel tiene que ir ANTES del primer marcador: leerlo después del triángulo rojo llega tarde. (El selector del
+  // CSS emitido va sin comillas, `[data-severidad=corte]`; el marcador del HTML sí las lleva.)
+  const marcador = html.indexOf('data-severidad="');
+  const cartel = html.indexOf('Datos de ejemplo');
+  if (estadoDeMuestra && marcador >= 0 && (cartel < 0 || cartel > marcador)) fallo(`${nombre}: marcadores de incidente sin el cartel "Datos de ejemplo" arriba`);
   // 7. indexabilidad
   const tieneNoindex = html.includes('content="noindex, nofollow"');
   if (indexable && tieneNoindex) fallo(`${nombre}: noindex presente con PUBLIC_INDEXABLE=true`);

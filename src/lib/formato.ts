@@ -23,3 +23,7 @@ export const kmTexto = (n: number): string => numero(n, Number.isInteger(n) ? 0 
 const fmtFechaHora = new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Argentina/Buenos_Aires' });
 /** "13 de septiembre de 2026, 15:04" (hora Argentina). Para la fecha de última actualización del footer. */
 export const fechaHoraLarga = (d: Date): string => fmtFechaHora.format(d).replace(' a las ', ', ').replace(/,\s*(\d{2}:\d{2})$/, ', $1');
+
+const fmtHora = new Intl.DateTimeFormat('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Argentina/Buenos_Aires' });
+/** "07:40" (hora Argentina, reloj de 24 h). Para la hora de un incidente del estado de la traza. */
+export const hora = (d: Date): string => fmtHora.format(d);

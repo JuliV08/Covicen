@@ -3,8 +3,8 @@
 // la vista previa), NO se cambia; el tamaño lo da el contenedor. Cada estación es un enlace con foco a su página; con JS
 // (scripts/mapa.ts, desde MapaInteractivo) el toque muestra su tarjeta. Verde = operativa; amarillo + anillo discontinuo =
 // próxima (nada se comunica solo por color). Los incidentes del estado de la traza se ubican por km (lib/tramo.ts).
-import { Bath, Coffee, ShieldCheck, Tag, TriangleAlert, Truck } from '@lucide/astro';
-import type { EstadoRuta, Tramo } from '@/lib/datos/esquemas';
+import { Bath, Coffee, ShieldCheck, Tag, Truck } from '@lucide/astro';
+import type { EstadoRuta, Incidente, Tramo } from '@/lib/datos/esquemas';
 import { kmTexto } from '@/lib/formato';
 import { ruta } from '@/lib/rutas';
 import { estadoCabina, leyendaServicios, puntoEnRuta, type ClaveServicio } from '@/lib/tramo';
@@ -28,6 +28,11 @@ const claseBaliza = modo === 'scroll' ? 'baliza' : 'baliza al-cargar';
 const titulo = `Mapa esquemático del Tramo Centro: ${tramo.rutas.map((r) => r.nombre).join(', ')} entre ${tramo.ciudades.filter((c) => c.principal).map((c) => c.nombre).join(', ')}, con ${tramo.cabinas.length} estaciones de peaje.`;
 const iconos: Record<ClaveServicio, typeof Coffee> = { areaDescanso: Coffee, detencionSegura: ShieldCheck, gruaGratuita: Truck, sanitarios: Bath, colocacionTelepase: Tag };
 const marcadores = incidentes.flatMap((inc) => { const p = inc.km === null ? null : puntoEnRuta(tramo, inc.ruta, inc.km); return p ? [{ ...inc, p }] : []; });
+// La severidad no se comunica solo por color (spec §7.1): cambia la FORMA del marcador (triángulo = corte, rombo =
+// precaución, círculo = info), se nombra en el <title> y la leyenda repite forma y nombre. El relleno es el refuerzo.
+const SEVERIDAD: Record<Incidente['severidad'], string> = { corte: 'Corte', precaucion: 'Precaución', info: 'Información' };
+const FORMA: Record<Incidente['severidad'], string> = { corte: 'M0 -10 L9 6 L-9 6 Z', precaucion: 'M0 -9 L9 0 L0 9 L-9 0 Z', info: 'M-8 0 A8 8 0 1 0 8 0 A8 8 0 1 0 -8 0 Z' };
+const severidades = (['corte', 'precaucion', 'info'] as const).filter((s) => marcadores.some((m) => m.severidad === s));
 ---
 <figure class:list={['mapa', clase]}>
   <p id={idTitulo} class="sr-only">{titulo}</p>
@@ -57,14 +62,14 @@ const marcadores = incidentes.flatMap((inc) => { const p = inc.km === null ? nul
           <circle cx={c.mapa.x} cy={c.mapa.y} r={c.principal ? 6 : 3.5} fill="var(--color-fondo)" stroke="var(--color-acento)" stroke-width={c.principal ? 2 : 1.5}></circle>
         )}
         {c.principal && (
-          <text x={c.mapa.x + (c.mapa.x > 410 ? -12 : 12)} y={c.mapa.y + 5} class="ciudad-etiqueta" text-anchor={c.mapa.x > 410 ? 'end' : 'start'}>{c.nombre}</text>
+          <text x={c.mapa.x + (c.mapa.x > 410 ? -12 : 12)} y={c.mapa.y + 6} class="ciudad-etiqueta" text-anchor={c.mapa.x > 410 ? 'end' : 'start'}>{c.nombre}</text>
         )}
       </g>
     ))}
     {marcadores.map((m) => (
-      <g class="incidente" data-severidad={m.severidad} transform={`translate(${m.p.x} ${m.p.y})`}>
-        <title>{`${m.ruta}${m.km !== null ? ` km ${kmTexto(m.km)}` : ''}: ${m.descripcion}`}</title>
-        <path d="M0 -10 L9 6 L-9 6 Z" class="incidente-forma" stroke="var(--color-fondo)" stroke-width="1.5" stroke-linejoin="round"></path>
+      <g class="incidente" role="img" data-severidad={m.severidad} transform={`translate(${m.p.x} ${m.p.y})`}>
+        <title>{`${SEVERIDAD[m.severidad]} — ${m.ruta}${m.km !== null ? ` km ${kmTexto(m.km)}` : ''}: ${m.descripcion}`}</title>
+        <path d={FORMA[m.severidad]} class="incidente-forma" stroke="var(--color-fondo)" stroke-width="1.5" stroke-linejoin="round"></path>
         <circle cy="1" r="1.4" fill="var(--color-fondo)"></circle>
       </g>
     ))}
@@ -88,15 +93,24 @@ const marcadores = incidentes.flatMap((inc) => { const p = inc.km === null ? nul
       <li class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full border-2 border-dashed border-vial-texto" aria-hidden="true"></span> Estación próxima</li>
       <li class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full border-2 border-acento" aria-hidden="true"></span> Ciudad</li>
       {leyendaServicios(tramo).map((s) => { const Icono = iconos[s.clave]; return <li class="inline-flex items-center gap-2"><Icono size={14} aria-hidden="true" /> {s.etiqueta}</li>; })}
-      {marcadores.length > 0 && <li class="inline-flex items-center gap-2"><TriangleAlert size={14} aria-hidden="true" /> Incidente informado</li>}
+      {severidades.map((s) => (
+        <li class="inline-flex items-center gap-2">
+          <svg viewBox="-12 -12 24 24" width="14" height="14" aria-hidden="true" class="incidente" data-severidad={s}><path d={FORMA[s]} class="incidente-forma"></path></svg> {SEVERIDAD[s]}
+        </li>
+      ))}
     </ul>
   </figcaption>
 </figure>
 <style>
   .mapa text { font-family: var(--font-sans); fill: var(--color-texto-2); }
-  .ruta-etiqueta { font-size: 13px; font-weight: 800; letter-spacing: 0.12em; fill: var(--color-acento); }
-  .ciudad-etiqueta { font-size: 15px; font-weight: 600; fill: var(--color-texto); }
-  .cabina-etiqueta { font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0; transition: opacity var(--dur-ui) var(--ease-salida); }
+  /* Estos font-size son unidades del viewBox (820 de ancho), no píxeles: el CSS escala el SVG. En El tramo, el ancho
+     más grande en que se dibuja es ~719 px (contenedor 80rem = 1280 − 2 × 40 del panel = 1200; la grilla 1,6fr/1fr con
+     gap 2rem le deja 1168 × 1,6/2,6 ≈ 719), o sea escala ≈ 0,877. Por eso los tamaños van por arriba del piso del
+     pliego (61.7): 14 → 12,3 px, 15 → 13,2 px, 17 → 14,9 px (el nombre de ciudad es contenido: pasa los 14 px).
+     Lo guarda tests/styles/legibilidad.test.ts. */
+  .ruta-etiqueta { font-size: 15px; font-weight: 800; letter-spacing: 0.12em; fill: var(--color-acento); }
+  .ciudad-etiqueta { font-size: 17px; font-weight: 600; fill: var(--color-texto); }
+  .cabina-etiqueta { font-size: 14px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0; transition: opacity var(--dur-ui) var(--ease-salida); }
   /* Los <a> del SVG son botones del mapa: sin el subrayado de la regla global de enlaces (llegaría a la etiqueta de texto). */
   .baliza { cursor: pointer; outline: none; text-decoration: none; }
   /* Los selectores por estado (0,3,0) le ganan a `.mapa text` (0,1,1): antes `.cabina-etiqueta` perdía y nunca se coloreaba. */

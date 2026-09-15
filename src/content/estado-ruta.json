@@ -9,6 +9,8 @@
       "tipo": "obra",
       "severidad": "precaucion",
       "sentido": "ascendente",
+      "desde": "2026-09-13T06:00:00-03:00",
+      "hasta": "2026-09-13T18:00:00-03:00",
       "descripcion": "Bacheo en carril derecho entre Carcarañá y Cañada de Gómez. Calzada reducida a un carril, velocidad máxima 60 km/h."
     },
     {
@@ -33,6 +35,7 @@
       "tipo": "incidente",
       "severidad": "corte",
       "sentido": "descendente",
+      "desde": "2026-09-13T07:40:00-03:00",
       "descripcion": "Corte total por vuelco de un camión a la altura de Cañada Rosquín. Desvío por RP 13. Grúa y móvil de seguridad en el lugar."
     }
   ]

@@ -1,6 +1,7 @@
 ---
 import { ArrowRight } from '@lucide/astro';
 import Base from '@/layouts/Base.astro';
+import EstadoTraza from '@/components/EstadoTraza.astro';
 import MapaInteractivo from '@/components/MapaInteractivo.astro';
 import TablaTarifas from '@/components/TablaTarifas.astro';
 import Boton from '@/components/ui/Boton.astro';
@@ -9,12 +10,16 @@ import Seccion from '@/components/ui/Seccion.astro';
 import Senal from '@/components/ui/Senal.astro';
 import { datos } from '@/lib/datos';
 import { cabinaOperativa } from '@/lib/datos/esquemas';
-import { fechaHoraLarga, kmTexto, numero } from '@/lib/formato';
+import { kmTexto, numero } from '@/lib/formato';
 import { ruta } from '@/lib/rutas';
 import { cabinasDelCuadro } from '@/lib/tarifas';
 import { estadoCabina, serviciosDeCabina } from '@/lib/tramo';
 const [tramo, estado, tarifario] = await Promise.all([datos.tramo(), datos.estadoRutas(), datos.tarifario()]);
 const incidentes = estado.disponible ? estado.incidentes ?? [] : [];
+// El mapa pinta los incidentes como marcadores. Mientras el estado sea de muestra (estado.ejemplo), el cartel va ARRIBA
+// del mapa: un corte inventado que se lee como real es el peor error posible. Y EstadoTraza repite los mismos incidentes
+// en texto, que es la única forma de leerlos con teclado o con lector de pantalla.
+const rutas = tramo.rutas.map((r) => r.nombre);
 const bloques = [['rutas', 'Rutas y longitudes'], ['estaciones', 'Estaciones de peaje'], ['tarifas', 'Cuadros tarifarios'], ['servicios', 'Áreas de descanso y servicios']] as const;
 const conServicios = tramo.cabinas.filter((c) => serviciosDeCabina(c).length > 0);
 ---
@@ -28,8 +33,9 @@ const conServicios = tramo.cabinas.filter((c) => serviciosDeCabina(c).length > 0
   </nav>
 
   <section id="mapa" class="contenedor py-12" aria-label="Mapa interactivo">
+    {estado.disponible && estado.ejemplo && <p class="revelar mb-4"><Senal variante="frio">Datos de ejemplo: el módulo se activa con la operación</Senal></p>}
     <div class="revelar tarjeta tarjeta-panel"><MapaInteractivo {tramo} {incidentes} modo="scroll" disposicion="lado" /></div>
-    {estado.disponible && estado.actualizado && <p class="anotacion mt-3 text-xs text-texto-2">Estado de la traza actualizado el {fechaHoraLarga(new Date(estado.actualizado))}.</p>}
+    {estado.disponible && <div class="revelar mt-8"><EstadoTraza {estado} {rutas} nivel="h2" /></div>}
   </section>
 
   <Seccion id="rutas" indice="01" eyebrow="Rutas y longitudes" titulo="Tres rutas nacionales bajo una misma concesión." intro={`${numero(tramo.km, 2)} km en total, según el pliego del Tramo Centro.`} fondo="fondo-2">

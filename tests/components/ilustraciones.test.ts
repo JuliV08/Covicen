@@ -34,7 +34,23 @@ describe('MapaTramo', () => {
   it('ubica incidentes sobre el trazo y los suma a la leyenda', async () => {
     const html = await render({ incidentes: [{ ruta: 'RN 9', km: 400, descripcion: 'Bacheo', severidad: 'precaucion' }] });
     expect(html).toContain('data-severidad="precaucion"');
-    expect(html).toContain('Incidente informado');
+    expect(html).toContain('Precaución'); // la leyenda nombra la severidad que hay
+    expect(html).not.toContain('Corte'); // y solo esa
+  });
+  // Spec §7.1: en este mapa nada se comunica solo por color. La severidad va en el <title> y cambia la FORMA del marcador.
+  it('nombra la severidad en el título y le da una forma distinta a cada una', async () => {
+    const html = await render({ incidentes: [
+      { ruta: 'RN 9', km: 400, descripcion: 'Bacheo', severidad: 'precaucion' },
+      { ruta: 'RN 34', km: 118, descripcion: 'Vuelco de camión', severidad: 'corte' },
+      { ruta: 'RN 19', km: 61, descripcion: 'Demoras', severidad: 'info' },
+    ] });
+    expect(html).toContain('<title>Corte — RN 34 km 118: Vuelco de camión</title>');
+    expect(html).toContain('<title>Precaución — RN 9 km 400: Bacheo</title>');
+    expect(html).toContain('<title>Información — RN 19 km 61: Demoras</title>');
+    const forma = (sev: string) => new RegExp(`data-severidad="${sev}"[\\s\\S]*?<path d="([^"]+)"`).exec(html)?.[1];
+    expect(new Set([forma('corte'), forma('precaucion'), forma('info')]).size).toBe(3);
+    expect(html.match(/class="incidente-forma"/g)?.length).toBe(6); // 3 marcadores + 3 entradas de leyenda
+    expect(html).toContain('role="img"'); // cada marcador se anuncia con su título
   });
 });
 

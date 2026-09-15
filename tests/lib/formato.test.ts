@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { conIva, fechaCorta, fechaHoraLarga, fechaLarga, kmTexto, moneda, numero } from '@/lib/formato';
+import { conIva, fechaCorta, fechaHoraLarga, fechaLarga, hora, kmTexto, moneda, numero } from '@/lib/formato';
 
 const sinNbsp = (s: string) => s.replace(/[  ]/g, ' ');
 
@@ -13,5 +13,10 @@ describe('formato es-AR', () => {
   it('kmTexto: coma decimal solo si hay decimales', () => { expect(kmTexto(340)).toBe('340'); expect(kmTexto(19.95)).toBe('19,95'); });
   it('fechaHoraLarga en hora argentina', () => {
     expect(fechaHoraLarga(new Date('2026-09-13T18:04:00Z'))).toBe('13 de septiembre de 2026, 15:04');
+  });
+  // La hora del incidente (spec §10.1). Reloj de 24 h y siempre en hora argentina: el dato puede venir con cualquier offset.
+  it('hora en 24 h y en hora argentina', () => {
+    expect(hora(new Date('2026-09-13T10:40:00Z'))).toBe('07:40');
+    expect(hora(new Date('2026-09-13T09:00:00-03:00'))).toBe('09:00');
   });
 });
