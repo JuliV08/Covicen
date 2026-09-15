@@ -15,3 +15,7 @@ CVSA/
 
 # Cuaderno de ejecución de planes (scratch)
 .superpowers/
+
+# Mapa de los sistemas internos de CVSA: es un tercero y este repo es público. Se sacó del historial el 15/09/2026
+# (quedó en ../PROMPT_MAESTRO_CVSA.md, fuera del repo). No volver a commitearlo acá.
+docs/PROMPT_MAESTRO_CVSA.md
