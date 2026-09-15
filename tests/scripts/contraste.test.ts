@@ -22,6 +22,28 @@ describe('leerTokens', () => {
     const css = `@theme static {\n  --color-fondo: #0B1526;\n  --color-vial: #F0C419;\n}\n:root { color-scheme: dark; }\nhtml[data-tema="claro"] {\n  --color-fondo: #EEF1F4;\n}`;
     expect(leerTokens(css)).toEqual({ fondo: '#0B1526', vial: '#F0C419' });
     expect(leerTokensClaro(css)).toEqual({ fondo: '#EEF1F4', vial: '#F0C419' });
-    expect(leerTemas(css)).toEqual({ oscuro: { fondo: '#0B1526', vial: '#F0C419' }, claro: { fondo: '#EEF1F4', vial: '#F0C419' } });
+    // Sin zona de tinta en el CSS de prueba, `tinta` es el oscuro tal cual: no hay nada que pisar.
+    expect(leerTemas(css)).toEqual({
+      oscuro: { fondo: '#0B1526', vial: '#F0C419' },
+      claro: { fondo: '#EEF1F4', vial: '#F0C419' },
+      tinta: { fondo: '#0B1526', vial: '#F0C419' },
+    });
+  });
+  // La zona de tinta (tarjetas y paneles en tema claro) parte del oscuro y la pisa entera: adentro no puede quedar
+  // ningún token del papel.
+  it('la zona de tinta pisa al oscuro con sus propios valores', () => {
+    const css = `@theme static {
+  --color-fondo: #0B1526;
+  --color-texto: #E8EEF5;
+}
+html[data-tema="claro"] {
+  --color-fondo: #EEF1F4;
+}
+@media screen {
+  html[data-tema="claro"] :is(.tarjeta, .bloque-oscuro) {
+    --color-fondo: #070E18;
+  }
+}`;
+    expect(leerTemas(css).tinta).toEqual({ fondo: '#070E18', texto: '#E8EEF5' });
   });
 });

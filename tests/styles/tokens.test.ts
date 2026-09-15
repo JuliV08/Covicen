@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { bloqueClaro, bloqueNoche, bloqueRoot, bloqueTheme, contraste, declaracionesDe, leerTemas, nombresDeTokens } from '../../scripts/lib/contraste.ts';
+import { bloqueClaro, bloqueNoche, bloqueRoot, bloqueTheme, bloqueTinta, contraste, declaracionesDe, leerTemas, nombresDeTokens } from '../../scripts/lib/contraste.ts';
 import { paresContraste } from '../../scripts/lib/pares.ts';
 
 const css = readFileSync('src/styles/tokens.css', 'utf8');
@@ -62,15 +62,42 @@ describe('tokens', () => {
   });
 
   // Pedido de Juli (15/09/2026): en el tema claro el fondo de la página se queda como está y lo que muestra contenido
-  // se apoya encima en oscuro, porque blanco sobre casi-blanco no se despega y encandila. Reusa el mecanismo de
-  // .zona-noche en vez de duplicarlo: si alguien lo parte en dos bloques, el día que cambie un color del tema oscuro
-  // uno de los dos se queda viejo y nadie se entera.
-  describe('tarjetas oscuras en el tema claro', () => {
-    const regla = /@media screen\s*\{\s*\.zona-noche\s*,\s*html\[data-tema="claro"\]\s*:is\(([^)]*)\)\s*\{/.exec(css);
-    it('comparten la regla con .zona-noche, no una copia', () => {
-      expect(regla, 'las tarjetas del tema claro dejaron de compartir la regla de .zona-noche').not.toBeNull();
+  // se apoya encima en oscuro, porque blanco sobre casi-blanco no se despega y encandila. La primera versión reusó los
+  // semánticos del tema oscuro y quedó azul: el interior de la tarjeta arranca en #17334F, que al lado del papel se lee
+  // navy, no negro. La zona de tinta usa la escala del marco del backoffice, que es más oscura y mucho menos saturada.
+  describe('zona de tinta (tarjetas y paneles en tema claro)', () => {
+    const tinta = declaracionesDe(bloqueTinta(css));
+    it('la regla cubre las tarjetas y los bloques de contenido, y solo en el tema claro', () => {
+      const regla = /@media screen\s*\{\s*html\[data-tema="claro"\]\s*:is\(([^)]*)\)\s*\{/.exec(css);
+      expect(regla, 'no encontré la regla de la zona de tinta').not.toBeNull();
       expect(regla![1]).toContain('.tarjeta');
       expect(regla![1]).toContain('.bloque-oscuro');
+    });
+    // Misma exigencia que para .zona-noche y por el mismo motivo: si redefiniera solo algunos, adentro quedaría mitad
+    // tinta y mitad papel (un texto navy sobre un fondo casi negro, por ejemplo).
+    it('redefine todos los tokens que el tema claro redefine', () => {
+      const claro = nombresDeTokens(bloqueClaro(css));
+      expect(claro.length).toBeGreaterThan(20);
+      for (const n of claro) expect(Object.keys(tinta), `falta --${n} en la zona de tinta`).toContain(n);
+    });
+    // Lo que Juli pidió, escrito como guarda: el interior de la tarjeta NO puede volver al azul del tema oscuro.
+    it('el interior de la tarjeta es la escala del marco del backoffice, no la del tema oscuro', () => {
+      expect(tinta['color-tarjeta-interior-1']).toBe('#152132');
+      expect(tinta['color-tarjeta-interior-2']).toBe('#0F1A29');
+      expect(tinta['color-tarjeta-interior-3']).toBe('#0B1522');
+      const oscuro = declaracionesDe(bloqueTheme(css));
+      for (const n of ['color-tarjeta-interior-1', 'color-fondo', 'color-fondo-2', 'color-superficie']) {
+        expect(tinta[n], `--${n} volvió al valor del tema oscuro`).not.toBe(oscuro[n]);
+      }
+    });
+    // Los grises del backoffice son neutros (0 % de saturación): es lo que hace que se lea negro y no navy.
+    it('los textos son los grises neutros del backoffice', () => {
+      expect(tinta['color-texto']).toBe('#FAFAFA');
+      expect(tinta['color-texto-2']).toBe('#A3A3A3');
+      expect(tinta['color-texto-3']).toBe('#8A8A8A');
+    });
+    it('vive dentro de @media screen: en papel manda impresion.css', () => {
+      expect(css).toMatch(/@media screen\s*\{\s*html\[data-tema="claro"\]/);
     });
     // Una tarjeta pinta su interior sola (tarjetas.css); una tabla o un panel, no: sin fondo propio quedarían con el
     // texto claro sobre el gris de la página.
@@ -78,7 +105,7 @@ describe('tokens', () => {
       expect(readFileSync('src/styles/global.css', 'utf8')).toMatch(/html\[data-tema="claro"\]\s*\.bloque-oscuro\s*\{[^}]*background-color/);
     });
     // El cromo de la página se queda claro a propósito: lo que cambia es el contenido, no el marco.
-    it('el header, las barras y el pie no son zona oscura', () => {
+    it('el header, las barras y el pie no son zona de tinta', () => {
       for (const comp of ['Header', 'BarraSuperior', 'BarraEmergencias', 'Footer']) {
         expect(readFileSync(`src/components/${comp}.astro`, 'utf8'), `${comp} se volvió zona oscura`).not.toContain('bloque-oscuro');
       }

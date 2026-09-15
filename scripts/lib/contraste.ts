@@ -42,6 +42,8 @@ export const bloqueClaro = (css: string): string => bloque(css, /html\[data-tema
 /** Texto crudo del bloque `:root` y del de `.zona-noche` (la zona que vuelve al tema oscuro dentro del tema claro). */
 export const bloqueRoot = (css: string): string => bloque(css, /^:root\s*\{/m);
 export const bloqueNoche = (css: string): string => bloque(css, /\.zona-noche[^{]*\{/);
+/** Texto crudo de la zona de tinta: las tarjetas y los paneles dentro del tema claro. */
+export const bloqueTinta = (css: string): string => bloque(css, /html\[data-tema="claro"\]\s*:is\([^)]*\)\s*\{/);
 
 /** Nombres de TODAS las variables (`--nombre:`) de un bloque: hex, rgb o números. `--color-*` (el reset) no cuenta. */
 export const nombresDeTokens = (texto: string): string[] => [...texto.matchAll(/--([\w-]+):/g)].map((m) => m[1]!);
@@ -59,4 +61,10 @@ export const leerTokens = (css: string): Record<string, string> => hexDe(bloqueT
 /** Tokens del tema claro: los del oscuro, pisados por los de `html[data-tema="claro"] { … }`. */
 export const leerTokensClaro = (css: string): Record<string, string> => ({ ...leerTokens(css), ...hexDe(bloqueClaro(css)) });
 
-export const leerTemas = (css: string): { oscuro: Record<string, string>; claro: Record<string, string> } => ({ oscuro: leerTokens(css), claro: leerTokensClaro(css) });
+/** Tokens dentro de la zona de tinta (tarjetas y paneles en tema claro): los del oscuro, pisados por los de la zona.
+ *  La zona redefine todo lo que redefine el bloque claro, así que partir del oscuro no deja ningún token del papel adentro. */
+export const leerTokensTinta = (css: string): Record<string, string> => ({ ...leerTokens(css), ...hexDe(bloqueTinta(css)) });
+
+/** Los tres ambientes que hay que verificar: el tema oscuro, el claro y la tinta de las tarjetas dentro del claro. */
+export const leerTemas = (css: string): { oscuro: Record<string, string>; claro: Record<string, string>; tinta: Record<string, string> } =>
+  ({ oscuro: leerTokens(css), claro: leerTokensClaro(css), tinta: leerTokensTinta(css) });

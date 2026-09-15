@@ -91,6 +91,11 @@ const copias = [false, true];
   .marquesina:hover .marquesina-cinta,
   .marquesina:focus-within .marquesina-cinta,
   .marquesina[data-pausado] .marquesina-cinta { animation-play-state: paused; }
+  /* Y el botón le gana a los implícitos. Sin esto, «Reanudar» no reanudaba NADA: al hacer clic el foco queda en el
+     propio botón y el puntero encima, así que `:focus-within` y `:hover` seguían frenando la cinta para siempre.
+     `data-corriendo` lo pone marquesina.ts al reanudar y lo saca cuando el usuario se va de la cinta, que es cuando
+     los frenos implícitos vuelven a tener sentido. Va última y con más especificidad para ganarle a las tres de arriba. */
+  .marquesina[data-corriendo]:not([data-pausado]) .marquesina-cinta { animation-play-state: running; }
 
   /* Con "menos movimiento" no desfila nada: la cinta queda quieta y se puede recorrer a mano. La copia sobra y el
      botón de pausa también (marquesina.ts lo esconde): no hay movimiento que frenar. */
