@@ -5,7 +5,7 @@ import { gzipSync } from 'node:zlib';
 import { FileSystemConfigLoader, HtmlValidate } from 'html-validate';
 import { loadEnv } from 'vite';
 import { contraste, leerTemas } from './lib/contraste.ts';
-import { existeDestino, jsonLdDe, linksInternos, paginasDe, textoVisible } from './lib/html.ts';
+import { existeDestino, hrefsConEsquemaProhibido, jsonLdDe, linksInternos, paginasDe, textoVisible } from './lib/html.ts';
 import { paresContraste } from './lib/pares.ts';
 
 const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
@@ -89,6 +89,10 @@ for (const ruta of paginas) {
   for (const r of reporte.results) for (const m of r.messages) fallo(`${nombre}: HTML ${m.ruleId} (${m.line}:${m.column}) ${m.message}`);
   // 14. ningún enlace externo abre en otra pestaña sin rel="noopener"
   for (const m of html.matchAll(/<a\b[^>]*target="_blank"[^>]*>/g)) if (!/rel="[^"]*noopener/.test(m[0])) fallo(`${nombre}: target=_blank sin noopener → ${m[0].slice(0, 80)}`);
+  // 15. ningún href usa un esquema raro: solo http(s), tel:, mailto:, anclas y rutas del sitio. El tramo y el tarifario
+  // los va a mandar el backend (FUENTE_DATOS=api) y un `javascript:` en un href es ejecución de código con un click.
+  // El contrato (lib/datos/esquemas) y esHttp (lib/rutas) lo atajan antes; esto lo comprueba sobre el HTML emitido.
+  for (const h of new Set(hrefsConEsquemaProhibido(html))) fallo(`${nombre}: href con un esquema no permitido → ${h.slice(0, 60)}`);
 }
 
 // 6. contraste de tokens usados, en los dos temas (la lista de pares vive en scripts/lib/pares.ts)

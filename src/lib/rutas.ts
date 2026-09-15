@@ -10,3 +10,8 @@ export const ruta = (path: string, base: string = config.base): string => {
 };
 
 export const absoluta = (path: string): string => `${config.sitio}${ruta(path)}`;
+
+/** ¿Esta URL se puede enlazar? Guarda única para las URLs que llegan de los datos (el backend manda el tramo y el
+ * tarifario): `javascript:` y `data:` en un href son ejecución de código con un click. El contrato ya las rechaza
+ * (esquemas.ts), esto es el segundo candado, en el borde donde se escribe el href. */
+export const esHttp = (url: string): boolean => /^https?:\/\//i.test(url);

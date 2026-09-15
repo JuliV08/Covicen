@@ -4,7 +4,10 @@ import { z } from 'astro/zod';
 
 export const fechaIso = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'fecha en formato YYYY-MM-DD');
 export const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'slug en minúsculas con guiones');
-export const url = z.url();
+/** `z.url()` a secas acepta `javascript:` y `data:` (son URLs válidas): acá se cierra a http(s) de una vez, para
+ * todas las URLs del contrato. El JSON Schema emitido no cambia (un refine no se representa), así que el backend
+ * sigue validando contra el mismo archivo de docs/contrato. */
+export const url = z.url().refine((v) => /^https?:\/\//i.test(v), 'solo se aceptan URLs http(s)');
 
 export const RUTAS = ['RN 9', 'RN 19', 'RN 34'] as const;
 export const esquemaNombreRuta = z.enum(RUTAS);

@@ -1,5 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { cabinaOperativa, esquemaCabina, esquemaCiudad, esquemaContacto, esquemaEmpresa, esquemaRuta, esquemaTarifario } from '@/lib/datos/esquemas';
+import { cabinaOperativa, esquemaCabina, esquemaCiudad, esquemaContacto, esquemaEmpresa, esquemaRuta, esquemaTarifario, url } from '@/lib/datos/esquemas';
+
+// El contrato es la única puerta de entrada de los datos del backend: si acá pasa un `javascript:`, después
+// hay que acordarse de filtrarlo en cada href. Se filtra una sola vez, acá.
+describe('url (el tipo del contrato)', () => {
+  it('acepta http y https', () => {
+    expect(url.parse('https://www.boletinoficial.gob.ar/detalleAviso/primera/1/2026')).toContain('boletinoficial');
+    expect(() => url.parse('http://covicen.com.ar')).not.toThrow();
+  });
+  it('rechaza los esquemas que ejecutan código o embeben contenido, aunque sean URLs válidas', () => {
+    for (const v of ['javascript:alert(1)', 'data:text/html,<script>x()</script>', 'vbscript:msgbox(1)', 'file:///c:/x'])
+      expect(() => url.parse(v), v).toThrow();
+  });
+  it('sigue rechazando lo que no es una URL', () => {
+    expect(() => url.parse('boletinoficial.gob.ar')).toThrow();
+  });
+});
 
 describe('esquemaTarifario', () => {
   const base = {
@@ -21,6 +37,10 @@ describe('esquemaTarifario', () => {
   });
   it('rechaza fechas que no sean YYYY-MM-DD', () => {
     expect(() => esquemaTarifario.parse({ ...base, publicadoEl: '27/08/2026' })).toThrow();
+  });
+  it('rechaza una fuente con URL que no sea http(s): el tarifario lo manda el backend y su URL va a un href', () => {
+    expect(() => esquemaTarifario.parse({ ...base, fuente: { nombre: 'Res. 1/2026', url: 'javascript:alert(1)' } })).toThrow();
+    expect(() => esquemaTarifario.parse({ ...base, fuente: { nombre: 'Res. 1/2026', url: 'data:text/html,hola' } })).toThrow();
   });
   it('admite origen heredado, resolución, cabinas, excepciones y monto manual, todos opcionales salvo origen', () => {
     const t = esquemaTarifario.parse({

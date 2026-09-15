@@ -20,6 +20,19 @@ export const linksInternos = (html: string): string[] =>
     .map((h) => h.split('#')[0]!)
     .filter((h) => h !== '');
 
+/** Los únicos esquemas de href que el sitio usa. Todo lo demás (javascript:, data:, vbscript:…) es un fallo. */
+const ESQUEMAS_HREF = new Set(['http', 'https', 'tel', 'mailto']);
+
+/** hrefs de dist/ cuyo esquema no está permitido. Las anclas (#x) y las rutas (/x) no tienen esquema: pasan.
+ * El navegador descarta espacios y saltos de línea antes de leer el esquema, así que acá también. */
+export const hrefsConEsquemaProhibido = (html: string): string[] =>
+  [...html.matchAll(/href="([^"]*)"/g)]
+    .map((m) => m[1]!.replace(/[\t\n\r]/g, '').trim())
+    .filter((h) => {
+      const esquema = /^([a-z][a-z0-9+.-]*):/i.exec(h)?.[1];
+      return esquema !== undefined && !ESQUEMAS_HREF.has(esquema.toLowerCase());
+    });
+
 /** '/covicen/tarifas/' + base '/covicen/' → 'tarifas/index.html' */
 export const normalizarHref = (href: string, base: string): string => {
   const sinBase = href.startsWith(base) ? href.slice(base.length) : href.replace(/^\//, '');

@@ -1,7 +1,10 @@
+import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { parseHTML } from 'linkedom';
 import { describe, expect, it } from 'vitest';
 import TablaTarifas from '@/components/TablaTarifas.astro';
+import TarifaDestacada from '@/components/home/TarifaDestacada.astro';
+import Tarifas from '@/pages/tarifas.astro';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
 
 describe('TablaTarifas', () => {
@@ -74,5 +77,64 @@ describe('TablaTarifas con textos del sistema', () => {
     const tarifas = base.tarifas.map((t) => (t.categoria === 'cat-2' ? { ...t, montoSinIva: 1399, montoConIva: 1692.79 } : t));
     const html = (await c.renderToString(TablaTarifas, { props: { tarifario: { ...base, tarifas } } })).replace(/[  ]/g, ' ');
     expect(html).toContain('1.692,79');
+  });
+});
+
+// La URL de la fuente del tarifario la va a mandar el backend (FUENTE_DATOS=api). Además del contrato, cada
+// componente que la mete en un href pasa por esHttp: la misma regla que ya cumplía TablaTarifas.
+describe('TarifaDestacada', () => {
+  const render = async (tarifario: unknown) => (await AstroContainer.create()).renderToString(TarifaDestacada, { props: { tarifario } });
+
+  it('enlaza la resolución cuando la fuente es http(s)', async () => {
+    const base = await fuenteLocalJson.tarifario();
+    const html = await render({ ...base, fuente: { nombre: 'Res. 1/2026', url: 'https://boletinoficial.gob.ar/x' } });
+    expect(parseHTML(html).document.querySelector('a[href="https://boletinoficial.gob.ar/x"]')).not.toBeNull();
+  });
+
+  it('con una URL que no es http(s) no emite el enlace', async () => {
+    const base = await fuenteLocalJson.tarifario();
+    for (const url of ['javascript:alert(1)', 'data:text/html,hola']) {
+      const html = await render({ ...base, fuente: { nombre: 'Res. 1/2026', url } });
+      expect([...parseHTML(html).document.querySelectorAll('a')].some((a) => a.getAttribute('href') === url), url).toBe(false);
+      expect(html).toContain('Tarifario completo por categoría');
+    }
+  });
+
+  // La tarjeta que gira es foco de teclado y los dos enlaces del dorso también: con :focus-visible la tarjeta volvía
+  // al frente al tabular hacia ellos (foco sobre una cara con backface-visibility: hidden) y `outline: none` le ganaba
+  // por especificidad al anillo global. Se prueba sobre la fuente porque el giro es CSS puro, sin navegador.
+  it('el giro se sostiene mientras el foco esté adentro y la tarjeta conserva su anillo de foco', () => {
+    const estilo = /<style>([\s\S]*)<\/style>/.exec(readFileSync('src/components/home/TarifaDestacada.astro', 'utf8'))?.[1] ?? '';
+    expect(estilo).not.toMatch(/\.flip\s*\{[^}]*outline:\s*none/);
+    expect(estilo).toContain('.flip:focus-within .flip-caras');
+    expect(estilo).toContain('.flip:focus-within .flip-item');
+    expect(estilo).not.toContain('.flip:focus-visible');
+  });
+});
+
+describe('/tarifas/', () => {
+  const render = async () => (await AstroContainer.create()).renderToString(Tarifas, { request: new Request('https://covicen.test/tarifas/') });
+
+  // Spec §3.4: el exceso de carga (PETG 83) es el único dato de esa lista que no estaba publicado.
+  it('publica el exceso de carga con los dos multiplicadores y su artículo', async () => {
+    const visible = (await render()).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+    expect(visible).toContain('50 veces');
+    expect(visible).toContain('100 veces');
+    expect(visible).toContain('PETG art. 83');
+    expect(visible).toContain('24.449');
+  });
+
+  it('enlaza el Boletín Oficial de la resolución vigente', async () => {
+    const html = await render();
+    expect(html).toContain('Ver en el Boletín Oficial');
+    expect(html).toMatch(/href="https:\/\/[^"]*boletinoficial[^"]*"/i);
+  });
+
+  // No se puede inyectar un tarifario envenenado en la página (lee `datos`), así que se verifica que el href pase por
+  // la guarda. El barrido de dist/ de scripts/verificar.ts es el otro candado, sobre el sitio entero.
+  it('la URL de la fuente pasa por esHttp antes de ir a un href', () => {
+    const fuente = readFileSync('src/pages/tarifas.astro', 'utf8');
+    expect(fuente).toContain("import { esHttp, ruta } from '@/lib/rutas'");
+    expect(fuente).toMatch(/esHttp\(tarifario\.fuente\.url\)/);
   });
 });

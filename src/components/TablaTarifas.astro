@@ -1,16 +1,17 @@
 ---
 // Cuadro tarifario de UNA estación (o el general si no se pasa cabina): categoría, tipo de vehículo, TelePASE y pago
 // electrónico o manual, precio al público (con IVA, como en la cabina) y sin IVA en anotación. Los textos del operador
-// (avisos, vigencia, fuente) se pintan como texto, nunca set:html; la URL de la fuente solo se enlaza si es http(s).
+// (avisos, vigencia, fuente) se pintan como texto, nunca set:html; la URL de la fuente solo se enlaza si pasa esHttp
+// (lib/rutas), la misma guarda que usan TarifaDestacada y /tarifas/.
 import IconoVehiculo from '@/components/ilustraciones/IconoVehiculo.astro';
 import type { Cabina, Tarifario } from '@/lib/datos/esquemas';
 import { fechaCorta, fechaLarga, kmTexto, moneda } from '@/lib/formato';
+import { esHttp } from '@/lib/rutas';
 import { iconoDeTarifa, publico, tarifasParaCabina } from '@/lib/tarifas';
 interface Props { tarifario: Tarifario; cabina?: Cabina; id?: string; compacta?: boolean }
 const { tarifario: t, cabina, id, compacta = false } = Astro.props;
 const filas = tarifasParaCabina(t, cabina?.slug);
 const vigencia = t.vigencia.desde ? `Vigencia: desde el ${fechaLarga(t.vigencia.desde)}.` : `Vigencia: ${t.vigencia.descripcion}`;
-const esHttp = (url: string) => /^https?:\/\//i.test(url);
 const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km !== null ? ` km ${kmTexto(cabina.km)}` : ''}` : 'Todas las estaciones operativas';
 ---
 <div class="revelar" {id}>
