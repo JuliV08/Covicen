@@ -1,3 +1,5 @@
+import { punteroRelativo } from '@/lib/puntero';
+
 // Parallax 2.5D con mapa de profundidad (WebGL 2, cae a WebGL 1). Solo desktop con hover y sin reduced-motion; si algo falla, queda la foto.
 // El canvas arranca con EXACTAMENTE el encuadre de la foto (cover, zoom 1): así el fundido de uno a otro es invisible.
 const VS = 'attribute vec2 p;varying vec2 v;void main(){v=vec2(p.x*0.5+0.5,0.5-p.y*0.5);gl_Position=vec4(p,0.,1.);}';
@@ -82,8 +84,12 @@ const montar = (raiz: HTMLElement) => {
     // objetivo (mouse + scroll + deriva) → actual (suavizado)
     let mx = 0, my = 0, sy = 0, ax = 0, ay = 0, zoom = 1, visible = true, animando = false;
     const pintar = () => {
+      // Segunda línea de defensa. Un solo valor no finito que llegue al shader deja la foto sampleada en una
+      // coordenada imposible —un manchón liso que tapa todo— y, como el suavizado arrastra el valor, no se recupera
+      // más. Si pasa igual, se vuelve al centro y la foto sigue viéndose.
+      if (!Number.isFinite(ax) || !Number.isFinite(ay)) { ax = 0; ay = 0; }
       gl.uniform2f(uDesp, ax, ay);
-      gl.uniform1f(uZoom, zoom);
+      gl.uniform1f(uZoom, Number.isFinite(zoom) ? zoom : 1);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     };
 
@@ -111,10 +117,14 @@ const montar = (raiz: HTMLElement) => {
     // el contenido lo corre. Con `resize` de window el lienzo se quedaba con la medida del montaje y la foto salía
     // recortada de otra manera que el <img> de abajo. ResizeObserver mira la caja real, incluida la vuelta de 0 a N.
     new ResizeObserver(() => redimensionar()).observe(canvas);
+    // El pointermove se escucha en la SECCIÓN y no en `raiz`, porque `raiz` vive detrás de todo y el puntero nunca le
+    // llega. La contra es que las DOS fotos (la de cada tema) reciben el mismo evento, y la que el tema esconde mide
+    // 0×0: la cuenta directa daba Infinity y envenenaba el desplazamiento para siempre. punteroRelativo devuelve null
+    // en ese caso. Ver src/lib/puntero.ts, que cuenta el bug entero.
     raiz.closest('section')?.addEventListener('pointermove', (e) => {
-      const r = raiz.getBoundingClientRect();
-      mx = (e.clientX - r.left) / r.width - 0.5;
-      my = (e.clientY - r.top) / r.height - 0.5;
+      const p = punteroRelativo(raiz.getBoundingClientRect(), e.clientX, e.clientY);
+      if (!p) return;
+      [mx, my] = p;
     }, { passive: true });
     addEventListener('scroll', () => { sy = Math.min(1, scrollY / Math.max(1, raiz.clientHeight)); }, { passive: true });
 
