@@ -61,6 +61,41 @@ describe('contenido del repo', () => {
     expect(grua.tiempos).toEqual(['Vehículos livianos: 30 minutos en al menos el 90 % de los casos, y nunca más de 40.', 'Vehículos pesados: 60 minutos en al menos el 90 % de los casos, y nunca más de 72.']);
     expect(s.filter((x) => !x.gratuito).map((x) => x.id)).toEqual(['mecanica-general', 'remolque-extendido']);
   });
+  it('servicios: la tarjeta de atención al usuario no contradice el cuadro del art. 58.1 (el 0800 acusa en el momento)', async () => {
+    const [s, c] = await Promise.all([fuenteLocalJson.servicios(), fuenteLocalJson.contacto()]);
+    // El cuadro del PETG 58.1 da acuse INMEDIATO a la línea gratuita 0800 y 24 horas a formulario web / correo y
+    // ChatBot/WhatsApp. En /servicios/ esta tarjeta y la tabla de Canales conviven tres bloques aparte: si la tarjeta
+    // mete el 0800 en la bolsa de las 24 horas, la página se desmiente sola.
+    expect(c.canales.find((k) => k.id === 'linea-0800')?.acuse).toBe('Inmediato');
+    const atencion = s.find((x) => x.id === 'atencion-al-usuario')!;
+    const clausulaDel0800 = atencion.descripcion.split(/[.;]/).find((frase) => frase.includes('0800'));
+    expect(clausulaDel0800, 'la tarjeta tiene que nombrar el 0800').toBeDefined();
+    expect(clausulaDel0800).toMatch(/en el momento|inmediat/i);
+    expect(clausulaDel0800).not.toMatch(/24 horas/);
+    expect(atencion.descripcion).toContain('24 horas');
+    expect(atencion.descripcion).toContain('5 días hábiles');
+  });
+  it('faq del desperfecto en ruta: los tiempos de grúa se publican como los del pliego, no como promesa lisa', async () => {
+    const p = (await fuenteLocalJson.faq()).find((x) => x.slug === 'desperfecto-en-ruta')!;
+    // PETG 54.5: 30 minutos en al menos el 90 % de las ocurrencias y nunca más de 40 (livianos), 60 y 72 (pesados).
+    // Publicar "30 para livianos y 60 para pesados" a secas promete algo que el contrato no compromete.
+    const grua = (await fuenteLocalJson.servicios()).find((x) => x.id === 'grua-y-remolque')!;
+    // La redacción sale de servicios.json: si allá cambia, acá tiene que cambiar igual.
+    for (const t of grua.tiempos ?? []) expect(p.respuesta).toContain(t.replace(/^Vehículos \w+: /, '').replace(/\.$/, ''));
+    expect(grua.tiempos).toHaveLength(2);
+    expect(p.respuesta).not.toMatch(/30 minutos para livianos/);
+  });
+  it('normativa: cada norma enlaza el aviso del Boletín Oficial que le corresponde', async () => {
+    const n = await fuenteLocalJson.normativa();
+    const porId = Object.fromEntries(n.map((x) => [x.id, x]));
+    // Verificado contra el Boletín Oficial: el aviso 310150 es la Resolución 215/2024 de la Comisión Nacional de
+    // Trabajo Agrario, no la ley. El PETG 61.6 obliga a dar acceso a la normativa aplicable: el enlace tiene que abrirla.
+    expect(porId['ley-27742'].url).toBe('https://www.boletinoficial.gob.ar/detalleAviso/primera/310189/20240708');
+    // El aviso 320610 es una notificación de la Aduana de Concepción del Uruguay; el Decreto 97/2025 salió el 17/02.
+    expect(porId['decreto-97-2025'].url).toBe('https://www.boletinoficial.gob.ar/detalleAviso/primera/321201/20250217');
+    expect(porId['decreto-97-2025'].descripcion).toContain('17/02/2025');
+    expect(porId['decreto-97-2025'].descripcion).not.toContain('13/02/2025');
+  });
   it('normativa, trámites y consejos cargan y tienen ids únicos', async () => {
     const [n, tr, co] = await Promise.all([fuenteLocalJson.normativa(), fuenteLocalJson.tramites(), fuenteLocalJson.consejos()]);
     expect(n.map((x) => x.id)).toContain('resolucion-248-2026');
