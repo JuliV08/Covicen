@@ -125,17 +125,29 @@ html[data-tema="claro"] {
   color-scheme: light;
 }
 
-/* Zona siempre oscura, para las secciones cuya foto es nocturna y NO tiene versión de día: en el tema claro esa foto se
-   muestra igual, ahí --brillo-foto es 1 y el velo aclara poco, así que el texto encima quedaba entre 2,8:1 y 4,4:1,
-   abajo del 4,5:1 que exige el pliego 61.7 en los DOS temas. En vez de inventar un velo nuevo (para llegar a 4,5:1 en
-   celular había que taparla casi entera), la zona revierte los semánticos a los del tema oscuro: adentro se ve
-   exactamente como en oscuro y el contraste es el que ya verifican pares.ts y verificar.ts. Todo sale de tokens, así
-   que ningún componente se toca. Hoy la lleva el panel del Consorcio; el hero salió de acá cuando llegó la foto de día
-   (ahora cada tema usa la suya y el contraste lo mide tests/styles/hero-foto.test.ts).
+/* Volver al tema oscuro dentro de un pedazo de la página. El mecanismo es uno solo —revertir los semánticos a los
+   valores del tema oscuro— y lo usan dos cosas distintas:
+
+   1. `.zona-noche`: secciones cuya foto es nocturna y NO tiene versión de día. En el tema claro esa foto se muestra
+      igual, ahí --brillo-foto es 1 y el velo aclara poco, así que el texto encima quedaba entre 2,8:1 y 4,4:1, abajo
+      del 4,5:1 que exige el pliego 61.7 en los DOS temas. Inventar un velo nuevo no servía: para llegar a 4,5:1 en
+      celular había que tapar la foto casi entera. Hoy la lleva el panel del Consorcio; el hero salió de acá cuando
+      llegó la foto de día (ahora cada tema usa la suya y el contraste lo mide tests/styles/hero-foto.test.ts).
+
+   2. Las tarjetas y los paneles de contenido en el tema claro (pedido de Juli, 15/09/2026). El tema claro tenía el
+      fondo en #EEF1F4 y las tarjetas en blanco: dos claros pegados, sin relieve, que encandilan. Ahora el fondo de la
+      página sigue igual y lo que muestra contenido se apoya encima en oscuro. `.bloque-oscuro` es para lo que enseña
+      contenido sin ser tarjeta: las tablas y los paneles sueltos. Queda AFUERA a propósito el cromo de la página
+      —header, barra superior, barra de emergencias, pie— y los campos de formulario, que son para escribir, no para
+      leer.
+
+   Los dos casos comparten la misma promesa: adentro se ve exactamente como en el tema oscuro, así que el contraste es
+   el que ya verifican pares.ts y verificar.ts, y ningún componente escribe un color a mano.
    Va en @media screen a propósito: en papel manda impresion.css (blanco y negro) y acá le ganaría por especificidad.
    tests/styles/tokens.test.ts exige que estén TODOS los que cambia el tema claro y con el valor del oscuro. */
 @media screen {
-  .zona-noche {
+  .zona-noche,
+  html[data-tema="claro"] :is(.tarjeta, .bloque-oscuro) {
     --color-fondo: #0B1526;
     --color-fondo-2: #10203A;
     --color-superficie: #16304E;

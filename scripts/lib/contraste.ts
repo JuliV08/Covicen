@@ -41,7 +41,7 @@ export const bloqueClaro = (css: string): string => bloque(css, /html\[data-tema
 
 /** Texto crudo del bloque `:root` y del de `.zona-noche` (la zona que vuelve al tema oscuro dentro del tema claro). */
 export const bloqueRoot = (css: string): string => bloque(css, /^:root\s*\{/m);
-export const bloqueNoche = (css: string): string => bloque(css, /\.zona-noche\s*\{/);
+export const bloqueNoche = (css: string): string => bloque(css, /\.zona-noche[^{]*\{/);
 
 /** Nombres de TODAS las variables (`--nombre:`) de un bloque: hex, rgb o números. `--color-*` (el reset) no cuenta. */
 export const nombresDeTokens = (texto: string): string[] => [...texto.matchAll(/--([\w-]+):/g)].map((m) => m[1]!);

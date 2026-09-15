@@ -32,7 +32,7 @@ const exentos = ['Ambulancias', 'Vehículos de las Fuerzas Armadas y de Segurida
 <Base titulo="Tarifas" descripcion={`Cuadro tarifario vigente en los peajes del Tramo Centro (Carcarañá, James Craik y Franck): ${precio !== null ? moneda(precio) : ''} por auto, Resolución 248/2026 de Vialidad Nacional. TelePASE, pago en la vía, descuentos por frecuencia y exenciones.`} migas={[{ nombre: 'Tarifas', href: '/tarifas' }]}>
   <Seccion nivel="h1" eyebrow="Tarifas" titulo="Cuánto cuesta el peaje." intro={tarifario.vigencia.descripcion} class="pt-10">
     <div class="revelar mb-12 grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
-      <div class="rounded-md border border-borde bg-superficie/50 p-8">
+      <div class="bloque-oscuro rounded-md border border-borde bg-superficie/50 p-8">
         <div class="flex items-center gap-3 text-texto-2"><IconoVehiculo icono={iconoDeTarifa(destacada)} size={32} /> <span>{destacada.nombre} · {destacada.descripcion}</span></div>
         {precio !== null && destacada.montoSinIva !== null && (
           <>
@@ -105,7 +105,7 @@ const exentos = ['Ambulancias', 'Vehículos de las Fuerzas Armadas y de Segurida
 
   {/* Sin fondo-2: las secciones alternan liso y grilla cinética, y la de exceso de carga ya ocupa ese turno. */}
   <Seccion indice="06" eyebrow="Después de las obras iniciales" titulo="Las categorías que van a regir." intro="Cuando terminen las Obras Iniciales de Puesta en Valor, el cuadro pasa a las categorías del pliego (PETG art. 53.2): cada una es un múltiplo de la tarifa básica. Acá va la estructura; los precios, cuando Vialidad Nacional homologue el cuadro.">
-    <section class="revelar overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label="Categorías futuras de vehículos">
+    <section class="bloque-oscuro revelar overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label="Categorías futuras de vehículos">
       <table class="w-full border-collapse text-left">
         <caption class="sr-only">Categorías de vehículos del pliego y su múltiplo sobre la tarifa básica.</caption>
         <thead class="bg-fondo-2 text-sm uppercase tracking-wider text-texto-2"><tr><th scope="col" class="px-4 py-3">Categoría</th><th scope="col" class="px-4 py-3">Vehículos</th><th scope="col" class="px-4 py-3 text-right">Tarifa básica ×</th></tr></thead>

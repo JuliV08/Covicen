@@ -22,7 +22,7 @@ const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km
     <h3 class="text-xl">{titulo}</h3>
     <p class="text-sm text-texto-2">{vigencia}{t.resolucion && ` ${t.resolucion}.`}</p>
   </div>
-  <section class="overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label={`Tabla de tarifas, ${titulo}`}>
+  <section class="bloque-oscuro overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label={`Tabla de tarifas, ${titulo}`}>
     <table class="w-full border-collapse text-left">
       <caption class="sr-only">Tarifas de peaje, {titulo}, en pesos argentinos con IVA incluido. {vigencia} {t.vigencia.descripcion}</caption>
       <thead class="bg-fondo-2 text-sm uppercase tracking-wider text-texto-2">

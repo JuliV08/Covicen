@@ -47,7 +47,7 @@ const conServicios = tramo.cabinas.filter((c) => serviciosDeCabina(c).length > 0
   </section>
 
   <Seccion id="rutas" class={anclaTapada} indice="01" eyebrow="Rutas y longitudes" titulo="Tres rutas nacionales bajo una misma concesión." intro={`${numero(tramo.km, 2)} km en total, según el pliego del Tramo Centro.`} fondo="fondo-2">
-    <section class="revelar overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label="Rutas del tramo">
+    <section class="bloque-oscuro revelar overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label="Rutas del tramo">
       <table class="w-full border-collapse text-left">
         <caption class="sr-only">Rutas del Tramo Centro con extremos, progresivas y longitud en kilómetros.</caption>
         <thead class="bg-fondo text-sm uppercase tracking-wider text-texto-2"><tr><th scope="col" class="px-4 py-3">Ruta</th><th scope="col" class="px-4 py-3">Desde</th><th scope="col" class="px-4 py-3">Hasta</th><th scope="col" class="px-4 py-3 text-right">Progresivas</th><th scope="col" class="px-4 py-3 text-right">Longitud</th></tr></thead>

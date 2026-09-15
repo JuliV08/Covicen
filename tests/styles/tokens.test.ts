@@ -57,7 +57,31 @@ describe('tokens', () => {
       for (const [n, v] of Object.entries(noche)) expect(v, `--${n}`).toBe(oscuro[n]);
     });
     it('vive dentro de @media screen: en papel manda impresion.css', () => {
-      expect(css).toMatch(/@media screen\s*\{\s*\.zona-noche\s*\{/);
+      expect(css).toMatch(/@media screen\s*\{\s*\.zona-noche[^{]*\{/);
+    });
+  });
+
+  // Pedido de Juli (15/09/2026): en el tema claro el fondo de la página se queda como está y lo que muestra contenido
+  // se apoya encima en oscuro, porque blanco sobre casi-blanco no se despega y encandila. Reusa el mecanismo de
+  // .zona-noche en vez de duplicarlo: si alguien lo parte en dos bloques, el día que cambie un color del tema oscuro
+  // uno de los dos se queda viejo y nadie se entera.
+  describe('tarjetas oscuras en el tema claro', () => {
+    const regla = /@media screen\s*\{\s*\.zona-noche\s*,\s*html\[data-tema="claro"\]\s*:is\(([^)]*)\)\s*\{/.exec(css);
+    it('comparten la regla con .zona-noche, no una copia', () => {
+      expect(regla, 'las tarjetas del tema claro dejaron de compartir la regla de .zona-noche').not.toBeNull();
+      expect(regla![1]).toContain('.tarjeta');
+      expect(regla![1]).toContain('.bloque-oscuro');
+    });
+    // Una tarjeta pinta su interior sola (tarjetas.css); una tabla o un panel, no: sin fondo propio quedarían con el
+    // texto claro sobre el gris de la página.
+    it('los bloques que no son tarjeta se pintan', () => {
+      expect(readFileSync('src/styles/global.css', 'utf8')).toMatch(/html\[data-tema="claro"\]\s*\.bloque-oscuro\s*\{[^}]*background-color/);
+    });
+    // El cromo de la página se queda claro a propósito: lo que cambia es el contenido, no el marco.
+    it('el header, las barras y el pie no son zona oscura', () => {
+      for (const comp of ['Header', 'BarraSuperior', 'BarraEmergencias', 'Footer']) {
+        expect(readFileSync(`src/components/${comp}.astro`, 'utf8'), `${comp} se volvió zona oscura`).not.toContain('bloque-oscuro');
+      }
     });
   });
 

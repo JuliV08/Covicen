@@ -10,7 +10,6 @@ import NovedadesRecientes from '@/components/home/NovedadesRecientes.astro';
 import ObrasYEstado from '@/components/home/ObrasYEstado.astro';
 import Servicios from '@/components/home/Servicios.astro';
 import TarifaDestacada from '@/components/home/TarifaDestacada.astro';
-import Divisor from '@/components/ui/Divisor.astro';
 import Marquesina from '@/components/Marquesina.astro';
 import { datos } from '@/lib/datos';
 
@@ -30,7 +29,6 @@ const [empresa, contacto, avisos, tramo, tarifario, obras, novedades, faq, estad
   {/* En la home la cinta se apoya en el borde de abajo del hero; en el resto de las páginas la monta Base, arriba
       del contenido. Por eso Base recibe `marquesinaEnHero` y acá va por el slot. */}
   <Hero {empresa}><Marquesina slot="marquesina" {avisos} enHero /></Hero>
-  <Divisor />
   <AccesosRapidos {contacto} />
   <TarifaDestacada {tarifario} />
   <ElTramo {tramo} />

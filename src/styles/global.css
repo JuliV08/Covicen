@@ -141,6 +141,13 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
      por debajo (que es un corte seco, y encima el canvas del parallax se vuelve a montar) y recién ahí reaparece.
      scripts/tema.ts levanta el velo ANTES de aplicar el tema y lo baja después; sin JS no hay cambio de tema que
      disolver, y con "menos movimiento" el cambio es instantáneo, como era antes. */
+  /* Una tarjeta pinta su interior sola (tarjetas.css, ::after). Los paneles y las tablas no traen fondo propio: en el
+     tema oscuro se apoyan directo sobre el fondo de la página, y al volverse zona oscura dentro del tema claro se
+     habrían quedado transparentes, con el texto claro sobre el gris de la página. Se pintan con el mismo fondo que
+     tienen debajo en el tema oscuro. Un componente que ya tiene su propio fondo lo dice con --fondo-bloque, y así el
+     color le queda igual en los dos temas. */
+  html[data-tema="claro"] .bloque-oscuro { background-color: var(--fondo-bloque, var(--color-fondo)); }
+
   .velo-tema { position: absolute; inset: 0; z-index: 40; opacity: 0; pointer-events: none; transition: opacity 200ms var(--ease-salida); }
   .velo-tema[data-visible] { opacity: 1; }
   /* La vuelta es más lenta que la ida: entrar en la disolvencia es un gesto, salir es la foto nueva apareciendo. */

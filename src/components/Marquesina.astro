@@ -17,7 +17,7 @@ const enlace = (u: string) => (u.startsWith('/') ? ruta(u) : u);
 const copias = [false, true];
 ---
 {avisos.length > 0 && (
-  <section class:list={['marquesina', enHero && 'marquesina-hero']} aria-label={etiqueta} data-marquesina style={`--avisos: ${avisos.length}`}>
+  <section class:list={['marquesina bloque-oscuro', enHero && 'marquesina-hero']} aria-label={etiqueta} data-marquesina style={`--avisos: ${avisos.length}`}>
     <p class="marquesina-etiqueta eyebrow"><span>{etiqueta}</span></p>
     <div class="marquesina-pista">
       <div class="marquesina-cinta">
@@ -46,10 +46,13 @@ const copias = [false, true];
 <script src="../scripts/marquesina.ts"></script>
 <style>
   .marquesina {
+    /* La cinta ya trae su fondo, así que le avisa a .bloque-oscuro cuál es en vez de dejar que le ponga el de la
+       página: de este modo se ve del mismo color en los dos temas. */
+    --fondo-bloque: var(--color-fondo-2);
     display: flex;
     align-items: stretch;
     min-height: 2.75rem;
-    background: var(--color-fondo-2);
+    background: var(--fondo-bloque);
     border-block: 1px solid var(--color-borde);
     overflow: hidden;
   }
