@@ -15,9 +15,10 @@ const auto = tarifaDestacada(tarifario);
 // Nombre llano del tipo de vehículo (§8.2: "$1.500 · Autos"): "Categoría 1" solo no le dice nada a quien entra al home.
 const tipos = { moto: 'Motos', auto: 'Autos', camioneta: 'Camionetas', 'camion-2': 'Camiones de 2 ejes', 'camion-3-4': 'Camiones de 3 y 4 ejes', 'camion-5-6': 'Camiones de 5 y 6 ejes', 'camion-7': 'Camiones de 7 o más ejes' } as const;
 const tipo = tipos[iconoDeTarifa(auto)];
+// `montoSinIva` es nullable en el contrato y significa "sin valor publicado": la sección entera se esconde, igual que
+// hacen /tarifas/ y TablaTarifas. Criterio de la casa (esconder, no a confirmar) y §8.2: la tarjeta no rompe el home.
 const sinIva = auto.montoSinIva;
 const precio = publico(sinIva, auto.montoConIva, tarifario.alicuotaIva);
-if (sinIva === null || precio === null) throw new Error('TarifaDestacada: la tarifa destacada no tiene precio');
 const vigencia = tarifario.vigencia.desde ? `Vigente desde el ${fechaLarga(tarifario.vigencia.desde)}.` : `Vigencia: ${tarifario.vigencia.descripcion}`;
 const detalles = [
   { Icono: BadgeCheck, texto: 'Rige en Carcarañá, James Craik y Franck; igual con TelePASE que con pago en la vía.' },
@@ -25,11 +26,12 @@ const detalles = [
   { Icono: FileText, texto: tarifario.resolucion ?? tarifario.fuente.nombre },
 ];
 ---
+{precio !== null && sinIva !== null && (
 <Seccion id="tarifa" indice="01" eyebrow="Tarifa" titulo="El cuadro tarifario vigente." intro="El que fijó Vialidad Nacional para estas estaciones y que Covicen aplica desde la toma de posesión. Se actualiza por índices oficiales cada tres meses.">
   <div class="revelar mx-auto max-w-2xl">
     <div class="flip" data-flip tabindex="0" role="group" aria-label="Tarifa del peaje: pasá el mouse o tocá para ver el detalle">
       <div class="flip-caras">
-        <!-- El frente es flex-col: si el dorso es más alto (mobile), el bloque central se centra y la pista va al pie: sin vacíos. -->
+        {/* El frente es flex-col: si el dorso es más alto (mobile), el bloque central se centra y la pista va al pie: sin vacíos. */}
         <div class="flip-cara flip-frente tarjeta p-8">
           <div class="flex items-center justify-between gap-4">
             <span class="tarjeta-icono"><IconoVehiculo icono={iconoDeTarifa(auto)} size={28} /></span>
@@ -74,6 +76,7 @@ const detalles = [
     <p class="mt-4 text-center text-sm text-texto-3">Publicado el {fechaCorta(tarifario.publicadoEl)}. Se actualiza por índices oficiales según el contrato.</p>
   </div>
 </Seccion>
+)}
 <script src="../../scripts/flip.ts"></script>
 <style>
   /* Sin `outline: none`: la tarjeta es foco de teclado (tabindex="0") y le toca el anillo global de :focus-visible. */

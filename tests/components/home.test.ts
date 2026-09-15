@@ -65,6 +65,16 @@ describe('TarifaDestacada', () => {
     expect(html).toContain('248/2026');
     expect(html).not.toContain('Tarifa ofertada');
   });
+  // `montoSinIva` es nullable en el contrato y significa "sin valor publicado": va el criterio de la casa (esconder,
+  // no a confirmar), no un throw que se lleve puesto el build entero del home.
+  it('sin valor publicado: no renderiza la sección en vez de romper el build', async () => {
+    const base = await fuenteLocalJson.tarifario();
+    const sinPrecio = { ...base, tarifas: [{ ...base.tarifas[0]!, montoSinIva: null, montoConIva: null }, ...base.tarifas.slice(1)] };
+    const html = await render(TarifaDestacada, { tarifario: sinPrecio });
+    expect(html).not.toContain('id="tarifa"');
+    expect(html).not.toContain('Cuadro vigente');
+    expect(html).not.toContain('Tarifario completo por categoría');
+  });
 });
 
 describe('Faq', () => {

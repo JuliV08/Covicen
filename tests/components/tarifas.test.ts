@@ -15,6 +15,9 @@ describe('TablaTarifas', () => {
     // Intl separa "$" del número con un espacio no separable (U+00A0 o U+202F): se normaliza con escapes, no con literales.
     const html = (await c.renderToString(TablaTarifas, { props: { tarifario, cabina, id: 'franck' } })).replace(/[\u00A0\u202F]/g, ' ');
     expect(html).toContain('id="franck"');
+    // El header es fijo (--alto-header: 7rem): sin scroll-margin, al llegar por la nav interna o por "Ver su cuadro
+    // tarifario" el nombre de la estación y la vigencia quedan tapados y se aterriza sobre un thead idéntico al de las otras.
+    expect(html).toMatch(/<div class="[^"]*\bscroll-mt-32\b[^"]*" id="franck"/);
     expect(html).toContain('Estación Franck · RN 19 km 19,95');
     expect(html).toContain('<caption');
     expect(html).toContain('>TelePASE<');
@@ -77,6 +80,18 @@ describe('TablaTarifas con textos del sistema', () => {
     const tarifas = base.tarifas.map((t) => (t.categoria === 'cat-2' ? { ...t, montoSinIva: 1399, montoConIva: 1692.79 } : t));
     const html = (await c.renderToString(TablaTarifas, { props: { tarifario: { ...base, tarifas } } })).replace(/[  ]/g, ' ');
     expect(html).toContain('1.692,79');
+  });
+
+  // Hoy las dos columnas son el mismo precio (spec §2 y §8.1). Si TelePASE usa el con-IVA del sistema y la columna
+  // manual siempre lo recalcula, un con-IVA que no siga el redondeo al peso parte la fila en dos números distintos.
+  it('con el mismo sin IVA en las dos columnas, las dos celdas muestran el mismo precio al público', async () => {
+    const c = await AstroContainer.create();
+    const base = await fuenteLocalJson.tarifario();
+    const tarifas = base.tarifas.map((t) => (t.categoria === 'cat-2' ? { ...t, montoSinIva: 1399, montoManualSinIva: 1399, montoConIva: 1692.79 } : t));
+    const html = (await c.renderToString(TablaTarifas, { props: { tarifario: { ...base, tarifas } } })).replace(/[  ]/g, ' ');
+    const fila = /<tr class="fila[\s\S]*?Categoría 2[\s\S]*?<\/tr>/.exec(html)?.[0] ?? '';
+    expect(fila.match(/\$ 1\.692,79</g)?.length).toBe(2);
+    expect(fila).not.toMatch(/\$ 1\.693</);
   });
 });
 

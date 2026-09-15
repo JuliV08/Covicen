@@ -2,19 +2,22 @@
 // Cuadro tarifario de UNA estación (o el general si no se pasa cabina): categoría, tipo de vehículo, TelePASE y pago
 // electrónico o manual, precio al público (con IVA, como en la cabina) y sin IVA en anotación. Los textos del operador
 // (avisos, vigencia, fuente) se pintan como texto, nunca set:html; la URL de la fuente solo se enlaza si pasa esHttp
-// (lib/rutas), la misma guarda que usan TarifaDestacada y /tarifas/.
+// (lib/rutas), la misma guarda que usan TarifaDestacada y /tarifas/. Los dos precios al público salen resueltos de
+// `tarifasParaCabina`: acá no se recalcula nada, así las dos columnas nunca se parten en dos números con el mismo sin IVA.
 import IconoVehiculo from '@/components/ilustraciones/IconoVehiculo.astro';
 import type { Cabina, Tarifario } from '@/lib/datos/esquemas';
 import { fechaCorta, fechaLarga, kmTexto, moneda } from '@/lib/formato';
 import { esHttp } from '@/lib/rutas';
-import { iconoDeTarifa, publico, tarifasParaCabina } from '@/lib/tarifas';
+import { iconoDeTarifa, tarifasParaCabina } from '@/lib/tarifas';
 interface Props { tarifario: Tarifario; cabina?: Cabina; id?: string; compacta?: boolean }
 const { tarifario: t, cabina, id, compacta = false } = Astro.props;
 const filas = tarifasParaCabina(t, cabina?.slug);
 const vigencia = t.vigencia.desde ? `Vigencia: desde el ${fechaLarga(t.vigencia.desde)}.` : `Vigencia: ${t.vigencia.descripcion}`;
 const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km !== null ? ` km ${kmTexto(cabina.km)}` : ''}` : 'Todas las estaciones operativas';
 ---
-<div class="revelar" {id}>
+<!-- scroll-mt-32: el header es fijo (--alto-header: 7rem) y al llegar por #slug el título de la estación y la vigencia
+     quedarían tapados, aterrizando sobre un thead idéntico al de las otras dos tablas. -->
+<div class="revelar scroll-mt-32" {id}>
   <div class="mb-4 flex flex-wrap items-baseline justify-between gap-3">
     <h3 class="text-xl">{titulo}</h3>
     <p class="text-sm text-texto-2">{vigencia}{t.resolucion && ` ${t.resolucion}.`}</p>
@@ -27,8 +30,8 @@ const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km
       </thead>
       <tbody class="divide-y divide-borde">
         {filas.map((f) => {
-          const telepase = publico(f.telepaseSinIva, f.montoConIva, t.alicuotaIva);
-          const manual = publico(f.manualSinIva, undefined, t.alicuotaIva);
+          const telepase = f.telepaseConIva;
+          const manual = f.manualConIva;
           return (
             <tr class="fila transition-colors hover:bg-superficie">
               <th scope="row" class="px-4 py-4 font-semibold text-texto"><span class="flex items-center gap-3"><IconoVehiculo icono={iconoDeTarifa(f)} class="icono text-texto-2" /> {f.nombre}</span></th>
