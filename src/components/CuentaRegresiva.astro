@@ -1,0 +1,10 @@
+---
+import { fechaLarga } from '@/lib/formato';
+interface Props { fecha: string; class?: string }
+const { fecha, class: clase = '' } = Astro.props;
+const larga = fechaLarga(fecha);
+---
+<p class:list={['inline-flex items-center gap-3 rounded-md border border-borde bg-fondo-2/70 px-4 py-2 text-sm text-texto-2', clase]} data-cuenta-regresiva data-fecha={fecha} data-despues={`En operación desde el ${larga}`}>
+  <span class="inline-block h-2 w-2 rounded-full bg-vial" aria-hidden="true"></span>
+  <span data-texto>Inicio de operación: <time datetime={fecha} class="font-semibold text-texto">{larga}</time></span>
+</p>

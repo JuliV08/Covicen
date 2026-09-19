@@ -1,0 +1,36 @@
+---
+import { MessageCircle, Phone } from '@lucide/astro';
+import Base from '@/layouts/Base.astro';
+import Canales from '@/components/Canales.astro';
+import Boton from '@/components/ui/Boton.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import { datos } from '@/lib/datos';
+import { enlaceWhatsapp } from '@/lib/whatsapp';
+const [contacto, servicios, consejos] = await Promise.all([datos.contacto(), datos.servicios(), datos.consejos()]);
+const tel = contacto.emergencias.telefono;
+const grua = servicios.find((s) => s.id === 'grua-y-remolque');
+const pasos = consejos.filter((c) => c.categoria === 'emergencia');
+---
+<Base titulo="Emergencias" descripcion="Emergencias y auxilio en ruta en el Tramo Centro (RN 9, RN 19 y RN 34): qué hacer ante un desperfecto o accidente y a quién llamar." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Emergencias', href: '/emergencias' }]}>
+  <Seccion nivel="h1" eyebrow="Emergencias" titulo="Ante una emergencia en la ruta." class="pt-10">
+    <div class="revelar tarjeta tarjeta-vial p-8">
+      <p class="eyebrow">{contacto.emergencias.etiqueta} · 24 horas · gratis desde cualquier celular</p>
+      <a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="mt-3 inline-flex items-center gap-4 font-extrabold tabular-nums text-vial-texto no-underline" style="font-size: clamp(3rem, 2rem + 5vw, 6rem)" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={44} aria-hidden="true" /> {tel}</a>
+      <p class="mt-4 max-w-prose text-texto-2">Auxilio mecánico, asistencia en accidentes, animales u objetos en la calzada. {contacto.whatsapp.numero && <a href={enlaceWhatsapp(contacto.whatsapp.numero, 'EMERGENCIA en ruta. Ruta: / Km: / Sentido: ')} class="inline-flex items-center gap-1 font-semibold text-texto underline" target="_blank" rel="noopener"><MessageCircle size={16} aria-hidden="true" /> También por WhatsApp</a>}</p>
+    </div>
+    <div class="revelar mt-6"><Boton href="/asistencia" variante="vial">Pedir asistencia con mi ubicación</Boton></div>
+    <ol class="escalonar mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      {pasos.map((p, i) => <li class="rounded-md border border-borde bg-superficie/40 p-6" style={`--i: ${i}`}><span class="eyebrow tabular-nums">0{i + 1}</span><h2 class="mt-3 text-xl">{p.titulo}</h2><p class="mt-2 text-texto-2">{p.texto}</p></li>)}
+    </ol>
+    {grua && (
+      <div class="revelar tarjeta mt-12 p-8">
+        <h2 class="text-2xl">{grua.nombre}: gratis y con tiempos comprometidos</h2>
+        <p class="mt-2 text-texto-2">{grua.descripcion} {grua.alcance}</p>
+        <ul class="mt-4 flex flex-col gap-1 text-texto-2">{grua.tiempos?.map((t) => <li class="flex gap-2"><span aria-hidden="true">—</span>{t}</li>)}</ul>
+        <p class="anotacion mt-3 text-xs text-texto-2">Fuente: {grua.fuente}</p>
+      </div>
+    )}
+    <div class="revelar mt-12"><h2 class="mb-4 text-2xl">Canales y plazos</h2><Canales canales={contacto.canales} compacto /></div>
+    <div class="revelar mt-12"><Boton href="/seguridad-vial" variante="secundario">Consejos de seguridad vial</Boton></div>
+  </Seccion>
+</Base>

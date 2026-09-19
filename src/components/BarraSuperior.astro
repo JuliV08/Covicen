@@ -1,0 +1,26 @@
+---
+// Barra de 40 px pegada arriba del header: TelePASE · Mi cuenta · interruptor de tema. Los avisos, que antes rotaban
+// acá a la izquierda, pasaron a la cinta (components/Marquesina.astro) el 15/09/2026.
+// Solo existe en escritorio: en celular esos tres accesos viven en el menú, así que la barra quedaría vacía y solo
+// estaría comiendo 40 px de pantalla. Por eso --alto-header vale menos abajo de 1024 px (tokens.css).
+import InterruptorTema from '@/components/InterruptorTema.astro';
+import type { Contacto } from '@/lib/datos/esquemas';
+import { ruta } from '@/lib/rutas';
+interface Props { contacto: Contacto }
+const { contacto } = Astro.props;
+const oficina = contacto.enlaces.oficinaVirtual;
+const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
+---
+<div class="barra-superior hidden h-10 border-b border-borde bg-fondo-2 text-sm lg:block">
+  <div class="contenedor flex h-full items-center justify-end gap-4">
+    <nav aria-label="Accesos" class="flex shrink-0 items-center gap-1">
+      <a href={contacto.enlaces.telepase} class="acceso" rel="noopener noreferrer" target="_blank">TelePASE</a>
+      <a href={miCuenta} class="acceso" rel={oficina ? 'noopener noreferrer' : undefined} target={oficina ? '_blank' : undefined}>Mi cuenta</a>
+      <InterruptorTema class="ml-1 inline-flex h-8 w-8" />
+    </nav>
+  </div>
+</div>
+<style>
+  .acceso { display: inline-flex; align-items: center; min-height: 2rem; padding: 0 0.6rem; border-radius: var(--radius-sm); color: var(--color-texto-2); font-weight: 600; text-decoration: none; }
+  .acceso:hover, .acceso:focus-visible { color: var(--color-texto); background: var(--color-superficie); }
+</style>

@@ -1,0 +1,76 @@
+/* Tarjetas con halo en el borde (adaptación propia a la paleta de Covicen).
+   Capas, de atrás hacia adelante:
+     ::before (z -2)  gradiente cónico de azules desenfocado  → halo SOLO alrededor del borde
+     fondo del elemento  el mismo cónico, nítido               → anillo de 1,5 px (el borde)
+     ::after (z -1)   interior opaco (tokens tarjeta-interior)  → tapa el interior: nada de brillo sobre el texto
+     contenido        en flujo, por encima de todo
+   El cónico gira con @property --angulo. Variantes: .tarjeta-vial (amarillo), .tarjeta-hueco, .tarjeta-panel.
+   Los halos usan los tokens de MARCA (fijos en los dos temas); el interior y la sombra, semánticos (cambian con el tema). */
+@property --angulo { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+
+@layer components {
+  .tarjeta {
+    --halo-1: var(--color-marca-300);
+    --halo-2: var(--color-marca-700);
+    --halo-3: var(--color-acento-hover);
+    --halo-4: var(--color-marca-900);
+    --halo-5: var(--color-marca-500);
+    --halo-opacidad: 0.5;
+    --halo-conico: conic-gradient(from var(--angulo), var(--halo-1), var(--halo-2), var(--halo-3), var(--halo-4), var(--halo-5), var(--halo-1));
+    --tarjeta-radio: 16px;
+    --tarjeta-interior: linear-gradient(180deg, var(--color-tarjeta-interior-1) 0%, var(--color-tarjeta-interior-2) 55%, var(--color-tarjeta-interior-3) 100%);
+    position: relative;
+    isolation: isolate;
+    border: 1.5px solid transparent;
+    border-radius: var(--tarjeta-radio);
+    background: var(--halo-conico) border-box;
+    box-shadow: 0 20px 30px -18px var(--color-sombra);
+    animation: halo-girar 9s linear infinite;
+    transition: transform var(--dur-ui) var(--ease-salida), box-shadow var(--dur-ui) var(--ease-salida);
+  }
+  .tarjeta::after {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    border-radius: calc(var(--tarjeta-radio) - 1.5px);
+    background: var(--tarjeta-interior);
+  }
+  .tarjeta::before {
+    content: ""; position: absolute; inset: -4px; z-index: -2; pointer-events: none;
+    border-radius: calc(var(--tarjeta-radio) + 4px);
+    background: var(--halo-conico);
+    filter: blur(12px);
+    opacity: var(--halo-opacidad);
+    animation: halo-girar 9s linear infinite;
+    transition: opacity var(--dur-ui) var(--ease-salida);
+  }
+  .tarjeta:hover, .tarjeta:focus-visible, .tarjeta:focus-within { animation-duration: 4s; }
+  .tarjeta:hover::before, .tarjeta:focus-visible::before, .tarjeta:focus-within::before { animation-duration: 4s; opacity: calc(var(--halo-opacidad) * 1.6); }
+  a.tarjeta:hover, a.tarjeta:focus-visible { transform: translateY(-3px); }
+
+  /* Halo amarillo: el vial y sus variantes oscura/clara derivadas con color-mix. Interior levemente cálido. */
+  .tarjeta-vial {
+    --halo-1: var(--color-vial);
+    --halo-2: color-mix(in srgb, var(--color-vial) 75%, black);
+    --halo-3: color-mix(in srgb, var(--color-vial) 80%, white);
+    --halo-4: color-mix(in srgb, var(--color-vial) 62%, black);
+    --halo-5: color-mix(in srgb, var(--color-vial) 92%, black);
+    --tarjeta-interior: linear-gradient(180deg, color-mix(in srgb, var(--color-tarjeta-interior-1) 88%, var(--color-vial)) 0%, var(--color-tarjeta-interior-2) 50%, var(--color-tarjeta-interior-3) 100%);
+  }
+
+  /* Hueco de capacidad: mismo lenguaje, más apagado y lento. */
+  .tarjeta-hueco { --halo-opacidad: 0.28; animation-duration: 16s; }
+  .tarjeta-hueco::before { animation-duration: 16s; }
+
+  /* Panel grande para contener secciones enteras: halo más suave y giro más lento. */
+  .tarjeta-panel { --halo-opacidad: 0.35; --tarjeta-radio: 24px; padding: clamp(1.25rem, 3vw, 2.5rem); animation-duration: 18s; }
+  .tarjeta-panel::before { animation-duration: 18s; filter: blur(18px); }
+
+  /* Caja de ícono */
+  .tarjeta-icono { display: inline-flex; align-items: center; justify-content: center; width: 3.25rem; height: 3.25rem; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--color-acento) 30%, transparent); background: color-mix(in srgb, var(--color-superficie-2) 50%, transparent); color: var(--color-acento); }
+  .tarjeta-vial .tarjeta-icono { border-color: color-mix(in srgb, var(--color-vial) 35%, transparent); background: color-mix(in srgb, var(--color-vial) 12%, transparent); color: var(--color-vial-texto); }
+
+  @keyframes halo-girar { to { --angulo: 360deg; } }
+
+  /* En táctil el halo queda quieto (sin repintado constante); con reduced-motion, todo quieto. */
+  @media (hover: none) { .tarjeta::before { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .tarjeta, .tarjeta::before { animation: none; } }
+}

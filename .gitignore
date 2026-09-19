@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+.omc/
+!.omc/skills/
+public/og.png
+public/apple-touch-icon.png
+dist-*/
+
+# Repos de referencia de Corredores Viales (contienen credenciales reales): nunca al repo
+CVSA/
+
+# Cuaderno de ejecución de planes (scratch)
+.superpowers/
+
+# Mapa de los sistemas internos de CVSA: es un tercero y este repo es público. Se sacó del historial el 15/09/2026
+# (quedó en ../PROMPT_MAESTRO_CVSA.md, fuera del repo). No volver a commitearlo acá.
+docs/PROMPT_MAESTRO_CVSA.md

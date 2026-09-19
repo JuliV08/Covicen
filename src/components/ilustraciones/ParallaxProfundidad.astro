@@ -1,0 +1,36 @@
+---
+// Parallax 2.5D: la foto como poster (<img>) y, en desktop con WebGL, un <canvas> que la desplaza según un mapa de
+// profundidad (avance lento automático + mouse + scroll). Sin WebGL, sin hover o con reduced-motion: queda la foto con
+// un dolly CSS centrado en el punto de fuga. El mapa se genera con scripts/generar-profundidad.py.
+import { Image, getImage } from 'astro:assets';
+import { imagenAtmosfera } from '@/lib/atmosfera';
+/** `prioridad`: la foto que se ve al cargar. La otra (la del tema opuesto) NO puede ir con carga diferida: nace dentro
+ *  de un bloque `display: none` y el navegador la difiere para siempre, aun cuando después se la muestre, así que al
+ *  cambiar de tema el hero quedaba sin foto en todo lo que no dibuja el canvas (celular, ventana angosta, menos
+ *  movimiento). Va `eager` con `fetchpriority="low"`: se descarga igual, pero después de lo que importa. */
+interface Props { nombre: string; profundidad: string; alt?: string; brillo?: number; vp?: [number, number]; prioridad?: boolean }
+const { nombre, profundidad, alt = '', brillo, vp = [0.78, 0.595], prioridad = true } = Astro.props;
+const imagen = imagenAtmosfera(nombre);
+const mapa = imagenAtmosfera(profundidad);
+// En desarrollo Astro codifica la imagen bajo demanda: WebP tarda milisegundos, AVIF segundos. En build, AVIF.
+const formato = import.meta.env.DEV ? 'webp' : 'avif';
+// Textura para WebGL a resolución completa (el <img> responsive puede haber elegido un candidato más chico).
+const textura = imagen ? await getImage({ src: imagen, width: imagen.width, format: formato, quality: 70 }) : undefined;
+---
+{imagen && (
+  <div class="parallax-2d absolute inset-0" data-parallax data-profundidad={mapa?.src} data-textura={textura?.src} data-vp={`${vp[0]},${vp[1]}`} style={`${brillo !== undefined ? `--brillo: ${brillo}; ` : ''}--vpx: ${vp[0] * 100}%; --vpy: ${vp[1] * 100}%`}>
+    <Image src={imagen} {alt} widths={[640, 1024, 1600, 2400]} sizes="100vw" format={formato} quality={55} loading="eager" fetchpriority={prioridad ? 'high' : 'low'} decoding="async" class="parallax-2d-img" />
+    <canvas class="parallax-2d-canvas" aria-hidden="true"></canvas>
+  </div>
+)}
+<script src="../../scripts/parallax-2d.ts"></script>
+<style>
+  .parallax-2d-img, .parallax-2d-canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85) brightness(var(--brillo, var(--brillo-foto))); }
+  .parallax-2d-canvas { opacity: 0; transition: opacity 900ms var(--ease-salida); }
+  .parallax-2d.activo .parallax-2d-canvas { opacity: 1; }
+  /* Sin WebGL (o mientras no se sabe): dolly CSS con origen en el punto de fuga = avanzar por la recta.
+     Con WebGL (.webgl, desde el primer instante del script) la foto queda quieta: el canvas arranca con su mismo encuadre. */
+  .parallax-2d:not(.webgl) .parallax-2d-img { transform-origin: var(--vpx) var(--vpy); animation: dolly 26s var(--ease-suave) infinite alternate; }
+  @keyframes dolly { from { transform: scale(1); } to { transform: scale(1.14); } }
+  @media (prefers-reduced-motion: reduce) { .parallax-2d .parallax-2d-img { animation: none; } }
+</style>

@@ -1,0 +1,121 @@
+---
+import { Printer } from '@lucide/astro';
+import Base from '@/layouts/Base.astro';
+import TablaTarifas from '@/components/TablaTarifas.astro';
+import IconoVehiculo from '@/components/ilustraciones/IconoVehiculo.astro';
+import Boton from '@/components/ui/Boton.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import Senal from '@/components/ui/Senal.astro';
+import { datos } from '@/lib/datos';
+import { cabinaOperativa } from '@/lib/datos/esquemas';
+import { fechaLarga, moneda } from '@/lib/formato';
+import { esHttp, ruta } from '@/lib/rutas';
+import { cabinasDelCuadro, iconoDeTarifa, publico, tarifaDestacada } from '@/lib/tarifas';
+const [tarifario, tramo] = await Promise.all([datos.tarifario(), datos.tramo()]);
+const destacada = tarifaDestacada(tarifario);
+const precio = publico(destacada.montoSinIva, destacada.montoConIva, tarifario.alicuotaIva);
+const cabinas = cabinasDelCuadro(tarifario, tramo.cabinas);
+const proximas = tramo.cabinas.filter((c) => !cabinaOperativa(c));
+// Categorías que rigen después de las Obras Iniciales de Puesta en Valor (PETG 53.2): informativas, sin precio.
+const futuras = [
+  ['0', 'Motocicletas', '0,5'], ['1', 'Hasta 2 ejes y hasta 2,30 m de altura, sin rueda doble', '1'],
+  ['2', 'Hasta 2 ejes y más de 2,30 m con rueda doble; o 3 ejes, menos de 2,30 m, sin rueda doble', '2'],
+  ['3', '3 ejes, más de 2,30 m, con rueda doble', '3'], ['4', '4 ejes', '4'], ['5', '5 ejes', '5'], ['6', '6 ejes', '6'],
+  ['7', 'Más de 6 ejes', '7'], ['8', 'Más de 8 ejes', '9'], ['Especial', 'Con permiso de circulación especial', 'cantidad de ejes'],
+] as const;
+const descuentos = [['A partir de la pasada 36 en el mes', '15 %'], ['A partir de la pasada 45 en el mes', '25 %'], ['A partir de la pasada 61 en el mes', '35 %']] as const;
+// Tarifa de peaje por exceso de carga (PETG art. 83), tal como está en el cuadro del pliego: el tramo de exceso y por
+// cuánto se multiplica la tarifa vigente de la categoría. No es una multa de tránsito: es la tarifa de esa pasada.
+const excesoDeCarga = [['Exceso del 10 % al 30 %', '50 veces'], ['Exceso de más del 30 %', '100 veces']] as const;
+const exentos = ['Ambulancias', 'Vehículos de las Fuerzas Armadas y de Seguridad de la Nación', 'Vehículos de servicio contra incendio (bomberos)', 'Vehículos y agentes al servicio de Vialidad Nacional', 'Vehículos de la Agencia Nacional de Seguridad Vial', 'Vehículos al servicio de la Cruz Roja (Ley 27.547)', 'Vehículos afectados a personas con discapacidad, según el reglamento de Vialidad Nacional', 'Vehículos afectados a ex combatientes de Malvinas, según el reglamento de Vialidad Nacional'];
+---
+<Base titulo="Tarifas" descripcion={`Cuadro tarifario vigente en los peajes del Tramo Centro (Carcarañá, James Craik y Franck): ${precio !== null ? moneda(precio) : ''} por auto, Resolución 248/2026 de Vialidad Nacional. TelePASE, pago en la vía, descuentos por frecuencia y exenciones.`} migas={[{ nombre: 'Tarifas', href: '/tarifas' }]}>
+  <Seccion nivel="h1" eyebrow="Tarifas" titulo="Cuánto cuesta el peaje." intro={tarifario.vigencia.descripcion} class="pt-10">
+    <div class="revelar mb-12 grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
+      <div class="bloque-oscuro rounded-md border border-borde bg-superficie/50 p-8">
+        <div class="flex items-center gap-3 text-texto-2"><IconoVehiculo icono={iconoDeTarifa(destacada)} size={32} /> <span>{destacada.nombre} · {destacada.descripcion}</span></div>
+        {precio !== null && destacada.montoSinIva !== null && (
+          <>
+            <p class="mt-5 flex flex-wrap items-baseline gap-x-3">
+              <span class="font-extrabold leading-none tracking-[var(--tracking-titulo)] text-texto" style="font-size: clamp(3rem, 2rem + 5vw, 6rem)">{moneda(precio)}</span>
+              <span class="text-lg text-texto-2">al público, con IVA</span>
+            </p>
+            <p class="mt-3 text-texto-2">{moneda(destacada.montoSinIva)} sin IVA · igual con TelePASE que con pago en la vía.</p>
+          </>
+        )}
+      </div>
+      <div class="flex flex-col gap-3">
+        <div class="flex flex-wrap gap-2"><Senal variante="ok">Cuadro vigente</Senal>{tarifario.vigencia.desde && <Senal variante="frio">Desde el {fechaLarga(tarifario.vigencia.desde)}</Senal>}</div>
+        {tarifario.resolucion && <p class="text-texto-2">{tarifario.resolucion}.{esHttp(tarifario.fuente.url) && <> <a href={tarifario.fuente.url} rel="noopener noreferrer" target="_blank">Ver en el Boletín Oficial</a>.</>}</p>}
+        <p class="text-texto-2">Rige el mismo cuadro en {cabinas.map((c) => c.nombre).join(', ')}.</p>
+        <div><button type="button" class="inline-flex items-center gap-2 rounded-md border border-borde px-4 py-2 font-semibold text-texto hover:border-borde-fuerte hover:bg-superficie" data-imprimir><Printer size={18} aria-hidden="true" /> Imprimir el cuadro</button></div>
+      </div>
+    </div>
+
+    <nav aria-label="Estaciones" class="revelar mb-8 flex flex-wrap gap-2">
+      {cabinas.map((c) => <a href={`#${c.slug}`} class="rounded-md border border-borde px-3 py-2 text-sm font-semibold text-texto-2 no-underline hover:border-borde-fuerte hover:bg-superficie hover:text-texto hover:underline">{c.nombre}</a>)}
+    </nav>
+    <div class="flex flex-col gap-14">
+      {cabinas.map((c) => <TablaTarifas {tarifario} cabina={c} id={c.slug} />)}
+    </div>
+
+    {proximas.length > 0 && (
+      <div class="revelar mt-12 rounded-md border border-dashed border-borde-fuerte p-6">
+        <h3 class="text-xl">Estaciones sin habilitar</h3>
+        <p class="mt-2 text-texto-2">{proximas.map((c) => c.nombre).join(', ')}: cobran cuando Vialidad Nacional las habilite, con el cuadro tarifario de Carcarañá (PETP art. 3). Hasta entonces, en esas estaciones no se paga.</p>
+      </div>
+    )}
+  </Seccion>
+
+  <Seccion indice="01" eyebrow="Descuentos por frecuencia" titulo="Cuanto más pasás, menos pagás." intro="Para autos, con TelePASE, por estación y por mes calendario, en ambos sentidos. Es una obligación del contrato (PETG art. 53.3)." fondo="fondo-2">
+    <dl class="revelar grid gap-4 md:grid-cols-3">
+      {descuentos.map(([pasadas, pct]) => <div class="tarjeta p-6"><dt class="eyebrow">{pasadas}</dt><dd class="mt-2 text-4xl font-extrabold text-texto">{pct}</dd><dd class="mt-1 text-sm text-texto-2">de descuento a partir de esa pasada</dd></div>)}
+    </dl>
+  </Seccion>
+
+  <Seccion indice="02" eyebrow="Exenciones" titulo="Quiénes no pagan." intro="Solo los vehículos de esta lista (PETG art. 52). Los vehículos exentos deben contar con el dispositivo TelePASE habilitado a ese efecto.">
+    <div class="revelar grid gap-8 lg:grid-cols-[1.2fr_1fr]">
+      <ul class="flex flex-col gap-2 text-texto-2">{exentos.map((e) => <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-vial" aria-hidden="true"></span>{e}</li>)}</ul>
+      <div class="flex flex-col gap-4">
+        <div class="tarjeta p-6"><h3 class="text-xl">Ex combatientes de Malvinas</h3><p class="mt-2 text-texto-2">El trámite es nacional y gratuito.</p><a href="https://www.argentina.gob.ar/servicio/exencion-de-pago-de-peaje-ex-combatientes-de-malvinas" rel="noopener noreferrer" target="_blank" class="mt-3 inline-block font-semibold">Cómo pedir la exención (argentina.gob.ar)</a></div>
+        <div class="tarjeta p-6"><h3 class="text-xl">Personas con discapacidad</h3><p class="mt-2 text-texto-2">Se tramita ante Vialidad Nacional con el certificado único de discapacidad.</p><a href={ruta('/tramites')} class="mt-3 inline-block font-semibold">Ver la guía de trámites</a></div>
+      </div>
+    </div>
+  </Seccion>
+
+  <Seccion indice="03" eyebrow="Tarifa diferencial" titulo="Vecinos, frentistas y docentes." intro="Existe una tarifa diferencial para vecinos y frentistas de una estación y para docentes, solo para la categoría 1, que se renueva cada año. El monto se informa al hacer el trámite." fondo="fondo-2">
+    <div class="revelar"><Boton href="/tramites" variante="secundario">Requisitos y cómo tramitarla</Boton></div>
+  </Seccion>
+
+  <Seccion indice="04" eyebrow="Si pasaste sin pagar" titulo="Cómo regularizarlo." intro="Si cruzás una estación sin TelePASE vigente y sin pagar (PETG art. 51.1.4):">
+    <ol class="revelar grid gap-4 md:grid-cols-2">
+      <li class="tarjeta p-6"><p class="eyebrow">Dentro de los 30 días</p><p class="mt-2 text-texto-2">Pagás la tarifa que correspondía más <strong class="text-texto">una tarifa</strong> de tu categoría, por gastos administrativos.</p></li>
+      <li class="tarjeta p-6"><p class="eyebrow">Después de los 30 días</p><p class="mt-2 text-texto-2">Pagás la tarifa más <strong class="text-texto">dos tarifas</strong> de tu categoría, con intereses a la tasa activa del Banco Nación.</p></li>
+    </ol>
+    <p class="revelar mt-6 text-texto-2">El medio para regularizar la deuda se publica en <a href={ruta('/medios-de-pago#sin-pagar')}>Medios de pago</a> cuando esté habilitado.</p>
+  </Seccion>
+
+  <Seccion indice="05" eyebrow="Exceso de carga" titulo="Pasar con sobrepeso sale 50 o 100 peajes." intro="Si una balanza de pesaje dinámico detecta que un vehículo lleva más carga que la que permiten la Ley 24.449 y su decreto reglamentario, la tarifa de esa pasada se multiplica." fondo="fondo-2">
+    <dl class="revelar grid gap-4 md:grid-cols-2">
+      {excesoDeCarga.map(([tramoExceso, multiplicador]) => <div class="tarjeta p-6"><dt class="eyebrow">{tramoExceso}</dt><dd class="mt-2 text-4xl font-extrabold text-texto">{multiplicador}</dd><dd class="mt-1 text-sm text-texto-2">la tarifa vigente de su categoría</dd></div>)}
+    </dl>
+    <p class="revelar mt-6 text-texto-2">Además, el exceso hay que descargarlo o pasarlo a otro vehículo antes de seguir viaje, por cuenta de quien transporta, y se cobra el canon por deterioro del artículo 57 del Decreto 779/95 (PETG art. 75 y 76).</p>
+    <p class="anotacion revelar mt-4 text-xs text-texto-2">Fuente: PETG art. 83.</p>
+  </Seccion>
+
+  {/* Sin fondo-2: las secciones alternan liso y grilla cinética, y la de exceso de carga ya ocupa ese turno. */}
+  <Seccion indice="06" eyebrow="Después de las obras iniciales" titulo="Las categorías que van a regir." intro="Cuando terminen las Obras Iniciales de Puesta en Valor, el cuadro pasa a las categorías del pliego (PETG art. 53.2): cada una es un múltiplo de la tarifa básica. Acá va la estructura; los precios, cuando Vialidad Nacional homologue el cuadro.">
+    <section class="bloque-oscuro revelar overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label="Categorías futuras de vehículos">
+      <table class="w-full border-collapse text-left">
+        <caption class="sr-only">Categorías de vehículos del pliego y su múltiplo sobre la tarifa básica.</caption>
+        <thead class="bg-fondo-2 text-sm uppercase tracking-wider text-texto-2"><tr><th scope="col" class="px-4 py-3">Categoría</th><th scope="col" class="px-4 py-3">Vehículos</th><th scope="col" class="px-4 py-3 text-right">Tarifa básica ×</th></tr></thead>
+        <tbody class="divide-y divide-borde">{futuras.map(([cat, veh, mult]) => <tr class="hover:bg-superficie"><th scope="row" class="px-4 py-3 font-semibold text-texto">{cat}</th><td class="px-4 py-3 text-texto-2">{veh}</td><td class="px-4 py-3 text-right tabular-nums text-texto">{mult}</td></tr>)}</tbody>
+      </table>
+    </section>
+    <div class="revelar mt-12 flex flex-wrap gap-3">
+      <Boton href="/medios-de-pago" variante="secundario">Cómo pagar</Boton>
+      <Boton href="/el-tramo" variante="secundario">Dónde están los peajes</Boton>
+      <Boton href="/preguntas-frecuentes" variante="secundario">Preguntas frecuentes</Boton>
+    </div>
+  </Seccion>
+</Base>

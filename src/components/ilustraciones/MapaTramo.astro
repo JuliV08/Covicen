@@ -1,0 +1,137 @@
+---
+// Mapa esquemático del Tramo Centro. viewBox 820×520: son las coordenadas del contrato (el panel del backend las usa para
+// la vista previa), NO se cambia; el tamaño lo da el contenedor. Cada estación es un enlace con foco a su página; con JS
+// (scripts/mapa.ts, desde MapaInteractivo) el toque muestra su tarjeta. Verde = operativa; amarillo + anillo discontinuo =
+// próxima (nada se comunica solo por color). Los incidentes del estado de la traza se ubican por km (lib/tramo.ts).
+import { Bath, Coffee, ShieldCheck, Tag, Truck } from '@lucide/astro';
+import type { EstadoRuta, Incidente, Tramo } from '@/lib/datos/esquemas';
+import { kmTexto } from '@/lib/formato';
+import { ruta } from '@/lib/rutas';
+import { estadoCabina, leyendaServicios, puntoEnRuta, type ClaveServicio } from '@/lib/tramo';
+interface Props { tramo: Tramo; incidentes?: NonNullable<EstadoRuta['incidentes']>; modo?: 'scroll' | 'cargar'; class?: string; /** Distinto por mapa si hay más de uno en la página. */ idTitulo?: string }
+const { tramo, incidentes = [], modo = 'scroll', class: clase = '', idTitulo = 'mapa-titulo' } = Astro.props;
+const porSlug = new Map(tramo.ciudades.map((c) => [c.slug, c]));
+const ciudad = (s: string) => {
+  const c = porSlug.get(s);
+  if (!c) throw new Error(`MapaTramo: la ciudad "${s}" no existe en tramo.json`);
+  return c;
+};
+const d = (slugs: string[]) => slugs.map((s, i) => `${i === 0 ? 'M' : 'L'}${ciudad(s).mapa.x} ${ciudad(s).mapa.y}`).join(' ');
+const etiquetaRuta = (slugs: string[]) => {
+  const medio = Math.floor(slugs.length / 2);
+  const a = ciudad(slugs[medio - 1]!);
+  const b = ciudad(slugs[medio]!);
+  return { x: (a.mapa.x + b.mapa.x) / 2, y: (a.mapa.y + b.mapa.y) / 2 - 10 };
+};
+const claseDibujar = modo === 'scroll' ? 'dibujar al-scroll' : 'dibujar al-cargar';
+const claseBaliza = modo === 'scroll' ? 'baliza' : 'baliza al-cargar';
+const titulo = `Mapa esquemático del Tramo Centro: ${tramo.rutas.map((r) => r.nombre).join(', ')} entre ${tramo.ciudades.filter((c) => c.principal).map((c) => c.nombre).join(', ')}, con ${tramo.cabinas.length} estaciones de peaje.`;
+const iconos: Record<ClaveServicio, typeof Coffee> = { areaDescanso: Coffee, detencionSegura: ShieldCheck, gruaGratuita: Truck, sanitarios: Bath, colocacionTelepase: Tag };
+const marcadores = incidentes.flatMap((inc) => { const p = inc.km === null ? null : puntoEnRuta(tramo, inc.ruta, inc.km); return p ? [{ ...inc, p }] : []; });
+// La severidad no se comunica solo por color (spec §7.1): cambia la FORMA del marcador (triángulo = corte, rombo =
+// precaución, círculo = info), se nombra en el <title> y la leyenda repite forma y nombre. El relleno es el refuerzo.
+const SEVERIDAD: Record<Incidente['severidad'], string> = { corte: 'Corte', precaucion: 'Precaución', info: 'Información' };
+const FORMA: Record<Incidente['severidad'], string> = { corte: 'M0 -10 L9 6 L-9 6 Z', precaucion: 'M0 -9 L9 0 L0 9 L-9 0 Z', info: 'M-8 0 A8 8 0 1 0 8 0 A8 8 0 1 0 -8 0 Z' };
+const severidades = (['corte', 'precaucion', 'info'] as const).filter((s) => marcadores.some((m) => m.severidad === s));
+---
+<figure class:list={['mapa', clase]}>
+  <p id={idTitulo} class="sr-only">{titulo}</p>
+  <svg viewBox="0 0 820 520" role="group" aria-labelledby={idTitulo} class="h-auto w-full">
+    <defs>
+      <pattern id="mapa-plano" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="var(--color-plano)"></path></pattern>
+      <filter id="mapa-glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"></feGaussianBlur></filter>
+    </defs>
+    <rect width="820" height="520" fill="url(#mapa-plano)"></rect>
+    {tramo.trazados.map((t, i) => (
+      <g>
+        <path d={d(t.ciudades)} fill="none" stroke="var(--color-borde-fuerte)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"></path>
+        <path d={d(t.ciudades)} fill="none" stroke="var(--color-glow)" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" filter="url(#mapa-glow)" pathLength="1000" class={claseDibujar}></path>
+        <path d={d(t.ciudades)} fill="none" stroke="var(--color-acento)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" pathLength="1000" class={claseDibujar}></path>
+        <!-- marcas viales: discontinuas y fluyendo (sin .dibujar, que pisaría el dasharray) -->
+        <path d={d(t.ciudades)} fill="none" stroke="var(--color-vial)" stroke-width="1" stroke-dasharray="6 12" opacity="0.7" pathLength="1000" class="marcas-vivas aparece"></path>
+        <!-- una luz que recorre la ruta -->
+        <path d={d(t.ciudades)} fill="none" stroke="var(--color-texto)" stroke-width="3" stroke-linecap="round" pathLength="1000" filter="url(#mapa-glow)" class="luz-viaja aparece" style={`--i: ${i}`}></path>
+        <text x={etiquetaRuta(t.ciudades).x} y={etiquetaRuta(t.ciudades).y} class="ruta-etiqueta" text-anchor="middle">{t.ruta}</text>
+      </g>
+    ))}
+    {tramo.ciudades.map((c) => (
+      <g>
+        {c.tipo === 'empalme' ? (
+          <rect x={c.mapa.x - 3} y={c.mapa.y - 3} width="6" height="6" fill="var(--color-fondo)" stroke="var(--color-acento)" stroke-width="1.5"></rect>
+        ) : (
+          <circle cx={c.mapa.x} cy={c.mapa.y} r={c.principal ? 6 : 3.5} fill="var(--color-fondo)" stroke="var(--color-acento)" stroke-width={c.principal ? 2 : 1.5}></circle>
+        )}
+        {c.principal && (
+          <text x={c.mapa.x + (c.mapa.x > 410 ? -12 : 12)} y={c.mapa.y + 6} class="ciudad-etiqueta" text-anchor={c.mapa.x > 410 ? 'end' : 'start'}>{c.nombre}</text>
+        )}
+      </g>
+    ))}
+    {marcadores.map((m) => (
+      <g class="incidente" role="img" data-severidad={m.severidad} transform={`translate(${m.p.x} ${m.p.y})`}>
+        <title>{`${SEVERIDAD[m.severidad]} — ${m.ruta}${m.km !== null ? ` km ${kmTexto(m.km)}` : ''}: ${m.descripcion}`}</title>
+        <path d={FORMA[m.severidad]} class="incidente-forma" stroke="var(--color-fondo)" stroke-width="1.5" stroke-linejoin="round"></path>
+        <circle cy="1" r="1.4" fill="var(--color-fondo)"></circle>
+      </g>
+    ))}
+    {tramo.cabinas.map((cab, i) => {
+      const e = estadoCabina(cab);
+      return (
+        <a href={ruta(`/peajes/${cab.slug}`)} class={claseBaliza} style={`--i: ${i}`} data-estacion={cab.slug} data-estado-operativo={e.clave} aria-label={`Estación ${cab.nombre}, ${cab.ruta}${cab.km !== null ? ` km ${kmTexto(cab.km)}` : ''}, ${e.etiqueta.toLowerCase()}`}>
+          <circle cx={cab.mapa.x} cy={cab.mapa.y} r="14" class="baliza-halo" opacity="0.18"></circle>
+          <circle cx={cab.mapa.x} cy={cab.mapa.y} r="19" class="baliza-foco" fill="none" stroke-width="2"></circle>
+          {e.clave === 'proxima' && <circle cx={cab.mapa.x} cy={cab.mapa.y} r="11" class="baliza-anillo" fill="none" stroke-width="1.5" stroke-dasharray="4 3"></circle>}
+          <circle cx={cab.mapa.x} cy={cab.mapa.y} r="6" class="baliza-punto" stroke="var(--color-fondo)" stroke-width="2"></circle>
+          <text x={cab.mapa.x} y={cab.mapa.y - 18} class="cabina-etiqueta" text-anchor="middle">{cab.nombre}</text>
+        </a>
+      );
+    })}
+  </svg>
+  <figcaption class="mt-4 text-sm text-texto-2">
+    <ul class="flex flex-wrap gap-x-6 gap-y-2" aria-label="Leyenda">
+      <li class="inline-flex items-center gap-2"><span class="inline-block h-0.5 w-6 bg-acento" aria-hidden="true"></span> Rutas del tramo</li>
+      <li class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full bg-ok" aria-hidden="true"></span> Estación operativa</li>
+      <li class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full border-2 border-dashed border-vial-texto" aria-hidden="true"></span> Estación próxima</li>
+      <li class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full border-2 border-acento" aria-hidden="true"></span> Ciudad</li>
+      {leyendaServicios(tramo).map((s) => { const Icono = iconos[s.clave]; return <li class="inline-flex items-center gap-2"><Icono size={14} aria-hidden="true" /> {s.etiqueta}</li>; })}
+      {severidades.map((s) => (
+        <li class="inline-flex items-center gap-2">
+          <svg viewBox="-12 -12 24 24" width="14" height="14" aria-hidden="true" class="incidente" data-severidad={s}><path d={FORMA[s]} class="incidente-forma"></path></svg> {SEVERIDAD[s]}
+        </li>
+      ))}
+    </ul>
+  </figcaption>
+</figure>
+<style>
+  .mapa text { font-family: var(--font-sans); fill: var(--color-texto-2); }
+  /* Estos font-size son unidades del viewBox (820 de ancho), no píxeles: el CSS escala el SVG. En El tramo, el ancho
+     más grande en que se dibuja es ~719 px (contenedor 80rem = 1280 − 2 × 40 del panel = 1200; la grilla 1,6fr/1fr con
+     gap 2rem le deja 1168 × 1,6/2,6 ≈ 719), o sea escala ≈ 0,877. Por eso los tamaños van por arriba del piso del
+     pliego (61.7): 14 → 12,3 px, 15 → 13,2 px, 17 → 14,9 px (el nombre de ciudad es contenido: pasa los 14 px).
+     Lo guarda tests/styles/legibilidad.test.ts. */
+  .ruta-etiqueta { font-size: 15px; font-weight: 800; letter-spacing: 0.12em; fill: var(--color-acento); }
+  .ciudad-etiqueta { font-size: 17px; font-weight: 600; fill: var(--color-texto); }
+  .cabina-etiqueta { font-size: 14px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0; transition: opacity var(--dur-ui) var(--ease-salida); }
+  /* Los <a> del SVG son botones del mapa: sin el subrayado de la regla global de enlaces (llegaría a la etiqueta de texto). */
+  .baliza { cursor: pointer; outline: none; text-decoration: none; }
+  /* Los selectores por estado (0,3,0) le ganan a `.mapa text` (0,1,1): antes `.cabina-etiqueta` perdía y nunca se coloreaba. */
+  .baliza[data-estado-operativo="operativa"] .baliza-halo, .baliza[data-estado-operativo="operativa"] .baliza-punto { fill: var(--color-ok); }
+  .baliza[data-estado-operativo="operativa"] .cabina-etiqueta { fill: var(--color-ok); }
+  /* Punto, halo y anillo van con vial-texto, no con vial: acá el amarillo es primer plano sobre el panel (en claro,
+     casi blanco), y --color-vial no cambia entre temas (1,47:1, por debajo del 3:1 de WCAG 1.4.11 para un objeto
+     gráfico). Con vial-texto el mapa coincide con la muestra de la leyenda, que ya usa border-vial-texto. En oscuro
+     los dos tokens son el mismo amarillo: no se mueve nada. Las marcas viales del trazado (arriba) siguen con
+     --color-vial a propósito: van sobre la línea del acento, o sea sobre asfalto, no sobre el fondo. */
+  .baliza[data-estado-operativo="proxima"] .baliza-halo, .baliza[data-estado-operativo="proxima"] .baliza-punto { fill: var(--color-vial-texto); }
+  .baliza[data-estado-operativo="proxima"] .baliza-anillo { stroke: var(--color-vial-texto); }
+  .baliza[data-estado-operativo="proxima"] .cabina-etiqueta { fill: var(--color-vial-texto); }
+  /* Foco de teclado y estación elegida: anillo con el acento (el outline no se dibuja en <a> de SVG). */
+  .baliza-foco { stroke: var(--color-acento); opacity: 0; transition: opacity var(--dur-micro); }
+  .baliza:focus-visible .baliza-foco, .baliza[aria-current="true"] .baliza-foco { opacity: 1; }
+  .baliza:hover .cabina-etiqueta, .baliza:focus-visible .cabina-etiqueta, .baliza[aria-current="true"] .cabina-etiqueta { opacity: 1; }
+  /* El halo late solo (movimiento.css); en hover se detiene y crece. */
+  .baliza:hover .baliza-halo, .baliza:focus-visible .baliza-halo { animation-play-state: paused; transform: scale(1.5); opacity: 0.4; }
+  .incidente-forma { fill: var(--color-acento); }
+  .incidente[data-severidad="precaucion"] .incidente-forma { fill: var(--color-vial-texto); }
+  .incidente[data-severidad="corte"] .incidente-forma { fill: var(--color-error); }
+  @media (min-width: 48rem) { .cabina-etiqueta { opacity: 0.9; } }
+</style>

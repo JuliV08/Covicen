@@ -1,0 +1,53 @@
+name: Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  # El sistema avisa al publicar un cuadro (repository_dispatch) y la web se reconstruye sola.
+  repository_dispatch:
+    types: [datos-publicados]
+  # Una vez por día (03:00 en Argentina): los cuadros programados a futuro entran el día que corresponde.
+  schedule:
+    - cron: "0 6 * * *"
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Sin dominio: URL de Pages del repo. Cuando haya dominio: PUBLIC_SITE_URL=https://www.covicen.com.ar (con www: el
+      # apex redirige 301 al www, lo pide el pliego), PUBLIC_BASE_PATH=/, PUBLIC_INDEXABLE=true. Paso a paso completo en
+      # README.md, "Migración al dominio propio". Esa URL termina en la cartelería de las cabinas: no cambiarla después.
+      PUBLIC_SITE_URL: https://${{ github.repository_owner }}.github.io
+      PUBLIC_BASE_PATH: /${{ github.event.repository.name }}/
+      PUBLIC_INDEXABLE: "false"
+      # Sin la variable de repositorio API_URL, la landing sigue leyendo del repo. Con ella, lee tramo y
+      # tarifario de la API del sistema (el resto sigue en el repo hasta que exista su sistema).
+      FUENTE_DATOS: ${{ vars.API_URL != '' && 'api' || 'local' }}
+      API_URL: ${{ vars.API_URL }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm test
+      - run: pnpm verificar
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
+        with: { path: dist }
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5

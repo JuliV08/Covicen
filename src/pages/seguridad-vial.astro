@@ -1,0 +1,22 @@
+---
+import Base from '@/layouts/Base.astro';
+import Boton from '@/components/ui/Boton.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import { datos } from '@/lib/datos';
+const consejos = await datos.consejos();
+const conducir = consejos.filter((c) => c.categoria === 'conducir');
+const emergencia = consejos.filter((c) => c.categoria === 'emergencia');
+---
+<Base titulo="Seguridad vial" descripcion="Consejos de seguridad vial para RN 9, RN 19 y RN 34 y qué hacer ante una emergencia en la ruta: salir de la calzada, protegerse, llamar al 140 y esperar el auxilio gratuito." migas={[{ nombre: 'Seguridad vial', href: '/seguridad-vial' }]}>
+  <Seccion nivel="h1" eyebrow="Seguridad vial" titulo="Manejar bien el centro del país." intro="Ocho hábitos que evitan la mayoría de los siniestros en estas tres rutas." class="pt-10">
+    <ol class="escalonar grid gap-4 md:grid-cols-2">
+      {conducir.map((c, i) => <li class="tarjeta p-6" style={`--i: ${i}`}><span class="eyebrow tabular-nums">0{i + 1}</span><h2 class="mt-3 text-xl">{c.titulo}</h2><p class="mt-2 text-texto-2">{c.texto}</p></li>)}
+    </ol>
+  </Seccion>
+  <Seccion id="emergencia" indice="01" eyebrow="Ante una emergencia" titulo="Qué hacer si algo pasa en la ruta." intro="En este orden. El auxilio es gratuito y el 140 funciona sin crédito." fondo="fondo-2">
+    <ol class="escalonar grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      {emergencia.map((c, i) => <li class="tarjeta p-6" style={`--i: ${i}`}><span class="eyebrow tabular-nums">0{i + 1}</span><h3 class="mt-3 text-xl">{c.titulo}</h3><p class="mt-2 text-texto-2">{c.texto}</p></li>)}
+    </ol>
+    <div class="revelar mt-8 flex flex-wrap gap-3"><Boton href="tel:140" variante="vial" ariaLabel="Llamar a emergencias, 140">Llamar&nbsp;al&nbsp;140</Boton><Boton href="/emergencias" variante="secundario">Emergencias y auxilio</Boton></div>
+  </Seccion>
+</Base>

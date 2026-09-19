@@ -1,0 +1,64 @@
+---
+import { ruta } from '@/lib/rutas';
+interface Props {
+  href?: string;
+  variante?: 'primario' | 'secundario' | 'vial';
+  class?: string;
+  externo?: boolean;
+  ariaLabel?: string;
+}
+const { href, variante = 'primario', class: clase = '', externo = false, ariaLabel } = Astro.props;
+const esInterno = href !== undefined && href.startsWith('/');
+const destino = href === undefined ? undefined : esInterno ? ruta(href) : href;
+const clases = ['btn', `btn-${variante}`, clase];
+// El primario lleva "puntos flotantes" (adaptación propia del Floating Dots CTA a la paleta): diez partículas que suben.
+const puntos = variante === 'primario' ? Array.from({ length: 10 }, (_, i) => i) : [];
+---
+{destino ? (
+  <a href={destino} class:list={clases} aria-label={ariaLabel} rel={externo ? 'noopener noreferrer' : undefined} target={externo ? '_blank' : undefined}>
+    {puntos.length > 0 && <span class="btn-puntos" aria-hidden="true">{puntos.map((i) => <i style={`--i: ${i}`}></i>)}</span>}
+    <span class="btn-interior"><slot /></span>
+  </a>
+) : (
+  <button type="button" class:list={clases} aria-label={ariaLabel}>
+    {puntos.length > 0 && <span class="btn-puntos" aria-hidden="true">{puntos.map((i) => <i style={`--i: ${i}`}></i>)}</span>}
+    <span class="btn-interior"><slot /></span>
+  </button>
+)}
+<style>
+  .btn {
+    position: relative; display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: 0.7rem 1.35rem;
+    border-radius: 12px; font-weight: 600; text-decoration: none; cursor: pointer; white-space: nowrap;
+    transition: transform var(--dur-ui) var(--ease-salida), box-shadow var(--dur-ui) var(--ease-salida), background var(--dur-ui), border-color var(--dur-ui), color var(--dur-micro);
+  }
+  .btn-interior { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+  .btn :global(svg) { transition: transform var(--dur-ui) var(--ease-salida); }
+  .btn:hover :global(svg) { transform: translateX(2px); }
+  .btn:active { transform: translateY(0) !important; }
+
+  /* Primario: gradiente azul de marca con luz interior, puntos que flotan y flecha que se dibuja en hover. */
+  .btn-primario {
+    overflow: hidden; color: var(--color-sobre-marca);
+    background: linear-gradient(135deg, var(--color-marca-700) 0%, var(--color-marca-900) 100%);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, white 18%, transparent), 0 10px 24px -12px var(--color-glow);
+  }
+  .btn-primario::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(135deg, color-mix(in srgb, var(--color-marca-300) 28%, transparent), transparent 60%); }
+  .btn-primario:hover, .btn-primario:focus-visible { transform: translateY(-1px); background: linear-gradient(135deg, color-mix(in srgb, var(--color-marca-700) 80%, var(--color-marca-300)) 0%, color-mix(in srgb, var(--color-marca-900) 85%, var(--color-marca-700)) 100%); box-shadow: inset 0 1px 0 color-mix(in srgb, white 22%, transparent), 0 14px 30px -12px var(--color-glow); }
+  .btn-puntos { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .btn-puntos i {
+    position: absolute; bottom: -4px; left: calc(5% + var(--i) * 9.5%); width: 3px; height: 3px; border-radius: 50%;
+    background: var(--color-sobre-marca); opacity: 0;
+    animation: puntos-flotan calc(2.4s + var(--i) * 0.22s) linear infinite;
+    animation-delay: calc(var(--i) * -0.45s);
+  }
+  .btn-puntos i:nth-child(odd) { width: 2px; height: 2px; background: var(--color-marca-300); }
+  @keyframes puntos-flotan { 0% { transform: translateY(0); opacity: 0; } 12% { opacity: 0.9; } 85% { opacity: 0; } 100% { transform: translateY(-55px); opacity: 0; } }
+  .btn-primario:hover :global(svg path) { stroke-dasharray: 20; animation: flecha-dibujar 0.7s ease forwards; }
+  @keyframes flecha-dibujar { 0% { stroke-dasharray: 0 20; stroke-dashoffset: 0; } 50% { stroke-dasharray: 10 10; stroke-dashoffset: -5; } 100% { stroke-dasharray: 20 0; stroke-dashoffset: -10; } }
+
+  .btn-secundario { border: 1px solid var(--color-borde); color: var(--color-texto); background: transparent; }
+  .btn-secundario:hover { border-color: var(--color-borde-fuerte); background: var(--color-superficie); }
+  /* .btn-vial vive en global.css (una sola definición para header, barra y botón). */
+
+  @media (prefers-reduced-motion: reduce) { .btn-puntos i { animation: none; } .btn-primario:hover :global(svg path) { animation: none; stroke-dasharray: none; } }
+</style>

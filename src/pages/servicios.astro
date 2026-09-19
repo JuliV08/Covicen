@@ -1,0 +1,41 @@
+---
+import Base from '@/layouts/Base.astro';
+import Canales from '@/components/Canales.astro';
+import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import Senal from '@/components/ui/Senal.astro';
+import { datos } from '@/lib/datos';
+const [servicios, contacto] = await Promise.all([datos.servicios(), datos.contacto()]);
+const gratuitos = servicios.filter((s) => s.gratuito);
+const onerosos = servicios.filter((s) => !s.gratuito);
+---
+<Base titulo="Servicios al usuario" descripcion="Servicios de Covicen en el Tramo Centro: emergencias 140, grúa y remolque gratuitos con tiempos comprometidos, móviles de seguridad vial, TelePASE sin costo, atención al usuario con plazos, y qué servicios se cobran." migas={[{ nombre: 'Servicios', href: '/servicios' }]}>
+  <Seccion nivel="h1" eyebrow="Servicios" titulo="Qué te da el peaje, y qué se cobra aparte." intro="El contrato obliga a prestar estos servicios y a decir cuáles son gratuitos y cuáles no. Acá están, con el artículo del pliego que los exige." class="pt-10 pb-0" />
+  <Seccion id="gratuitos" indice="01" eyebrow="Sin costo" titulo="Servicios gratuitos." fondo="fondo-2">
+    <ul class="escalonar grid gap-4 md:grid-cols-2">
+      {gratuitos.map((s, i) => (
+        <li class="tarjeta p-6" style={`--i: ${i}`}>
+          <div class="flex items-start justify-between gap-3"><h3 class="text-xl">{s.nombre}</h3><Senal variante="ok">Gratis</Senal></div>
+          <p class="mt-2 text-texto-2">{s.descripcion}</p>
+          {s.alcance && <p class="mt-2 text-texto-2"><span class="text-texto">Alcance:</span> {s.alcance}</p>}
+          {s.tiempos && <ul class="mt-3 flex flex-col gap-1 text-texto-2">{s.tiempos.map((t) => <li class="flex gap-2"><span aria-hidden="true">—</span>{t}</li>)}</ul>}
+          <p class="anotacion mt-3 text-xs text-texto-2">Fuente: {s.fuente}</p>
+        </li>
+      ))}
+    </ul>
+  </Seccion>
+  <Seccion id="con-costo" indice="02" eyebrow="Con costo" titulo="Servicios que se cobran." intro="Para que nadie se lleve una sorpresa: esto no lo cubre el peaje.">
+    <ul class="escalonar grid gap-4 md:grid-cols-2">
+      {onerosos.map((s, i) => <li class="tarjeta p-6" style={`--i: ${i}`}><div class="flex items-start justify-between gap-3"><h3 class="text-xl">{s.nombre}</h3><Senal variante="frio">Con costo</Senal></div><p class="mt-2 text-texto-2">{s.descripcion}</p><p class="anotacion mt-3 text-xs text-texto-2">Fuente: {s.fuente}</p></li>)}
+    </ul>
+  </Seccion>
+  <Seccion id="canales" indice="03" eyebrow="Atención" titulo="Canales y plazos de respuesta." intro="Los que fija el pliego (art. 58). Los que todavía no están habilitados lo dicen." fondo="fondo-2">
+    <div class="revelar"><Canales canales={contacto.canales} /></div>
+  </Seccion>
+  <Seccion indice="04" eyebrow="Más adelante" titulo="Lo que se suma cuando existan los sistemas.">
+    <div class="grid gap-4 md:grid-cols-2">
+      <HuecoCapacidad capacidad="oficinaVirtual" titulo="Oficina virtual" descripcion="Pasadas, facturas, deuda, comprobantes y pagos de TelePASE en línea." alternativaHref="/medios-de-pago#mi-cuenta" alternativaTexto="Qué vas a poder hacer" />
+      <HuecoCapacidad capacidad="ticketingReclamos" titulo="Seguimiento de reclamos" descripcion="Número de reclamo y estado en línea." alternativaHref="/contacto" alternativaTexto="Cómo hacer un reclamo hoy" />
+    </div>
+  </Seccion>
+</Base>

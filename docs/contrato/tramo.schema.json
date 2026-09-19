@@ -1,0 +1,320 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "km": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "rutas": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "enum": [
+              "RN 9",
+              "RN 19",
+              "RN 34"
+            ]
+          },
+          "descripcion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "desde": {
+            "type": "string",
+            "minLength": 1
+          },
+          "hasta": {
+            "type": "string",
+            "minLength": 1
+          },
+          "km": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pkInicial": {
+            "type": "number",
+            "minimum": 0
+          },
+          "pkFinal": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "nota": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "nombre",
+          "descripcion",
+          "desde",
+          "hasta",
+          "km"
+        ]
+      }
+    },
+    "provincias": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "ciudades": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "nombre": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provincia": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mapa": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number"
+              },
+              "y": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ]
+          },
+          "principal": {
+            "default": false,
+            "type": "boolean"
+          },
+          "tipo": {
+            "default": "ciudad",
+            "type": "string",
+            "enum": [
+              "ciudad",
+              "empalme"
+            ]
+          }
+        },
+        "required": [
+          "slug",
+          "nombre",
+          "provincia",
+          "mapa"
+        ]
+      }
+    },
+    "cabinas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "nombre": {
+            "type": "string",
+            "minLength": 1
+          },
+          "ruta": {
+            "type": "string",
+            "enum": [
+              "RN 9",
+              "RN 19",
+              "RN 34"
+            ]
+          },
+          "km": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "localidad": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provincia": {
+            "type": "string",
+            "minLength": 1
+          },
+          "situacion": {
+            "type": "string",
+            "enum": [
+              "existente",
+              "nueva"
+            ]
+          },
+          "estado": {
+            "type": "string",
+            "enum": [
+              "confirmada",
+              "a-confirmar"
+            ]
+          },
+          "freeFlow": {
+            "type": "boolean"
+          },
+          "operativa": {
+            "type": "boolean"
+          },
+          "vias": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "sentido": {
+            "type": "string",
+            "enum": [
+              "ambos",
+              "ascendente",
+              "descendente"
+            ]
+          },
+          "telefono": {
+            "type": "string",
+            "minLength": 3
+          },
+          "horarioAtencion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "servicios": {
+            "type": "object",
+            "properties": {
+              "areaDescanso": {
+                "type": "boolean"
+              },
+              "detencionSegura": {
+                "type": "boolean"
+              },
+              "gruaGratuita": {
+                "type": "boolean"
+              },
+              "sanitarios": {
+                "type": "boolean"
+              },
+              "colocacionTelepase": {
+                "type": "boolean"
+              }
+            }
+          },
+          "mapa": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number"
+              },
+              "y": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ]
+          },
+          "fuente": {
+            "type": "object",
+            "properties": {
+              "nombre": {
+                "type": "string",
+                "minLength": 1
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "required": [
+              "nombre",
+              "url"
+            ]
+          }
+        },
+        "required": [
+          "slug",
+          "nombre",
+          "ruta",
+          "km",
+          "localidad",
+          "provincia",
+          "situacion",
+          "estado",
+          "mapa"
+        ]
+      }
+    },
+    "trazados": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ruta": {
+            "type": "string",
+            "enum": [
+              "RN 9",
+              "RN 19",
+              "RN 34"
+            ]
+          },
+          "ciudades": {
+            "minItems": 2,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            }
+          }
+        },
+        "required": [
+          "ruta",
+          "ciudades"
+        ]
+      }
+    },
+    "avisos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "km",
+    "rutas",
+    "provincias",
+    "ciudades",
+    "cabinas",
+    "trazados",
+    "avisos"
+  ]
+}

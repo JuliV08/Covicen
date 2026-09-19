@@ -1,0 +1,160 @@
+@import "tailwindcss";
+@import "./tokens.css";
+@import "@fontsource-variable/archivo";
+@import "./movimiento.css";
+@import "./tarjetas.css";
+@import "./impresion.css";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    /* Una sola scrollbar, la nativa, con los tokens: pulgar azul de marca sobre pista navy. */
+    scrollbar-width: auto;
+    scrollbar-color: var(--color-superficie-2) var(--color-fondo-2);
+  }
+  body {
+    @apply bg-fondo text-texto font-sans antialiased;
+    font-size: 1rem;
+    line-height: 1.6;
+    font-variant-numeric: tabular-nums;
+  }
+  ::selection { background: var(--color-acento); color: var(--color-fondo); }
+
+  /* foco visible, uniforme, en todo lo interactivo */
+  :focus-visible {
+    outline: 2px solid var(--color-acento);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+  h1, h2, h3 { @apply font-extrabold text-texto; letter-spacing: var(--tracking-titulo); line-height: 1.05; text-wrap: balance; }
+  h1 { font-size: clamp(2.5rem, 2rem + 4vw, 6rem); }
+  h2 { font-size: clamp(1.9rem, 1.4rem + 2.2vw, 3.25rem); }
+  h3 { font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.75rem); }
+  p { text-wrap: pretty; }
+  /* Pliego 61.7: los enlaces de texto van subrayados. Menú, botones y tarjetas-enlace tienen otra forma de verse:
+     usan `no-underline` (utilidad) o definen text-decoration: none en su propio estilo. */
+  a:not(.btn):not(.btn-vial):not(.nav-item) { @apply text-acento; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em; transition: color var(--dur-micro) var(--ease-salida), text-decoration-thickness var(--dur-micro); }
+  a:not(.btn):not(.btn-vial):not(.nav-item):hover, a:not(.btn):not(.btn-vial):not(.nav-item):focus-visible { @apply text-acento-hover; text-decoration-thickness: 2px; }
+  a, button, summary, [role="button"] { touch-action: manipulation; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+}
+
+/* Piezas exclusivas de un tema: el hero tiene una foto por tema. Un elemento sin caja no carga su <img loading="lazy">. */
+html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro { display: none; }
+
+@layer components {
+  .contenedor { width: min(100% - 2.5rem, var(--ancho-max)); margin-inline: auto; }
+  /* grilla de plano: fondo tech tenue */
+  .plano {
+    background-image:
+      linear-gradient(to right, var(--color-plano) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-plano) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+  }
+  /* Sección con grilla cinética, fundida con las vecinas: el fondo va de `fondo` a `fondo-2` y vuelve, la grilla se
+     desvanece en los bordes, y una "costura" (hairline + marca vial centrada, como el divisor del hero) une los bloques. */
+  .seccion-cinetica {
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--color-fondo) 0%, var(--color-fondo-2) 16%, var(--color-fondo-2) 84%, var(--color-fondo) 100%);
+  }
+  .seccion-cinetica > canvas {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
+  }
+  .costura { position: absolute; left: 0; right: 0; height: 1px; z-index: 5; pointer-events: none;
+    background: linear-gradient(90deg, transparent, var(--color-borde-fuerte) 25%, color-mix(in srgb, var(--color-acento) 55%, transparent) 50%, var(--color-borde-fuerte) 75%, transparent); }
+  .costura-arriba { top: 0; }
+  .costura-abajo { bottom: 0; }
+  .costura::before { content: ""; position: absolute; left: 50%; top: 50%; width: 2.5rem; height: 3px; border-radius: 2px; transform: translate(-50%, -50%);
+    background: var(--color-acento); box-shadow: 0 0 14px var(--color-glow), 0 0 2px var(--color-acento); }
+  /* resplandor que "derrama" la grilla hacia la sección vecina */
+  .costura::after { content: ""; position: absolute; left: 20%; right: 20%; top: 50%; height: 120px; transform: translateY(-50%); pointer-events: none;
+    background: radial-gradient(60% 100% at 50% 50%, var(--color-luz), transparent 70%); }
+  /* Volanta. 12 px a propósito y declarada acá como anotación del pliego (61.7, spec §11): una volanta nunca es cuerpo
+     de texto, es el rótulo que encabeza otra cosa —el índice y la etiqueta de una sección, el título de columna del
+     footer, la ruta y el km de una estación—. Junto con .anotacion es la única excepción a los 14 px, y lo guarda
+     tests/styles/legibilidad.test.ts: los 12 px escritos a mano fuera de .anotacion o .eyebrow hacen fallar. */
+  .eyebrow { @apply font-medium uppercase text-texto-2; letter-spacing: var(--tracking-eyebrow); font-size: 0.75rem; }
+  /* texto largo (privacidad, novedades) */
+  .prose-covicen h2 { margin-top: 2rem; font-size: 1.35rem; color: var(--color-texto); }
+  .prose-covicen h3 { margin-top: 1.5rem; font-size: 1.15rem; color: var(--color-texto); }
+  /* Pliego 61.7 (WCAG 1.4.8): separación entre párrafos = 1,5 veces el interlineado. `lh` donde existe; 2.4em (1.5 × 1.6) si no.
+     El fallback va en @supports porque el minificador borra una declaración repetida y se quedaría solo el `lh`. */
+  .prose-covicen p { margin-top: 0.75rem; }
+  .prose-covicen p + p { margin-block-start: 1.5lh; }
+  @supports not (margin-block-start: 1lh) { .prose-covicen p + p { margin-block-start: 2.4em; } }
+  .prose-covicen ul, .prose-covicen ol { margin-top: 0.75rem; padding-left: 1.25rem; }
+  .prose-covicen ul { list-style: disc; }
+  .prose-covicen ol { list-style: decimal; }
+  .prose-covicen li { margin-top: 0.35rem; }
+  .prose-covicen strong { color: var(--color-texto); }
+
+  /* Botón de señalética (amarillo vial): header y <Boton variante="vial">; la barra inferior lo adopta en la Fase 1. ÚNICA definición. */
+  .btn-vial {
+    display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; border-radius: var(--radius-md);
+    background: var(--color-vial); color: var(--color-sobre-vial); font-weight: 600; text-decoration: none;
+    transition: box-shadow var(--dur-ui) var(--ease-salida), transform var(--dur-ui) var(--ease-salida);
+  }
+  .btn-vial:hover { box-shadow: 0 8px 24px -6px color-mix(in srgb, var(--color-vial) 45%, transparent); transform: translateY(-1px); }
+  .btn-vial:hover .telefono { animation: oscilar 0.5s var(--ease-suave) 1; }
+  /* El anillo de foco se dibuja 2 px AFUERA del botón (outline-offset de la regla base), o sea sobre el fondo de la
+     página: va con vial-texto, el amarillo como tinta. Con --color-vial daba 1,47:1 en claro (el token no cambia entre
+     temas) y el anillo desaparecía justo en el botón del 140. En oscuro vial-texto es el mismo amarillo: no se mueve. */
+  .btn-vial:focus-visible { outline-color: var(--color-vial-texto); }
+  @keyframes oscilar { 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+
+  /* Velo del hero: es lo único que deja leer el texto encima de la foto, así que los porcentajes de acá son contrato
+     con tests/styles/hero-foto.test.ts, que mide el contraste real del texto sobre cada foto en cada tamaño de
+     pantalla. Si se tocan, el test vuelve a medir y avisa; no se ajustan a ojo.
+     En escritorio el texto vive en la mitad izquierda: velo horizontal, fuerte a la izquierda y casi nulo sobre el
+     punto de fuga. Debajo de 1024 px el texto ocupa todo el ancho y el horizontal no alcanza (llegaba a 2,5:1 sobre el
+     asfalto con la foto de día): pasa a vertical, transparente sobre el cielo y firme del horizonte para abajo. */
+  .velo-hero {
+    background: linear-gradient(to right,
+      color-mix(in srgb, var(--color-fondo) 100%, transparent) 0%,
+      color-mix(in srgb, var(--color-fondo) 70%, transparent) 50%,
+      color-mix(in srgb, var(--color-fondo) 10%, transparent) 100%);
+  }
+  /* Sin foto (calzada vectorial): el dibujo aguanta más velo y el texto gana. */
+  .velo-hero-vector {
+    background: linear-gradient(to right,
+      color-mix(in srgb, var(--color-fondo) 100%, transparent) 0%,
+      color-mix(in srgb, var(--color-fondo) 85%, transparent) 50%,
+      color-mix(in srgb, var(--color-fondo) 20%, transparent) 100%);
+  }
+  @media (max-width: 63.9375rem) {
+    .velo-hero {
+      background: linear-gradient(to bottom,
+        color-mix(in srgb, var(--color-fondo) 12%, transparent) 0%,
+        color-mix(in srgb, var(--color-fondo) 12%, transparent) 50%,
+        color-mix(in srgb, var(--color-fondo) var(--velo-hero-abajo), transparent) 66%,
+        color-mix(in srgb, var(--color-fondo) var(--velo-hero-abajo), transparent) 100%);
+    }
+  }
+
+  /* Disolvencia del hero al cambiar de tema: el hero se funde al fondo del tema que viene, las fotos se intercambian
+     por debajo (que es un corte seco, y encima el canvas del parallax se vuelve a montar) y recién ahí reaparece.
+     scripts/tema.ts levanta el velo ANTES de aplicar el tema y lo baja después; sin JS no hay cambio de tema que
+     disolver, y con "menos movimiento" el cambio es instantáneo, como era antes. */
+  /* Una tarjeta pinta su interior sola (tarjetas.css, ::after). Los paneles y las tablas no traen fondo propio: en el
+     tema oscuro se apoyan directo sobre el fondo de la página, y al volverse zona oscura dentro del tema claro se
+     habrían quedado transparentes, con el texto claro sobre el gris de la página. Se pintan con el mismo fondo que
+     tienen debajo en el tema oscuro. Un componente que ya tiene su propio fondo lo dice con --fondo-bloque, y así el
+     color le queda igual en los dos temas. */
+  html[data-tema="claro"] .bloque-oscuro { background-color: var(--fondo-bloque, var(--color-fondo)); }
+
+  /* El velo NO depende de que el JS lo baje. Va y vuelve en una sola animación de CSS: si el script se cuelga, si la
+     pestaña se va a segundo plano o si pasa cualquier cosa rara, igual termina transparente. Lo peor que puede pasar
+     es que la disolvencia se vea fea, nunca que el hero quede tapado por un panel liso.
+     Los tiempos: tapa a los 200 ms (es cuando scripts/tema.ts aplica el tema, ENTRADA_VELO en lib/disolvencia.ts) y de
+     ahí se abre más lento, porque entrar en la disolvencia es un gesto y salir es la foto nueva apareciendo. */
+  .velo-tema { position: absolute; inset: 0; z-index: 40; opacity: 0; pointer-events: none; }
+  .velo-tema[data-visible] { animation: velo-tema 625ms var(--ease-salida) both; }
+  @keyframes velo-tema { 0% { opacity: 0; } 32% { opacity: 1; } 100% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .velo-tema[data-visible] { animation: none; } }
+}

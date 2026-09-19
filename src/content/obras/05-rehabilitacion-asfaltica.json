@@ -1,0 +1,11 @@
+{
+  "slug": "rehabilitacion-asfaltica",
+  "titulo": "Rehabilitación asfáltica por secciones",
+  "ruta": "Todo el tramo",
+  "tipo": "Rehabilitación",
+  "estado": "planificada",
+  "avance": null,
+  "orden": 5,
+  "descripcion": "Toneladas mínimas de concreto asfáltico por sección y por año durante los veinte años, con medición semestral del avance en toneladas y en longitud de carril.",
+  "fuente": "PETP art. 7"
+}

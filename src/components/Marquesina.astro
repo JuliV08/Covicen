@@ -1,0 +1,107 @@
+---
+// Cinta de avisos. Reemplaza a los anuncios que rotaban de a uno arriba del navbar (decisión de Juli, 15/09/2026,
+// con la cinta de Corresur como referencia): ahora desfilan en una sola línea continua, con una etiqueta fija a la
+// izquierda. El contenido sale de avisos.json y mañana del backoffice, sin tocar este componente: la costura de
+// datos ya es la misma (FuenteDatos.avisos()).
+import { Pause, Play } from '@lucide/astro';
+import type { Aviso } from '@/lib/datos/esquemas';
+import { ruta } from '@/lib/rutas';
+/** `enHero`: la cinta se apoya en el borde de abajo del hero (referencia de Corresur). Fuera de la home va en el
+ *  flujo, arriba del contenido. */
+interface Props { avisos: Aviso[]; etiqueta?: string; enHero?: boolean }
+const { avisos, etiqueta = 'Avisos', enHero = false } = Astro.props;
+const enlace = (u: string) => (u.startsWith('/') ? ruta(u) : u);
+// El desfile empalma sin salto porque la pista lleva los avisos DOS veces y se corre exactamente media pista. La
+// segunda copia es puro relleno visual: va fuera del árbol de accesibilidad y fuera del recorrido del tabulador,
+// para que el lector de pantalla y el teclado encuentren cada aviso una sola vez.
+const copias = [false, true];
+---
+{avisos.length > 0 && (
+  <section class:list={['marquesina bloque-oscuro', enHero && 'marquesina-hero']} aria-label={etiqueta} data-marquesina style={`--avisos: ${avisos.length}`}>
+    <p class="marquesina-etiqueta eyebrow"><span>{etiqueta}</span></p>
+    <div class="marquesina-pista">
+      <div class="marquesina-cinta">
+        {copias.map((copia) => (
+          <ul class="marquesina-grupo" aria-hidden={copia ? 'true' : undefined}>
+            {avisos.map((a) => (
+              <li class="marquesina-item">
+                <span class:list={['marquesina-punto', a.tono === 'vial' ? 'bg-vial' : 'bg-acento']} aria-hidden="true"></span>
+                {a.url
+                  ? <a href={enlace(a.url)} tabindex={copia ? -1 : undefined}>{a.texto}</a>
+                  : <span>{a.texto}</span>}
+              </li>
+            ))}
+          </ul>
+        ))}
+      </div>
+    </div>
+    {/* WCAG 2.2.2: lo que se mueve solo y dura más de 5 s tiene que poder frenarse. El puntero encima y el foco
+        adentro también frenan, por CSS; este botón es el freno explícito, el único que sirve sin mouse. */}
+    <button type="button" class="marquesina-pausa" data-pausa data-pausar="Pausar los avisos" data-reanudar="Reanudar los avisos" aria-label="Pausar los avisos">
+      <span data-icono-pausa><Pause size={16} aria-hidden="true" /></span>
+      <span data-icono-reanudar><Play size={16} aria-hidden="true" /></span>
+    </button>
+  </section>
+)}
+<script src="../scripts/marquesina.ts"></script>
+<style>
+  .marquesina {
+    /* La cinta ya trae su fondo, así que le avisa a .bloque-oscuro cuál es en vez de dejar que le ponga el de la
+       página: de este modo se ve del mismo color en los dos temas. */
+    --fondo-bloque: var(--color-fondo-2);
+    display: flex;
+    align-items: stretch;
+    min-height: 2.75rem;
+    background: var(--fondo-bloque);
+    border-block: 1px solid var(--color-borde);
+    overflow: hidden;
+  }
+  /* Señalética: el amarillo va de fondo y el texto encima es sobre-vial (el par que verifica pares.ts). */
+  .marquesina-etiqueta {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding-inline: 1rem;
+    background: var(--color-vial);
+    color: var(--color-sobre-vial);
+    font-weight: 700;
+  }
+  /* En la home se apoya en el borde de abajo del hero, encima de la foto: el fondo es opaco, así que el texto no
+     depende del velo. Queda por debajo del velo de la disolvencia (z 40), que tapa el hero entero. */
+  .marquesina-hero { position: absolute; inset-inline: 0; bottom: 0; z-index: 10; border-block-end: 0; }
+  .marquesina-pista { flex: 1; min-width: 0; display: flex; align-items: center; overflow: hidden; }
+  .marquesina-cinta { display: flex; width: max-content; animation: desfilar calc(var(--avisos, 3) * 9s) linear infinite; }
+  .marquesina-grupo { display: flex; align-items: center; }
+  /* Media pista = exactamente una copia de los avisos: al llegar ahí, la imagen es idéntica a la del arranque. */
+  @keyframes desfilar { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  .marquesina-item { display: flex; align-items: center; gap: 0.5rem; padding-inline: 1.25rem; font-size: 0.875rem; white-space: nowrap; color: var(--color-texto-2); }
+  .marquesina-item + .marquesina-item { border-inline-start: 1px solid var(--color-borde); }
+  .marquesina-punto { width: 0.5rem; height: 0.5rem; flex-shrink: 0; border-radius: var(--radius-full); }
+  .marquesina-item a { color: var(--color-texto); text-decoration: none; }
+  .marquesina-item a:hover, .marquesina-item a:focus-visible { text-decoration: underline; }
+
+  .marquesina-pausa { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 2.75rem; color: var(--color-texto-2); }
+  .marquesina-pausa:hover, .marquesina-pausa:focus-visible { color: var(--color-texto); background: var(--color-superficie); }
+  /* Un solo botón para las dos caras del pausado: se ve el ícono que corresponde al estado. */
+  [data-icono-reanudar], [data-pausado] [data-icono-pausa] { display: none; }
+  [data-pausado] [data-icono-reanudar] { display: inline-flex; }
+
+  /* Los tres frenos. El puntero y el foco son implícitos y se sueltan solos; el botón manda y dura lo que dure la página. */
+  .marquesina:hover .marquesina-cinta,
+  .marquesina:focus-within .marquesina-cinta,
+  .marquesina[data-pausado] .marquesina-cinta { animation-play-state: paused; }
+  /* Y el botón le gana a los implícitos. Sin esto, «Reanudar» no reanudaba NADA: al hacer clic el foco queda en el
+     propio botón y el puntero encima, así que `:focus-within` y `:hover` seguían frenando la cinta para siempre.
+     `data-corriendo` lo pone marquesina.ts al reanudar y lo saca cuando el usuario se va de la cinta, que es cuando
+     los frenos implícitos vuelven a tener sentido. Va última y con más especificidad para ganarle a las tres de arriba. */
+  .marquesina[data-corriendo]:not([data-pausado]) .marquesina-cinta { animation-play-state: running; }
+
+  /* Con "menos movimiento" no desfila nada: la cinta queda quieta y se puede recorrer a mano. La copia sobra y el
+     botón de pausa también (marquesina.ts lo esconde): no hay movimiento que frenar. */
+  @media (prefers-reduced-motion: reduce) {
+    .marquesina-cinta { animation: none; }
+    .marquesina-grupo[aria-hidden] { display: none; }
+    .marquesina-pista { overflow-x: auto; }
+  }
+</style>

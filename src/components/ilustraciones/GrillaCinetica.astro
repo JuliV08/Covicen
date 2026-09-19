@@ -1,0 +1,11 @@
+---
+// Fondo de grilla cinética (adaptación propia): nodos que se atraen hacia el puntero y ondas al hacer clic.
+// Canvas del tamaño de la sección; solo anima cuando está en pantalla y hay puntero u ondas. En táctil/reduced-motion, estático.
+interface Props { class?: string }
+const { class: clase = '' } = Astro.props;
+---
+<canvas class:list={['grilla-cinetica absolute inset-0 h-full w-full', clase]} data-grilla aria-hidden="true"></canvas>
+<script src="../../scripts/grilla-cinetica.ts"></script>
+<style>
+  .grilla-cinetica { pointer-events: none; }
+</style>

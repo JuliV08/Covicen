@@ -1,0 +1,224 @@
+/* Tokens de Covicen. Dos capas: marca (manual "Covicen Marca 9b1", fijos) y semánticos (los usan los componentes).
+   El tema oscuro "La ruta, de noche" es el de @theme. El tema claro redefine SOLO la capa semántica, abajo, en
+   html[data-tema="claro"]. Regla: los componentes usan solo semánticos; ningún color se escribe a mano fuera de acá.
+   `@theme static`: Tailwind emite TODOS los tokens, también los que solo se usan con var() dentro de <style> de componentes. */
+@theme static {
+  /* --- reset de la paleta por defecto de Tailwind: solo existen nuestros colores --- */
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* --- marca (no usar en componentes) --- */
+  --color-marca-900: #1E4870;
+  --color-marca-700: #2C688F;
+  --color-marca-500: #4A92BA;
+  --color-marca-300: #68BCE1;
+  --color-gris-texto: #5A6472;
+  --color-gris-fondo: #EEF1F4;
+
+  /* --- semánticos, tema oscuro --- */
+  --color-fondo: #0B1526;
+  --color-fondo-2: #10203A;
+  --color-superficie: #16304E;
+  --color-superficie-2: #1E4870;
+  --color-texto: #E8EEF5;
+  --color-texto-2: #A9C4D8;
+  --color-texto-3: #8593A0; /* ≥ 4.5:1 sobre fondo y fondo-2; NUNCA sobre superficie ni superficie-2 */
+  --color-acento: #68BCE1;
+  --color-acento-hover: #8FCDE8;
+  --color-vial: #F0C419;         /* señalética: SOLO como fondo; el texto encima es sobre-vial */
+  --color-vial-texto: #F0C419;   /* el amarillo usado como texto (en claro se oscurece para llegar a 4.5:1) */
+  --color-sobre-vial: #0B1526;   /* texto sobre amarillo */
+  --color-sobre-acento: #0B1526; /* texto sobre acento (botón de envío, badges) */
+  --color-sobre-marca: #FFFFFF;  /* texto sobre el navy de marca (botón primario), igual en los dos temas */
+  --color-ok: #7BD389;           /* estación operativa */
+  --color-sobre-ok: #0B1526;
+  --color-error: #FF8A80;
+  --color-cabecera: rgb(16 32 58 / 0.85);      /* fondo del header al scrollear */
+  --color-tarjeta-interior-1: #17334F;         /* degradé interior de .tarjeta, de arriba a abajo */
+  --color-tarjeta-interior-2: #10203A;
+  --color-tarjeta-interior-3: #0B1526;
+  --color-borde: rgb(255 255 255 / 0.10);
+  --color-borde-fuerte: rgb(255 255 255 / 0.18);
+  --color-glow: rgb(104 188 225 / 0.35);
+  --color-sombra: rgb(0 0 0 / 0.6);
+  --color-plano: rgb(255 255 255 / 0.04);     /* grilla de fondo */
+  --color-luz: rgb(104 188 225 / 0.09);       /* resplandores suaves */
+
+  /* --- tipografía --- */
+  --font-sans: "Archivo Variable", "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --tracking-eyebrow: 0.15em;
+  --tracking-titulo: -0.02em;
+
+  /* --- radios: sobrio --- */
+  --radius-*: initial;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* --- movimiento --- */
+  --ease-salida: cubic-bezier(0.25, 1, 0.5, 1);   /* ease-out-quart: entradas */
+  --ease-suave: cubic-bezier(0.65, 0, 0.35, 1);   /* ease-in-out-cubic: scrub */
+}
+
+:root {
+  --dur-micro: 120ms;
+  --dur-ui: 240ms;
+  --dur-entrada: 600ms;
+  --dur-narrativa: 900ms;
+  --stagger: 60ms;
+  --alto-header: 7rem; /* 2.5rem de barra superior + 4.5rem de header */
+  --ancho-max: 80rem;
+  --brillo-foto: 0.62; /* las fotos de atmósfera se oscurecen para que el texto gane */
+  /* Cuánto tapa el velo del hero del horizonte para abajo en pantallas angostas (global.css, .velo-hero). Ahí el texto
+     ocupa todo el ancho y cae sobre el asfalto: la foto nocturna ya es oscura y pide poco, la diurna pide bastante más.
+     Los dos valores los mide tests/styles/hero-foto.test.ts sobre las fotos reales; no se tocan a ojo. */
+  --velo-hero-abajo: 28%;
+  color-scheme: dark;
+  /* Solo para @media print (impresion.css): papel y tinta no dependen del tema. Grises: tinta-2 para el texto terciario
+     (12,6:1 sobre papel), tinta-media para bordes de tarjetas y la regla del encabezado, tinta-suave para bordes finos. */
+  --color-papel: #FFFFFF;
+  --color-tinta: #000000;
+  --color-tinta-2: #333333;
+  --color-tinta-media: #666666;
+  --color-tinta-suave: #999999;
+}
+
+/* La barra superior (TelePASE · Mi cuenta · tema) solo se muestra en escritorio: en celular esos tres accesos viven
+   en el menú, así que abajo de 1024 px la barra no existe y el header mide solo sus 4,5rem. Todo lo que se apoya en
+   el alto del header —el relleno del <main>, el alto del hero, el scroll-margin de las anclas— sale de este token. */
+@media (width < 64rem) {
+  :root { --alto-header: 4.5rem; }
+}
+
+/* Tema claro: mismos nombres, valores del manual (gris-fondo, gris-texto, marca-900 en títulos, marca-700 en links).
+   Sin @layer a propósito: lo no-layered le gana a la capa `theme` de Tailwind, y html[...] es más específico que :root. */
+html[data-tema="claro"] {
+  --color-fondo: #EEF1F4;
+  --color-fondo-2: #F7F9FB;
+  --color-superficie: #FFFFFF;
+  --color-superficie-2: #DDE6EE;
+  --color-texto: #16304E;
+  --color-texto-2: #5A6472;
+  --color-texto-3: #546070;
+  --color-acento: #2C688F;
+  --color-acento-hover: #1E4870;
+  --color-vial-texto: #6E5A00;
+  --color-sobre-acento: #FFFFFF;
+  --color-sobre-marca: #FFFFFF;
+  --color-ok: #1B6B35;
+  --color-sobre-ok: #FFFFFF;
+  --color-error: #B3261E;
+  --color-cabecera: rgb(238 241 244 / 0.85);
+  --color-tarjeta-interior-1: #FFFFFF;
+  --color-tarjeta-interior-2: #F7F9FB;
+  --color-tarjeta-interior-3: #EEF1F4;
+  --color-borde: rgb(30 72 112 / 0.14);
+  --color-borde-fuerte: rgb(30 72 112 / 0.28);
+  --color-glow: rgb(44 104 143 / 0.25);
+  --color-sombra: rgb(30 72 112 / 0.18);
+  --color-plano: rgb(30 72 112 / 0.06);
+  --color-luz: rgb(44 104 143 / 0.08);
+  --brillo-foto: 1;
+  --velo-hero-abajo: 68%;
+  color-scheme: light;
+}
+
+/* Volver al tema oscuro dentro de un pedazo de la página. El mecanismo es uno solo —revertir los semánticos a los
+   valores del tema oscuro— y lo usan dos cosas distintas:
+
+   1. `.zona-noche`: secciones cuya foto es nocturna y NO tiene versión de día. En el tema claro esa foto se muestra
+      igual, ahí --brillo-foto es 1 y el velo aclara poco, así que el texto encima quedaba entre 2,8:1 y 4,4:1, abajo
+      del 4,5:1 que exige el pliego 61.7 en los DOS temas. Inventar un velo nuevo no servía: para llegar a 4,5:1 en
+      celular había que tapar la foto casi entera. Hoy la lleva el panel del Consorcio; el hero salió de acá cuando
+      llegó la foto de día (ahora cada tema usa la suya y el contraste lo mide tests/styles/hero-foto.test.ts).
+
+   2. La zona de tinta, abajo: las tarjetas y los paneles en el tema claro. Esa NO usa estos valores (ver ahí por qué).
+
+   Adentro se ve exactamente como en el tema oscuro, así que el contraste es el que ya verifican pares.ts y
+   verificar.ts, y ningún componente escribe un color a mano.
+   Va en @media screen a propósito: en papel manda impresion.css (blanco y negro) y acá le ganaría por especificidad.
+   tests/styles/tokens.test.ts exige que estén TODOS los que cambia el tema claro y con el valor del oscuro. */
+@media screen {
+  .zona-noche {
+    --color-fondo: #0B1526;
+    --color-fondo-2: #10203A;
+    --color-superficie: #16304E;
+    --color-superficie-2: #1E4870;
+    --color-texto: #E8EEF5;
+    --color-texto-2: #A9C4D8;
+    --color-texto-3: #8593A0;
+    --color-acento: #68BCE1;
+    --color-acento-hover: #8FCDE8;
+    --color-vial-texto: #F0C419;
+    --color-sobre-acento: #0B1526;
+    --color-sobre-marca: #FFFFFF;
+    --color-ok: #7BD389;
+    --color-sobre-ok: #0B1526;
+    --color-error: #FF8A80;
+    --color-cabecera: rgb(16 32 58 / 0.85);
+    --color-tarjeta-interior-1: #17334F;
+    --color-tarjeta-interior-2: #10203A;
+    --color-tarjeta-interior-3: #0B1526;
+    --color-borde: rgb(255 255 255 / 0.10);
+    --color-borde-fuerte: rgb(255 255 255 / 0.18);
+    --color-glow: rgb(104 188 225 / 0.35);
+    --color-sombra: rgb(0 0 0 / 0.6);
+    --color-plano: rgb(255 255 255 / 0.04);
+    --color-luz: rgb(104 188 225 / 0.09);
+    --brillo-foto: 0.62;
+    --velo-hero-abajo: 28%;
+    color-scheme: dark;
+  }
+}
+
+/* Zona de tinta: las tarjetas y los paneles de contenido cuando el sitio está en tema claro.
+
+   El pedido de Juli (15/09/2026) fue "el mismo negro que tiene el sidebar del backoffice". La primera versión reusó los
+   semánticos del tema oscuro y quedó mal: el interior de la tarjeta arranca en `--color-tarjeta-interior-1: #17334F`,
+   que al lado del papel se lee **azul navy**, no negro. Esta escala es la del marco del panel de Covicen
+   (`covicen-sistemas/panel/src/index.css`, tema "Papel con marco de tinta"), traducida de HSL a hex:
+     --background     216 55%  6%  → #070E18      --foreground         0 0% 98%  → #FAFAFA
+     --surface        216 50%  9%  → #0B1522      --foreground-muted   0 0% 64%  → #A3A3A3
+     --card           216 45% 11%  → #0F1A29      --foreground-subtle  0 0% 54%  → #8A8A8A
+     --surface-raised 216 40% 14%  → #152132
+   Más oscura y mucho menos saturada que la del tema oscuro: se lee como negro y sigue siendo el matiz de la marca.
+   El interior de la tarjeta ya no va de un azul claro a un navy, va de #152132 a #0B1522: casi plano, como el panel.
+
+   Redefine EXACTAMENTE los mismos tokens que el bloque claro (guarda en tokens.test.ts): si redefiniera solo algunos,
+   adentro quedaría mitad tinta y mitad papel. Los pares de contraste de esta zona los verifica `pares.ts` como un tema
+   más ("tinta"), igual que el oscuro y el claro; el más justo es texto-3 sobre la tarjeta, en 5,07:1.
+   En @media screen por lo mismo que la zona noche: en papel manda impresion.css. */
+@media screen {
+  html[data-tema="claro"] :is(.tarjeta, .bloque-oscuro) {
+    --color-fondo: #070E18;
+    --color-fondo-2: #0B1522;
+    --color-superficie: #0F1A29;
+    --color-superficie-2: #152132;
+    --color-texto: #FAFAFA;
+    --color-texto-2: #A3A3A3;
+    --color-texto-3: #8A8A8A;
+    --color-acento: #68BCE1;
+    --color-acento-hover: #8FCDE8;
+    --color-vial-texto: #F0C419;
+    --color-sobre-acento: #070E18;
+    --color-sobre-marca: #FFFFFF;
+    --color-ok: #7BD389;
+    --color-sobre-ok: #070E18;
+    --color-error: #FF8A80;
+    --color-cabecera: rgb(11 21 34 / 0.85);
+    --color-tarjeta-interior-1: #152132;
+    --color-tarjeta-interior-2: #0F1A29;
+    --color-tarjeta-interior-3: #0B1522;
+    --color-borde: rgb(255 255 255 / 0.10);
+    --color-borde-fuerte: rgb(255 255 255 / 0.18);
+    --color-glow: rgb(104 188 225 / 0.35);
+    --color-sombra: rgb(0 0 0 / 0.6);
+    --color-plano: rgb(255 255 255 / 0.04);
+    --color-luz: rgb(104 188 225 / 0.09);
+    --brillo-foto: 0.62;
+    --velo-hero-abajo: 28%;
+    color-scheme: dark;
+  }
+}

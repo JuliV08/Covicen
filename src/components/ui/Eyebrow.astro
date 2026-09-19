@@ -1,0 +1,5 @@
+---
+interface Props { class?: string }
+const { class: clase = '' } = Astro.props;
+---
+<p class:list={['eyebrow flex items-center gap-3', clase]}><span class="inline-block h-px w-6 bg-acento" aria-hidden="true"></span><slot /></p>

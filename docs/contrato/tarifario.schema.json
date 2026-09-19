@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "publicadoEl": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "vigencia": {
+      "type": "object",
+      "properties": {
+        "desde": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "descripcion": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "desde",
+        "descripcion"
+      ]
+    },
+    "moneda": {
+      "type": "string",
+      "const": "ARS"
+    },
+    "alicuotaIva": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "origen": {
+      "type": "string",
+      "enum": [
+        "oferta",
+        "homologada",
+        "heredado"
+      ]
+    },
+    "resolucion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cabinas": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      }
+    },
+    "categoriaDestacada": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "tarifas": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "categoria": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "nombre": {
+            "type": "string",
+            "minLength": 1
+          },
+          "descripcion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "icono": {
+            "type": "string",
+            "enum": [
+              "moto",
+              "auto",
+              "camioneta",
+              "camion-2",
+              "camion-3-4",
+              "camion-5-6",
+              "camion-7"
+            ]
+          },
+          "montoSinIva": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "montoConIva": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "montoManualSinIva": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "multiplicador": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "nota": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "categoria",
+          "nombre",
+          "descripcion",
+          "montoSinIva"
+        ]
+      }
+    },
+    "excepciones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cabina": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "categoria": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "montoSinIva": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "montoManualSinIva": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "cabina",
+          "categoria",
+          "montoSinIva"
+        ]
+      }
+    },
+    "fuente": {
+      "type": "object",
+      "properties": {
+        "nombre": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "nombre",
+        "url"
+      ]
+    },
+    "avisos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "publicadoEl",
+    "vigencia",
+    "moneda",
+    "alicuotaIva",
+    "origen",
+    "tarifas",
+    "fuente",
+    "avisos"
+  ]
+}

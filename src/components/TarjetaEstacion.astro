@@ -1,0 +1,45 @@
+---
+// Tarjeta de una estación: estado, ubicación, vías, sentido, atención, servicios con ícono y accesos. La usan el mapa
+// interactivo, El tramo y la página de la estación. Todo sale del contrato; lo que no está, no se muestra.
+import { Bath, Coffee, Phone, ShieldCheck, Tag, Truck } from '@lucide/astro';
+import Senal from '@/components/ui/Senal.astro';
+import type { Cabina } from '@/lib/datos/esquemas';
+import { kmTexto } from '@/lib/formato';
+import { ruta } from '@/lib/rutas';
+import { estadoCabina, serviciosDeCabina, type ClaveServicio } from '@/lib/tramo';
+interface Props { cabina: Cabina; completa?: boolean; nivel?: 'h2' | 'h3' }
+const { cabina: c, completa = false, nivel = 'h3' } = Astro.props;
+const Titulo = nivel;
+const estado = estadoCabina(c);
+const servicios = serviciosDeCabina(c);
+const iconos: Record<ClaveServicio, typeof Coffee> = { areaDescanso: Coffee, detencionSegura: ShieldCheck, gruaGratuita: Truck, sanitarios: Bath, colocacionTelepase: Tag };
+const sentidos = { ambos: 'Cobra en ambos sentidos', ascendente: 'Cobra en sentido ascendente', descendente: 'Cobra en sentido descendente' } as const;
+---
+<article class="tarjeta p-6" data-estacion-tarjeta={c.slug}>
+  <div class="flex items-start justify-between gap-3">
+    <div>
+      <p class="eyebrow">{c.ruta}{c.km !== null && ` · km ${kmTexto(c.km)}`}</p>
+      <Titulo class="mt-2 text-2xl">{c.nombre}</Titulo>
+      <p class="mt-1 text-sm text-texto-2">{c.localidad}, {c.provincia}</p>
+    </div>
+    <Senal variante={estado.clave === 'operativa' ? 'ok' : 'vial'}>{estado.etiqueta}</Senal>
+  </div>
+  <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm text-texto-2">
+    {c.vias !== undefined && <><dt class="text-texto-3">Vías</dt><dd>{c.vias}</dd></>}
+    {c.sentido && <><dt class="text-texto-3">Sentido</dt><dd>{sentidos[c.sentido]}</dd></>}
+    {c.horarioAtencion && <><dt class="text-texto-3">Atención</dt><dd>{c.horarioAtencion}</dd></>}
+    {c.telefono && <><dt class="text-texto-3">Teléfono</dt><dd><a href={`tel:${c.telefono.replace(/[^\d+]/g, '')}`}>{c.telefono}</a></dd></>}
+  </dl>
+  {servicios.length > 0 && (
+    <ul class="mt-4 flex flex-wrap gap-2" aria-label="Servicios">
+      {servicios.map((s) => { const Icono = iconos[s.clave]; return <li class="inline-flex items-center gap-1.5 rounded-sm border border-borde px-2 py-1 text-sm text-texto-2"><Icono size={14} aria-hidden="true" /> {s.etiqueta}</li>; })}
+    </ul>
+  )}
+  {estado.clave === 'proxima' && <p class="mt-4 text-sm text-texto-2">Cobra cuando Vialidad Nacional la habilite. Hasta entonces, en esta estación no se paga.</p>}
+  <div class="mt-5 flex flex-wrap gap-4 text-sm font-semibold">
+    {estado.clave === 'operativa' && <a href={ruta(`/tarifas#${c.slug}`)}>Ver su cuadro tarifario</a>}
+    {!completa && <a href={ruta(`/peajes/${c.slug}`)}>Ficha completa</a>}
+    <a href={ruta('/asistencia')}>Pedir asistencia</a>
+    <a href="tel:140" class="inline-flex items-center gap-1 text-vial-texto" aria-label="Llamar a emergencias, 140"><Phone size={14} aria-hidden="true" /> 140</a>
+  </div>
+</article>

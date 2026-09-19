@@ -1,0 +1,66 @@
+---
+import { Phone } from '@lucide/astro';
+import Base from '@/layouts/Base.astro';
+import Canales from '@/components/Canales.astro';
+import Formulario from '@/components/Formulario.astro';
+import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import { datos } from '@/lib/datos';
+import { cabinaOperativa } from '@/lib/datos/esquemas';
+const [contacto, tramo] = await Promise.all([datos.contacto(), datos.tramo()]);
+const tel = contacto.emergencias.telefono;
+const correo = contacto.atencionUsuario ?? contacto.email.general;
+const estaciones = tramo.cabinas.filter(cabinaOperativa).map((c) => c.nombre);
+const plazos = 'Acuse en 24 horas · Respuesta en 5 días hábiles';
+const pasosReclamo = [
+  ['Elegís el canal', 'Formulario, correo, 0800 o WhatsApp cuando estén habilitados. Para emergencias, el 140.'],
+  ['Recibís un número de gestión', 'Dentro de las 24 horas te confirmamos que lo recibimos, con un número para seguirlo.'],
+  ['Te respondemos', 'En 5 días hábiles, con fundamento. Los plazos de respuesta pueden ampliarse por un plazo igual cuando haga falta reunir elementos probatorios, con aviso previo al usuario.'],
+  ['Si no estás conforme', 'Podés escalarlo ante Vialidad Nacional, que supervisa la concesión y tiene su propio centro de atención al usuario.'],
+] as const;
+---
+<Base titulo="Contacto" descripcion="Reclamos, consultas y sugerencias a Covicen con acuse en 24 horas y respuesta en 5 días hábiles. Consultas de TelePASE. Emergencias en ruta: 140, las 24 horas." migas={[{ nombre: 'Contacto', href: '/contacto' }]}>
+  <Seccion nivel="h1" eyebrow="Contacto" titulo="Reclamos, consultas y sugerencias." intro="Con los plazos que fija el pliego. Para emergencias en la ruta, llamá al 140." class="pt-10">
+    <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.3fr]">
+      <div class="flex flex-col gap-4">
+        <div class="tarjeta tarjeta-vial p-5"><p class="eyebrow flex items-center gap-2"><Phone size={14} aria-hidden="true" /> Emergencias 24 h</p><a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="mt-2 block text-3xl font-extrabold tabular-nums text-vial-texto no-underline" aria-label={`Llamar a emergencias, ${tel}`}>{tel}</a></div>
+        <Canales canales={contacto.canales} compacto />
+        <HuecoCapacidad capacidad="ticketingReclamos" nivel="h2" titulo="Seguimiento de reclamos en línea" descripcion="Número de reclamo y estado, cuando exista el sistema." />
+      </div>
+      <Formulario id="reclamos" asunto="Reclamo, consulta o sugerencia" whatsapp={contacto.whatsapp.numero} email={correo} {plazos} campos={[
+        { nombre: 'motivo', etiqueta: 'Motivo', tipo: 'select', opciones: ['Reclamo', 'Consulta', 'Sugerencia'], requerido: true },
+        { nombre: 'tema', etiqueta: 'Tema', tipo: 'select', opciones: ['Tarifas y cobro', 'Estado de la ruta y obras', 'Atención recibida', 'Seguridad vial', 'Otro'], requerido: true },
+        { nombre: 'lugar', etiqueta: 'Ruta y kilómetro, o estación', placeholder: `RN 9, km 350 · ${estaciones.join(' / ')}` },
+        { nombre: 'fecha', etiqueta: 'Fecha del hecho', placeholder: 'dd/mm/aaaa' },
+        { nombre: 'patente', etiqueta: 'Patente (opcional, para reclamos de cobro)' },
+        { nombre: 'nombre', etiqueta: 'Nombre', requerido: true },
+        { nombre: 'apellido', etiqueta: 'Apellido', requerido: true },
+        { nombre: 'dni', etiqueta: 'DNI (opcional)' },
+        { nombre: 'correo', etiqueta: 'Correo electrónico', tipo: 'email', requerido: true },
+        { nombre: 'telefono', etiqueta: 'Teléfono', tipo: 'tel' },
+        { nombre: 'mensaje', etiqueta: 'Mensaje', tipo: 'textarea', requerido: true },
+      ]} />
+    </div>
+  </Seccion>
+
+  <Seccion id="telepase" indice="01" eyebrow="TelePASE" titulo="Consultas sobre tu TelePASE." intro="Cobros, dispositivo, adhesión o factura. Las respuestas a TelePASE tienen prioridad (PETG art. 61.5 b)." fondo="fondo-2">
+    <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.3fr]">
+      <p class="text-texto-2">Si tu consulta es sobre la cuenta o la facturación del dispositivo, también podés resolverla en el <a href={contacto.enlaces.telepase} rel="noopener noreferrer" target="_blank">sitio de TelePASE</a>.</p>
+      <Formulario id="formulario-telepase" asunto="Consulta de TelePASE" whatsapp={contacto.whatsapp.numero} email={correo} {plazos} campos={[
+        { nombre: 'tipo', etiqueta: 'Tipo de consulta', tipo: 'select', opciones: ['Me cobraron mal', 'Problema con el dispositivo', 'Adhesión o alta', 'Factura o pasadas', 'Otra'], requerido: true },
+        { nombre: 'patente', etiqueta: 'Patente', requerido: true },
+        { nombre: 'tag', etiqueta: 'Número de TAG (opcional)' },
+        { nombre: 'estacion', etiqueta: 'Estación', tipo: 'select', opciones: [...estaciones, 'No aplica'] },
+        { nombre: 'fecha', etiqueta: 'Fecha de la pasada', placeholder: 'dd/mm/aaaa' },
+        { nombre: 'correo', etiqueta: 'Correo electrónico', tipo: 'email', requerido: true },
+        { nombre: 'mensaje', etiqueta: 'Qué pasó', tipo: 'textarea', requerido: true },
+      ]} />
+    </div>
+  </Seccion>
+
+  <Seccion indice="02" eyebrow="Cómo hacer un reclamo" titulo="Cuatro pasos, con plazos.">
+    <ol class="escalonar grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {pasosReclamo.map(([t, d], i) => <li class="tarjeta p-6" style={`--i: ${i}`}><span class="eyebrow tabular-nums">0{i + 1}</span><h3 class="mt-3 text-xl">{t}</h3><p class="mt-2 text-texto-2">{d}</p></li>)}
+    </ol>
+  </Seccion>
+</Base>

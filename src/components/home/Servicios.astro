@@ -1,0 +1,26 @@
+---
+import { CreditCard, LifeBuoy, ShieldCheck } from '@lucide/astro';
+import Card from '@/components/ui/Card.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+// Se usa en la Home y en /servicios/: la página que lo incluye ajusta índice, id y título.
+interface Props { indice?: string; id?: string; titulo?: string; eyebrow?: string }
+const { indice = '04', id = 'servicios', titulo = 'Lo que cubre el peaje.', eyebrow = 'Servicios al usuario' } = Astro.props;
+const servicios = [
+  { Icono: LifeBuoy, titulo: 'Emergencias 140 y auxilio', texto: 'Llamá al 140, gratis y las 24 horas. Grúa y remolque sin cargo para despejar la calzada, con tiempos comprometidos.', href: '/emergencias' },
+  { Icono: ShieldCheck, titulo: 'Seguridad vial', texto: 'Móviles de seguridad en RN 9 y RN 19, señalización de obras y consejos para manejar mejor en el centro del país.', href: '/seguridad-vial' },
+  { Icono: CreditCard, titulo: 'Medios de pago', texto: 'TelePASE gratis y en todas las estaciones, pago en la vía donde haya cabinas y Free Flow en las estaciones nuevas.', href: '/medios-de-pago' },
+];
+---
+<Seccion {id} {indice} {eyebrow} {titulo} fondo="plano">
+  <ul class="escalonar grid gap-4 md:grid-cols-3">
+    {servicios.map(({ Icono, ...s }, i) => (
+      <li style={`--i: ${i}`}>
+        <Card href={s.href}>
+          <Icono size={28} aria-hidden="true" class="text-acento" />
+          <h3 class="mt-4 text-xl">{s.titulo}</h3>
+          <p class="mt-2 text-texto-2">{s.texto}</p>
+        </Card>
+      </li>
+    ))}
+  </ul>
+</Seccion>

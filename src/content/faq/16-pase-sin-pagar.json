@@ -1,0 +1,8 @@
+{
+  "slug": "pase-sin-pagar",
+  "tema": "pago",
+  "orden": 16,
+  "enHome": false,
+  "pregunta": "Pasé sin pagar. ¿Qué hago?",
+  "respuesta": "Si pagás dentro de los 30 días, abonás la tarifa más una tarifa de tu categoría. Después de los 30 días, la tarifa más dos tarifas, con intereses. El medio para regularizar se publica en Medios de pago cuando esté habilitado."
+}

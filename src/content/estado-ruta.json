@@ -1,0 +1,42 @@
+{
+  "disponible": true,
+  "ejemplo": true,
+  "actualizado": "2026-09-13T09:00:00-03:00",
+  "incidentes": [
+    {
+      "ruta": "RN 9",
+      "km": 352,
+      "tipo": "obra",
+      "severidad": "precaucion",
+      "sentido": "ascendente",
+      "desde": "2026-09-13T06:00:00-03:00",
+      "hasta": "2026-09-13T18:00:00-03:00",
+      "descripcion": "Bacheo en carril derecho entre Carcarañá y Cañada de Gómez. Calzada reducida a un carril, velocidad máxima 60 km/h."
+    },
+    {
+      "ruta": "RN 9",
+      "km": 588,
+      "tipo": "transito",
+      "severidad": "info",
+      "sentido": "ambos",
+      "descripcion": "Demoras de hasta 10 minutos en la estación James Craik por alto tránsito."
+    },
+    {
+      "ruta": "RN 19",
+      "km": 61,
+      "tipo": "clima",
+      "severidad": "precaucion",
+      "sentido": "ambos",
+      "descripcion": "Niebla con visibilidad reducida entre San Carlos Centro y el empalme con la RN 34. Luces bajas, distancia y velocidad reducida."
+    },
+    {
+      "ruta": "RN 34",
+      "km": 118,
+      "tipo": "incidente",
+      "severidad": "corte",
+      "sentido": "descendente",
+      "desde": "2026-09-13T07:40:00-03:00",
+      "descripcion": "Corte total por vuelco de un camión a la altura de Cañada Rosquín. Desvío por RP 13. Grúa y móvil de seguridad en el lugar."
+    }
+  ]
+}

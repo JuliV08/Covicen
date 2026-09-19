@@ -1,0 +1,92 @@
+---
+import { ArrowRight } from '@lucide/astro';
+import Base from '@/layouts/Base.astro';
+import EstadoTraza from '@/components/EstadoTraza.astro';
+import MapaInteractivo from '@/components/MapaInteractivo.astro';
+import TablaTarifas from '@/components/TablaTarifas.astro';
+import Boton from '@/components/ui/Boton.astro';
+import Mojon from '@/components/ui/Mojon.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import Senal from '@/components/ui/Senal.astro';
+import { datos } from '@/lib/datos';
+import { cabinaOperativa } from '@/lib/datos/esquemas';
+import { kmTexto, numero } from '@/lib/formato';
+import { ruta } from '@/lib/rutas';
+import { cabinasDelCuadro } from '@/lib/tarifas';
+import { estadoCabina, serviciosDeCabina } from '@/lib/tramo';
+const [tramo, estado, tarifario] = await Promise.all([datos.tramo(), datos.estadoRutas(), datos.tarifario()]);
+const incidentes = estado.disponible ? estado.incidentes ?? [] : [];
+// El mapa pinta los incidentes como marcadores. Mientras el estado sea de muestra (estado.ejemplo), el cartel va ARRIBA
+// del mapa: un corte inventado que se lee como real es el peor error posible. Y EstadoTraza repite los mismos incidentes
+// en texto, que es la única forma de leerlos con teclado o con lector de pantalla.
+const rutas = tramo.rutas.map((r) => r.nombre);
+const bloques = [['rutas', 'Rutas y longitudes'], ['estaciones', 'Estaciones de peaje'], ['tarifas', 'Cuadros tarifarios'], ['servicios', 'Áreas de descanso y servicios']] as const;
+// Los cuatro bloques son destino de la nav de anclas de abajo, que es sticky justo debajo del header fijo. Entre las dos
+// barras tapan los primeros ~165 px del viewport (112 px de --alto-header + ~53 px de la nav), así que sin scroll-margin
+// el encabezado de la sección aterriza escondido. 4,5rem cubre la nav con aire; el calc sigue a --alto-header si cambia.
+const anclaTapada = 'scroll-mt-[calc(var(--alto-header)+4.5rem)]';
+const conServicios = tramo.cabinas.filter((c) => serviciosDeCabina(c).length > 0);
+---
+<Base titulo="El tramo" descripcion="El Tramo Centro de la Red Federal de Concesiones: 679,03 km sobre RN 9 (autopista Rosario–Córdoba), RN 19 y RN 34, en Córdoba y Santa Fe. Mapa interactivo, rutas, estaciones de peaje, tarifas y servicios." migas={[{ nombre: 'El tramo', href: '/el-tramo' }]}>
+  <Seccion nivel="h1" eyebrow="El tramo" titulo="679 kilómetros de centro." intro="Un corredor que une Rosario con Córdoba por la autopista y se abre hacia Santo Tomé, Franck y San Francisco por la RN 19. Tocá una estación en el mapa para ver su ficha." class="pt-10 pb-0" />
+
+  <nav aria-label="Secciones de El tramo" class="sticky top-[var(--alto-header)] z-30 border-b border-borde bg-fondo/85 backdrop-blur">
+    <ul class="contenedor flex gap-1 overflow-x-auto py-2 text-sm">
+      {bloques.map(([id, nombre]) => <li><a href={`#${id}`} class="inline-block whitespace-nowrap rounded-sm px-3 py-2 font-semibold text-texto-2 no-underline hover:bg-superficie hover:text-texto hover:underline">{nombre}</a></li>)}
+    </ul>
+  </nav>
+
+  <!-- El encabezado va de verdad, aunque no se vea: adentro el mapa arma seis TarjetaEstacion en h3 y, sin este h2, quien
+       navega por encabezados salta del h1 a un nombre de estación colgado de un nivel que no existe. El id no puede ser
+       "mapa-titulo": ese ya lo usa MapaTramo para la descripción del SVG y quedarían dos iguales en la misma página. -->
+  <section id="mapa" class="contenedor py-12" aria-labelledby="titulo-seccion-mapa">
+    <h2 id="titulo-seccion-mapa" class="sr-only">Mapa del tramo y estaciones de peaje</h2>
+    {estado.disponible && estado.ejemplo && <p class="revelar mb-4"><Senal variante="frio">Datos de ejemplo: el módulo se activa con la operación</Senal></p>}
+    <div class="revelar tarjeta tarjeta-panel"><MapaInteractivo {tramo} {incidentes} modo="scroll" disposicion="lado" /></div>
+    {estado.disponible && <div class="revelar mt-8"><EstadoTraza {estado} {rutas} nivel="h2" /></div>}
+  </section>
+
+  <Seccion id="rutas" class={anclaTapada} indice="01" eyebrow="Rutas y longitudes" titulo="Tres rutas nacionales bajo una misma concesión." intro={`${numero(tramo.km, 2)} km en total, según el pliego del Tramo Centro.`} fondo="fondo-2">
+    <section class="bloque-oscuro revelar overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label="Rutas del tramo">
+      <table class="w-full border-collapse text-left">
+        <caption class="sr-only">Rutas del Tramo Centro con extremos, progresivas y longitud en kilómetros.</caption>
+        <thead class="bg-fondo text-sm uppercase tracking-wider text-texto-2"><tr><th scope="col" class="px-4 py-3">Ruta</th><th scope="col" class="px-4 py-3">Desde</th><th scope="col" class="px-4 py-3">Hasta</th><th scope="col" class="px-4 py-3 text-right">Progresivas</th><th scope="col" class="px-4 py-3 text-right">Longitud</th></tr></thead>
+        <tbody class="divide-y divide-borde">
+          {tramo.rutas.map((r) => (
+            <tr class="hover:bg-superficie"><th scope="row" class="px-4 py-4 font-semibold text-texto">{r.nombre}<span class="block text-sm font-normal text-texto-2">{r.descripcion}</span></th><td class="px-4 py-4 text-texto-2">{r.desde}</td><td class="px-4 py-4 text-texto-2">{r.hasta}</td><td class="px-4 py-4 text-right tabular-nums text-texto-2">{r.pkInicial !== undefined && r.pkFinal !== undefined ? `km ${numero(r.pkInicial, 2)} a ${numero(r.pkFinal, 2)}` : ''}</td><td class="px-4 py-4 text-right tabular-nums font-semibold text-texto">{r.km !== null ? `${numero(r.km, 2)} km` : ''}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+    <div class="escalonar mt-10 grid gap-8 sm:grid-cols-3">
+      <div style="--i: 0"><Mojon valor={Math.floor(tramo.km)} unidad="km" etiqueta="de rutas nacionales" animar /></div>
+      <div style="--i: 1"><Mojon valor={tramo.provincias.length} unidad="provincias" etiqueta={tramo.provincias.join(' y ')} animar /></div>
+      <div style="--i: 2"><Mojon valor={tramo.cabinas.length} unidad="peajes" etiqueta={`${tramo.cabinas.filter(cabinaOperativa).length} operativos y ${tramo.cabinas.filter((c) => !cabinaOperativa(c)).length} próximos`} animar /></div>
+    </div>
+  </Seccion>
+
+  <Seccion id="estaciones" class={anclaTapada} indice="02" eyebrow="Estaciones de peaje" titulo="Dónde se paga." intro="Tres estaciones que ya cobran y tres nuevas que nacen con Free Flow. La ficha de cada una está en el mapa de arriba y en su propia página.">
+    <ul class="escalonar grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {tramo.cabinas.map((c, i) => { const e = estadoCabina(c); return (
+        <li class="tarjeta p-5" style={`--i: ${i}`}>
+          <div class="flex items-start justify-between gap-3"><div><p class="eyebrow">{c.ruta}{c.km !== null && ` · km ${kmTexto(c.km)}`}</p><h3 class="mt-1 text-xl"><a href={ruta(`/peajes/${c.slug}`)} class="text-texto no-underline hover:underline">{c.nombre}</a></h3><p class="mt-1 text-sm text-texto-2">{c.localidad}, {c.provincia}</p></div><Senal variante={e.clave === 'operativa' ? 'ok' : 'vial'}>{e.etiqueta}</Senal></div>
+        </li>
+      ); })}
+    </ul>
+    <ul class="revelar mt-8 flex flex-col gap-2 text-sm text-texto-2">{tramo.avisos.map((a) => <li class="flex gap-2"><span aria-hidden="true">—</span>{a}</li>)}</ul>
+  </Seccion>
+
+  <Seccion id="tarifas" class={anclaTapada} indice="03" eyebrow="Cuadros tarifarios" titulo="Cuánto cuesta en cada estación." intro="El cuadro vigente, por estación operativa, con TelePASE y pago en la vía." fondo="fondo-2">
+    <div class="flex flex-col gap-12">{cabinasDelCuadro(tarifario, tramo.cabinas).map((c) => <TablaTarifas {tarifario} cabina={c} compacta />)}</div>
+    <div class="revelar mt-8"><Boton href="/tarifas">Descuentos, exenciones y detalle <ArrowRight size={18} aria-hidden="true" /></Boton></div>
+  </Seccion>
+
+  <Seccion id="servicios" class={anclaTapada} indice="04" eyebrow="Áreas de descanso y servicios" titulo="Qué encontrás en la ruta." intro="Servicios por estación según los datos cargados. El detalle de gratuitos y con costo está en Servicios.">
+    <ul class="escalonar grid gap-4 md:grid-cols-3">
+      {conServicios.map((c, i) => (
+        <li class="tarjeta p-6" style={`--i: ${i}`}><h3 class="text-xl">{c.nombre}</h3><p class="mt-1 text-sm text-texto-2">{c.ruta}{c.km !== null && ` · km ${kmTexto(c.km)}`}</p><ul class="mt-3 flex flex-col gap-1 text-texto-2">{serviciosDeCabina(c).map((s) => <li class="flex gap-2"><span aria-hidden="true">—</span>{s.etiqueta}</li>)}</ul></li>
+      ))}
+    </ul>
+    <div class="revelar mt-8"><a href={ruta('/servicios')} class="font-semibold">Servicios al usuario: gratuitos y con costo</a></div>
+  </Seccion>
+</Base>

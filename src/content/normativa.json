@@ -1,0 +1,37 @@
+[
+  {
+    "id": "resolucion-1379-2026",
+    "titulo": "Resolución 1379/2026 del Ministerio de Economía",
+    "descripcion": "Adjudicó los ocho tramos de la Etapa III de la Red Federal de Concesiones, entre ellos el Tramo Centro a Covicen (24/08/2026).",
+    "url": "https://www.boletinoficial.gob.ar/detalleAviso/primera/346271/20260824",
+    "descargable": true
+  },
+  {
+    "id": "resolucion-248-2026",
+    "titulo": "Resolución 248/2026 de la Dirección Nacional de Vialidad",
+    "descripcion": "Aprobó los cuadros tarifarios vigentes en los corredores viales nacionales (Tramos I a X), que Covicen aplica desde la toma de posesión. Vigencia desde el 26/02/2026.",
+    "url": "https://www.boletinoficial.gob.ar/detalleAviso/primera/338657/20260224",
+    "descargable": true
+  },
+  {
+    "id": "ley-27742",
+    "titulo": "Ley 27.742 (Bases y Puntos de Partida para la Libertad de los Argentinos)",
+    "descripcion": "Declaró a Corredores Viales S.A. sujeta a privatización y habilitó el nuevo régimen de concesiones. Publicada el 08/07/2024.",
+    "url": "https://www.boletinoficial.gob.ar/detalleAviso/primera/310189/20240708",
+    "descargable": true
+  },
+  {
+    "id": "decreto-97-2025",
+    "titulo": "Decreto 97/2025",
+    "descripcion": "Autorizó la privatización total de Corredores Viales S.A. y el programa Red Federal de Concesiones. Publicado el 17/02/2025.",
+    "url": "https://www.boletinoficial.gob.ar/detalleAviso/primera/321201/20250217",
+    "descargable": true
+  },
+  {
+    "id": "pliegos",
+    "titulo": "Pliegos de la concesión (generales y particulares del Tramo Centro)",
+    "descripcion": "Definen obras, servicios al usuario, canales de atención, tarifas y controles. Se publican acá cuando Covicen disponga de la versión definitiva firmada.",
+    "url": null,
+    "descargable": false
+  }
+]

@@ -1,0 +1,155 @@
+---
+import { ChevronDown, Menu, Phone, X } from '@lucide/astro';
+import BarraSuperior from '@/components/BarraSuperior.astro';
+import InterruptorTema from '@/components/InterruptorTema.astro';
+import Logotipo from '@/components/marca/Logotipo.astro';
+import type { Contacto } from '@/lib/datos/esquemas';
+import { ruta } from '@/lib/rutas';
+
+interface Props { contacto: Contacto; rutaActual: string }
+const { contacto, rutaActual } = Astro.props;
+
+const items = [
+  { nombre: 'Tarifas', href: '/tarifas' },
+  { nombre: 'El tramo', href: '/el-tramo' },
+  { nombre: 'Servicios', href: '/servicios' },
+  { nombre: 'Obras', href: '/obras' },
+  { nombre: 'Novedades', href: '/novedades' },
+];
+const nosotros = [
+  { nombre: 'Quiénes somos', href: '/quienes-somos' },
+  { nombre: 'Políticas', href: '/politicas' },
+  { nombre: 'Transparencia', href: '/transparencia' },
+  { nombre: 'Trabajá con nosotros', href: '/trabaja-con-nosotros' },
+];
+const activo = (href: string) => rutaActual.startsWith(ruta(href));
+const nosotrosActivo = nosotros.some((n) => activo(n.href));
+const tel = contacto.emergencias.telefono;
+const telHref = `tel:${tel.replace(/[^\d+]/g, '')}`;
+const oficina = contacto.enlaces.oficinaVirtual;
+const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
+---
+<header class="cabecera fixed inset-x-0 top-0 z-50 border-b" transition:animate="none">
+  <BarraSuperior {contacto} />
+  <div class="contenedor flex h-[4.5rem] items-center justify-between gap-6">
+    <Logotipo />
+
+    <nav aria-label="Principal" class="hidden lg:block">
+      <ul class="nav-lista flex items-center gap-1">
+        {items.map((i) => (
+          <li>
+            <a href={ruta(i.href)} class="nav-item" aria-current={activo(i.href) ? 'page' : undefined}>{i.nombre}</a>
+          </li>
+        ))}
+        <li>
+          <details class="desplegable relative" data-desplegable>
+            {/* Sin aria-expanded en el marcado: el summary nativo ya expone si el details está abierto. Escrito a mano
+                quedaría fijo en "false" cuando no hay JS que lo sincronice, y el lector anunciaría "contraído" sobre un
+                menú abierto: peor que no ponerlo. Lo pone y lo mantiene al día sincronizar(), abajo. */}
+            <summary class:list={['nav-item cursor-pointer list-none', { 'is-activo': nosotrosActivo }]}>
+              Nosotros <ChevronDown size={16} aria-hidden="true" class="chevron" />
+            </summary>
+            <ul class="absolute right-0 top-full mt-2 w-64 rounded-md border border-borde bg-superficie-2 p-2 shadow-2xl">
+              {nosotros.map((n) => (
+                <li>
+                  <a href={ruta(n.href)} class="block rounded-sm px-3 py-2 text-texto no-underline transition-colors hover:bg-superficie hover:text-acento-hover" aria-current={activo(n.href) ? 'page' : undefined}>{n.nombre}</a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        </li>
+        <li><a href={ruta('/contacto')} class="nav-item" aria-current={activo('/contacto') ? 'page' : undefined}>Contacto</a></li>
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <!-- El 140 grande: número corto de emergencia del pliego (PETG 59). Debajo de 640 px lo muestra BarraEmergencias. -->
+      <a href={telHref} class="btn-vial btn-140 hidden sm:inline-flex" aria-label={`Llamar a emergencias, ${tel}`}>
+        <Phone size={22} aria-hidden="true" class="telefono" />
+        <span class="flex flex-col text-left leading-none">
+          <span class="eyebrow text-sobre-vial">{contacto.emergencias.etiqueta}</span>
+          <span class="text-2xl font-extrabold tabular-nums leading-none">{tel}</span>
+        </span>
+      </a>
+      <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-md border border-borde text-texto hover:border-borde-fuerte hover:bg-superficie lg:hidden" popovertarget="menu-mobile" aria-label="Abrir menú">
+        <Menu size={22} aria-hidden="true" />
+      </button>
+    </div>
+  </div>
+
+  <nav id="menu-mobile" popover class="menu-mobile" aria-label="Menú">
+    <div class="flex items-center justify-between border-b border-borde p-5">
+      <div class="flex items-center gap-3"><span class="eyebrow">Menú</span><InterruptorTema class="inline-flex h-11 w-11" /></div>
+      <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-md border border-borde hover:bg-superficie" popovertarget="menu-mobile" popovertargetaction="hide" aria-label="Cerrar menú">
+        <X size={22} aria-hidden="true" />
+      </button>
+    </div>
+    <ul class="flex flex-col p-3">
+      {[...items, ...nosotros, { nombre: 'Contacto', href: '/contacto' }, { nombre: 'Preguntas frecuentes', href: '/preguntas-frecuentes' }].map((i) => (
+        <li>
+          <a href={ruta(i.href)} class="block rounded-sm px-3 py-3 text-lg font-semibold text-texto no-underline hover:bg-superficie hover:text-acento-hover" aria-current={activo(i.href) ? 'page' : undefined}>{i.nombre}</a>
+        </li>
+      ))}
+    </ul>
+    <ul class="flex flex-col border-t border-borde p-3">
+      <li><a href={contacto.enlaces.telepase} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 no-underline hover:bg-superficie hover:text-texto" rel="noopener noreferrer" target="_blank">TelePASE</a></li>
+      <li><a href={miCuenta} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 no-underline hover:bg-superficie hover:text-texto" rel={oficina ? 'noopener noreferrer' : undefined} target={oficina ? '_blank' : undefined}>Mi cuenta</a></li>
+    </ul>
+  </nav>
+</header>
+<script>
+  // El <summary> no expone aria-expanded solo: se sincroniza con el estado del <details>.
+  const sincronizar = () => document.querySelectorAll<HTMLDetailsElement>('details[data-desplegable]').forEach((d) => {
+    const s = d.querySelector('summary');
+    if (!s) return;
+    s.setAttribute('aria-expanded', String(d.open));
+    // `dataset.listo = ''` se lee como falsy: la guarda con `!d.dataset.listo` no guardaba nada y el listener se
+    // enganchaba de nuevo en cada page-load. Con hasAttribute se pregunta por el atributo, no por su valor.
+    if (!d.hasAttribute('data-listo')) { d.setAttribute('data-listo', ''); d.addEventListener('toggle', () => s.setAttribute('aria-expanded', String(d.open))); }
+  });
+  document.addEventListener('astro:page-load', sincronizar);
+</script>
+
+<style>
+  .cabecera { border-color: transparent; backdrop-filter: blur(12px); }
+  @supports (animation-timeline: scroll()) {
+    .cabecera { animation: cabecera-fondo linear both; animation-timeline: scroll(root); animation-range: 0 120px; }
+  }
+  @supports not (animation-timeline: scroll()) {
+    .cabecera { background: var(--color-cabecera); border-color: var(--color-borde); }
+  }
+  @keyframes cabecera-fondo {
+    from { background: transparent; border-color: transparent; }
+    to { background: var(--color-cabecera); border-color: var(--color-borde); }
+  }
+
+  .nav-item {
+    position: relative; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.7rem 0.75rem; border-radius: var(--radius-sm);
+    color: var(--color-texto-2); font-weight: 500; line-height: 1.2; text-decoration: none; white-space: nowrap;
+    transition: color var(--dur-micro) var(--ease-salida);
+  }
+  .nav-item::after {
+    content: ""; position: absolute; left: 0.75rem; right: 0.75rem; bottom: 0.2rem; height: 2px; border-radius: 1px;
+    background: var(--color-acento); transform: scaleX(0); transform-origin: left;
+    transition: transform var(--dur-ui) var(--ease-salida);
+  }
+  .nav-item:hover, .nav-item:focus-visible, .nav-item[aria-current="page"], .nav-item.is-activo { color: var(--color-texto); }
+  .nav-item:hover::after, .nav-item:focus-visible::after, .nav-item[aria-current="page"]::after, .nav-item.is-activo::after { transform: scaleX(1); }
+  .desplegable summary::-webkit-details-marker { display: none; }
+  .desplegable .chevron { transition: transform var(--dur-ui) var(--ease-salida); }
+  .desplegable[open] .chevron { transform: rotate(180deg); }
+  .desplegable[open] > ul { animation: aparecer var(--dur-ui) var(--ease-salida) both; }
+  @keyframes aparecer { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  /* .btn-vial vive en global.css (una sola definición para header, barra y botón). */
+  .btn-140 { padding: 0.35rem 0.9rem 0.35rem 0.75rem; }
+
+  .menu-mobile {
+    inset: unset; top: 0; right: 0; height: 100dvh; width: min(100%, 22rem); margin: 0; border: 0; border-left: 1px solid var(--color-borde);
+    background: var(--color-fondo-2); color: var(--color-texto); translate: 100% 0; overflow-y: auto; overscroll-behavior: contain;
+    transition: translate var(--dur-ui) var(--ease-salida), display var(--dur-ui) allow-discrete, overlay var(--dur-ui) allow-discrete;
+  }
+  .menu-mobile:popover-open { translate: 0 0; }
+  @starting-style { .menu-mobile:popover-open { translate: 100% 0; } }
+  .menu-mobile::backdrop { background: color-mix(in srgb, var(--color-fondo) 60%, transparent); }
+</style>
