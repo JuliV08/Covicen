@@ -48,10 +48,16 @@ describe('Base', () => {
     expect(html).toMatch(/<body[^>]*data-sitio="covicen\.test"/);
     expect(html).toMatch(/<body[^>]*data-fecha="\d{1,2}\/\d{1,2}\/\d{4}"/);
   });
+  // La regla vive en global.css desde que la portada de «Próximamente» pasó a ser un segundo layout: así la tienen
+  // los dos y no hay dos copias que se puedan desincronizar. El test mira dónde vive ahora, y comprueba además que
+  // no haya vuelto a duplicarse en un layout.
   it('el destino del skip link tiene foco visible: sin outline-none y con su regla de foco', async () => {
     const html = await render('/tarifas/', { titulo: 'Tarifas', descripcion: 'x' });
     expect(html).not.toMatch(/<main[^>]*outline-none/);
-    expect(readFileSync('src/layouts/Base.astro', 'utf8')).toMatch(/#contenido:focus-visible[^{]*\{[^}]*outline:\s*2px solid var\(--color-acento\)/);
+    expect(readFileSync('src/styles/global.css', 'utf8')).toMatch(/#contenido:focus-visible[^{]*\{[^}]*outline:\s*2px solid var\(--color-acento\)/);
+    for (const layout of ['src/layouts/Base.astro', 'src/layouts/Proximamente.astro']) {
+      expect(readFileSync(layout, 'utf8')).not.toContain('#contenido:focus-visible');
+    }
   });
 });
 

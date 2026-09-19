@@ -1,41 +1,13 @@
 ---
-import Base from '@/layouts/Base.astro';
-import AccesosRapidos from '@/components/home/AccesosRapidos.astro';
-import Consorcio from '@/components/home/Consorcio.astro';
-import ContactoCta from '@/components/home/ContactoCta.astro';
-import ElTramo from '@/components/home/ElTramo.astro';
-import FaqCorto from '@/components/home/FaqCorto.astro';
-import Hero from '@/components/home/Hero.astro';
-import NovedadesRecientes from '@/components/home/NovedadesRecientes.astro';
-import ObrasYEstado from '@/components/home/ObrasYEstado.astro';
-import Servicios from '@/components/home/Servicios.astro';
-import TarifaDestacada from '@/components/home/TarifaDestacada.astro';
-import Marquesina from '@/components/Marquesina.astro';
-import { datos } from '@/lib/datos';
-
-const [empresa, contacto, avisos, tramo, tarifario, obras, novedades, faq, estado] = await Promise.all([
-  datos.empresa(),
-  datos.contacto(),
-  datos.avisos(),
-  datos.tramo(),
-  datos.tarifario(),
-  datos.obras(),
-  datos.novedades(),
-  datos.faq(),
-  datos.estadoRutas(),
-]);
+// La portada del sitio, y el único lugar donde se decide qué versión de la web se publica.
+//
+// `@portada` no es una carpeta: es un alias que astro.config.mjs resuelve en build según PUBLIC_SITIO_COMPLETO.
+// Con la variable en true apunta a la home de siempre (components/home/Home.astro, que es este archivo tal como
+// estaba); sin ella —el default— apunta a la pantalla de «Próximamente», y la integración `soloPortada` poda del
+// build las otras 29 páginas generadas: lo que se publica es esa pantalla y nada más.
+//
+// Por qué el default va al revés: src/lib/config.ts, `sitioCompleto`. Por qué un alias y no un `if` acá adentro:
+// el comentario del alias en astro.config.mjs.
+import Portada from '@portada';
 ---
-<Base titulo="Inicio" descripcion="Covicen, concesionaria del Tramo Centro de la Red Federal de Concesiones: 679 km sobre RN 9, RN 19 y RN 34 en Córdoba y Santa Fe. Tarifas, peajes, emergencias y obras." marquesinaEnHero>
-  {/* En la home la cinta se apoya en el borde de abajo del hero; en el resto de las páginas la monta Base, arriba
-      del contenido. Por eso Base recibe `marquesinaEnHero` y acá va por el slot. */}
-  <Hero {empresa}><Marquesina slot="marquesina" {avisos} enHero /></Hero>
-  <AccesosRapidos {contacto} />
-  <TarifaDestacada {tarifario} />
-  <ElTramo {tramo} />
-  <ObrasYEstado {obras} {estado} rutas={tramo.rutas.map((r) => r.nombre)} />
-  <Servicios />
-  <NovedadesRecientes {novedades} />
-  <Consorcio {empresa} />
-  <FaqCorto preguntas={faq} />
-  <ContactoCta {contacto} />
-</Base>
+<Portada />

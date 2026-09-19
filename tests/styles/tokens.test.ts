@@ -8,9 +8,9 @@ const temas = leerTemas(css);
 const marca = ['marca-900', 'marca-700', 'marca-500', 'marca-300', 'gris-texto', 'gris-fondo', 'vial'];
 // Lo que el bloque claro TIENE que redefinir: los semánticos hex que cambian y los que no son hex (nadie más los mira).
 const semanticosHex = ['fondo', 'fondo-2', 'superficie', 'superficie-2', 'texto', 'texto-2', 'texto-3', 'acento', 'acento-hover', 'vial-texto', 'sobre-acento', 'sobre-marca', 'ok', 'sobre-ok', 'error', 'tarjeta-interior-1', 'tarjeta-interior-2', 'tarjeta-interior-3'];
-const semanticosNoHex = ['color-cabecera', 'color-borde', 'color-borde-fuerte', 'color-glow', 'color-sombra', 'color-plano', 'color-luz', 'brillo-foto', 'velo-hero-abajo'];
+const semanticosNoHex = ['color-cabecera', 'color-borde', 'color-borde-fuerte', 'color-glow', 'color-sombra', 'color-plano', 'color-luz', 'brillo-foto', 'velo-hero-abajo', 'velo-portada-arriba', 'velo-portada-abajo'];
 // Viven en :root y no en @theme (no son colores de Tailwind, son ajustes del tema): el bloque claro los redefine igual.
-const enRoot = ['brillo-foto', 'velo-hero-abajo'];
+const enRoot = ['brillo-foto', 'velo-hero-abajo', 'velo-portada-arriba', 'velo-portada-abajo'];
 
 describe('tokens', () => {
   it('define los 7 colores del manual de marca', () => {

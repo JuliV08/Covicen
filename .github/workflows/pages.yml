@@ -26,6 +26,9 @@ jobs:
       PUBLIC_SITE_URL: https://${{ github.repository_owner }}.github.io
       PUBLIC_BASE_PATH: /${{ github.event.repository.name }}/
       PUBLIC_INDEXABLE: "false"
+      # Pages es donde Juli revisa: acá va el sitio ENTERO. El default de la variable es al revés (sin ella se
+      # publica solo la portada de «Próximamente») porque el hosting de producción lo sube hoy una persona a mano.
+      PUBLIC_SITIO_COMPLETO: "true"
       # Sin la variable de repositorio API_URL, la landing sigue leyendo del repo. Con ella, lee tramo y
       # tarifario de la API del sistema (el resto sigue en el repo hasta que exista su sistema).
       FUENTE_DATOS: ${{ vars.API_URL != '' && 'api' || 'local' }}
@@ -38,6 +41,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
       - run: pnpm test
+      # Los DOS modos pasan por la compuerta, y el de la portada primero. Es el que hoy se publica en producción
+      # (ver README, «Cómo se publica hoy»): si solo verificáramos el sitio entero, el único build sin gate sería
+      # justo el que ve el público. Corre antes para que el dist que se sube a Pages sea el del sitio entero.
+      - name: Verificar la portada sola (lo que se publica hoy en producción)
+        run: pnpm verificar:portada
       - run: pnpm verificar
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5

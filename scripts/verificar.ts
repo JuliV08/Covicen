@@ -1,16 +1,20 @@
 // Chequeos sobre dist/ sin navegador. Uso: pnpm verificar (hace build antes).
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, sep } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { FileSystemConfigLoader, HtmlValidate } from 'html-validate';
 import { loadEnv } from 'vite';
 import { contraste, leerTemas } from './lib/contraste.ts';
-import { existeDestino, hrefsConEsquemaProhibido, jsonLdDe, linksInternos, paginasDe, textoVisible } from './lib/html.ts';
+import { archivosDe, existeDestino, hrefsConEsquemaProhibido, jsonLdDe, linksInternos, paginasDe, textoVisible } from './lib/html.ts';
+import { alcanzables } from './lib/solo-portada.ts';
 import { paresContraste } from './lib/pares.ts';
 
 const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
 const base = `/${(env.PUBLIC_BASE_PATH || '/').replace(/^\/+|\/+$/g, '')}/`.replace('//', '/');
-const indexable = env.PUBLIC_INDEXABLE === 'true';
+// Default invertido, igual que en src/lib/config.ts: sin la variable lo que se publica es la portada sola.
+const sitioCompleto = env.PUBLIC_SITIO_COMPLETO === 'true';
+// Misma definición que src/lib/config.ts: una portada de «Próximamente» no es indexable aunque haya dominio.
+const indexable = env.PUBLIC_INDEXABLE === 'true' && sitioCompleto;
 const DIST = 'dist';
 const fallos: string[] = [];
 const fallo = (m: string) => fallos.push(m);
@@ -20,7 +24,7 @@ const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/];
 // sin el cartel que lo aclara (spec §10.1): un corte de ruta inventado que se lee como real es el error más caro del sitio.
 const estadoDeMuestra = (JSON.parse(readFileSync('src/content/estado-ruta.json', 'utf8')) as { ejemplo?: boolean }).ejemplo === true;
 const paginas = paginasDe(DIST).filter((p) => !p.includes('404'));
-console.log(`Verificando ${paginas.length} páginas (base ${base}, indexable ${indexable})…`);
+console.log(`Verificando ${paginas.length} páginas (base ${base}, indexable ${indexable}, ${sitioCompleto ? 'sitio completo' : 'PORTADA SOLA'})…`);
 
 // Validador de HTML (pliego 61.7: estándares W3C). `new HtmlValidate()` a secas usa un loader estático que ignora el
 // disco; con FileSystemConfigLoader busca .htmlvalidate.json desde la carpeta de cada página hacia arriba y toma el de
@@ -108,17 +112,52 @@ for (const [tema, tokens] of Object.entries(temas)) {
 // 10b. textos prohibidos también en los json y xml emitidos (sitemap, datos): "ausentes en todo dist/".
 // No se miran js/css/svg: ahí \b681\b haría match en hashes de assets o valores numéricos (`.681;`), y ningún texto de
 // usuario vive en esos archivos.
-const archivosDe = (dir: string): string[] => readdirSync(dir).flatMap((n) => { const r = join(dir, n); return statSync(r).isDirectory() ? archivosDe(r) : [r]; });
 for (const archivo of archivosDe(DIST).filter((a) => /\.(json|xml)$/.test(a))) {
   const contenido = readFileSync(archivo, 'utf8');
   for (const p of PROHIBIDOS) if (p.test(contenido)) fallo(`${relative(DIST, archivo)}: contiene ${p}`);
 }
 
-// 11. páginas que tienen que existir (una por estación de peaje)
-for (const slug of ['carcarana', 'james-craik', 'franck', 'leones', 'san-francisco', 'totoras']) {
-  if (!existsSync(join(DIST, 'peajes', slug, 'index.html'))) fallo(`falta la página /peajes/${slug}/`);
+// 11. páginas que tienen que existir (una por estación de peaje). Solo con el sitio entero: con la portada sola no
+// existe ninguna de las dos cosas, y lo que hay que verificar es justamente lo contrario (16b).
+if (sitioCompleto) {
+  for (const slug of ['carcarana', 'james-craik', 'franck', 'leones', 'san-francisco', 'totoras']) {
+    if (!existsSync(join(DIST, 'peajes', slug, 'index.html'))) fallo(`falta la página /peajes/${slug}/`);
+  }
+  for (const p of ['asistencia', 'tramites']) if (!existsSync(join(DIST, p, 'index.html'))) fallo(`falta la página /${p}/`);
 }
-for (const p of ['asistencia', 'tramites']) if (!existsSync(join(DIST, p, 'index.html'))) fallo(`falta la página /${p}/`);
+
+// 16b. Portada sola: que no se haya colado nada más. Es el control que le da sentido al default invertido —si la
+// poda de scripts/lib/solo-portada.ts fallara en silencio, se publicaría el sitio entero creyendo que no—, así que
+// mira el dist de verdad y no la intención: una sola página, un solo destino en el sitemap y el robots cerrado.
+if (!sitioCompleto) {
+  const htmls = archivosDe(DIST).filter((a) => a.endsWith('.html')).map((a) => relative(DIST, a).split(sep).join('/')).sort();
+  if (htmls.join(' ') !== '404.html index.html') fallo(`portada sola: en dist tiene que quedar solo index.html y su copia 404.html, quedaron: ${htmls.join(', ')}`);
+  const urls = (readFileSync(join(DIST, 'sitemap-0.xml'), 'utf8').match(/<loc>/g) ?? []).length;
+  if (urls !== 1) fallo(`portada sola: el sitemap lista ${urls} URL, tiene que listar solo la portada`);
+  if (!/^Disallow: \/$/m.test(readFileSync(join(DIST, 'robots.txt'), 'utf8'))) fallo('portada sola: el robots.txt tiene que estar cerrado (Disallow: / a secas)');
+  const portada = readFileSync(join(DIST, 'index.html'), 'utf8');
+  if (!/href="tel:140"/.test(portada)) fallo('portada sola: la portada perdió el tel:140');
+  if (!/Próximamente/.test(portada)) fallo('portada sola: la portada no dice «Próximamente»');
+  // Ningún enlace a una página despublicada. Con trailingSlash: always una página termina en barra y un asset no,
+  // así que la barra final es lo que separa «página» de «favicon, hoja de estilos o tipografía».
+  for (const href of new Set(linksInternos(portada))) {
+    if (href.endsWith('/') && href !== base) fallo(`portada sola: la portada enlaza a ${href}, que no está publicado`);
+  }
+  // Y que la poda no se haya llevado nada que la portada usa. El chequeo 1 solo mira los `href` (la hoja de estilos
+  // y la tipografía precargada); las fotos y las otras dos tipografías salen de `src`, `srcset` y `url()` del CSS,
+  // que nadie miraba. Se usa el MISMO cierre transitivo que hace la poda: si se equivoca, se equivoca acá también,
+  // así que además se exige que no sobre ningún archivo (un huérfano es la señal de que el barrido quedó corto).
+  const astro = join(DIST, '_astro');
+  const usa = alcanzables([portada], (a) => (existsSync(join(astro, a)) ? readFileSync(join(astro, a), 'utf8') : undefined));
+  for (const archivo of usa) if (!existsSync(join(astro, archivo))) fallo(`portada sola: falta _astro/${archivo}, que la portada usa`);
+  for (const archivo of readdirSync(astro)) if (!usa.has(archivo)) fallo(`portada sola: sobra _astro/${archivo}, que no usa nadie`);
+}
+
+// 16c. Sitio completo: que la portada sea la home y no «Próximamente». Sin esto, si el alias `@portada` de
+// astro.config.mjs se resolviera al revés se publicarían las 30 páginas con un cartel de portada y CI en verde.
+if (sitioCompleto && /Próximamente/.test(readFileSync(join(DIST, 'index.html'), 'utf8'))) {
+  fallo('sitio completo: la portada dice «Próximamente» (el alias @portada se resolvió al revés)');
+}
 
 // 12. la hoja de impresión (pliego 61.7) está en el CSS emitido, con el encabezado de la hoja y las URL de los enlaces externos
 const css = readdirSync(join(DIST, '_astro')).filter((f) => f.endsWith('.css')).map((f) => readFileSync(join(DIST, '_astro', f), 'utf8')).join('\n');
@@ -130,8 +169,14 @@ const archivosJs = readdirSync(join(DIST, '_astro')).filter((f) => f.endsWith('.
 const totalJs = archivosJs.reduce((s, f) => s + gzipSync(readFileSync(join(DIST, '_astro', f))).length, 0);
 console.log(`JS total: ${archivosJs.length} archivos, ${(totalJs / 1024).toFixed(1)} KB gz`);
 if (totalJs > 30 * 1024) fallo(`JS enviado ${(totalJs / 1024).toFixed(1)} KB gz > 30 KB`);
-const og = statSync(join(DIST, 'og.png')).size;
-if (og > 300 * 1024) fallo(`og.png pesa ${(og / 1024).toFixed(0)} KB > 300 KB`);
+// `existsSync` antes de medir: og.png sale de `node scripts/generar-og.ts` y está gitignoreado, así que en un
+// clone limpio puede no estar. Sin esta guarda el script moría con un ENOENT en vez de decir qué falta.
+if (!existsSync(join(DIST, 'og.png'))) {
+  fallo('falta dist/og.png (lo genera `node scripts/generar-og.ts`, que corre como primer paso de `pnpm build`)');
+} else {
+  const og = statSync(join(DIST, 'og.png')).size;
+  if (og > 300 * 1024) fallo(`og.png pesa ${(og / 1024).toFixed(0)} KB > 300 KB`);
+}
 
 if (fallos.length) {
   console.error(`\n${fallos.length} fallo(s):\n- ${fallos.join('\n- ')}`);

@@ -1,10 +1,11 @@
 {
+  "_comentario_portada": "@portada se tipa SIEMPRE contra Proximamente.astro; en build, astro.config.mjs lo resuelve a la home cuando PUBLIC_SITIO_COMPLETO=true. No diverge en la practica porque ninguno de los dos recibe props, y la rama de la home la construye `pnpm verificar` en CI.",
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "src/**/*", "tests/**/*", "scripts/**/*"],
   "exclude": ["dist", "node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": { "@/*": ["src/*"] },
+    "paths": { "@/*": ["src/*"], "@portada": ["src/layouts/Proximamente.astro"] },
     "types": ["node", "vitest/globals"]
   }
 }

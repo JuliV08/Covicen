@@ -48,6 +48,14 @@
 html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro { display: none; }
 
 @layer components {
+  /* Salto al contenido (pliego 61.7). Vivía en el <style is:global> de Base.astro; se mudó acá cuando la portada de
+     «Próximamente» (layouts/Proximamente.astro) pasó a ser un segundo layout que también lo necesita. */
+  .salto { position: absolute; left: 1rem; top: -100%; z-index: 100; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: var(--color-vial); color: var(--color-sobre-vial); font-weight: 600; text-decoration: none; }
+  .salto:focus { top: 1rem; }
+  /* Destino del salto: foco visible. El anillo va hacia adentro porque <main> ocupa todo el ancho y arranca bajo el
+     header fijo: hacia afuera lo recortaría el viewport y lo taparía el header. */
+  #contenido:focus-visible { outline: 2px solid var(--color-acento); outline-offset: -4px; border-radius: var(--radius-sm); }
+
   .contenedor { width: min(100% - 2.5rem, var(--ancho-max)); margin-inline: auto; }
   /* grilla de plano: fondo tech tenue */
   .plano {
@@ -119,6 +127,26 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
       color-mix(in srgb, var(--color-fondo) 100%, transparent) 0%,
       color-mix(in srgb, var(--color-fondo) 70%, transparent) 50%,
       color-mix(in srgb, var(--color-fondo) 10%, transparent) 100%);
+  }
+  /* Velo de la portada de «Próximamente». Misma forma que .velo-hero y más firme, porque NO es la misma caja:
+     el hero mide `100dvh - var(--alto-header)` y la portada un dvh entero, así que el `object-fit: cover` recorta
+     la foto distinto y con el velo del hero el párrafo se quedaba en 4,03:1 sobre la foto de día en 360×740.
+     Estos porcentajes son contrato con tests/styles/hero-foto.test.ts, que mide el contraste real de CADA caja con
+     su propio velo en once tamaños de pantalla y en los dos temas. No se ajustan a ojo. */
+  .velo-portada {
+    background: linear-gradient(to right,
+      color-mix(in srgb, var(--color-fondo) 100%, transparent) 0%,
+      color-mix(in srgb, var(--color-fondo) 88%, transparent) 50%,
+      color-mix(in srgb, var(--color-fondo) 35%, transparent) 100%);
+  }
+  @media (max-width: 63.9375rem) {
+    .velo-portada {
+      background: linear-gradient(to bottom,
+        color-mix(in srgb, var(--color-fondo) var(--velo-portada-arriba), transparent) 0%,
+        color-mix(in srgb, var(--color-fondo) var(--velo-portada-arriba), transparent) 40%,
+        color-mix(in srgb, var(--color-fondo) var(--velo-portada-abajo), transparent) 70%,
+        color-mix(in srgb, var(--color-fondo) var(--velo-portada-abajo), transparent) 100%);
+    }
   }
   /* Sin foto (calzada vectorial): el dibujo aguanta más velo y el texto gana. */
   .velo-hero-vector {

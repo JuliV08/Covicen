@@ -75,6 +75,9 @@
      ocupa todo el ancho y cae sobre el asfalto: la foto nocturna ya es oscura y pide poco, la diurna pide bastante más.
      Los dos valores los mide tests/styles/hero-foto.test.ts sobre las fotos reales; no se tocan a ojo. */
   --velo-hero-abajo: 28%;
+  /* Portada de «Próximamente» (.velo-portada): otra caja, otro recorte de la foto; sus valores los mide el mismo test. */
+  --velo-portada-arriba: 45%;
+  --velo-portada-abajo: 60%;
   color-scheme: dark;
   /* Solo para @media print (impresion.css): papel y tinta no dependen del tema. Grises: tinta-2 para el texto terciario
      (12,6:1 sobre papel), tinta-media para bordes de tarjetas y la regla del encabezado, tinta-suave para bordes finos. */
@@ -122,6 +125,9 @@ html[data-tema="claro"] {
   --color-luz: rgb(44 104 143 / 0.08);
   --brillo-foto: 1;
   --velo-hero-abajo: 68%;
+  /* Portada de «Próximamente» (.velo-portada): la foto de día es clara y el velo aclara poco; pide bastante más. */
+  --velo-portada-arriba: 72%;
+  --velo-portada-abajo: 84%;
   color-scheme: light;
 }
 
@@ -169,6 +175,9 @@ html[data-tema="claro"] {
     --color-luz: rgb(104 188 225 / 0.09);
     --brillo-foto: 0.62;
     --velo-hero-abajo: 28%;
+    /* Portada de «Próximamente» (.velo-portada): otra caja, otro recorte de la foto; sus valores los mide el mismo test. */
+    --velo-portada-arriba: 45%;
+    --velo-portada-abajo: 60%;
     color-scheme: dark;
   }
 }
@@ -219,6 +228,9 @@ html[data-tema="claro"] {
     --color-luz: rgb(104 188 225 / 0.09);
     --brillo-foto: 0.62;
     --velo-hero-abajo: 28%;
+    /* Portada de «Próximamente» (.velo-portada): otra caja, otro recorte de la foto; sus valores los mide el mismo test. */
+    --velo-portada-arriba: 45%;
+    --velo-portada-abajo: 60%;
     color-scheme: dark;
   }
 }

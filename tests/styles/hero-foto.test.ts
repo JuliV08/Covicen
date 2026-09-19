@@ -37,9 +37,9 @@ const paradas = (regla: string, tokens: Record<string, string>): Array<[number, 
     return [Number(m[2]) / 100, Number(crudo.replace('%', '')) / 100];
   });
 
-/** Bloque `.velo-hero { ... }`: el primero es el de escritorio, el segundo el de la media query de pantalla angosta. */
-const reglasVeloHero = (texto: string) =>
-  [...texto.matchAll(/\.velo-hero\s*\{([^}]*)\}/g)].map((m) => m[1]!);
+/** Bloques `.<clase> { ... }`: el primero es el de escritorio, el segundo el de la media query de pantalla angosta. */
+const reglasVelo = (texto: string, clase: string) =>
+  [...texto.matchAll(new RegExp('\\.' + clase + '\\s*\\{([^}]*)\\}', 'g'))].map((m) => m[1]!);
 
 const interpolar = (stops: Array<[number, number]>) => (t: number) => {
   for (let i = 0; i < stops.length - 1; i++) {
@@ -62,7 +62,7 @@ const leerFoto = async (archivo: string, brillo: number) => {
 
 const oscuro = { ...declaracionesDe(bloqueTheme(css.tokens)), ...declaracionesDe(bloqueRoot(css.tokens)) };
 const claro = { ...oscuro, ...declaracionesDe(bloqueClaro(css.tokens)) };
-const [reglaAncha, reglaAngosta] = reglasVeloHero(css.global);
+
 
 // Tamaños reales: del celular más chico que se usa hoy al monitor grande, cruzando el corte de 1024 px por los dos lados.
 const PANTALLAS: Array<[string, number, number]> = [
@@ -74,65 +74,78 @@ const PANTALLAS: Array<[string, number, number]> = [
 const CORTE = 1024; // px, el mismo 63.9375rem de la media query de global.css
 const ALTO_HEADER = 112; // 7rem: el hero mide 100dvh menos eso
 
-describe('contraste del texto del hero sobre la foto (pliego 61.7)', () => {
-  it('el velo de global.css se puede leer y trae las paradas esperadas', () => {
-    expect(reglaAncha, 'falta la regla .velo-hero de escritorio').toBeTruthy();
-    expect(reglaAngosta, 'falta la regla .velo-hero de pantalla angosta').toBeTruthy();
-    expect(reglaAncha).toContain('to right');
-    expect(reglaAngosta).toContain('to bottom');
-    expect(paradas(reglaAncha!, oscuro).length).toBeGreaterThanOrEqual(3);
-    expect(paradas(reglaAngosta!, claro).length).toBeGreaterThanOrEqual(3);
-    // El velo de abajo sale de un token por tema: la foto nocturna pide poco y la diurna bastante más.
-    expect(oscuro['velo-hero-abajo']).toBeTruthy();
-    expect(claro['velo-hero-abajo']).toBeTruthy();
-    expect(claro['velo-hero-abajo']).not.toBe(oscuro['velo-hero-abajo']);
-  });
+// Las DOS cajas del sitio con texto sobre una foto a pantalla completa. No comparten velo porque no comparten
+// altura: el hero descuenta el header y la portada de «Próximamente» mide un dvh entero, así que `object-fit:
+// cover` recorta la foto distinto y el mismo velo da contrastes distintos. Medir solo el hero dejaba la portada en
+// 4,03:1 con el test en verde: es exactamente la forma en que esto se escapa.
+// `banda`: el tramo vertical del viewport donde vive el texto, como fracción de la caja.
+const CAJAS = [
+  { nombre: 'hero', clase: 'velo-hero', descuento: ALTO_HEADER, banda: [0.3, 0.78] },
+  { nombre: 'portada de «Próximamente»', clase: 'velo-portada', descuento: 0, banda: [0.15, 0.85] },
+] as const;
 
+describe('contraste del texto sobre la foto, caja por caja (pliego 61.7)', () => {
   const temas = [
     { nombre: 'claro, foto de día', archivo: 'src/assets/atmosfera/hero-ruta-diurna.jpg', tokens: claro },
     { nombre: 'oscuro, foto de noche', archivo: 'src/assets/atmosfera/hero-ruta-nocturna.jpg', tokens: oscuro },
   ];
 
-  for (const tema of temas) {
-    it(`tema ${tema.nombre}: el párrafo llega a 4,5:1 y el h1 a 3:1 en toda pantalla`, async () => {
-      const brillo = Number(tema.tokens['brillo-foto']);
-      const fondo = aRgb(tema.tokens['color-fondo']!);
-      const texto = aRgb(tema.tokens['color-texto']!);
-      const foto = await leerFoto(tema.archivo, brillo);
-      const velo = {
-        ancha: interpolar(paradas(reglaAncha!, tema.tokens)),
-        angosta: interpolar(paradas(reglaAngosta!, tema.tokens)),
-      };
-      const flojos: string[] = [];
+  for (const caja of CAJAS) {
+    const [reglaAncha, reglaAngosta] = reglasVelo(css.global, caja.clase);
 
-      for (const [nombre, vw, vh] of PANTALLAS) {
-        const alto = vh - ALTO_HEADER;
-        // object-fit: cover — la foto se escala para cubrir y se recorta centrada.
-        const porAlto = vw / alto < RATIO_FOTO;
-        const anchoFoto = porAlto ? alto * RATIO_FOTO : vw;
-        const altoFoto = porAlto ? alto : vw / RATIO_FOTO;
-        const offX = (anchoFoto - vw) / 2;
-        const offY = (altoFoto - alto) / 2;
-        const aFoto = (vx: number, vy: number): [number, number] => [(vx * vw + offX) / anchoFoto, (vy * alto + offY) / altoFoto];
-        const angosta = vw < CORTE;
-        const opacidad = angosta ? velo.angosta : velo.ancha;
-        const contenedor = Math.min(vw - 40, 1280); // .contenedor: min(100% - 2.5rem, 80rem)
-        const izquierda = (vw - contenedor) / 2;
-
-        // El párrafo es max-w-2xl (42rem) y el h1 max-w-4xl (56rem); el h1 es texto grande, le alcanza 3:1.
-        for (const [cual, ancho, minimo] of [['párrafo', 672, 4.5], ['h1', 896, 3]] as const) {
-          const derecha = (izquierda + Math.min(ancho, contenedor)) / vw;
-          let peor = Infinity;
-          for (let vx = izquierda / vw; vx <= derecha; vx += 0.02) {
-            for (let vy = 0.3; vy <= 0.78; vy += 0.015) {
-              const [fx, fy] = aFoto(vx, vy);
-              peor = Math.min(peor, contraste(sobre(foto(fx, fy), fondo, opacidad(angosta ? vy : vx)), texto));
-            }
-          }
-          if (peor < minimo) flojos.push(`${nombre}: ${cual} ${peor.toFixed(2)}:1 (mínimo ${minimo})`);
-        }
-      }
-      expect(flojos, flojos.join('\n')).toEqual([]);
+    it(`${caja.nombre}: el velo .${caja.clase} de global.css se puede leer y trae las paradas esperadas`, () => {
+      expect(reglaAncha, `falta la regla .${caja.clase} de escritorio`).toBeTruthy();
+      expect(reglaAngosta, `falta la regla .${caja.clase} de pantalla angosta`).toBeTruthy();
+      expect(reglaAncha).toContain('to right');
+      expect(reglaAngosta).toContain('to bottom');
+      expect(paradas(reglaAncha!, oscuro).length).toBeGreaterThanOrEqual(3);
+      expect(paradas(reglaAngosta!, claro).length).toBeGreaterThanOrEqual(3);
+      // El velo de abajo sale de tokens por tema: la foto nocturna pide poco y la diurna bastante más.
+      for (const t of [oscuro, claro]) for (const [, v] of paradas(reglaAngosta!, t)) expect(Number.isFinite(v)).toBe(true);
+      expect(paradas(reglaAngosta!, claro).at(-1)![1]).toBeGreaterThan(paradas(reglaAngosta!, oscuro).at(-1)![1]);
     });
+
+    for (const tema of temas) {
+      it(`${caja.nombre}, tema ${tema.nombre}: el párrafo llega a 4,5:1 y el h1 a 3:1 en toda pantalla`, async () => {
+        const brillo = Number(tema.tokens['brillo-foto']);
+        const fondo = aRgb(tema.tokens['color-fondo']!);
+        const texto = aRgb(tema.tokens['color-texto']!);
+        const foto = await leerFoto(tema.archivo, brillo);
+        const velo = {
+          ancha: interpolar(paradas(reglaAncha!, tema.tokens)),
+          angosta: interpolar(paradas(reglaAngosta!, tema.tokens)),
+        };
+        const flojos: string[] = [];
+
+        for (const [nombre, vw, vh] of PANTALLAS) {
+          const alto = vh - caja.descuento;
+          // object-fit: cover — la foto se escala para cubrir y se recorta centrada.
+          const porAlto = vw / alto < RATIO_FOTO;
+          const anchoFoto = porAlto ? alto * RATIO_FOTO : vw;
+          const altoFoto = porAlto ? alto : vw / RATIO_FOTO;
+          const offX = (anchoFoto - vw) / 2;
+          const offY = (altoFoto - alto) / 2;
+          const aFoto = (vx: number, vy: number): [number, number] => [(vx * vw + offX) / anchoFoto, (vy * alto + offY) / altoFoto];
+          const angosta = vw < CORTE;
+          const opacidad = angosta ? velo.angosta : velo.ancha;
+          const contenedor = Math.min(vw - 40, 1280); // .contenedor: min(100% - 2.5rem, 80rem)
+          const izquierda = (vw - contenedor) / 2;
+
+          // El párrafo es max-w-2xl (42rem) y el h1 max-w-4xl (56rem); el h1 es texto grande, le alcanza 3:1.
+          for (const [cual, ancho, minimo] of [['párrafo', 672, 4.5], ['h1', 896, 3]] as const) {
+            const derecha = (izquierda + Math.min(ancho, contenedor)) / vw;
+            let peor = Infinity;
+            for (let vx = izquierda / vw; vx <= derecha; vx += 0.02) {
+              for (let vy = caja.banda[0]; vy <= caja.banda[1]; vy += 0.015) {
+                const [fx, fy] = aFoto(vx, vy);
+                peor = Math.min(peor, contraste(sobre(foto(fx, fy), fondo, opacidad(angosta ? vy : vx)), texto));
+              }
+            }
+            if (peor < minimo) flojos.push(`${nombre}: ${cual} ${peor.toFixed(2)}:1 (mínimo ${minimo})`);
+          }
+        }
+        expect(flojos, flojos.join(String.fromCharCode(10))).toEqual([]);
+      });
+    }
   }
 });

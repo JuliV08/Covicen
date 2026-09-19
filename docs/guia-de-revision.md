@@ -13,6 +13,30 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 
 ---
 
+## La portada de «Próximamente» (19 de septiembre) — mirá esto primero
+
+Es **lo único que ve el público** hasta que salga la primera versión, así que es lo primero a revisar.
+
+**Cómo verla:** `pnpm verificar:portada` y después abrí `dist/index.html`. Con `pnpm dev` **no** la ves: tu `.env` tiene `PUBLIC_SITIO_COMPLETO=true` y te muestra el sitio entero, que es lo que querés para todo lo demás.
+
+Qué mirar:
+
+- [ ] Se lee **PRÓXIMAMENTE** grande, con la marca arriba y la foto de la ruta atrás, **quieta** (sin parallax ni movimiento: se sacó a propósito).
+- [ ] El texto se lee bien **sobre la foto**, en la compu y en el celular. Va a la izquierda, no centrado: el velo del hero tapa fuerte de ese lado y casi nada del otro.
+- [ ] El botón amarillo del **140** se ve y al tocarlo abre el marcador del teléfono.
+- [ ] **No hay menú, ni pie, ni cinta de avisos, ni nada clickeable que lleve a otra página.** Es una pantalla sola.
+- [ ] Si tenés el tema claro guardado de antes, la pantalla sale clara y con la foto de día. No hay interruptor de tema acá: se respeta lo que hayas elegido antes.
+- [ ] Dice los **679,03 km** y desde cuándo opera. No dice ningún 0800 (todavía no existe).
+- [ ] Abajo de todo, la franja con la fecha de última actualización va sobre **fondo sólido**, no sobre la foto (sobre la foto no llegaba al contraste que pide el pliego).
+
+Lo que ya verificó la máquina sobre este modo: que en el build quede **una sola página** (más su copia como 404), que el sitemap liste una sola URL, que el `robots.txt` esté cerrado, que la portada conserve el `tel:140`, que **no enlace a ninguna página despublicada** y que la poda no se haya llevado ni dejado de más ningún archivo que la portada usa. También el **contraste real del texto sobre la foto**, medido píxel a píxel en once tamaños de pantalla y en los dos temas: la portada tiene su propio velo (`.velo-portada`) porque su caja es más alta que la del hero y la foto se recorta distinto. Corre en CI antes que la verificación del sitio entero.
+
+**Para que producción la muestre** no alcanza con pushear: hoy el sitio no sale de git. Hay que pedirle a infra que baje `main`, vuelva a subir e **invalide la cache de CloudFront**. Ver `README.md`, «Cómo se publica hoy».
+
+**Para volver al sitio completo**, una sola cosa: `PUBLIC_SITIO_COMPLETO=true` donde se buildee. No hay nada borrado.
+
+---
+
 ## Lo que cambió en la revisión final (14 y 15 de septiembre) — mirá esto primero
 
 Después de cerrar las seis fases se revisó todo de punta a punta, sección por sección de la spec, y los hallazgos se aplicaron en tandas; la última es la del 15 de septiembre. Antes de tocar nada, cada hallazgo pasó por tres lentes que trabajan por separado: una intenta refutarlo, otra chequea si lo que pide está escrito en la spec o en el pliego, y otra calibra qué tan grave es y si el arreglo no rompe otra cosa. Uno se descartó con ese filtro (abajo, en «Lo que se revisó y se dejó como estaba»). Lo que sigue es lo nuevo respecto de lo que ya habías visto; cada punto está explicado en su pantalla, más abajo.

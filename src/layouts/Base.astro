@@ -78,10 +78,3 @@ const impreso = new Date().toLocaleDateString('es-AR', { timeZone: 'America/Arge
     <script src="../scripts/imprimir.ts"></script>
   </body>
 </html>
-<style is:global>
-  .salto { position: absolute; left: 1rem; top: -100%; z-index: 100; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: var(--color-vial); color: var(--color-sobre-vial); font-weight: 600; text-decoration: none; }
-  .salto:focus { top: 1rem; }
-  /* Destino del salto: foco visible (pliego 61.7). El anillo va hacia adentro porque <main> ocupa todo el ancho y arranca
-     bajo el header fijo: hacia afuera lo recortaría el viewport y lo taparía el header. */
-  #contenido:focus-visible { outline: 2px solid var(--color-acento); outline-offset: -4px; border-radius: var(--radius-sm); }
-</style>

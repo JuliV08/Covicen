@@ -1,0 +1,124 @@
+---
+// Pantalla de «Próximamente»: lo único que se publica mientras PUBLIC_SITIO_COMPLETO no esté en true.
+//
+// No usa Base.astro a propósito. Base trae el header con todo el menú, el pie con las trece secciones, la cinta de
+// avisos, la barra de emergencias y cinco scripts: justo lo que acá no tiene que haber. Lo que sí comparte con el
+// resto del sitio es lo que la hace parecerse a Covicen y no a una página de mantenimiento cualquiera: los tokens,
+// la tipografía, los dos temas, la foto del hero con su velo y la hoja de impresión (todo vive en global.css).
+//
+// Lo que esta pantalla no puede perder, porque son controles que scripts/verificar.ts corre sobre TODA página del
+// sitio: el tel:140 (número corto de emergencias, PETG art. 58 y 59), el salto al contenido, un solo <h1>, la
+// canonical absoluta, el lang, el JSON-LD de Organization (lo pone Seo) y la línea de «Última actualización».
+import '@/styles/global.css';
+import { Image } from 'astro:assets';
+import { Phone } from '@lucide/astro';
+import Isotipo from '@/components/marca/Isotipo.astro';
+import Seo from '@/components/Seo.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import { imagenAtmosfera, variantesHero } from '@/lib/atmosfera';
+import { config } from '@/lib/config';
+import { datos } from '@/lib/datos';
+import { fechaHoraLarga, fechaLarga, numero } from '@/lib/formato';
+import { CLAVE_TEMA, COLOR_TEMA, TEMA_POR_DEFECTO, temaInicial } from '@/lib/tema';
+
+const [empresa, contacto] = await Promise.all([datos.empresa(), datos.contacto()]);
+const c = empresa.concesion;
+const tel = contacto.emergencias.telefono;
+const soloDigitos = (t: string) => t.replace(/[^\d+]/g, '');
+
+// Las mismas fotos del hero, quietas: sin parallax, sin canvas y sin el dolly. Esta pantalla no tiene nada que
+// mirar salvo el mensaje y el 140, y el movimiento del hero es la parte del sitio que más pelea dio.
+const fotos = variantesHero(imagenAtmosfera('hero-ruta-nocturna') !== undefined, imagenAtmosfera('hero-ruta-diurna') !== undefined);
+const hayFoto = fotos.length > 0;
+// Con una sola foto (la nocturna) la pantalla se vería de noche también en tema claro: `zona-noche` revierte los
+// tokens semánticos al tema oscuro dentro de la sección, igual que hace el hero.
+const soloNocturna = fotos.length === 1;
+// Igual que el parallax: en desarrollo Astro codifica la imagen bajo demanda y AVIF tarda segundos donde WebP
+// tarda milisegundos. En build va AVIF, que es lo que pesa menos.
+const formato = import.meta.env.DEV ? 'webp' : 'avif';
+// El velo es propio (`.velo-portada`) y NO el del hero. Misma forma —horizontal en escritorio, vertical en pantalla
+// angosta— pero más firme: esta caja mide un dvh entero y el hero mide `100dvh - var(--alto-header)`, así que el
+// `object-fit: cover` recorta la foto distinto y con el velo del hero el párrafo se quedó en 4,03:1 sobre la foto
+// de día en 360×740. Los dos velos los mide tests/styles/hero-foto.test.ts, cada uno con SU caja.
+// El texto va a la izquierda y no centrado porque en escritorio el velo tapa fuerte de ese lado y casi nada sobre
+// el punto de fuga: centrado, el test seguiría en verde y la pantalla quedaría ilegible. No centrar.
+const ahora = new Date();
+const sitio = config.sitio.replace(/^https?:\/\//, '');
+const impreso = ahora.toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
+const descripcion = `Covicen, concesionaria del Tramo Centro de la Red Federal de Concesiones, está preparando su sitio. Emergencias en ruta: ${tel}, las 24 horas.`;
+---
+<!doctype html>
+<html lang="es-AR" data-tema={temaInicial()}>
+  <head>
+    <Seo titulo="Próximamente" {descripcion} jsonLd={[]} tipo="website" {empresa} {contacto} />
+    <!-- Tema ANTES de pintar, sin destello. Copia mínima de resolverTema() de src/lib/tema.ts: un script inline no
+         puede importar. Acá no hay ClientRouter (es una sola pantalla), así que no hace falta reaplicarlo. -->
+    <script is:inline define:vars={{ porDefecto: TEMA_POR_DEFECTO, clave: CLAVE_TEMA, colores: COLOR_TEMA }}>
+      let guardado = null;
+      try { guardado = localStorage.getItem(clave); } catch { /* sin storage: se usa el default */ }
+      const valido = guardado === 'oscuro' || guardado === 'claro';
+      const prefiereClaro = matchMedia('(prefers-color-scheme: light)').matches;
+      const tema = valido ? guardado : porDefecto === 'sistema' ? (prefiereClaro ? 'claro' : 'oscuro') : porDefecto;
+      document.documentElement.dataset.tema = tema;
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', colores[tema]);
+    </script>
+  </head>
+  <body class="flex min-h-dvh flex-col bg-fondo text-texto" data-sitio={sitio} data-fecha={impreso}>
+    <a href="#contenido" class="salto">Saltar al contenido</a>
+    <main id="contenido" tabindex="-1" class:list={['plano relative isolate flex min-h-dvh flex-col overflow-hidden', soloNocturna && 'zona-noche']}>
+      {hayFoto && fotos.map((f) => {
+        const imagen = imagenAtmosfera(f.nombre)!;
+        return (
+          <div class:list={['absolute inset-0 -z-20', f.clase]} aria-hidden="true">
+            <Image src={imagen} alt="" widths={[640, 1024, 1600, 2400]} sizes="100vw" format={formato} quality={55} loading="eager" fetchpriority={f.prioridad ? 'high' : 'low'} decoding="async" class="foto-portada" />
+          </div>
+        );
+      })}
+      <div class:list={['absolute inset-0 -z-10', hayFoto ? 'velo-portada' : 'velo-hero-vector']} aria-hidden="true"></div>
+
+      <div class="contenedor flex flex-1 flex-col justify-center py-20">
+        <div class="flex items-center gap-3">
+          <Isotipo size={40} class="shrink-0" />
+          <span class="font-extrabold text-[1.25rem] leading-none tracking-[0.02em]">COVICEN</span>
+        </div>
+
+        <div class="mt-10 max-w-3xl">
+          {/* Color pleno, no el `texto-2` de la volanta: cae sobre la foto y en tema claro `texto-2` da 1,8:1. */}
+          <Eyebrow class="text-texto">Concesionaria del Tramo Centro · {c.rutas.join(' · ')}</Eyebrow>
+          <h1 class="mt-6">Próximamente</h1>
+          <p class="mt-6 max-w-2xl text-lg text-texto md:text-xl">
+            Estamos preparando el sitio de Covicen, la concesionaria del Tramo Centro de la Red Federal de Concesiones:
+            <strong>{numero(c.km, 2)} km</strong> sobre {c.rutas.join(', ')}, entre {c.provincias.join(' y ')}.
+            Operación desde el <strong>{fechaLarga(c.inicioOperacion)}</strong>.
+          </p>
+        </div>
+
+        {/* El 140 es el número corto de emergencias del pliego (PETG art. 58 y 59) y es el único dato de contacto que
+            entra acá: si alguien tiene un problema en la ruta y llega al sitio, no se puede encontrar con una pantalla
+            muerta. El 0800 del art. 61.1 todavía no existe (contacto.json lo tiene en null): no se anuncia. */}
+        {/* Fondo OPACO, no `bg-fondo-2/80` con desenfoque: translúcido sobre la foto, el contraste de lo que va adentro
+            depende de la foto y deja de estar cubierto por los pares de scripts/lib/pares.ts. Se ve algo menos lindo y
+            se lee siempre. */}
+        <div class="mt-12 max-w-md rounded-lg border border-borde bg-fondo-2 p-5 bloque-oscuro">
+          <p class="eyebrow">{contacto.emergencias.etiqueta} en ruta</p>
+          <a href={`tel:${soloDigitos(tel)}`} class="btn-vial mt-3 inline-flex items-center gap-2 px-4 py-2 text-2xl font-extrabold tabular-nums" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={20} aria-hidden="true" class="telefono" /> {tel}</a>
+          <p class="mt-3 text-sm text-texto-2">Las 24 horas, los 365 días del año.</p>
+        </div>
+      </div>
+
+      {/* Franja opaca, encima de la foto (la foto va en -z-20 y el velo en -z-10; esto no lleva z negativo).
+          Es el mismo pie que el resto del sitio y por el mismo motivo: sobre la foto, `texto-2` y `texto-3` no
+          llegaban a 4,5:1 en ningún tema. Sobre `fondo` sólido los mide paresContraste, como en toda página. */}
+      <div class="relative border-t border-borde bg-fondo">
+        <div class="contenedor py-4 text-sm text-texto-2">
+          <p><span class="text-texto-3">Última actualización:</span> <time datetime={ahora.toISOString()}>{fechaHoraLarga(ahora)}</time></p>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
+<style>
+  /* La foto, quieta: el mismo tratamiento que el poster del parallax, sin la animación de dolly ni el canvas. */
+  .foto-portada { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85) brightness(var(--brillo-foto)); }
+</style>

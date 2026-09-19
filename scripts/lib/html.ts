@@ -1,6 +1,13 @@
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
+/** Lista recursiva de TODOS los archivos bajo un directorio. */
+export const archivosDe = (dir: string): string[] =>
+  readdirSync(dir).flatMap((n) => {
+    const r = join(dir, n);
+    return statSync(r).isDirectory() ? archivosDe(r) : [r];
+  });
+
 /** Lista recursiva de archivos .html bajo un directorio. */
 export const paginasDe = (dir: string): string[] => {
   const salida: string[] = [];
