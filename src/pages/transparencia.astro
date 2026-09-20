@@ -8,7 +8,7 @@ const [e, normativa] = await Promise.all([datos.empresa(), datos.normativa()]);
 const registrales = e.razonSocial && e.cuit && e.domicilioLegal;
 ---
 <Base titulo="Transparencia" descripcion="Normativa de la concesión del Tramo Centro para descargar, póliza de responsabilidad civil, datos registrales y control de Vialidad Nacional. Covicen publica lo que se puede verificar, con la fuente al lado." migas={[{ nombre: 'Transparencia', href: '/transparencia' }]}>
-  <Seccion nivel="h1" eyebrow="Transparencia" titulo="Lo que se puede verificar, con la fuente al lado." intro="Vialidad Nacional supervisa la concesión con indicadores objetivos. Acá está la normativa que la rige, la póliza que nos cubre y los datos de la sociedad, a medida que existen." class="pt-10">
+  <Seccion nivel="h1" eyebrow="Transparencia" titulo="Lo que se puede verificar, con la fuente al lado." intro="Vialidad Nacional supervisa la concesión con indicadores objetivos. Acá están la normativa aplicable, la póliza de responsabilidad civil y los datos registrales de la sociedad." class="pt-10">
     <h2 class="revelar mb-6 text-2xl">Normativa aplicable</h2>
     <ol class="escalonar grid gap-4 md:grid-cols-2">
       {normativa.map((n, i) => (
@@ -24,7 +24,7 @@ const registrales = e.razonSocial && e.cuit && e.domicilioLegal;
       ))}
     </ol>
   </Seccion>
-  <Seccion indice="01" eyebrow="Seguro" titulo="Póliza de responsabilidad civil." intro="El contrato exige publicar la aseguradora y los datos de la póliza que cubre a los usuarios (PETG art. 61.6)." fondo="fondo-2">
+  <Seccion indice="01" eyebrow="Seguro" titulo="Póliza de responsabilidad civil." intro="El contrato de concesión exige publicar la aseguradora y los datos de la póliza que cubre a los usuarios (PETG art. 61.6)." fondo="fondo-2">
     {e.polizaRc ? (
       <dl class="revelar grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-texto-2"><dt class="eyebrow">Aseguradora</dt><dd>{e.polizaRc.aseguradora}</dd><dt class="eyebrow">Póliza</dt><dd>{e.polizaRc.numero}</dd><dt class="eyebrow">Vigencia</dt><dd>hasta el {fechaLarga(e.polizaRc.vigenciaHasta)}</dd>{e.polizaRc.url && <><dt class="eyebrow">Documento</dt><dd><a href={e.polizaRc.url} rel="noopener noreferrer" target="_blank" class="inline-flex items-center gap-1">Ver la póliza <ExternalLink size={12} aria-hidden="true" /></a></dd></>}</dl>
     ) : (

@@ -11,7 +11,7 @@ const politicas = [
 ];
 ---
 <Base titulo="Políticas" descripcion="Políticas de calidad, seguridad vial y anticorrupción de Covicen, concesionaria del Tramo Centro." migas={[{ nombre: 'Políticas', href: '/politicas' }]}>
-  <Seccion nivel="h1" eyebrow="Políticas" titulo="Cómo nos comprometemos a operar." intro="Tres políticas, escritas para que cualquiera pueda exigirlas." class="pt-10">
+  <Seccion nivel="h1" eyebrow="Políticas" titulo="Políticas de la concesión." intro="Calidad, seguridad vial y ética. Son compromisos del contrato, exigibles." class="pt-10">
     <nav aria-label="Secciones" class="revelar mb-10 flex flex-wrap gap-2">{politicas.map((p) => <a href={`#${p.id}`} class="rounded-md border border-borde px-3 py-1.5 text-sm text-texto-2 no-underline transition-colors hover:border-borde-fuerte hover:text-texto hover:underline">{p.titulo}</a>)}</nav>
     <div class="escalonar grid gap-6">
       {politicas.map((p, i) => (

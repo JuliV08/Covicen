@@ -24,7 +24,7 @@ const asumimos = [
 ] as const;
 ---
 <Base titulo="Quiénes somos" descripcion="Covicen es la concesionaria del Tramo Centro de la Red Federal de Concesiones: 679 km de RN 9, RN 19 y RN 34 entre Córdoba y Santa Fe, adjudicados por la Resolución 1379/2026 a AFEMA S.A., Pablo Federico e Hijos S.A. y Guido Mogetta S.A. Qué asumimos y quién nos controla." migas={[{ nombre: 'Quiénes somos', href: '/quienes-somos' }]}>
-  <Seccion nivel="h1" eyebrow="Quiénes somos" titulo="Somos quienes van a cuidar las rutas del centro." intro={`Covicen es la concesionaria del Tramo Centro de la Red Federal de Concesiones: ${numero(c.km, 2)} km de rutas nacionales entre Córdoba y Santa Fe que, desde el ${fechaLarga(c.inicioOperacion)} y por ${c.plazoAnios} años, pasan a estar bajo nuestra responsabilidad.`} class="pt-10">
+  <Seccion nivel="h1" eyebrow="Quiénes somos" titulo="La concesionaria del Tramo Centro." intro={`Covicen es la concesionaria del Tramo Centro de la Red Federal de Concesiones: ${numero(c.km, 2)} km de rutas nacionales entre Córdoba y Santa Fe que, desde el ${fechaLarga(c.inicioOperacion)} y por ${c.plazoAnios} años, pasan a estar bajo nuestra responsabilidad.`} class="pt-10">
     <div class="revelar prose-covicen max-w-prose text-lg text-texto-2">
       <p>Nacimos de tres empresas constructoras de Córdoba y Santa Fe —{e.consorcio.map((s) => s.nombre).join(', ').replace(/, ([^,]*)$/, ' y $1')}— que se unieron para presentarse a la licitación del Tramo Centro y la ganaron ofreciendo el peaje más bajo de los {c.tramosEtapa} tramos de la Etapa III. La adjudicación es la {c.adjudicacion.resolucion}, del {fechaLarga(c.adjudicacion.fecha)}.</p>
       <p>No venimos a inaugurar una ruta: venimos a hacernos cargo de una que ya existe y que la gente usa todos los días. Las obligaciones de conservación, de inversión y de atención al usuario están en el contrato de concesión, y rigen desde el primer día.</p>
@@ -36,7 +36,7 @@ const asumimos = [
     </div>
   </Seccion>
 
-  <Seccion indice="01" eyebrow="Qué asumimos" titulo="Ocho compromisos que se pueden exigir." intro="Todos están en el contrato de concesión. Ninguno es una promesa de marketing." fondo="fondo-2">
+  <Seccion indice="01" eyebrow="Qué asumimos" titulo="Qué asume Covicen." intro="Obligaciones del contrato de concesión, exigibles y verificables por Vialidad Nacional." fondo="fondo-2">
     <ol class="escalonar grid gap-4 md:grid-cols-2">
       {asumimos.map(([t, d], i) => <li class="tarjeta p-6" style={`--i: ${i}`}><span class="eyebrow tabular-nums">0{i + 1}</span><h3 class="mt-3 text-xl">{t}</h3><p class="mt-2 text-texto-2">{d}</p></li>)}
     </ol>

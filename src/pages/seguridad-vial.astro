@@ -8,7 +8,7 @@ const conducir = consejos.filter((c) => c.categoria === 'conducir');
 const emergencia = consejos.filter((c) => c.categoria === 'emergencia');
 ---
 <Base titulo="Seguridad vial" descripcion="Consejos de seguridad vial para RN 9, RN 19 y RN 34 y qué hacer ante una emergencia en la ruta: salir de la calzada, protegerse, llamar al 140 y esperar el auxilio gratuito." migas={[{ nombre: 'Seguridad vial', href: '/seguridad-vial' }]}>
-  <Seccion nivel="h1" eyebrow="Seguridad vial" titulo="Manejar bien el centro del país." intro="Ocho hábitos que evitan la mayoría de los siniestros en estas tres rutas." class="pt-10">
+  <Seccion nivel="h1" eyebrow="Seguridad vial" titulo="Consejos de seguridad vial." intro="Recomendaciones para circular por la RN 9, la RN 19 y la RN 34." class="pt-10">
     <ol class="escalonar grid gap-4 md:grid-cols-2">
       {conducir.map((c, i) => <li class="tarjeta p-6" style={`--i: ${i}`}><span class="eyebrow tabular-nums">0{i + 1}</span><h2 class="mt-3 text-xl">{c.titulo}</h2><p class="mt-2 text-texto-2">{c.texto}</p></li>)}
     </ol>

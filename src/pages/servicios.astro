@@ -10,7 +10,7 @@ const gratuitos = servicios.filter((s) => s.gratuito);
 const onerosos = servicios.filter((s) => !s.gratuito);
 ---
 <Base titulo="Servicios al usuario" descripcion="Servicios de Covicen en el Tramo Centro: emergencias 140, grúa y remolque gratuitos con tiempos comprometidos, móviles de seguridad vial, TelePASE sin costo, atención al usuario con plazos, y qué servicios se cobran." migas={[{ nombre: 'Servicios', href: '/servicios' }]}>
-  <Seccion nivel="h1" eyebrow="Servicios" titulo="Qué te da el peaje, y qué se cobra aparte." intro="El contrato de concesión obliga a prestar estos servicios y a decir cuáles son gratuitos y cuáles no. Acá están." class="pt-10 pb-0" />
+  <Seccion nivel="h1" eyebrow="Servicios" titulo="Servicios al usuario." intro="El contrato de concesión obliga a prestarlos y a informar cuáles son gratuitos y cuáles tienen costo." class="pt-10 pb-0" />
   <Seccion id="gratuitos" indice="01" eyebrow="Sin costo" titulo="Servicios gratuitos." fondo="fondo-2">
     <ul class="escalonar grid gap-4 md:grid-cols-2">
       {gratuitos.map((s, i) => (
@@ -23,7 +23,7 @@ const onerosos = servicios.filter((s) => !s.gratuito);
       ))}
     </ul>
   </Seccion>
-  <Seccion id="con-costo" indice="02" eyebrow="Con costo" titulo="Servicios que se cobran." intro="Para que nadie se lleve una sorpresa: esto no lo cubre el peaje.">
+  <Seccion id="con-costo" indice="02" eyebrow="Con costo" titulo="Servicios que se cobran." intro="Estos servicios no están cubiertos por la tarifa de peaje.">
     <ul class="escalonar grid gap-4 md:grid-cols-2">
       {onerosos.map((s, i) => <li class="tarjeta p-6" style={`--i: ${i}`}><div class="flex items-start justify-between gap-3"><h3 class="text-xl">{s.nombre}</h3><Senal variante="frio">Con costo</Senal></div><p class="mt-2 text-texto-2">{s.descripcion}</p></li>)}
     </ul>
