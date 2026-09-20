@@ -24,10 +24,13 @@ describe('/el-tramo/', () => {
   // El header es fijo (--alto-header: 7rem = 112 px) y encima la nav de anclas es sticky en top: var(--alto-header) y
   // mide ~53 px: los primeros ~165 px del viewport están tapados. Sin scroll-margin, tocar un ancla deja el encabezado
   // de la sección debajo de las dos barras y se aterriza sobre el cuerpo del bloque sin saber a dónde se llegó.
-  it('los cuatro bloques de la nav de anclas arrancan debajo del header fijo y de la barra sticky', async () => {
+  // Call del 20/09/2026: los cuadros tarifarios salen de acá («es reiterativo», y viven en /tarifas/). Y las áreas
+  // de descanso no se muestran hasta que existan los datos de qué hay en cada una. La nav de anclas se arma con los
+  // bloques que quedan: un ancla a una sección que no existe es un link roto, y verificar.ts lo canta.
+  it('la nav de anclas lista exactamente las secciones que existen, y todas arrancan debajo del header', async () => {
     const { document } = parseHTML(await render());
     const anclas = [...document.querySelectorAll('nav[aria-label="Secciones de El tramo"] a')].map((a) => a.getAttribute('href'));
-    expect(anclas).toEqual(['#rutas', '#estaciones', '#tarifas', '#servicios']);
+    expect(anclas).toEqual(['#rutas', '#estaciones']);
     for (const href of anclas) {
       const destino = document.querySelector(`section${href}`);
       expect(destino, `falta la sección ${href}`).not.toBeNull();
@@ -56,4 +59,41 @@ describe('/el-tramo/', () => {
     const saltos = niveles.map((n, i) => (i > 0 && n - niveles[i - 1]! > 1 ? `h${niveles[i - 1]} → h${n} (encabezado ${i + 1})` : null)).filter(Boolean);
     expect(saltos, saltos.join('; ')).toEqual([]);
   });
+  it('no repite los cuadros tarifarios: eso vive en Tarifas', async () => {
+    const html = await render();
+    expect(html.includes('id="tarifas"'), 'volvió la sección de cuadros tarifarios').toBe(false);
+    expect(html.includes('Cuánto cuesta en cada estación'), 'volvió el título de la sección').toBe(false);
+    // Pero el puente a Tarifas no se pierde: vivía adentro de esa sección.
+    expect(html.includes('href="/tarifas/"'), 'se perdió la salida a Tarifas').toBe(true);
+  });
+
+  // La sección 01 la dio por perfecta el gerente: no se toca más que lo que exige sacar la cita del pliego.
+  it('la sección 01 conserva su título', async () => {
+    expect(await render()).toContain('Tres rutas nacionales bajo una misma concesión.');
+  });
+
+  it('los índices quedan corridos, sin huecos', async () => {
+    const visible = (await render()).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+    expect(visible).toContain(' 01 ');
+    expect(visible).toContain(' 02 ');
+    expect(visible.includes(' 03 '), 'quedó un índice de una sección que ya no está').toBe(false);
+  });
+
+  // Lo que el gerente pidió el 20/09/2026 es que esta sección diga QUÉ HAY DE VERDAD en cada área de descanso
+  // (agua, baños). Ese dato no existe. Lo único cargado es grueso —«tiene área de descanso» y «grúa gratuita», igual
+  // para las tres operativas, y la grúa ni siquiera es de la estación: es de toda la red—, así que la sección se
+  // leía como tres tarjetas idénticas que no responden nada. Se esconde entera hasta que el dato exista.
+  // Este test fija las DOS mitades: que hoy no se renderiza, y que el dato fino sigue faltando (si alguien lo carga,
+  // el test se cae y avisa que hay que prender el interruptor en vez de dejar la sección escondida con datos).
+  it('sin el detalle de qué hay en cada área, la sección no se renderiza', async () => {
+    const tramo = await fuenteLocalJson.tramo();
+    const detalle = tramo.cabinas.some((c) => c.servicios?.sanitarios || c.servicios?.detencionSegura || c.servicios?.colocacionTelepase);
+    expect(detalle, 'se cargó el detalle por estación: hay que prender publicado.serviciosDeAreaDescanso').toBe(false);
+    const html = await render();
+    expect(html.includes('id="servicios"'), 'encabezado de servicios sin nada debajo').toBe(false);
+    expect(html.includes('Qué encontrás en la ruta'), 'quedó el título de servicios').toBe(false);
+    // La salida a /servicios/, que sí tiene contenido, no se pierde con la sección.
+    expect(html.includes('href="/servicios/"'), 'se perdió la salida a Servicios').toBe(true);
+  });
+
 });
