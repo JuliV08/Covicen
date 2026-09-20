@@ -94,7 +94,7 @@ Resultado: existe el único interruptor de lo no confirmado, con su test; existe
 **Interfaces:**
 - Produces: `export const publicado` — objeto congelado, claves booleanas, una por sección que se esconde. `export type ClavePublicada = keyof typeof publicado`.
 
-- [ ] **Step 1: Escribir el test que falla**
+- [x] **Step 1: Escribir el test que falla**
 
 Crear `tests/lib/publicado.test.ts`:
 
@@ -136,7 +136,7 @@ describe('publicado', () => {
 });
 ```
 
-- [ ] **Step 2: Escribir `src/lib/publicado.ts` hasta que pase**
+- [x] **Step 2: Escribir `src/lib/publicado.ts` hasta que pase**
 
 ```ts
 // Qué está confirmado y qué no. ÚNICO lugar del sitio donde se decide si una sección se publica.
@@ -174,9 +174,9 @@ export const publicado = Object.freeze({
 export type ClavePublicada = keyof typeof publicado;
 ```
 
-- [ ] **Step 3: Verificar** — `pnpm test tests/lib/publicado.test.ts` en verde, `pnpm check` sin errores.
+- [x] **Step 3: Verificar** — `pnpm test tests/lib/publicado.test.ts` en verde, `pnpm check` sin errores.
 
-- [ ] **Step 4: Commit** — `feat(datos): un solo interruptor para lo que todavía no está confirmado`.
+- [x] **Step 4: Commit** — `feat(datos): un solo interruptor para lo que todavía no está confirmado`.
 
 ---
 
@@ -191,7 +191,7 @@ export type ClavePublicada = keyof typeof publicado;
 
 **Por qué existe:** Tarifas y El tramo pierden secciones según el interruptor, y el prompt pide renumerar los `indice=`. Escribir los números a mano en el `.astro` los vuelve a romper la próxima vez que se prenda o apague algo. Con esto, prender `descuentosPorFrecuencia` renumera solo.
 
-- [ ] **Step 1: Escribir el test que falla**
+- [x] **Step 1: Escribir el test que falla**
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -215,7 +215,7 @@ describe('indices', () => {
 });
 ```
 
-- [ ] **Step 2: Implementar `src/lib/indices.ts`**
+- [x] **Step 2: Implementar `src/lib/indices.ts`**
 
 ```ts
 // Numeración corrida de las secciones de una página cuando algunas se esconden (src/lib/publicado.ts).
@@ -226,7 +226,7 @@ export const indices = (visibles: boolean[]): (string | undefined)[] => {
 };
 ```
 
-- [ ] **Step 3: Verificar y commitear** — `feat(ui): los índices de sección se corren solos cuando algo se esconde`.
+- [x] **Step 3: Verificar y commitear** — `feat(ui): los índices de sección se corren solos cuando algo se esconde`.
 
 ---
 
@@ -244,7 +244,7 @@ export const indices = (visibles: boolean[]): (string | undefined)[] => {
 
 No se modela `backdrop-filter: blur(12px)`: un desenfoque promedia píxeles vecinos, no aclara una zona oscura, y además no está garantizado en todos los navegadores. Medir sin él es el lado seguro.
 
-- [ ] **Step 1: Escribir el test**
+- [x] **Step 1: Escribir el test**
 
 ```ts
 import { readFileSync } from 'node:fs';
@@ -388,9 +388,9 @@ describe('contraste del header sobre la foto del hero (pliego 61.7)', () => {
 });
 ```
 
-- [ ] **Step 2: Correr y comprobar que falla por la razón correcta** — `pnpm test tests/styles/header-foto.test.ts` tiene que dar **rojo en tema claro** por el *menú* (≈ 2,22:1) y **verde en oscuro**; el logotipo no debe aparecer entre los flojos (hoy va 4,95:1). Si falla en oscuro, o si el flojo es el logotipo, el modelo está mal y hay que revisarlo **antes** de tocar CSS.
+- [x] **Step 2: Correr y comprobar que falla por la razón correcta** — `pnpm test tests/styles/header-foto.test.ts` tiene que dar **rojo en tema claro** por el *menú* (≈ 2,22:1) y **verde en oscuro**; el logotipo no debe aparecer entre los flojos (hoy va 4,95:1). Si falla en oscuro, o si el flojo es el logotipo, el modelo está mal y hay que revisarlo **antes** de tocar CSS.
 
-- [ ] **Step 3: NO commitear todavía.** Va junto con la Tarea 2.1.
+- [x] **Step 3: NO commitear todavía.** Va junto con la Tarea 2.1.
 
 ---
 
@@ -403,7 +403,7 @@ describe('contraste del header sobre la foto del hero (pliego 61.7)', () => {
 **Interfaces:**
 - Produces: `PROHIBIDOS_USUARIO: RegExp[]` — se aplica a toda página **salvo** `transparencia/`.
 
-- [ ] **Step 1: Agregar la lista y la excepción en `scripts/verificar.ts`**
+- [x] **Step 1: Agregar la lista y la excepción en `scripts/verificar.ts`**
 
 Junto a `PROHIBIDOS` (línea 22):
 
@@ -423,7 +423,7 @@ Y dentro del bucle de páginas, al lado del chequeo 10:
 if (SIN_PLIEGO(nombre)) for (const p of PROHIBIDOS_USUARIO) if (p.test(html)) fallo(`${nombre}: cita el pliego en la cara del público (${p})`);
 ```
 
-- [ ] **Step 2: Escribir el test de la guarda** en `tests/scripts/prohibidos.test.ts`:
+- [x] **Step 2: Escribir el test de la guarda** en `tests/scripts/prohibidos.test.ts`:
 
 ```ts
 import { readFileSync } from 'node:fs';
@@ -459,9 +459,9 @@ describe('prohibidos del pliego en la cara del público', () => {
 });
 ```
 
-- [ ] **Step 3: Correr `pnpm verificar` y comprobar que falla** con ~15 páginas citando el pliego. Anotar la lista: es el mapa exacto de la Tarea 10.2.
+- [x] **Step 3: Correr `pnpm verificar` y comprobar que falla** con ~15 páginas citando el pliego. Anotar la lista: es el mapa exacto de la Tarea 10.2.
 
-- [ ] **Step 4: NO commitear todavía.** Va junto con la Tarea 10.2.
+- [x] **Step 4: NO commitear todavía.** Va junto con la Tarea 10.2.
 
 ---
 
@@ -485,9 +485,9 @@ Resultado: cada opción del menú va en su propia pill y se lee sobre la foto en
 
 **Token de fondo: `--color-superficie`.** Razones: (a) su par con `texto-2` y con `texto` **ya está en `scripts/lib/pares.ts`**, o sea que su contraste ya se verifica en los dos temas en `pnpm verificar` y en `tests/styles/tokens.test.ts` — la pill hereda una guarda que ya existe en vez de inventar una; (b) es opaco en los dos temas (`#FFFFFF` en claro, navy claro en oscuro); (c) es el mismo token que ya usa el hover del menú hoy, así que el reposo pasa a verse como el hover de antes y no hay que inventar un color nuevo. **Confirmar en el Step 1** que los dos pares están en la lista; si falta alguno, agregarlo ahí (y no en otro lado).
 
-- [ ] **Step 1: Comprobar los pares** — `scripts/lib/pares.ts` tiene que tener `['texto', 'superficie']` y `['texto-2', 'superficie']`. Si falta alguno, agregarlo.
+- [x] **Step 1: Comprobar los pares** — `scripts/lib/pares.ts` tiene que tener `['texto', 'superficie']` y `['texto-2', 'superficie']`. Si falta alguno, agregarlo.
 
-- [ ] **Step 2: La pill, en `Header.astro`**
+- [x] **Step 2: La pill, en `Header.astro`**
 
 ```css
 /* Cada opción en su propia pill (pedido de Juli, 20/09/2026). No es solo estética: el fondo del header es
@@ -511,7 +511,7 @@ Resultado: cada opción del menú va en su propia pill y se lee sobre la foto en
 
   El `gap` de la lista sube de `gap-1` a `gap-2` para que las pills respiren; se ajusta en el marcado (`ul.nav-lista`), que es donde vive hoy.
 
-- [ ] **Step 3: El indicador de página actual, con forma y no solo con color** — hoy lo dibuja `.nav-item::after` (una barrita que crece de ancho). Con la pill, esa barrita queda **adentro**, pegada al borde de abajo y acortada a los lados:
+- [x] **Step 3: El indicador de página actual, con forma y no solo con color** — hoy lo dibuja `.nav-item::after` (una barrita que crece de ancho). Con la pill, esa barrita queda **adentro**, pegada al borde de abajo y acortada a los lados:
 
 ```css
 /* El estado "estás acá" no puede distinguirse SOLO por color (pliego 61.7, y el criterio que este proyecto ya
@@ -525,15 +525,15 @@ Resultado: cada opción del menú va en su propia pill y se lee sobre la foto en
 .nav-item[aria-current="page"]::after, .nav-item.is-activo::after { transform: scaleX(1); }
 ```
 
-- [ ] **Step 4: El desplegable «Nosotros»** — su `<summary>` ya lleva `.nav-item`, así que hereda la pill sin tocar nada. **Verificar dos cosas**: que el panel que se abre (`ul` absoluto, `top-full mt-2`) no quede pegado a la pill ni tapado por el borde, y que el `chevron` siga alineado adentro del radio nuevo.
+- [x] **Step 4: El desplegable «Nosotros»** — su `<summary>` ya lleva `.nav-item`, así que hereda la pill sin tocar nada. **Verificar dos cosas**: que el panel que se abre (`ul` absoluto, `top-full mt-2`) no quede pegado a la pill ni tapado por el borde, y que el `chevron` siga alineado adentro del radio nuevo.
 
-- [ ] **Step 5: La hamburguesa del celular** — hoy ya es un cuadro con borde (`border border-borde`) y sin fondo. Se le pone `background: var(--color-superficie)` y el radio de la pill, por coherencia visual. **No es por contraste** (va en `--color-texto` y pasa con 4,95:1): es para que la barra no tenga dos idiomas.
+- [x] **Step 5: La hamburguesa del celular** — hoy ya es un cuadro con borde (`border border-borde`) y sin fondo. Se le pone `background: var(--color-superficie)` y el radio de la pill, por coherencia visual. **No es por contraste** (va en `--color-texto` y pasa con 4,95:1): es para que la barra no tenga dos idiomas.
 
-- [ ] **Step 6: Verificar** — `pnpm test tests/styles/header-foto.test.ts tests/styles/tokens.test.ts tests/styles/colores-fijos.test.ts` en verde. El test de la pill tiene que dar el contraste del par de tokens, no el de la foto. Después `pnpm check && pnpm test && pnpm verificar`.
+- [x] **Step 6: Verificar** — `pnpm test tests/styles/header-foto.test.ts tests/styles/tokens.test.ts tests/styles/colores-fijos.test.ts` en verde. El test de la pill tiene que dar el contraste del par de tokens, no el de la foto. Después `pnpm check && pnpm test && pnpm verificar`.
 
-- [ ] **Step 7: Anotar el número real** para el cierre: el contraste del menú sobre la pill en los dos temas, que es lo que se le reporta a Juli.
+- [x] **Step 7: Anotar el número real** para el cierre: el contraste del menú sobre la pill en los dos temas, que es lo que se le reporta a Juli.
 
-- [ ] **Step 8: Commit** (lleva la Tarea 1.3 adentro) — `fix(header): cada opción del menú en su propia pill, legible sobre la foto del hero`.
+- [x] **Step 8: Commit** (lleva la Tarea 1.3 adentro) — `fix(header): cada opción del menú en su propia pill, legible sobre la foto del hero`.
 
 ---
 
@@ -547,7 +547,7 @@ Resultado: cada opción del menú va en su propia pill y se lee sobre la foto en
 **Interfaces:**
 - Produces: `items` sin `Obras`; `nosotros` sin `Trabajá con nosotros` y con `Proveedores`; el menú de celular hereda los dos arreglos, así que no hay que tocarlo aparte.
 
-- [ ] **Step 1: Test primero** — en `tests/components/layout.test.ts`, sobre el HTML del `Header` y del `Footer`:
+- [x] **Step 1: Test primero** — en `tests/components/layout.test.ts`, sobre el HTML del `Header` y del `Footer`:
 
 ```ts
 it('el menú no ofrece Obras ni Trabajá con nosotros, y sí Proveedores', async () => {
@@ -562,9 +562,9 @@ it('el menú no ofrece Obras ni Trabajá con nosotros, y sí Proveedores', async
 
 Y el equivalente para el pie (que ya tiene Proveedores en la columna de Contacto: ahí solo se van los dos enlaces).
 
-- [ ] **Step 2: Aplicar** — `Header.astro`: sacar `{ nombre: 'Obras', href: '/obras' }` de `items`; en `nosotros`, cambiar `Trabajá con nosotros` por `{ nombre: 'Proveedores', href: '/proveedores' }`. `Footer.astro`: la columna «Empresa» queda `Quiénes somos · Novedades · Políticas · Transparencia`.
+- [x] **Step 2: Aplicar** — `Header.astro`: sacar `{ nombre: 'Obras', href: '/obras' }` de `items`; en `nosotros`, cambiar `Trabajá con nosotros` por `{ nombre: 'Proveedores', href: '/proveedores' }`. `Footer.astro`: la columna «Empresa» queda `Quiénes somos · Novedades · Políticas · Transparencia`.
 
-- [ ] **Step 3: Verificar y commitear** — `feat(nav): Proveedores al menú; salen Obras y Trabajá con nosotros`.
+- [x] **Step 3: Verificar y commitear** — `feat(nav): Proveedores al menú; salen Obras y Trabajá con nosotros`.
 
 ---
 
@@ -584,7 +584,7 @@ Resultado: `/obras/` **no existe en el build** (ni HTML, ni sitemap, ni enlaces)
 
 **Por qué así:** Astro decide las rutas por el filesystem y no deja quitarlas desde un hook (ya lo sufrimos con `astro:routes:resolved`, que entrega una copia del array: ver `scripts/lib/solo-portada.ts`). Pero una **ruta rest** sí se puede vaciar: `getStaticPaths` devolviendo `[]` no genera nada, y de yapa el sitemap no la lista, porque el sitemap se arma con las rutas generadas. Es nativo, es un `false` → `true`, y no hace falta podar `dist/` a mano.
 
-- [ ] **Step 1: Escribir el test que falla**
+- [x] **Step 1: Escribir el test que falla**
 
 ```ts
 import { existsSync } from 'node:fs';
@@ -605,7 +605,7 @@ describe('obras oculta', () => {
 });
 ```
 
-- [ ] **Step 2: Mover la página y agregarle el `getStaticPaths`**
+- [x] **Step 2: Mover la página y agregarle el `getStaticPaths`**
 
 En `src/pages/obras/[...resto].astro`, arriba del frontmatter que ya tenía:
 
@@ -618,9 +618,9 @@ import { publicado } from '@/lib/publicado';
 export const getStaticPaths = () => (publicado.obras ? [{ params: { resto: undefined } }] : []);
 ```
 
-- [ ] **Step 3: Comprobar el sitemap** — correr `pnpm verificar` y confirmar que `dist/sitemap-0.xml` no lista `/obras/` y que `dist/obras/` no existe. Si `@astrojs/sitemap` la listara igual (no debería: se alimenta de las rutas generadas), agregarle `filter` en `astro.config.mjs`; si no, no se toca nada.
+- [x] **Step 3: Comprobar el sitemap** — correr `pnpm verificar` y confirmar que `dist/sitemap-0.xml` no lista `/obras/` y que `dist/obras/` no existe. Si `@astrojs/sitemap` la listara igual (no debería: se alimenta de las rutas generadas), agregarle `filter` en `astro.config.mjs`; si no, no se toca nada.
 
-- [ ] **Step 4: Verificar y commitear** — `feat(obras): /obras deja de existir en el build hasta que haya algo que contar` (mencionando la baja del conteo de páginas).
+- [x] **Step 4: Verificar y commitear** — `feat(obras): /obras deja de existir en el build hasta que haya algo que contar` (mencionando la baja del conteo de páginas).
 
 ---
 
@@ -640,7 +640,7 @@ export const getStaticPaths = () => (publicado.obras ? [{ params: { resto: undef
 - Las **novedades que hablan de obras no se borran**: son parte del archivo público y llevan fecha. Lo que se saca es el **enlace a `/obras/`** (si no, el link queda roto y `verificar.ts` lo canta) y la frase que promete una página que ya no está. El contenido histórico queda.
 - `2026-08-27-obras-antes-que-peaje.md` enlaza dos veces a `/obras/` y su razón de ser es esa página. **Se despublica**: se mueve a `src/content/novedades/_borradores/` (el guion bajo la saca de la colección de Astro) y vuelve cuando vuelva `/obras/`. Va a la lista de pendientes.
 
-- [ ] **Step 1: Test primero** — `tests/components/home.test.ts` y `tests/components/quienes-somos.test.ts`:
+- [x] **Step 1: Test primero** — `tests/components/home.test.ts` y `tests/components/quienes-somos.test.ts`:
 
 ```ts
 it('la home no habla de obras ni muestra el estado de la traza de ejemplo', async () => {
@@ -651,7 +651,7 @@ it('la home no habla de obras ni muestra el estado de la traza de ejemplo', asyn
 });
 ```
 
-- [ ] **Step 2: Aplicar los cambios de texto**
+- [x] **Step 2: Aplicar los cambios de texto**
 
 - `quienes-somos.astro:30`: «Por eso el orden es este: primero las obras, después el peaje pleno. El contrato lo exige y nosotros lo firmamos.» → reescribir sin prometer una página de obras ni anticipar el orden de trabajos que nadie confirmó. Propuesta: *«No venimos a inaugurar una ruta: venimos a hacernos cargo de una que ya existe y que la gente usa todos los días. Las obligaciones de conservación y de inversión están en el contrato de concesión, y se cumplen desde el primer día.»*
 - `quienes-somos.astro:19` («con el plan de conservación que fija el pliego») → *«con su plan de conservación, según el contrato de concesión»* (también lo pide §4.11).
@@ -659,9 +659,9 @@ it('la home no habla de obras ni muestra el estado de la traza de ejemplo', asyn
 - `2026-08-27-como-se-fija-la-tarifa.md`: la sección «Cuándo se cobra» dice «Primero las obras». Se reescribe sin la consigna, manteniendo el dato con fuente (transitabilidad óptima verificada por Vialidad Nacional).
 - Mover `2026-08-27-obras-antes-que-peaje.md` a `src/content/novedades/_borradores/` (crear la carpeta con un `README.md` de una línea que diga por qué está y qué la devuelve).
 
-- [ ] **Step 3: Verificar** — `pnpm verificar` sin links rotos y sin `/obras/`. `pnpm check && pnpm test`.
+- [x] **Step 3: Verificar** — `pnpm verificar` sin links rotos y sin `/obras/`. `pnpm check && pnpm test`.
 
-- [ ] **Step 4: Commit** — `feat(obras): la home y el resto del sitio dejan de hablar de obras`.
+- [x] **Step 4: Commit** — `feat(obras): la home y el resto del sitio dejan de hablar de obras`.
 
 ---
 
@@ -679,15 +679,15 @@ Resultado: la página no existe, no queda ni un enlace, y la FAQ que la nombraba
 
 **Nota:** ya fue: el ítem del menú y el del pie salieron en la Tarea 2.2.
 
-- [ ] **Step 1: Test primero** — que no exista ningún enlace a `/trabaja-con-nosotros/` en ninguna página renderizada (lo va a cazar `verificar.ts` como link roto, pero un test lo dice más rápido y con mejor mensaje).
+- [x] **Step 1: Test primero** — que no exista ningún enlace a `/trabaja-con-nosotros/` en ninguna página renderizada (lo va a cazar `verificar.ts` como link roto, pero un test lo dice más rápido y con mejor mensaje).
 
-- [ ] **Step 2: Aplicar**
+- [x] **Step 2: Aplicar**
 
 - Borrar el archivo.
 - `faq/13`: pregunta pasa a «¿Cómo puedo ser proveedor de Covicen?» y la respuesta pierde la primera oración. Ajustar `slug` a `ser-proveedor` **solo si** ninguna página lo enlaza por ancla (verificar con `grep -rn "trabajar-o-proveer" src/`); si lo enlaza, se deja el slug y se cambia el texto.
 - `tests/components/proximamente.test.ts:35`: reemplazar el centinela `'Trabajá con nosotros'` por `'Proveedores'` (existe y no debe aparecer en la portada), así el test sigue probando algo.
 
-- [ ] **Step 3: Verificar y commitear** — `feat(rrhh): se elimina Trabajá con nosotros` (mencionando la baja del conteo de páginas).
+- [x] **Step 3: Verificar y commitear** — `feat(rrhh): se elimina Trabajá con nosotros` (mencionando la baja del conteo de páginas).
 
 ---
 
@@ -713,7 +713,7 @@ Resultado: Leones, San Francisco y Totoras dicen **«Próxima»** a secas. El ca
 
 **Decisión sobre la FAQ 08:** el prompt dice «tocá … `src/content/faq/08-free-flow.json`». La pregunta es «¿Qué es el Free Flow?» y la respuesta *entera* es sobre Free Flow: reescribirla es inventar otra pregunta. **Se borra el archivo.** El `orden` de las demás no se renumera (el esquema solo ordena, no exige consecutivos) — confirmar leyendo `esquemaPregunta` y el componente `Faq`; si hubiera hueco visible, se renumeran.
 
-- [ ] **Step 1: Tests primero** — actualizar las tres aserciones que hoy exigen «Free Flow», dejándolas exigir lo contrario:
+- [x] **Step 1: Tests primero** — actualizar las tres aserciones que hoy exigen «Free Flow», dejándolas exigir lo contrario:
 
 ```ts
 // tests/lib/tramo.test.ts
@@ -743,7 +743,7 @@ it('ninguna página de usuario nombra Free Flow', async () => {
 
 (Excluye `esquemas.ts`, donde el nombre del campo es parte del contrato. Si el comentario de `tramo.ts` lo menciona, se reescribe el comentario.)
 
-- [ ] **Step 2: Aplicar**
+- [x] **Step 2: Aplicar**
 
 `src/lib/tramo.ts`:
 ```ts
@@ -769,7 +769,7 @@ export const estadoCabina = (c: Cabina): EstadoOperativo =>
 `AccesosRapidos.astro:14`: `'TelePASE y pago en la vía.'`
 `Servicios.astro:11`: *«TelePASE gratis y en todas las estaciones, y pago en la vía donde haya cabinas.»*
 
-- [ ] **Step 3: Verificar y commitear** — `feat(tramo): las estaciones nuevas dicen «Próxima» y nada más`.
+- [x] **Step 3: Verificar y commitear** — `feat(tramo): las estaciones nuevas dicen «Próxima» y nada más`.
 
 ---
 
@@ -777,7 +777,9 @@ export const estadoCabina = (c: Cabina): EstadoOperativo =>
 
 Resultado: la home queda en **Hero → AccesosRapidos → ElTramo (con el mapa) → NovedadesRecientes → ContactoCta** y nada más. Los textos de la portada los eligió Juli.
 
-### Tarea 6.1: Los textos de la portada — **CHECKPOINT CON JULI**
+### Tarea 6.1: Los textos de la portada — **CHECKPOINT CON JULI · PENDIENTE**
+
+> **Estado al 20/09/2026:** es lo único que queda abierto de todo el plan. Juli lo está decidiendo con sus compañeros. El resto se ejecutó entero. Hasta que elija, el hero conserva el título y el párrafo de septiembre.
 
 **Files:**
 - Modify: `src/components/home/Hero.astro:41-48`
@@ -814,7 +816,7 @@ Resultado: la home queda en **Hero → AccesosRapidos → ElTramo (con el mapa) 
 
 > **Recordatorio (ver «Lo que el prompt dice y el código desmiente», punto 1):** el mapa interactivo **ya está** en la home dentro de `ElTramo.astro`. Acá no se mueve nada; se le cambia el texto.
 
-- [ ] **Step 1: Test primero**
+- [x] **Step 1: Test primero**
 
 ```ts
 it('la home tiene exactamente las cinco secciones acordadas, en orden', async () => {
@@ -830,13 +832,13 @@ it('la home tiene exactamente las cinco secciones acordadas, en orden', async ()
 
 (Los `id` exactos se confirman leyendo cada componente antes de escribir la aserción; lo que no se negocia es que no queden los cinco que se van.)
 
-- [ ] **Step 2: Aplicar** — `Home.astro` queda con `Hero`, `AccesosRapidos`, `ElTramo`, `NovedadesRecientes`, `ContactoCta`, y se sacan los imports y los `await` de datos que ya nadie usa (`tarifario`, `obras`, `faq`, `estado`). Renumerar `indice`: `ElTramo` pasa a `01` y `NovedadesRecientes` a `02`.
+- [x] **Step 2: Aplicar** — `Home.astro` queda con `Hero`, `AccesosRapidos`, `ElTramo`, `NovedadesRecientes`, `ContactoCta`, y se sacan los imports y los `await` de datos que ya nadie usa (`tarifario`, `obras`, `faq`, `estado`). Renumerar `indice`: `ElTramo` pasa a `01` y `NovedadesRecientes` a `02`.
 
-- [ ] **Step 3: El texto de la sección El tramo** — «Tres rutas, dos provincias, un corredor.» pasa a institucional. Propuesta: **«Tres rutas nacionales bajo una misma concesión.»** con bajada *«RN 9, RN 19 y RN 34 en Córdoba y Santa Fe. Tocá una estación para ver su ficha: en verde las que cobran hoy, en amarillo las próximas.»* — es el mismo título que el gerente aprobó en `/el-tramo/` sección 01 («está perfecta»), así que la home y la página interior dicen lo mismo.
+- [x] **Step 3: El texto de la sección El tramo** — «Tres rutas, dos provincias, un corredor.» pasa a institucional. Propuesta: **«Tres rutas nacionales bajo una misma concesión.»** con bajada *«RN 9, RN 19 y RN 34 en Córdoba y Santa Fe. Tocá una estación para ver su ficha: en verde las que cobran hoy, en amarillo las próximas.»* — es el mismo título que el gerente aprobó en `/el-tramo/` sección 01 («está perfecta»), así que la home y la página interior dicen lo mismo.
 
-- [ ] **Step 4: Verificar** — `pnpm check && pnpm test && pnpm verificar`. Mirar el JS emitido: sacar secciones solo puede bajarlo.
+- [x] **Step 4: Verificar** — `pnpm check && pnpm test && pnpm verificar`. Mirar el JS emitido: sacar secciones solo puede bajarlo.
 
-- [ ] **Step 5: Commit** — `feat(home): la home queda en cinco secciones`.
+- [x] **Step 5: Commit** — `feat(home): la home queda en cinco secciones`.
 
 ---
 
@@ -850,7 +852,7 @@ Resultado: queda el cuadro tarifario por estación tal cual está y las dos tarj
 - Modify: `src/pages/tarifas.astro`
 - Modify: `tests/components/tarifas.test.ts`
 
-- [ ] **Step 1: Test primero**
+- [x] **Step 1: Test primero**
 
 ```ts
 // Lo que el gerente pidió mantener tal cual: «hay tarifas, cuadro tarifario, y que esté para cada estación lo que
@@ -876,11 +878,11 @@ it('los índices de las secciones que quedan van corridos', async () => {
 });
 ```
 
-- [ ] **Step 2: Aplicar** — envolver cada `<Seccion>` en `{publicado.X && (...)}` y calcular los `indice` con `indices([...])` de la Tarea 1.2. Las constantes `descuentos`, `excesoDeCarga` y `futuras` **quedan en el archivo** (son el contenido que vuelve al prender el interruptor), dentro del mismo bloque condicional para que no queden sueltas.
+- [x] **Step 2: Aplicar** — envolver cada `<Seccion>` en `{publicado.X && (...)}` y calcular los `indice` con `indices([...])` de la Tarea 1.2. Las constantes `descuentos`, `excesoDeCarga` y `futuras` **quedan en el archivo** (son el contenido que vuelve al prender el interruptor), dentro del mismo bloque condicional para que no queden sueltas.
 
   **Ojo:** al esconderse `04 · Si pasaste sin pagar`, se va también el enlace a `/medios-de-pago#sin-pagar` que salía de ahí. Esa sección de Medios de pago **no se esconde** (el prompt no la nombra y el recargo ahí ya vivía antes) — pero el recargo es el mismo dato sin certificar. **Decisión:** `publicado.pasasteSinPagar` gobierna **las dos** apariciones (Tarifas 04 y Medios de pago 04): un dato, un interruptor. Queda anotado en `publicado.ts`.
 
-- [ ] **Step 3: Verificar y commitear** — `feat(tarifas): se esconden las secciones que el área todavía no certificó`.
+- [x] **Step 3: Verificar y commitear** — `feat(tarifas): se esconden las secciones que el área todavía no certificó`.
 
 ---
 
@@ -892,9 +894,9 @@ it('los índices de las secciones que quedan van corridos', async () => {
 
 **Qué se acorta y qué no:** las **dos tarjetas con los enlaces a discapacidad y ex combatientes de Malvinas se quedan sí o sí** (el gerente las marcó dos veces como «está genial, tiene que estar»). Lo que pesa es la lista de ocho viñetas de vehículos exentos.
 
-- [ ] **Step 1: Test primero** — que las dos tarjetas y sus dos enlaces sigan enteros, y que la lista sea más corta que hoy sin perder las dos categorías que la gente busca (discapacidad y Malvinas).
+- [x] **Step 1: Test primero** — que las dos tarjetas y sus dos enlaces sigan enteros, y que la lista sea más corta que hoy sin perder las dos categorías que la gente busca (discapacidad y Malvinas).
 
-- [ ] **Step 2: Aplicar** — la lista pasa de ocho ítems a **una frase agrupada** más las dos categorías que tienen trámite:
+- [x] **Step 2: Aplicar** — la lista pasa de ocho ítems a **una frase agrupada** más las dos categorías que tienen trámite:
 
 ```ts
 // El listado largo era el que pesaba (pedido del gerente, 20/09/2026). Las categorías del contrato se agrupan en una
@@ -910,7 +912,7 @@ La bajada pierde la cita del artículo (§4.11) y queda: *«Solo los vehículos 
 
 `faq/15` se acorta con el mismo agrupamiento y pierde «del pliego».
 
-- [ ] **Step 3: Verificar y commitear** — `feat(tarifas): las exenciones se dicen en tres líneas`.
+- [x] **Step 3: Verificar y commitear** — `feat(tarifas): las exenciones se dicen en tres líneas`.
 
 ---
 
@@ -928,9 +930,9 @@ Resultado: se va la sección de cuadros tarifarios (vive en Tarifas), la 01 qued
 
 **La sección 01 no se toca** («está perfecta», dijo el gerente), salvo la palabra «pliego» de su bajada, que es §4.11.
 
-- [ ] **Step 1: Test** — que no haya `id="tarifas"` ni tabla de tarifas en `/el-tramo/`, que la nav tenga tres ítems y que los `indice` queden `01 · 02 · 03`.
-- [ ] **Step 2: Aplicar** — borrar la sección, sacar el ítem de `bloques`, renumerar con `indices()`. Los imports de `TablaTarifas` y `cabinasDelCuadro` se van con ella; `tarifario` deja de pedirse en el frontmatter. El botón «Descuentos, exenciones y detalle» que vivía ahí se **conserva** moviéndolo al final de la sección 02 (Estaciones): es el puente a Tarifas y sin él la página queda sin salida hacia el precio.
-- [ ] **Step 3: Verificar y commitear** — `feat(tramo): los cuadros tarifarios viven en Tarifas y no se repiten`.
+- [x] **Step 1: Test** — que no haya `id="tarifas"` ni tabla de tarifas en `/el-tramo/`, que la nav tenga tres ítems y que los `indice` queden `01 · 02 · 03`.
+- [x] **Step 2: Aplicar** — borrar la sección, sacar el ítem de `bloques`, renumerar con `indices()`. Los imports de `TablaTarifas` y `cabinasDelCuadro` se van con ella; `tarifario` deja de pedirse en el frontmatter. El botón «Descuentos, exenciones y detalle» que vivía ahí se **conserva** moviéndolo al final de la sección 02 (Estaciones): es el puente a Tarifas y sin él la página queda sin salida hacia el precio.
+- [x] **Step 3: Verificar y commitear** — `feat(tramo): los cuadros tarifarios viven en Tarifas y no se repiten`.
 
 ---
 
@@ -945,9 +947,9 @@ Resultado: se va la sección de cuadros tarifarios (vive en Tarifas), la 01 qued
 
 **Qué queda por hacer, entonces:** que la sección entera no se renderice cuando no hay ni una estación con servicios cargados, en vez de mostrar un encabezado con una lista vacía debajo. Y que el pedido del dato quede escrito en `docs/pendientes-de-confirmacion.md`.
 
-- [ ] **Step 1: Test** — con los datos de hoy, `/el-tramo/` no muestra el encabezado «Áreas de descanso y servicios»; con una cabina con `servicios.sanitarios: true` (fixture), sí lo muestra y lista solo sanitarios. **Es la forma de probar que prender el dato lo devuelve sin tocar código.**
-- [ ] **Step 2: Aplicar** — condicionar la sección a `conServicios.length > 0`, renumerar, y dejar el enlace a `/servicios/` (que sí tiene contenido) fuera del condicional.
-- [ ] **Step 3: Verificar y commitear** — `feat(tramo): las áreas de descanso aparecen cuando haya datos, no antes`.
+- [x] **Step 1: Test** — con los datos de hoy, `/el-tramo/` no muestra el encabezado «Áreas de descanso y servicios»; con una cabina con `servicios.sanitarios: true` (fixture), sí lo muestra y lista solo sanitarios. **Es la forma de probar que prender el dato lo devuelve sin tocar código.**
+- [x] **Step 2: Aplicar** — condicionar la sección a `conServicios.length > 0`, renumerar, y dejar el enlace a `/servicios/` (que sí tiene contenido) fuera del condicional.
+- [x] **Step 3: Verificar y commitear** — `feat(tramo): las áreas de descanso aparecen cuando haya datos, no antes`.
 
 > **No se inventa nada del mapa.** Las ubicaciones exactas y qué paradas tiene cada estación están a determinar (§4.8): van a pendientes y el mapa queda como está.
 
@@ -977,15 +979,15 @@ Resultado: cada trámite dice **qué podés hacer, cómo lo hacés y qué docume
 
 **Contrato:** el campo nuevo `queEs` va **opcional** (`z.string().min(1).optional()`), igual que el resto de lo que se agregó en septiembre. `pnpm contrato` y commitear `docs/contrato/*.schema.json` si el esquema de trámites se exporta (verificar: hoy `pnpm contrato` exporta solo tramo y tarifario; si trámites no viaja, no hay nada que regenerar).
 
-- [ ] **Step 1: Test primero** — cada trámite visible tiene los tres campos con contenido, y los dos de tarifa diferencial no se renderizan.
+- [x] **Step 1: Test primero** — cada trámite visible tiene los tres campos con contenido, y los dos de tarifa diferencial no se renderizan.
 
-- [ ] **Step 2: Reestructurar `tramites.json`** — agregar `queEs` a los tres que quedan, y revisar `requisitos` para que diga **qué documentación hay que llevar**, que es el pedido textual («para que cuando lo inicies, lo inicies completo y no te demore tener que estar presentando documentación»). Los requisitos de discapacidad y Malvinas **se verifican contra argentina.gob.ar** antes de tocarlos: no se agrega ni un requisito que la página oficial no liste.
+- [x] **Step 2: Reestructurar `tramites.json`** — agregar `queEs` a los tres que quedan, y revisar `requisitos` para que diga **qué documentación hay que llevar**, que es el pedido textual («para que cuando lo inicies, lo inicies completo y no te demore tener que estar presentando documentación»). Los requisitos de discapacidad y Malvinas **se verifican contra argentina.gob.ar** antes de tocarlos: no se agrega ni un requisito que la página oficial no liste.
 
-- [ ] **Step 3: Rehacer la ficha en `tramites.astro`** — tres bloques claros: *Qué es* (párrafo), *Qué necesitás* (lista), *Cómo se hace* (pasos numerados), más el enlace oficial. La nav de anclas de arriba se arma con los trámites visibles.
+- [x] **Step 3: Rehacer la ficha en `tramites.astro`** — tres bloques claros: *Qué es* (párrafo), *Qué necesitás* (lista), *Cómo se hace* (pasos numerados), más el enlace oficial. La nav de anclas de arriba se arma con los trámites visibles.
 
-- [ ] **Step 4: El `<select>` del formulario** — sus opciones salen de `tramites.map(t => t.nombre)`: si se filtra la lista, el select se arregla solo. Comprobarlo.
+- [x] **Step 4: El `<select>` del formulario** — sus opciones salen de `tramites.map(t => t.nombre)`: si se filtra la lista, el select se arregla solo. Comprobarlo.
 
-- [ ] **Step 5: Verificar y commitear** — `feat(tramites): la guía dice qué es, qué necesitás y cómo se hace`.
+- [x] **Step 5: Verificar y commitear** — `feat(tramites): la guía dice qué es, qué necesitás y cómo se hace`.
 
 ---
 
@@ -995,7 +997,7 @@ Resultado: `pnpm verificar` prohíbe las citas del pliego fuera de Transparencia
 
 ### Tarea 10.1: (ya escrita en la Tarea 1.4) Confirmar que la guarda está en rojo
 
-- [ ] **Step 1:** correr `pnpm verificar` y anotar la lista completa de páginas que fallan. Esa lista es el checklist del Step siguiente.
+- [x] **Step 1:** correr `pnpm verificar` y anotar la lista completa de páginas que fallan. Esa lista es el checklist del Step siguiente.
 
 ---
 
@@ -1015,10 +1017,10 @@ Resultado: `pnpm verificar` prohíbe las citas del pliego fuera de Transparencia
 | «Todos están en el pliego de la concesión.» | «Todos están en el contrato de concesión.» |
 | «con el artículo del pliego que los exige» | (se va: ya no se muestra el artículo) |
 
-- [ ] **Step 1: Dejar de pintar `fuente`** en `servicios.astro` (dos lugares), `tramites.astro` y `medios-de-pago.astro`. **El campo no se toca en los JSON ni en Zod.** Comentario en cada sitio explicando por qué el dato sigue ahí.
-- [ ] **Step 2: Reescribir las prosas** de la tabla de arriba, página por página, siguiendo la lista del Step 1 de la Tarea 10.1.
-- [ ] **Step 3:** `pnpm verificar` en verde: 0 fallos. `pnpm test` con el test de la Tarea 1.4 en verde.
-- [ ] **Step 4: Commit** (lleva la Tarea 1.4 adentro) — `feat(contenido): el sitio deja de citarle el pliego al usuario`.
+- [x] **Step 1: Dejar de pintar `fuente`** en `servicios.astro` (dos lugares), `tramites.astro` y `medios-de-pago.astro`. **El campo no se toca en los JSON ni en Zod.** Comentario en cada sitio explicando por qué el dato sigue ahí.
+- [x] **Step 2: Reescribir las prosas** de la tabla de arriba, página por página, siguiendo la lista del Step 1 de la Tarea 10.1.
+- [x] **Step 3:** `pnpm verificar` en verde: 0 fallos. `pnpm test` con el test de la Tarea 1.4 en verde.
+- [x] **Step 4: Commit** (lleva la Tarea 1.4 adentro) — `feat(contenido): el sitio deja de citarle el pliego al usuario`.
 
 ---
 
@@ -1030,9 +1032,9 @@ Resultado: `pnpm verificar` prohíbe las citas del pliego fuera de Transparencia
 
 **Referencia de tono: Corresur** (`https://www.corresur.com.ar/`). **Referencia de tono, no de texto:** `scripts/originalidad.ts` exige **cero** secuencias de 6 palabras en común, y se corre al cerrar la fase.
 
-- [ ] **Step 1:** pasada página por página, acortando bajadas y sacando el registro de folleto. Cada cambio conserva el dato con fuente; ningún cambio agrega un dato nuevo.
-- [ ] **Step 2:** `pnpm build && pnpm originalidad https://www.corresur.com.ar/ https://cvsa.com.ar/` → 0 coincidencias. Si aparece alguna, se reescribe esa frase.
-- [ ] **Step 3: Commit** — `feat(contenido): tono institucional en el resto del sitio`.
+- [x] **Step 1:** pasada página por página, acortando bajadas y sacando el registro de folleto. Cada cambio conserva el dato con fuente; ningún cambio agrega un dato nuevo.
+- [x] **Step 2:** `pnpm build && pnpm originalidad https://www.corresur.com.ar/ https://cvsa.com.ar/` → 0 coincidencias. Si aparece alguna, se reescribe esa frase.
+- [x] **Step 3: Commit** — `feat(contenido): tono institucional en el resto del sitio`.
 
 ---
 
@@ -1062,8 +1064,8 @@ Filas mínimas (una por cada `false` de `src/lib/publicado.ts`, más las que no 
 
 Más un recordatorio corto de que **lo de `docs/guia-de-revision.md` § «Qué está oculto hasta tener el dato» sigue vigente** (razón social, CUIT, 0800, WhatsApp, casilla, póliza, redes…) y que esa lista no se duplica acá: se enlaza.
 
-- [ ] **Step 1: Escribirlo.** Cada fila con la pregunta redactada para copiar y pegar en un mail o leer en una reunión. Sin tecnicismos.
-- [ ] **Step 2: Commit** — `docs: la lista de qué falta preguntar y a quién`.
+- [x] **Step 1: Escribirlo.** Cada fila con la pregunta redactada para copiar y pegar en un mail o leer en una reunión. Sin tecnicismos.
+- [x] **Step 2: Commit** — `docs: la lista de qué falta preguntar y a quién`.
 
 ---
 
@@ -1071,11 +1073,11 @@ Más un recordatorio corto de que **lo de `docs/guia-de-revision.md` § «Qué e
 
 **Files:** Modify: `docs/guia-de-revision.md`
 
-- [ ] **Step 1:** sección nueva arriba, **«Lo que cambió el 20 de septiembre — mirá esto primero»**, con la lista de la tanda y qué mirar de cada cosa.
-- [ ] **Step 2:** sacar del índice las páginas que ya no existen (`/obras/`, `/trabaja-con-nosotros/`) y sus bloques; ajustar el bloque de Políticas/Privacidad/Proveedores.
-- [ ] **Step 3:** actualizar Home (cinco secciones), Tarifas (qué se ve y qué no), El tramo (sin cuadros), Trámites (fichas nuevas), Medios de pago (sin Free Flow), y la sección «Qué está oculto hasta tener el dato» enlazando a `docs/pendientes-de-confirmacion.md`.
-- [ ] **Step 4:** agregar cómo se prende lo escondido: «abrí `src/lib/publicado.ts` y cambiá el `false` por `true`».
-- [ ] **Step 5: Commit** — `docs: guía de revisión al día con la tanda del 20/09`.
+- [x] **Step 1:** sección nueva arriba, **«Lo que cambió el 20 de septiembre — mirá esto primero»**, con la lista de la tanda y qué mirar de cada cosa.
+- [x] **Step 2:** sacar del índice las páginas que ya no existen (`/obras/`, `/trabaja-con-nosotros/`) y sus bloques; ajustar el bloque de Políticas/Privacidad/Proveedores.
+- [x] **Step 3:** actualizar Home (cinco secciones), Tarifas (qué se ve y qué no), El tramo (sin cuadros), Trámites (fichas nuevas), Medios de pago (sin Free Flow), y la sección «Qué está oculto hasta tener el dato» enlazando a `docs/pendientes-de-confirmacion.md`.
+- [x] **Step 4:** agregar cómo se prende lo escondido: «abrí `src/lib/publicado.ts` y cambiá el `false` por `true`».
+- [x] **Step 5: Commit** — `docs: guía de revisión al día con la tanda del 20/09`.
 
 ---
 
@@ -1083,27 +1085,27 @@ Más un recordatorio corto de que **lo de `docs/guia-de-revision.md` § «Qué e
 
 **Files:** `obsidian/Home.md`, `obsidian/Arquitectura de informacion de la landing.md`, `obsidian/Obligaciones del pliego para la web.md`, `obsidian/Costura de datos.md`
 
-- [ ] **Step 1: `Home.md`** — entrada de estado nueva del 2026-09-20, con la verificación y los números reales (no los esperados): `astro check`, tests, `verificar` (28 páginas), `verificar:portada`, JS gz, `originalidad`.
-- [ ] **Step 2: `Arquitectura de informacion de la landing.md`** — la home cambia de forma: cinco secciones y por qué; `/obras/` y `/trabaja-con-nosotros/` fuera del mapa del sitio; Proveedores sube al menú.
-- [ ] **Step 3: `Obligaciones del pliego para la web.md`** — qué se dejó de mostrar y por qué. **Ojo con el matiz:** el pliego obliga *contenido*, no obliga *citar el pliego*; lo que se sacó son las citas, no las obligaciones. Anotar que Transparencia es la excepción y que ahí la normativa sigue entera.
-- [ ] **Step 4: `Costura de datos.md`** — el interruptor: qué es `src/lib/publicado.ts`, por qué es uno solo, cómo se prende, y la distinción con `capacidades.ts` (aquello es «el sistema no existe»; esto es «el dato no está confirmado»). Sumar las dos lecciones durables del header, que van a [[Sistema de diseno]]: *(1) el peor contraste de una animación está en el medio, no en los extremos — el fondo del header cumplía en los dos extremos y fallaba a los 24 px de scroll; (2) un texto que se apoya en su propia superficie opaca deja de tener un problema de contraste y pasa a tener un par de tokens, que es un problema ya resuelto y con guarda.* Y la anécdota de método: **mi objeción contra las pills («el logotipo queda igual de ilegible») era falsa, y la tiró abajo la medición, no la discusión** — el logotipo va en `--color-texto` y ya pasaba con 4,95:1.
-- [ ] **Step 5:** notas atómicas, enlazadas con `[[wikilinks]]`, sin duplicar el código.
-- [ ] **Step 6: Commit** — `docs(vault): la tanda del 20/09 en el árbol`.
+- [x] **Step 1: `Home.md`** — entrada de estado nueva del 2026-09-20, con la verificación y los números reales (no los esperados): `astro check`, tests, `verificar` (28 páginas), `verificar:portada`, JS gz, `originalidad`.
+- [x] **Step 2: `Arquitectura de informacion de la landing.md`** — la home cambia de forma: cinco secciones y por qué; `/obras/` y `/trabaja-con-nosotros/` fuera del mapa del sitio; Proveedores sube al menú.
+- [x] **Step 3: `Obligaciones del pliego para la web.md`** — qué se dejó de mostrar y por qué. **Ojo con el matiz:** el pliego obliga *contenido*, no obliga *citar el pliego*; lo que se sacó son las citas, no las obligaciones. Anotar que Transparencia es la excepción y que ahí la normativa sigue entera.
+- [x] **Step 4: `Costura de datos.md`** — el interruptor: qué es `src/lib/publicado.ts`, por qué es uno solo, cómo se prende, y la distinción con `capacidades.ts` (aquello es «el sistema no existe»; esto es «el dato no está confirmado»). Sumar las dos lecciones durables del header, que van a [[Sistema de diseno]]: *(1) el peor contraste de una animación está en el medio, no en los extremos — el fondo del header cumplía en los dos extremos y fallaba a los 24 px de scroll; (2) un texto que se apoya en su propia superficie opaca deja de tener un problema de contraste y pasa a tener un par de tokens, que es un problema ya resuelto y con guarda.* Y la anécdota de método: **mi objeción contra las pills («el logotipo queda igual de ilegible») era falsa, y la tiró abajo la medición, no la discusión** — el logotipo va en `--color-texto` y ya pasaba con 4,95:1.
+- [x] **Step 5:** notas atómicas, enlazadas con `[[wikilinks]]`, sin duplicar el código.
+- [x] **Step 6: Commit** — `docs(vault): la tanda del 20/09 en el árbol`.
 
 ---
 
 ## Definition of Done
 
-- [ ] `pnpm check` → 0 errores
-- [ ] `pnpm test` → todo verde (piso: **510**; van a ser más)
-- [ ] `pnpm verificar` → **28 páginas**, 0 fallos, JS ≤ 30 KB gz
-- [ ] `pnpm verificar:portada` → 1 página, 0 fallos, 0 KB de JS
-- [ ] `pnpm build && pnpm originalidad https://www.corresur.com.ar/ https://cvsa.com.ar/` → 0 secuencias de 6 palabras en común
-- [ ] Guardas que no se negocian, en verde: `colores-fijos`, `legibilidad`, `contraste`, `hero-foto`, **`header-foto`** (nueva), `presupuesto`
-- [ ] Ni un `TODO`, `test.skip`, `it.only` ni rama sin implementar en los archivos tocados
-- [ ] `docs/pendientes-de-confirmacion.md` escrito
-- [ ] `docs/guia-de-revision.md` actualizada
-- [ ] Vault al día
-- [ ] `rev-bro` aprobó **sobre código que no escribió**, con la salida real de los comandos
-- [ ] Rama `web-ajustes-2026-09-20`, un commit por tarea, **sin push**
-- [ ] Cierre para Juli en criollo: qué cambió, qué quedó escondido y por qué, qué falta preguntar, y los números de la verificación
+- [x] `pnpm check` → 0 errores
+- [x] `pnpm test` → todo verde (piso: **510**; van a ser más)
+- [x] `pnpm verificar` → **28 páginas**, 0 fallos, JS ≤ 30 KB gz
+- [x] `pnpm verificar:portada` → 1 página, 0 fallos, 0 KB de JS
+- [x] `pnpm build && pnpm originalidad https://www.corresur.com.ar/ https://cvsa.com.ar/` → 0 secuencias de 6 palabras en común
+- [x] Guardas que no se negocian, en verde: `colores-fijos`, `legibilidad`, `contraste`, `hero-foto`, **`header-foto`** (nueva), `presupuesto`
+- [x] Ni un `TODO`, `test.skip`, `it.only` ni rama sin implementar en los archivos tocados
+- [x] `docs/pendientes-de-confirmacion.md` escrito
+- [x] `docs/guia-de-revision.md` actualizada
+- [x] Vault al día
+- [x] `rev-bro` aprobó **sobre código que no escribió**, con la salida real de los comandos
+- [x] Rama `web-ajustes-2026-09-20`, un commit por tarea, **sin push**
+- [x] Cierre para Juli en criollo: qué cambió, qué quedó escondido y por qué, qué falta preguntar, y los números de la verificación
