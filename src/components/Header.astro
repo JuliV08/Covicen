@@ -9,18 +9,20 @@ import { ruta } from '@/lib/rutas';
 interface Props { contacto: Contacto; rutaActual: string }
 const { contacto, rutaActual } = Astro.props;
 
+// Call del 20/09/2026. Obras se fue: se esconde hasta que haya algo que contar (src/lib/publicado.ts), y una
+// pagina viva sin enlaces igual se indexa, asi que la ruta tampoco se genera. Trabaja con nosotros se elimino.
+// Proveedores subio del pie al desplegable Nosotros: estaba enterrado y es por donde entra un tercero.
 const items = [
   { nombre: 'Tarifas', href: '/tarifas' },
   { nombre: 'El tramo', href: '/el-tramo' },
   { nombre: 'Servicios', href: '/servicios' },
-  { nombre: 'Obras', href: '/obras' },
   { nombre: 'Novedades', href: '/novedades' },
 ];
 const nosotros = [
   { nombre: 'Quiénes somos', href: '/quienes-somos' },
   { nombre: 'Políticas', href: '/politicas' },
   { nombre: 'Transparencia', href: '/transparencia' },
-  { nombre: 'Trabajá con nosotros', href: '/trabaja-con-nosotros' },
+  { nombre: 'Proveedores', href: '/proveedores' },
 ];
 const activo = (href: string) => rutaActual.startsWith(ruta(href));
 const nosotrosActivo = nosotros.some((n) => activo(n.href));

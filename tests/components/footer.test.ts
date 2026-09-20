@@ -36,3 +36,12 @@ describe('Footer', () => {
     expect(html).toContain('aria-label="Sitios institucionales"');
   });
 });
+
+describe('Footer, columna Empresa (20/09/2026)', () => {
+  it('ya no enlaza Obras ni Trabajá con nosotros, y sigue enlazando Proveedores', async () => {
+    const html = await render(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto());
+    expect(html, 'Obras volvió al pie').not.toContain('href="/obras/"');
+    expect(html, 'Trabajá con nosotros volvió al pie').not.toContain('href="/trabaja-con-nosotros/"');
+    expect(html).toContain('href="/proveedores/"');
+  });
+});

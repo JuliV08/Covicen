@@ -12,7 +12,7 @@ interface Props { empresa: Empresa; contacto: Contacto }
 const { empresa, contacto } = Astro.props;
 const columnas = [
   { titulo: 'Usuarios', links: [['Tarifas', '/tarifas'], ['Medios de pago', '/medios-de-pago'], ['Emergencias', '/emergencias'], ['Asistencia en ruta', '/asistencia'], ['Guía de trámites', '/tramites'], ['Seguridad vial', '/seguridad-vial'], ['Preguntas frecuentes', '/preguntas-frecuentes']] },
-  { titulo: 'Empresa', links: [['Quiénes somos', '/quienes-somos'], ['Obras', '/obras'], ['Novedades', '/novedades'], ['Políticas', '/politicas'], ['Transparencia', '/transparencia'], ['Trabajá con nosotros', '/trabaja-con-nosotros']] },
+  { titulo: 'Empresa', links: [['Quiénes somos', '/quienes-somos'], ['Novedades', '/novedades'], ['Políticas', '/politicas'], ['Transparencia', '/transparencia']] },
 ] as const;
 const tel = contacto.emergencias.telefono;
 const soloDigitos = (t: string) => t.replace(/[^\d+]/g, '');

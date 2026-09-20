@@ -80,6 +80,16 @@ describe('Header', () => {
     // con JS sí lo pone y lo mantiene al día con el estado del <details>
     expect(readFileSync('src/components/Header.astro', 'utf8')).toMatch(/setAttribute\('aria-expanded', String\(d\.open\)\)/);
   });
+  // Call del 20/09/2026: Obras se esconde hasta que haya algo que contar, Trabajá con nosotros se elimina, y
+  // Proveedores sube del pie al desplegable Nosotros. El menú de celular se arma con los MISMOS dos arreglos, así
+  // que exigir que Proveedores aparezca dos veces es lo que impide que alguien los desdoble y deje el celular viejo.
+  it('el menú no ofrece Obras ni Trabajá con nosotros, y sí Proveedores', async () => {
+    const c = await AstroContainer.create();
+    const html = await c.renderToString(Header, { props: await props() });
+    expect(html, 'Obras volvió al menú').not.toContain('href="/obras/"');
+    expect(html, 'Trabajá con nosotros volvió al menú').not.toContain('href="/trabaja-con-nosotros/"');
+    expect(html.match(/href="\/proveedores\/"/g)?.length, 'Proveedores tiene que estar en escritorio y en celular').toBe(2);
+  });
   it('lleva la barra superior con los accesos y, en el menú mobile, TelePASE y Mi cuenta', async () => {
     const c = await AstroContainer.create();
     const html = await c.renderToString(Header, { props: await props() });
