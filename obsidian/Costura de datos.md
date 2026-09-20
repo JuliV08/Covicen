@@ -117,3 +117,42 @@ Slots nuevos que se esconden hasta tener el dato: `empresa.polizaRc` (Transparen
 
 `src/content/estado-ruta.json` alimenta `datos.estadoRutas()` con **datos de ejemplo** (`ejemplo: true`): el componente `EstadoTraza` lo dice con un cartel inequívoco y el mapa de El tramo ubica los incidentes por km. Cuando exista el centro de operaciones, la misma forma (`disponible`, `ejemplo: false`, `actualizado` ISO con zona, `incidentes[] { ruta, km, tipo, severidad, sentido, descripcion, desde?, hasta? }`) la manda el sistema y una isla la pide en runtime (capacidad `estadoRutasEnVivo`). `src/lib/estado.ts` reduce a una fila por ruta con el peor nivel (normal / precaución / corte).
 
+
+## El interruptor de lo no confirmado (2026-09-20)
+
+`src/lib/publicado.ts`: **el único lugar del sitio donde se decide si una sección se publica**. Un objeto
+congelado de booleanos, uno por sección, con su comentario de por qué está apagada.
+
+**No es lo mismo que `capacidades.ts`**, y la diferencia importa:
+
+| | `capacidades.ts` | `publicado.ts` |
+|---|---|---|
+| Qué dice | «el sistema todavía no existe» | «el dato existe pero nadie lo certificó» |
+| Qué muestra | un hueco con una alternativa real («Próximamente» + a dónde ir mientras tanto) | **nada**: ni el rótulo, ni un guion, ni un «próximamente» |
+| Ejemplos | oficina virtual, ticketing de reclamos, portal de proveedores | descuentos por frecuencia, tarifa diferencial, recargos, obras |
+
+**Reglas que lo sostienen, y que tienen test:**
+
+1. **Son literales y nada más.** Ni `import.meta.env`, ni imports, ni ternarios, ni `if`. `tests/lib/publicado.test.ts`
+   lee el archivo y falla si aparece cualquiera de esas cosas. El motivo no es purismo: el que carga el dato no es
+   programador, y el día que este archivo deje de leerse de un vistazo deja de servir para lo que fue hecho.
+2. **Un dato, un interruptor.** «Pasaste sin pagar» aparece en Tarifas y en Medios de pago: lo gobierna el mismo
+   booleano. Con dos, el dato se escondería en una página y se publicaría en la otra, que es peor que no esconderlo.
+3. **Esconder no es borrar.** El contenido de lo escondido sigue versionado (las seis obras, los dos trámites de
+   tarifa diferencial, las constantes de las secciones de Tarifas), y hay tests que exigen que siga ahí: si alguien
+   lo borra «para limpiar», prender el `true` dejaría una sección vacía y nadie se enteraría.
+4. **La contracara es obligatoria.** Cada `false` tiene su fila en `docs/pendientes-de-confirmacion.md`, con la
+   pregunta redactada, a quién va, qué vuelve y dónde se carga. Esconder sin esa lista es perder el dato.
+
+Los números de sección no se escriben a mano: `src/lib/indices.ts` los corre solos a partir de qué se ve, así que
+apagar una sección no deja la numeración salteada ni obliga a renumerar a mano al volver a prenderla.
+
+**Cómo se esconde una página entera**, que es distinto de esconder una sección: ver
+[[Arquitectura de informacion de la landing]]. Astro no deja quitar una ruta fija desde un hook, pero una ruta
+rest con `getStaticPaths` devolviendo `[]` no genera nada, ni siquiera la entrada del sitemap.
+
+**Trampa encontrada al despublicar una novedad**: el guion bajo saca un archivo del *routing* de Astro, pero
+**no** de una colección de contenido. `content.config.ts` carga las novedades con `glob({ pattern: '**/*.md',
+base: './src/content/novedades' })`, así que un `_borradores/README.md` entró igual a la colección y `astro
+check` lo rechazó por no cumplir el schema. La única forma de sacar algo de una colección es sacarlo de la
+carpeta base: quedó en `src/content/novedades-despublicadas/`.

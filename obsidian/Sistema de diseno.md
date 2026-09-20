@@ -79,3 +79,35 @@ Lo que el PETG 61.7 exige al sitio se implementó como reglas globales **con gua
 - **Foco visible:** `<main id="contenido" tabindex="-1">` sin `outline-none`; `#contenido:focus-visible` dibuja el anillo con `outline-offset: -4px` (hacia adentro: `<main>` ocupa todo el ancho y arranca bajo el header fijo). El `<summary>` de Nosotros sincroniza `aria-expanded` con el `<details>`.
 - **HTML válido:** html-validate sobre cada página de `dist/` en `verificar.ts`; qué marcó y cómo se resolvió en los componentes está en [[Decisiones de arquitectura]] ("Cosas que aprendimos construyendo").
 - **Colores fijos:** la lista `permitidos` de `tests/styles/colores-fijos.test.ts` sigue siendo `tokens.css`, `Isotipo.astro` y `scripts/lib/color.ts`; la hoja de impresión no necesita excepción porque usa los tokens de papel y tinta.
+
+## El contraste del header, y por qué la pill (2026-09-20)
+
+El gerente vio a ojo que el menú se perdía sobre la foto del hero. La medición le dio la razón y, de paso,
+desmintió dos intuiciones — las dos mías.
+
+Medido con los píxeles de las dos fotos, nueve tamaños de pantalla y **todo el recorrido del scroll**, con el
+método de `tests/styles/hero-foto.test.ts`. Cada celda: menú (`texto-2`) · logotipo y hamburguesa (`texto`).
+
+| Configuración | Oscuro | Claro (foto de día) |
+|---|---|---|
+| Como estaba: `animation-range: 0 120px`, `--color-cabecera` alfa 0,85 | 8,92 · 14,16 | **2,22** · 4,95 |
+| Fondo opaco (alfa 1,00), mismo recorrido | 8,97 · 14,24 | **2,29** · 5,13 |
+| Recorrido de 16 px, alfa 0,85 | 8,92 · 14,16 | 4,59 · 10,24 |
+| Recorrido de 16 px, alfa 1,00 | 8,97 · 14,24 | 5,29 · 11,82 |
+
+**Tres lecciones durables:**
+
+1. **El peor contraste de una animación está en el medio, no en los extremos.** El fondo del header cumplía a
+   scroll 0 (está sobre `--color-fondo`, no sobre la foto) y cumplía al final (opaco), y fallaba a los ~24 px,
+   con la foto ya detrás del texto y el fondo a 0,17 de opacidad. Por eso oscurecer el color final no movía nada
+   (2,22 → 2,29): la variable no era el color, era **cuándo** termina de pintarse.
+2. **Un texto que se apoya en su propia superficie opaca deja de tener un problema de contraste** y pasa a tener
+   un par de tokens, que es un problema ya resuelto y con guarda (`scripts/lib/pares.ts` lo verifica en los dos
+   temas). Eso hace la pill: el menú deja de depender del scroll, del tema y de qué foto haya.
+3. **La medición gana a la discusión.** Yo había objetado la pill con un argumento que sonaba sólido —«no cubre
+   el logotipo ni la hamburguesa, que viajan en la misma franja»—, y era **falso**: esas dos piezas van en
+   `--color-texto`, bastante más fuerte que el `--color-texto-2` del menú, y ya pasaban con 4,95. La pill que
+   pidió Juli resolvía lo único que fallaba, y el vidrio esmerilado del header quedó intacto.
+
+Las dos piezas sin pill entran igual a `tests/styles/header-foto.test.ts`, aunque hoy estén en verde: 0,45 de
+margen es poco, y este proyecto ya lo perdió **dos veces** al cambiar la foto del hero.

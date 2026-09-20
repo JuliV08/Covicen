@@ -55,3 +55,25 @@ CVSA se alimenta de un backoffice con varios sistemas viejos. Covicen no tiene n
 **Costura anti-corrupción.** Definir HOY la forma de los datos (tarifas, novedades, estado de rutas, obras) detrás de un adaptador, de modo que hoy lea un JSON del repo y mañana una API de los sistemas viejos, **sin tocar un componente de UI**. Si esto no se define ahora, el día que aparezcan los sistemas hay que reescribir medio front.
 
 Y la más cara de revertir: **¿el cliente edita novedades y tarifas sin devs?** Si la respuesta es sí, hace falta algún panel, y eso cambia el stack de v1. Va al brainstorming.
+
+## Lo que cambió el 20/09/2026 (call con el gerente)
+
+La home deja de ser un índice de todo el sitio y pasa a ser **una portada**: cinco secciones y nada más.
+
+```
+Hero → AccesosRapidos → ElTramo (con el mapa) → NovedadesRecientes → ContactoCta
+```
+
+Salieron de ahí `TarifaDestacada`, `Servicios`, `Consorcio` y `FaqCorto`; sus contenidos siguen en sus páginas.
+`ObrasYEstado` se borró entero: mezclaba dos cosas que se van por motivos distintos (obras se esconde; el estado
+de la traza no va porque los datos son de ejemplo). Los cuatro primeros **no se borraron**, porque la decisión
+fue de recorte y no de contenido: volver a ponerlos es una línea de import, y lo que impide que vuelvan sin que
+nadie lo decida es un test que exige cinco secciones y ninguna más.
+
+**El mapa del sitio también cambió**: `/obras/` dejó de generarse (ver [[Costura de datos]], el interruptor) y
+`/trabaja-con-nosotros/` se eliminó. El sitio pasó de 30 páginas a 27. **Proveedores** subió del pie al
+desplegable Nosotros: es por donde entra un tercero y estaba enterrado.
+
+**Lección durable de arquitectura**: esconder una página no es dejar de enlazarla. Una página viva sin enlaces se
+indexa igual, así que la forma correcta es que **no se genere**. En Astro eso se consigue con una ruta rest cuyo
+`getStaticPaths` devuelve `[]`: ni HTML, ni entrada en el sitemap, y se prende y se apaga con un booleano.

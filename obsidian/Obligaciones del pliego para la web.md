@@ -31,3 +31,35 @@ Criterio general: **esconder, no "a confirmar"**. Lo que depende de un dato que 
 | Subtítulos en videos | No hay videos | no aplica |
 | Emergencias 140 (59) | `tel:140` en toda página (header, barra inferior, footer, tarjetas); `verificar.ts` lo exige | cumple |
 | Tarifas con vigencia y resolución | `/tarifas/`: cuadro heredado Res. 248/2026 por estación, leyenda del Anexo B, descuentos (53.3), exenciones (52), diferencial, sin pagar (51.1.4), categorías futuras (53.2) | cumple |
+
+## Qué se dejó de mostrar el 20/09/2026, y por qué no afecta lo que el pliego obliga
+
+El gerente pidió que la web **no le cite el pliego al usuario** («hace mención del pliego; esas cosas que no
+aparezcan»). Conviene tener claro el matiz, porque es fácil leerlo al revés:
+
+> **El pliego obliga contenido, no obliga citarlo.** Lo que se sacó son las citas («PETG art. 52», «según el
+> pliego»), no las obligaciones. Cada fila de la tabla de arriba sigue cumpliéndose igual; lo que cambió es cómo
+> se nombra la fuente en la cara del usuario: ahora dice «el contrato de concesión».
+
+**Excepción: `/transparencia/`**, donde la normativa *es* el contenido y citarla es justamente lo institucional.
+Ahí `normativa.json` sigue entero y las citas quedan.
+
+**La `fuente` de cada dato no se borró: se dejó de pintar.** `servicios.json`, `tramites.json` y
+`contacto.json` siguen guardando el artículo que respalda cada afirmación —es la trazabilidad de por qué la web
+dice lo que dice—, y hay un test que exige que siga ahí. Se apaga la UI, no se rompe el dato: el mismo criterio
+que se aplicó a `freeFlow`.
+
+La guarda vive en `scripts/verificar.ts` (`PROHIBIDOS_USUARIO`) y prohíbe **las dos formas de nombrarlo**: la
+sigla y la palabra entera. Hacía falta: había ocho lugares que lo escribían largo («según el Pliego de
+Especificaciones Técnicas Particulares…») que un filtro de siglas no habría agarrado nunca.
+
+**Hallazgo de la guarda, que vale para cualquier proyecto Astro**: marcó las 27 páginas, incluidas Privacidad y
+Proveedores. La causa era un comentario `<!-- -->` del `Header.astro`. **Los comentarios HTML de un template
+Astro se emiten al navegador; los de expresión (`{/* */}`) no.** O sea que una nota interna sobre el pliego venía
+publicándose en todas las páginas del sitio. Quedan nueve comentarios HTML más en el repo: ninguno dice nada
+comprometedor, pero conviene saber que son texto público.
+
+**Lo que se escondió por falta de certificación** (descuentos, tarifa diferencial, recargos, exceso de carga,
+categorías futuras, obras, áreas de descanso) no es un incumplimiento: el pliego obliga a publicar el cuadro
+tarifario vigente, que **sigue publicado entero**. Lo escondido son datos que Covicen todavía no certificó, y
+publicarlos con salvedades sería peor. La lista de qué preguntar está en `docs/pendientes-de-confirmacion.md`.
