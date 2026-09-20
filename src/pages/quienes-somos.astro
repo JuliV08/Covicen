@@ -16,7 +16,7 @@ const asumimos = [
   ['Conservar los 679 km', 'Calzada, banquinas, señalización, iluminación, desagües y forestación de las tres rutas, todos los días de los veinte años.'],
   ['Reconstruir las losas de hormigón', 'En la RN 9 y en la RN 19, los tramos de hormigón deteriorado se reconstruyen. Es una obra obligatoria del contrato.'],
   ['Pavimentar las banquinas', 'En la RN 9 entre Rosario y Carcarañá, para que detenerse sea seguro.'],
-  ['Mantener el puente sobre el río Carcarañá', 'En la RN 34, con el plan de conservación que fija el pliego.'],
+  ['Mantener el puente sobre el río Carcarañá', 'En la RN 34, con el plan de conservación que fija el contrato de concesión.'],
   ['Rehabilitar el asfalto por secciones', 'Toneladas mínimas de concreto asfáltico por año y por sección, medidas cada seis meses.'],
   ['Auxiliar gratis y a tiempo', 'Grúa y remolque para despejar la calzada, sin cargo. Vehículos livianos: 30 minutos en al menos el 90 % de los casos, y nunca más de 40. Vehículos pesados: 60 minutos en al menos el 90 % de los casos, y nunca más de 72.'],
   ['Atender el 140 con personas', 'A toda hora, todos los días del año, gratis desde cualquier celular. Nunca solo un contestador.'],
@@ -27,7 +27,7 @@ const asumimos = [
   <Seccion nivel="h1" eyebrow="Quiénes somos" titulo="Somos quienes van a cuidar las rutas del centro." intro={`Covicen es la concesionaria del Tramo Centro de la Red Federal de Concesiones: ${numero(c.km, 2)} km de rutas nacionales entre Córdoba y Santa Fe que, desde el ${fechaLarga(c.inicioOperacion)} y por ${c.plazoAnios} años, pasan a estar bajo nuestra responsabilidad.`} class="pt-10">
     <div class="revelar prose-covicen max-w-prose text-lg text-texto-2">
       <p>Nacimos de tres empresas constructoras de Córdoba y Santa Fe —{e.consorcio.map((s) => s.nombre).join(', ').replace(/, ([^,]*)$/, ' y $1')}— que se unieron para presentarse a la licitación del Tramo Centro y la ganaron ofreciendo el peaje más bajo de los {c.tramosEtapa} tramos de la Etapa III. La adjudicación es la {c.adjudicacion.resolucion}, del {fechaLarga(c.adjudicacion.fecha)}.</p>
-      <p>No venimos a inaugurar una ruta: venimos a hacernos cargo de una que ya existe y que la gente usa todos los días. Por eso el orden es este: primero las obras, después el peaje pleno. El contrato lo exige y nosotros lo firmamos.</p>
+      <p>No venimos a inaugurar una ruta: venimos a hacernos cargo de una que ya existe y que la gente usa todos los días. Las obligaciones de conservación, de inversión y de atención al usuario están en el contrato de concesión, y rigen desde el primer día.</p>
       {e.enFormacion && <p>La sociedad está en formación. Cuando se complete la inscripción, publicamos acá y en el pie de página la razón social, el CUIT y los domicilios.</p>}
     </div>
     <div class="escalonar mt-12 grid gap-10 sm:grid-cols-2">

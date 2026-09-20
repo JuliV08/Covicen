@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
+import Home from '@/components/home/Home.astro';
 import Hero from '@/components/home/Hero.astro';
 import TarifaDestacada from '@/components/home/TarifaDestacada.astro';
 import Faq from '@/components/Faq.astro';
@@ -8,6 +9,24 @@ import CuentaRegresiva from '@/components/CuentaRegresiva.astro';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
 
 const render = async (C: unknown, props: Record<string, unknown>) => (await AstroContainer.create()).renderToString(C as never, { props });
+
+// La home se renderiza entera para mirar su FORMA: qué secciones trae y cuáles no. Ojo: la colección `novedades`
+// (astro:content) está vacía fuera de un build, así que NovedadesRecientes no aparece acá y no se puede afirmar
+// nada sobre ella desde este test; su lugar en la home lo verifica `pnpm verificar` sobre dist/.
+const renderHome = async () =>
+  (await AstroContainer.create()).renderToString(Home, { request: new Request('https://covicen.test/') });
+
+describe('Home', () => {
+  // Call del 20/09/2026: obras se esconde y el estado de la traza no va a la home (los datos de estado-ruta.json
+  // son de ejemplo, y un corte inventado que se lee como real es el error más caro del sitio).
+  it('la home no habla de obras ni muestra el estado de la traza de ejemplo', async () => {
+    const html = await renderHome();
+    expect(html, 'volvió el enlace a obras').not.toContain('href="/obras/"');
+    expect(html, 'volvió el estado de la traza con datos de muestra').not.toContain('Datos de ejemplo');
+    expect(html).not.toContain('Primero las obras');
+    expect(html).not.toContain('id="obras"');
+  });
+});
 
 describe('Hero', () => {
   it('un h1, la fecha de inicio y los dos CTAs', async () => {

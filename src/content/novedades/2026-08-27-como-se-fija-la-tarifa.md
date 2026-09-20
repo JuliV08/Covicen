@@ -19,8 +19,8 @@ La tarifa se ajusta por **índices oficiales**, según el contrato. Cada actuali
 
 ## Cuándo se cobra
 
-Recién cuando el tramo alcance las **condiciones de transitabilidad óptima** que verifica Vialidad Nacional. Primero las obras.
+Recién cuando el tramo alcance las **condiciones de transitabilidad óptima** que verifica Vialidad Nacional, con indicadores objetivos.
 
 ## Mientras tanto
 
-Desde la toma de posesión rige en las tres estaciones el cuadro que ya se cobraba, aprobado por la Resolución 248/2026 de Vialidad Nacional: $1.500 por auto con IVA. La tarifa ofertada llega con las obras iniciales terminadas.
+Desde la toma de posesión rige en las tres estaciones el cuadro que ya se cobraba, aprobado por la Resolución 248/2026 de Vialidad Nacional: $1.500 por auto con IVA. La tarifa ofertada se aplica cuando Vialidad Nacional homologue el cuadro propio de la concesión.
