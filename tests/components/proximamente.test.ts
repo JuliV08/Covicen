@@ -32,7 +32,9 @@ describe('portada de «Próximamente»', () => {
 
   it('no trae el sitio colgando: ni menú, ni pie, ni cinta de avisos', async () => {
     const html = await render();
-    for (const rastro of ['nav-item', 'Preguntas frecuentes', 'marquesina', 'Trabajá con nosotros', 'Medios de pago']) {
+    // 'Trabajá con nosotros' era uno de los centinelas y esa página se eliminó del sitio el 20/09/2026: un
+    // centinela que ya no existe en ningún lado no prueba nada. Se reemplaza por 'Proveedores', que sí existe.
+    for (const rastro of ['nav-item', 'Preguntas frecuentes', 'marquesina', 'Proveedores', 'Medios de pago']) {
       expect(html).not.toContain(rastro);
     }
   });

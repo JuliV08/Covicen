@@ -136,6 +136,11 @@ if (sitioCompleto) {
     if (existsSync(join(DIST, ruta, 'index.html'))) fallo(`/${ruta}/ está apagada en src/lib/publicado.ts y el build la generó igual`);
     if (sitemap.includes(`/${ruta}/`)) fallo(`/${ruta}/ está apagada y el sitemap la lista`);
   }
+
+  // Y que no haya quedado ninguna página eliminada a propósito (§4.4 del prompt del 20/09: se elimina, no se oculta).
+  for (const ruta of ['trabaja-con-nosotros']) {
+    if (existsSync(join(DIST, ruta, 'index.html'))) fallo(`/${ruta}/ se eliminó del sitio y volvió a aparecer en el build`);
+  }
 }
 
 // 16b. Portada sola: que no se haya colado nada más. Es el control que le da sentido al default invertido —si la
