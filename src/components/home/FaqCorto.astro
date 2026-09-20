@@ -7,6 +7,11 @@ import type { Pregunta } from '@/lib/datos/esquemas';
 interface Props { preguntas: Pregunta[] }
 const { preguntas } = Astro.props;
 ---
+{/* FUERA DE LA HOME desde el 20/09/2026 (call con el gerente: la home queda en portada, accesos, El tramo con el
+    mapa, novedades y cierre de contacto, y nada más). El componente NO se borra: la decisión es de recorte, no de
+    contenido, y volver a ponerlo es una línea de import en components/home/Home.astro. Lo que SÍ está prohibido es
+    reponerlo sin decirlo: tests/components/home.test.ts exige que la home tenga esas cinco secciones y ninguna más.
+    Las preguntas viven en /preguntas-frecuentes/. */}
 <section id="faq" class="py-20 md:py-28">
   <div class="contenedor grid gap-10 lg:grid-cols-[1fr_1.7fr] lg:gap-16">
     <header class="revelar lg:sticky lg:top-28 lg:self-start">

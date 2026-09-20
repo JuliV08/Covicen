@@ -7,7 +7,7 @@ interface Props { novedades: Novedad[] }
 const { novedades } = Astro.props;
 ---
 {novedades.length > 0 && (
-  <Seccion id="novedades" indice="05" eyebrow="Novedades" titulo="Lo último.">
+  <Seccion id="novedades" indice="02" eyebrow="Novedades" titulo="Lo último.">
     <ul class="escalonar grid gap-4 md:grid-cols-3">
       {novedades.slice(0, 3).map((n, i) => (
         <li style={`--i: ${i}`}>

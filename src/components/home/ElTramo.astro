@@ -9,8 +9,14 @@ import { cabinaOperativa } from '@/lib/datos/esquemas';
 interface Props { tramo: Tramo }
 const { tramo } = Astro.props;
 const operativas = tramo.cabinas.filter(cabinaOperativa).length;
+// Título institucional (call del 20/09/2026), y es el MISMO que el gerente dio por perfecto en la sección 01 de
+// /el-tramo/: la home y la página interior dicen lo mismo en vez de dos cosas parecidas.
+// Las rutas y las provincias salen del dato, nunca escritas a mano; la coma final se vuelve "y".
+const enumerar = (xs: string[]) => xs.join(', ').replace(/, ([^,]*)$/, ' y $1');
+const rutas = enumerar(tramo.rutas.map((r) => r.nombre));
+const provincias = enumerar(tramo.provincias);
 ---
-<Seccion id="tramo" indice="02" eyebrow="El tramo" titulo="Tres rutas, dos provincias, un corredor." intro={`${tramo.rutas.map((r) => `${r.nombre} (${r.descripcion})`).join(', ')}. Tocá una estación para ver su ficha: en verde las que cobran hoy, en amarillo las próximas.`} fondo="fondo-2">
+<Seccion id="tramo" indice="01" eyebrow="El tramo" titulo="Tres rutas nacionales bajo una misma concesión." intro={`${rutas} en ${provincias}. Tocá una estación para ver su ficha: en verde las que cobran hoy, en amarillo las próximas.`} fondo="fondo-2">
   <div class="revelar tarjeta tarjeta-panel">
     <MapaInteractivo {tramo} modo="scroll" disposicion="lado" />
     <div class="escalonar mt-10 grid gap-8 border-t border-borde pt-8 sm:grid-cols-3">

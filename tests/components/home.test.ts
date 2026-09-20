@@ -17,6 +17,26 @@ const renderHome = async () =>
   (await AstroContainer.create()).renderToString(Home, { request: new Request('https://covicen.test/') });
 
 describe('Home', () => {
+  // La home acordada el 20/09/2026: portada, accesos, El tramo con el mapa, novedades y cierre de contacto. Nada
+  // más. Los cuatro componentes que salieron siguen en el repo (la decisión fue de recorte, no de contenido), así
+  // que lo único que impide que vuelvan sin que nadie lo decida es este test.
+  it('la home trae las cinco secciones acordadas y ninguna más', async () => {
+    const html = await renderHome();
+    // Solo El tramo lleva id de los que quedan: portada, accesos y cierre no lo necesitan, y NovedadesRecientes no
+    // aparece acá porque astro:content está vacío fuera de un build (su lugar lo verifica `pnpm verificar`).
+    expect([...html.matchAll(/<section[^>]*id="([^"]+)"/g)].map((m) => m[1])).toEqual(['tramo']);
+    for (const [seccion, marca] of [['la tarifa destacada', 'id="tarifa"'], ['obras', 'id="obras"'],
+                                    ['servicios', 'id="servicios"'], ['el consorcio', 'id="consorcio"'],
+                                    ['las preguntas frecuentes', 'id="faq"']] as const) {
+      expect(html, `volvió ${seccion} a la home`).not.toContain(marca);
+    }
+    // El mapa interactivo viaja adentro de El tramo (está en la home desde septiembre, no hubo que moverlo).
+    expect(html, 'la home perdió el mapa interactivo').toContain('data-estacion=');
+    // Y los índices quedan corridos: El tramo es 01.
+    expect(html).toContain('>01<');
+    expect(html, 'quedó un índice salteado').not.toContain('>03<');
+  });
+
   // Call del 20/09/2026: obras se esconde y el estado de la traza no va a la home (los datos de estado-ruta.json
   // son de ejemplo, y un corte inventado que se lee como real es el error más caro del sitio).
   it('la home no habla de obras ni muestra el estado de la traza de ejemplo', async () => {

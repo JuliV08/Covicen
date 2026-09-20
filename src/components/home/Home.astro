@@ -1,25 +1,19 @@
 ---
 import Base from '@/layouts/Base.astro';
 import AccesosRapidos from '@/components/home/AccesosRapidos.astro';
-import Consorcio from '@/components/home/Consorcio.astro';
 import ContactoCta from '@/components/home/ContactoCta.astro';
 import ElTramo from '@/components/home/ElTramo.astro';
-import FaqCorto from '@/components/home/FaqCorto.astro';
 import Hero from '@/components/home/Hero.astro';
 import NovedadesRecientes from '@/components/home/NovedadesRecientes.astro';
-import Servicios from '@/components/home/Servicios.astro';
-import TarifaDestacada from '@/components/home/TarifaDestacada.astro';
 import Marquesina from '@/components/Marquesina.astro';
 import { datos } from '@/lib/datos';
 
-const [empresa, contacto, avisos, tramo, tarifario, novedades, faq] = await Promise.all([
+const [empresa, contacto, avisos, tramo, novedades] = await Promise.all([
   datos.empresa(),
   datos.contacto(),
   datos.avisos(),
   datos.tramo(),
-  datos.tarifario(),
   datos.novedades(),
-  datos.faq(),
 ]);
 ---
 <Base titulo="Inicio" descripcion="Covicen, concesionaria del Tramo Centro de la Red Federal de Concesiones: 679 km sobre RN 9, RN 19 y RN 34 en Córdoba y Santa Fe. Tarifas, peajes, medios de pago y emergencias." marquesinaEnHero>
@@ -27,11 +21,7 @@ const [empresa, contacto, avisos, tramo, tarifario, novedades, faq] = await Prom
       del contenido. Por eso Base recibe `marquesinaEnHero` y acá va por el slot. */}
   <Hero {empresa}><Marquesina slot="marquesina" {avisos} enHero /></Hero>
   <AccesosRapidos {contacto} />
-  <TarifaDestacada {tarifario} />
   <ElTramo {tramo} />
-  <Servicios />
   <NovedadesRecientes {novedades} />
-  <Consorcio {empresa} />
-  <FaqCorto preguntas={faq} />
   <ContactoCta {contacto} />
 </Base>
