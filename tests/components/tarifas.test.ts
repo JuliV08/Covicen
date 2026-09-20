@@ -130,13 +130,44 @@ describe('TarifaDestacada', () => {
 describe('/tarifas/', () => {
   const render = async () => (await AstroContainer.create()).renderToString(Tarifas, { request: new Request('https://covicen.test/tarifas/') });
 
-  // Spec §3.4: el exceso de carga (PETG 83) es el único dato de esa lista que no estaba publicado.
-  it('publica el exceso de carga con los dos multiplicadores y su artículo', async () => {
+  // Lo que el gerente pidió mantener tal cual en la call del 20/09/2026: «hay tarifas, cuadro tarifario, y que esté
+  // para cada estación lo que cuesta, así como está». Sale de la Res. 248/2026, publicada en el Boletín Oficial:
+  // tiene fuente oficial, queda. Y las dos tarjetas de exención las marcó dos veces como «tiene que estar».
+  it('el cuadro por estación y las dos tarjetas de exención siguen estando', async () => {
+    const html = await render();
+    for (const e of ['Carcarañá', 'James Craik', 'Franck']) expect(html.includes(e), `falta ${e}`).toBe(true);
+    expect(html).toContain('Ex combatientes de Malvinas');
+    expect(html).toContain('Personas con discapacidad');
+    expect(html).toContain('argentina.gob.ar/servicio/exencion-de-pago-de-peaje-ex-combatientes-de-malvinas');
+    expect(html).toContain('href="/tramites/"');
+  });
+
+  // Las cinco que el área todavía no certificó (src/lib/publicado.ts). No alcanza con esconder el encabezado: lo
+  // que no puede quedar en la página es el NÚMERO, que es lo que alguien podría leer como un compromiso.
+  it('las secciones sin certificar no se renderizan, ni su encabezado ni sus cifras', async () => {
     const visible = (await render()).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-    expect(visible).toContain('50 veces');
-    expect(visible).toContain('100 veces');
-    expect(visible).toContain('PETG art. 83');
-    expect(visible).toContain('24.449');
+    for (const titulo of ['Descuentos por frecuencia', 'Tarifa diferencial', 'Si pasaste sin pagar',
+                          'Exceso de carga', 'Las categorías que van a regir']) {
+      expect(visible.includes(titulo), `sigue publicada la sección "${titulo}"`).toBe(false);
+    }
+    for (const cifra of ['15 %', '25 %', '35 %', '50 veces', '100 veces', 'dos tarifas', 'Banco Nación']) {
+      expect(visible.includes(cifra), `quedó la cifra sin certificar "${cifra}"`).toBe(false);
+    }
+  });
+
+  // Los índices se calculan con src/lib/indices.ts: apagar una sección no puede dejar la numeración salteada.
+  it('la única sección que queda numerada es la 01', async () => {
+    const visible = (await render()).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+    expect(visible).toContain('01');
+    for (const n of ['02', '03', '04', '05', '06']) expect(visible.includes(` ${n} `), `quedó el índice ${n}`).toBe(false);
+  });
+
+  // Las salidas de la página vivían adentro de la sección 06, que se escondió. Sin esto, Tarifas queda sin puentes.
+  it('conserva las salidas a Medios de pago, El tramo y Preguntas frecuentes', async () => {
+    const html = await render();
+    for (const destino of ['/medios-de-pago/', '/el-tramo/', '/preguntas-frecuentes/']) {
+      expect(html.includes(`href="${destino}"`), `se perdió la salida a ${destino}`).toBe(true);
+    }
   });
 
   it('enlaza el Boletín Oficial de la resolución vigente', async () => {

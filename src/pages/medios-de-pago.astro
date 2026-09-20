@@ -7,10 +7,17 @@ import Seccion from '@/components/ui/Seccion.astro';
 import Senal from '@/components/ui/Senal.astro';
 import { datos } from '@/lib/datos';
 import { cabinaOperativa } from '@/lib/datos/esquemas';
+import { indices } from '@/lib/indices';
+import { publicado } from '@/lib/publicado';
 const [tramo, contacto] = await Promise.all([datos.tramo(), datos.contacto()]);
 const conCabina = tramo.cabinas.filter(cabinaOperativa).map((c) => c.nombre);
 const colocacion = tramo.cabinas.filter((c) => c.servicios?.colocacionTelepase).map((c) => c.nombre);
 const oficina = contacto.enlaces.oficinaVirtual;
+// «Pasaste sin pagar» aparece acá y en /tarifas/: es EL MISMO dato sin certificar («certificar que va a ser así»),
+// así que lo gobierna el mismo interruptor. Un dato, un interruptor: si no, se esconde en una página y se publica
+// en la otra, que es peor que no esconderlo.
+const secciones = [true, true, publicado.pasasteSinPagar];
+const [nTelepase, nMiCuenta, nSinPagar] = indices(secciones);
 // Modalidades del pliego (PETG 51.1).
 const modalidades = [
   { titulo: 'Prepago con TelePASE', texto: 'Cargás saldo por adelantado y cada pasada se descuenta a la tarifa vigente de tu categoría.', fuente: 'PETG art. 51.1.1' },
@@ -23,24 +30,26 @@ const modalidades = [
     <ul class="escalonar grid gap-4 md:grid-cols-3">{modalidades.map((m, i) => <li style={`--i: ${i}`}><Card><h2 class="text-xl">{m.titulo}</h2><p class="mt-2 text-texto-2">{m.texto}</p><p class="anotacion mt-3 text-xs text-texto-2">Fuente: {m.fuente}</p></Card></li>)}</ul>
   </Seccion>
 
-  <Seccion id="telepase" indice="01" eyebrow="TelePASE" titulo="Gratis, y en todas las estaciones." intro="La adhesión, el primer dispositivo por vehículo, su colocación, la renovación, la cancelación y la reposición no tienen costo para el usuario (PETG art. 50.5). Los exentos y las tarifas diferenciales también se gestionan con TelePASE." fondo="fondo-2">
+  <Seccion id="telepase" indice={nTelepase} eyebrow="TelePASE" titulo="Gratis, y en todas las estaciones." intro="La adhesión, el primer dispositivo por vehículo, su colocación, la renovación, la cancelación y la reposición no tienen costo para el usuario (PETG art. 50.5). Los exentos y las tarifas diferenciales también se gestionan con TelePASE." fondo="fondo-2">
     <div class="revelar grid gap-6 md:grid-cols-2">
       <div class="tarjeta p-6"><h3 class="text-xl">Cómo adherirte</h3><p class="mt-2 text-texto-2">En el sitio oficial de TelePASE o en un punto de colocación. Elegís prepago o pospago y retirás el dispositivo sin cargo.</p><div class="mt-4"><Boton href={contacto.enlaces.telepase} variante="secundario" externo>Ir a TelePASE <ExternalLink size={16} aria-hidden="true" /></Boton></div></div>
       <div class="tarjeta p-6"><h3 class="text-xl">Dónde se coloca</h3>{colocacion.length > 0 ? <p class="mt-2 text-texto-2">En los sectores de detención segura de {colocacion.join(', ')}, en días hábiles.</p> : <p class="mt-2 text-texto-2">En los sectores de detención segura de las estaciones, con horarios señalizados en cada una. Publicamos las ubicaciones cuando Covicen las defina.</p>}</div>
     </div>
   </Seccion>
 
-  <Seccion id="mi-cuenta" indice="02" eyebrow="Mi cuenta" titulo="Tus pasadas, facturas y pagos en un solo lugar." intro="La oficina virtual de TelePASE: consultás pasadas y facturas, ves si tenés deuda, descargás comprobantes y pagás." fondo="fondo-2">
+  <Seccion id="mi-cuenta" indice={nMiCuenta} eyebrow="Mi cuenta" titulo="Tus pasadas, facturas y pagos en un solo lugar." intro="La oficina virtual de TelePASE: consultás pasadas y facturas, ves si tenés deuda, descargás comprobantes y pagás." fondo="fondo-2">
     <div class="revelar flex flex-wrap items-center gap-4">
       {oficina ? <Boton href={oficina} externo>Entrar a Mi cuenta <ExternalLink size={16} aria-hidden="true" /></Boton> : <><Senal variante="frio">Se habilita con la toma de posesión</Senal><p class="text-texto-2">El acceso se publica acá y en la barra superior del sitio cuando esté disponible.</p></>}
     </div>
   </Seccion>
 
-  <Seccion id="sin-pagar" indice="03" eyebrow="Pasaste sin pagar" titulo="Cómo regularizarlo." intro="Si cruzás una estación sin TelePASE vigente y sin pagar (PETG art. 51.1.4):">
+  {publicado.pasasteSinPagar && (
+  <Seccion id="sin-pagar" indice={nSinPagar} eyebrow="Pasaste sin pagar" titulo="Cómo regularizarlo." intro="Si cruzás una estación sin TelePASE vigente y sin pagar (PETG art. 51.1.4):">
     <ol class="revelar grid gap-4 md:grid-cols-2">
       <li class="tarjeta p-6"><p class="eyebrow">Dentro de los 30 días</p><p class="mt-2 text-texto-2">La tarifa que correspondía más <strong class="text-texto">una tarifa</strong> de tu categoría.</p></li>
       <li class="tarjeta p-6"><p class="eyebrow">Después de los 30 días</p><p class="mt-2 text-texto-2">La tarifa más <strong class="text-texto">dos tarifas</strong> de tu categoría, con intereses a la tasa activa del Banco Nación.</p></li>
     </ol>
     {contacto.cuentaRegularizacion ? <p class="revelar mt-6 text-texto-2">Podés pagar la deuda por transferencia a: <strong class="text-texto">{contacto.cuentaRegularizacion}</strong>.</p> : <p class="revelar mt-6 text-texto-2">El medio para pagar la deuda se publica acá cuando esté habilitado.</p>}
   </Seccion>
+  )}
 </Base>
