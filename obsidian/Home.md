@@ -19,6 +19,7 @@ Este es el vault del proyecto (vive en el repo, viaja con el código). El punter
 - Actualización de sept. 2026 — Spec: `docs/superpowers/specs/2026-09-13-actualizacion-web-design.md` · Plan: `docs/superpowers/plans/2026-09-13-actualizacion-web.md` · Contrato exportado para el backend: `docs/contrato/*.schema.json` (`pnpm contrato`)
 - Guía de revisión para Juli: `docs/guia-de-revision.md` (reescrita el 2026-09-14 y ampliada el 2026-09-15: qué mirar a mano en cada pantalla, qué está oculto, cómo cargar lo que falta) · `README.md` (comandos, variables, deploy y migración al dominio propio) · Prompt maestro original: `docs/PROMPT_MAESTRO.md`
 - Prompt maestro para el mapa de CVSA y el primer sistema: `docs/PROMPT_MAESTRO_CVSA.md` (2026-09-05)
+- Prompt maestro de la tanda de ajustes de la call con el gerente: `docs/PROMPT_MAESTRO_AJUSTES_2026-09-20.md` (2026-09-20, sin ejecutar todavía). Hace de spec: las cuatro decisiones abiertas ya se cerraron con Juli (esconder lo no confirmado, home recortada a cinco secciones, opciones de texto para la portada, rama nueva con un commit por tarea).
 - Manual de marca: `docs/marca/Logo Covicen 2.pdf` · Prompts de imágenes: `docs/marca/prompts-imagenes.md`
 
 ## Estado
