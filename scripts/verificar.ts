@@ -8,6 +8,7 @@ import { contraste, leerTemas } from './lib/contraste.ts';
 import { archivosDe, existeDestino, hrefsConEsquemaProhibido, jsonLdDe, linksInternos, paginasDe, textoVisible } from './lib/html.ts';
 import { alcanzables } from './lib/solo-portada.ts';
 import { paresContraste } from './lib/pares.ts';
+import { publicado } from '../src/lib/publicado.ts';
 
 const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
 const base = `/${(env.PUBLIC_BASE_PATH || '/').replace(/^\/+|\/+$/g, '')}/`.replace('//', '/');
@@ -124,6 +125,17 @@ if (sitioCompleto) {
     if (!existsSync(join(DIST, 'peajes', slug, 'index.html'))) fallo(`falta la página /peajes/${slug}/`);
   }
   for (const p of ['asistencia', 'tramites']) if (!existsSync(join(DIST, p, 'index.html'))) fallo(`falta la página /${p}/`);
+
+  // 11b. El espejo del control de arriba: las páginas que un interruptor apagado tiene que dejar FUERA del build.
+  // El pedido de la call del 20/09/2026 no fue "no la enlaces" sino que no exista: una página viva sin enlaces se
+  // indexa igual. Esto mira el dist de verdad y el sitemap, no la intención del código: si mañana alguien vuelve a
+  // poner src/pages/obras.astro como ruta fija, el interruptor deja de mandar y acá se cae.
+  const sitemap = existsSync(join(DIST, 'sitemap-0.xml')) ? readFileSync(join(DIST, 'sitemap-0.xml'), 'utf8') : '';
+  for (const [ruta, prendida] of [['obras', publicado.obras]] as const) {
+    if (prendida) continue;
+    if (existsSync(join(DIST, ruta, 'index.html'))) fallo(`/${ruta}/ está apagada en src/lib/publicado.ts y el build la generó igual`);
+    if (sitemap.includes(`/${ruta}/`)) fallo(`/${ruta}/ está apagada y el sitemap la lista`);
+  }
 }
 
 // 16b. Portada sola: que no se haya colado nada más. Es el control que le da sentido al default invertido —si la

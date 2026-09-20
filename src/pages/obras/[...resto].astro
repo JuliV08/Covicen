@@ -6,6 +6,15 @@ import ImagenAtmosfera from '@/components/ilustraciones/ImagenAtmosfera.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import Senal from '@/components/ui/Senal.astro';
 import { datos } from '@/lib/datos';
+import { publicado } from '@/lib/publicado';
+
+// Ruta rest con un solo destino: `resto: undefined` genera /obras/ tal cual estaba. Con el interruptor apagado
+// devuelve [] y Astro no genera NADA: ni el HTML, ni la entrada del sitemap. El pedido de la call del 20/09 no fue
+// "no la enlaces" sino que no exista, y una página viva sin enlaces se indexa igual.
+// Es una ruta rest y no un archivo suelto porque Astro no deja quitar una ruta fija desde un hook: el de
+// `astro:routes:resolved` entrega una copia del array (ver scripts/lib/solo-portada.ts). Esta forma es nativa y se
+// apaga y se prende con un booleano, que es lo que pide el criterio de la casa.
+export const getStaticPaths = () => (publicado.obras ? [{ params: { resto: undefined } }] : []);
 import { fechaLarga } from '@/lib/formato';
 const [obras, estado, tramo] = await Promise.all([datos.obras(), datos.estadoRutas(), datos.tramo()]);
 const rutas = tramo.rutas.map((r) => r.nombre);
