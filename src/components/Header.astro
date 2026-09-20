@@ -35,7 +35,7 @@ const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
     <Logotipo />
 
     <nav aria-label="Principal" class="hidden lg:block">
-      <ul class="nav-lista flex items-center gap-1">
+      <ul class="nav-lista flex items-center gap-1.5">
         {items.map((i) => (
           <li>
             <a href={ruta(i.href)} class="nav-item" aria-current={activo(i.href) ? 'page' : undefined}>{i.nombre}</a>
@@ -71,7 +71,7 @@ const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
           <span class="text-2xl font-extrabold tabular-nums leading-none">{tel}</span>
         </span>
       </a>
-      <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-md border border-borde text-texto hover:border-borde-fuerte hover:bg-superficie lg:hidden" popovertarget="menu-mobile" aria-label="Abrir menú">
+      <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-borde bg-superficie text-texto hover:border-borde-fuerte lg:hidden" popovertarget="menu-mobile" aria-label="Abrir menú">
         <Menu size={22} aria-hidden="true" />
       </button>
     </div>
@@ -123,17 +123,32 @@ const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
     to { background: var(--color-cabecera); border-color: var(--color-borde); }
   }
 
+  /* Cada opción en su propia pill (pedido de Juli, 20/09/2026). No es solo estética. El fondo del header es
+     traslúcido y se opaca con el scroll, así que el texto del menú se apoyaba en la foto del hero: en tema claro
+     caía a 2,22:1, medido sobre los píxeles de la foto en nueve pantallas y en todo el recorrido del scroll. Con
+     una superficie opaca propia, el contraste del menú deja de depender de lo que pase por detrás —del scroll, del
+     tema y de qué foto haya— y pasa a ser el par (texto-2, superficie), que scripts/lib/pares.ts ya verifica en los
+     dos temas. Lo mide tests/styles/header-foto.test.ts.
+     El fondo del header NO se tocó: el logotipo y la hamburguesa van en --color-texto y ya daban 4,95:1.
+     El padding es el de .btn-vial (el botón del 140, que ya era una pill sólida en esta misma fila): la barra gana
+     un solo idioma en vez de dos. Horizontal 0.8rem y no 1rem porque con 1rem el menú no entra a 1024 px, que es
+     justo donde aparece. */
   .nav-item {
-    position: relative; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.7rem 0.75rem; border-radius: var(--radius-sm);
+    position: relative; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.5rem 0.8rem; border-radius: 999px;
+    background: var(--color-superficie); border: 1px solid var(--color-borde);
     color: var(--color-texto-2); font-weight: 500; line-height: 1.2; text-decoration: none; white-space: nowrap;
-    transition: color var(--dur-micro) var(--ease-salida);
+    transition: color var(--dur-micro) var(--ease-salida), border-color var(--dur-micro) var(--ease-salida),
+                box-shadow var(--dur-ui) var(--ease-salida), transform var(--dur-ui) var(--ease-salida);
   }
+  /* "Estás acá" no puede distinguirse SOLO por color (pliego 61.7, y el criterio que este proyecto ya aplicó el
+     14/09 con la severidad del mapa: forma además de color). La barrita sigue, ahora adentro de la pill. */
   .nav-item::after {
-    content: ""; position: absolute; left: 0.75rem; right: 0.75rem; bottom: 0.2rem; height: 2px; border-radius: 1px;
+    content: ""; position: absolute; left: 0.8rem; right: 0.8rem; bottom: 0.25rem; height: 2px; border-radius: 1px;
     background: var(--color-acento); transform: scaleX(0); transform-origin: left;
     transition: transform var(--dur-ui) var(--ease-salida);
   }
-  .nav-item:hover, .nav-item:focus-visible, .nav-item[aria-current="page"], .nav-item.is-activo { color: var(--color-texto); }
+  .nav-item:hover, .nav-item:focus-visible { color: var(--color-texto); border-color: var(--color-borde-fuerte); transform: translateY(-1px); box-shadow: 0 6px 18px -8px var(--color-sombra); }
+  .nav-item[aria-current="page"], .nav-item.is-activo { color: var(--color-texto); border-color: var(--color-acento); }
   .nav-item:hover::after, .nav-item:focus-visible::after, .nav-item[aria-current="page"]::after, .nav-item.is-activo::after { transform: scaleX(1); }
   .desplegable summary::-webkit-details-marker { display: none; }
   .desplegable .chevron { transition: transform var(--dur-ui) var(--ease-salida); }
