@@ -4,9 +4,12 @@ import { cabinaOperativa } from '@/lib/datos/esquemas';
 
 export type EstadoOperativo = { clave: 'operativa' | 'proxima'; etiqueta: string };
 
-/** Verde (cobra hoy) o amarillo (cobra cuando Vialidad la habilite). Las nuevas nacen con Free Flow (PETP art. 2). */
+/** Verde (cobra hoy) o amarillo (cobra cuando Vialidad la habilite).
+ *  La modalidad de cobro de las nuevas NO se anuncia: al 20/09/2026 no está definida («no está asegurado que sea de
+ *  esa manera y no se sabe cómo va a ser»), y la web no publica lo que no está confirmado. El campo `freeFlow` sigue
+ *  en el contrato porque el backend lo va a mandar igual: se apaga la UI, no se rompe el contrato. */
 export const estadoCabina = (c: Cabina): EstadoOperativo =>
-  cabinaOperativa(c) ? { clave: 'operativa', etiqueta: 'Operativa' } : { clave: 'proxima', etiqueta: c.freeFlow ? 'Próxima · Free Flow' : 'Próxima' };
+  cabinaOperativa(c) ? { clave: 'operativa', etiqueta: 'Operativa' } : { clave: 'proxima', etiqueta: 'Próxima' };
 
 export const SERVICIOS = [
   ['areaDescanso', 'Área de descanso'],

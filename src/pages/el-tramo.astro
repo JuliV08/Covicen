@@ -65,7 +65,7 @@ const conServicios = tramo.cabinas.filter((c) => serviciosDeCabina(c).length > 0
     </div>
   </Seccion>
 
-  <Seccion id="estaciones" class={anclaTapada} indice="02" eyebrow="Estaciones de peaje" titulo="Dónde se paga." intro="Tres estaciones que ya cobran y tres nuevas que nacen con Free Flow. La ficha de cada una está en el mapa de arriba y en su propia página.">
+  <Seccion id="estaciones" class={anclaTapada} indice="02" eyebrow="Estaciones de peaje" titulo="Dónde se paga." intro="Tres estaciones operativas y tres que cobran cuando Vialidad Nacional las habilite. La ficha de cada una está en el mapa de arriba y en su propia página.">
     <ul class="escalonar grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {tramo.cabinas.map((c, i) => { const e = estadoCabina(c); return (
         <li class="tarjeta p-5" style={`--i: ${i}`}>

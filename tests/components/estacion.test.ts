@@ -23,7 +23,8 @@ describe('TarjetaEstacion', () => {
   });
   it('próxima: amarilla, sin cuadro, con la aclaración de que todavía no cobra', async () => {
     const html = await render('leones');
-    expect(html).toContain('Próxima · Free Flow');
+    expect(html).toContain('Próxima');
+    expect(html).not.toContain('Flow');
     expect(html).not.toContain('href="/tarifas/#leones"');
     expect(html).toContain('Cobra cuando Vialidad Nacional la habilite');
     expect(html).not.toContain('Área de descanso');

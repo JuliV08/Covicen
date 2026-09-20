@@ -20,7 +20,7 @@ const [obras, estado, tramo] = await Promise.all([datos.obras(), datos.estadoRut
 const rutas = tramo.rutas.map((r) => r.nombre);
 const estados = { planificada: 'Planificada', 'en-ejecucion': 'En ejecución', terminada: 'Terminada' } as const;
 ---
-<Base titulo="Obras y avance" descripcion="Obras de Covicen en el Tramo Centro: puesta en valor inicial, losas de hormigón en RN 9 y RN 19, banquinas entre Rosario y Carcarañá, puente sobre el Carcarañá, rehabilitación asfáltica y estaciones Free Flow. Estado y avance." migas={[{ nombre: 'Obras', href: '/obras' }]}>
+<Base titulo="Obras y avance" descripcion="Obras de Covicen en el Tramo Centro: puesta en valor inicial, losas de hormigón en RN 9 y RN 19, banquinas entre Rosario y Carcarañá, puente sobre el Carcarañá, rehabilitación asfáltica y estaciones nuevas. Estado y avance." migas={[{ nombre: 'Obras', href: '/obras' }]}>
   <Seccion nivel="h1" eyebrow="Obras y avance" titulo="Primero las obras. Después, el peaje pleno." intro="El contrato exige alcanzar condiciones de transitabilidad óptima antes de aplicar la tarifa ofertada. Vialidad Nacional lo verifica con indicadores objetivos." class="pt-10">
     <!-- Sin espacios adentro: `empty:hidden` depende de que no haya nodos de texto cuando no hay imagen. -->
     <div class="revelar tarjeta mb-12 aspect-[21/9] w-full overflow-hidden p-0 empty:hidden"><div class="h-full w-full overflow-hidden rounded-[calc(var(--tarjeta-radio)-1.5px)]"><ImagenAtmosfera nombre="obras-nocturnas" alt="Zona de obra nocturna en autopista: pavimentadora y rodillo bajo torres de luz, con balizamiento amarillo" sizes="(min-width: 80rem) 80rem, 100vw" brillo={0.8} /></div></div>

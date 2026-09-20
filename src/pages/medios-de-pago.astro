@@ -9,7 +9,6 @@ import { datos } from '@/lib/datos';
 import { cabinaOperativa } from '@/lib/datos/esquemas';
 const [tramo, contacto] = await Promise.all([datos.tramo(), datos.contacto()]);
 const conCabina = tramo.cabinas.filter(cabinaOperativa).map((c) => c.nombre);
-const freeFlow = tramo.cabinas.filter((c) => c.freeFlow).map((c) => c.nombre);
 const colocacion = tramo.cabinas.filter((c) => c.servicios?.colocacionTelepase).map((c) => c.nombre);
 const oficina = contacto.enlaces.oficinaVirtual;
 // Modalidades del pliego (PETG 51.1).
@@ -19,7 +18,7 @@ const modalidades = [
   { titulo: 'Contado en la vía', texto: `Efectivo o medios electrónicos en las vías habilitadas de las estaciones con cabina (${conCabina.join(', ')}).`, fuente: 'PETG art. 51.1.3' },
 ];
 ---
-<Base titulo="Medios de pago" descripcion="Cómo pagar el peaje en el Tramo Centro: TelePASE prepago o pospago, pago en la vía en Carcarañá, James Craik y Franck, Free Flow en las estaciones nuevas, y qué hacer si pasaste sin pagar." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Medios de pago', href: '/medios-de-pago' }]}>
+<Base titulo="Medios de pago" descripcion="Cómo pagar el peaje en el Tramo Centro: TelePASE prepago o pospago, pago en la vía en Carcarañá, James Craik y Franck, y qué hacer si pasaste sin pagar." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Medios de pago', href: '/medios-de-pago' }]}>
   <Seccion nivel="h1" eyebrow="Medios de pago" titulo="Cómo pagar el peaje." intro="Con TelePASE se paga lo mismo que en la vía. El dispositivo es gratis y sirve en toda la red nacional." class="pt-10">
     <ul class="escalonar grid gap-4 md:grid-cols-3">{modalidades.map((m, i) => <li style={`--i: ${i}`}><Card><h2 class="text-xl">{m.titulo}</h2><p class="mt-2 text-texto-2">{m.texto}</p><p class="anotacion mt-3 text-xs text-texto-2">Fuente: {m.fuente}</p></Card></li>)}</ul>
   </Seccion>
@@ -31,17 +30,13 @@ const modalidades = [
     </div>
   </Seccion>
 
-  <Seccion id="free-flow" indice="02" eyebrow="Free Flow" titulo="Sin barreras en las estaciones nuevas." intro={`${freeFlow.join(', ')} se construyen sin cabinas: pórticos que leen el TelePASE o la patente sin que frenes. Cobran cuando Vialidad Nacional las habilite.`}>
-    <p class="revelar text-texto-2">Si pasás sin TelePASE por una estación Free Flow, el peaje se paga después por los medios habilitados; pasado el plazo, se aplican los recargos de abajo.</p>
-  </Seccion>
-
-  <Seccion id="mi-cuenta" indice="03" eyebrow="Mi cuenta" titulo="Tus pasadas, facturas y pagos en un solo lugar." intro="La oficina virtual de TelePASE: consultás pasadas y facturas, ves si tenés deuda, descargás comprobantes y pagás." fondo="fondo-2">
+  <Seccion id="mi-cuenta" indice="02" eyebrow="Mi cuenta" titulo="Tus pasadas, facturas y pagos en un solo lugar." intro="La oficina virtual de TelePASE: consultás pasadas y facturas, ves si tenés deuda, descargás comprobantes y pagás." fondo="fondo-2">
     <div class="revelar flex flex-wrap items-center gap-4">
       {oficina ? <Boton href={oficina} externo>Entrar a Mi cuenta <ExternalLink size={16} aria-hidden="true" /></Boton> : <><Senal variante="frio">Se habilita con la toma de posesión</Senal><p class="text-texto-2">El acceso se publica acá y en la barra superior del sitio cuando esté disponible.</p></>}
     </div>
   </Seccion>
 
-  <Seccion id="sin-pagar" indice="04" eyebrow="Pasaste sin pagar" titulo="Cómo regularizarlo." intro="Si cruzás una estación sin TelePASE vigente y sin pagar (PETG art. 51.1.4):">
+  <Seccion id="sin-pagar" indice="03" eyebrow="Pasaste sin pagar" titulo="Cómo regularizarlo." intro="Si cruzás una estación sin TelePASE vigente y sin pagar (PETG art. 51.1.4):">
     <ol class="revelar grid gap-4 md:grid-cols-2">
       <li class="tarjeta p-6"><p class="eyebrow">Dentro de los 30 días</p><p class="mt-2 text-texto-2">La tarifa que correspondía más <strong class="text-texto">una tarifa</strong> de tu categoría.</p></li>
       <li class="tarjeta p-6"><p class="eyebrow">Después de los 30 días</p><p class="mt-2 text-texto-2">La tarifa más <strong class="text-texto">dos tarifas</strong> de tu categoría, con intereses a la tasa activa del Banco Nación.</p></li>

@@ -5,9 +5,16 @@ import { estadoCabina, leyendaServicios, puntoEnRuta, serviciosDeCabina } from '
 describe('estadoCabina', async () => {
   const t = await fuenteLocalJson.tramo();
   const por = (slug: string) => t.cabinas.find((c) => c.slug === slug)!;
-  it('operativa para las existentes, próxima (Free Flow) para las nuevas', () => {
+  // Call del 20/09/2026: la etiqueta deja de anunciar la modalidad de cobro de las nuevas, que no está definida.
+  it('operativa para las existentes, próxima a secas para las nuevas', () => {
     expect(estadoCabina(por('carcarana'))).toEqual({ clave: 'operativa', etiqueta: 'Operativa' });
-    expect(estadoCabina(por('leones'))).toEqual({ clave: 'proxima', etiqueta: 'Próxima · Free Flow' });
+    expect(estadoCabina(por('leones'))).toEqual({ clave: 'proxima', etiqueta: 'Próxima' });
+  });
+  // El dato no se borró: se apagó la UI. Si alguien "limpia" el contrato, el backend empieza a mandar un campo que
+  // el schema rechaza y el build se cae con un error que no habla de esto.
+  it('el campo freeFlow del contrato sigue llegando aunque no se muestre', () => {
+    expect(por('leones').freeFlow).toBe(true);
+    expect(estadoCabina(por('leones')).etiqueta).not.toContain('Flow');
   });
   it('servicios: solo los que la estación tiene; la leyenda, solo los que alguna tiene', () => {
     expect(serviciosDeCabina(por('franck')).map((s) => s.clave)).toEqual(['areaDescanso', 'gruaGratuita']);

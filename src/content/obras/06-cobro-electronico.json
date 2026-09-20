@@ -1,12 +1,12 @@
 {
   "slug": "cobro-electronico",
-  "titulo": "Estaciones nuevas con Free Flow",
+  "titulo": "Estaciones de peaje nuevas",
   "ruta": "Todo el tramo",
   "tramo": "Leones (RN 9), San Francisco (RN 19) y Totoras (RN 34)",
   "tipo": "Estaciones de peaje",
   "estado": "planificada",
   "avance": null,
   "orden": 6,
-  "descripcion": "Las tres estaciones nuevas se proyectan y construyen sin barreras: pórticos que leen el TelePASE o la patente sin detener el vehículo. Cobran cuando Vialidad Nacional las habilite, con el cuadro tarifario de Carcarañá.",
+  "descripcion": "Tres estaciones nuevas en Leones (RN 9), San Francisco (RN 19) y Totoras (RN 34). Cobran cuando Vialidad Nacional las habilite, con el cuadro tarifario de Carcarañá.",
   "fuente": "PETP art. 2 y 3"
 }

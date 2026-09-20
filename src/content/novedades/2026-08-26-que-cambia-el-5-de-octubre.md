@@ -11,7 +11,7 @@ El 5 de octubre de 2026 Covicen toma la operación del Tramo Centro. Esto es lo 
 
 - **Siguen operando:** Carcarañá y James Craik (RN 9) y Franck (RN 19).
 - **Deja de operar:** San Vicente (RN 34).
-- **Se suman:** Leones (RN 9), San Francisco (RN 19, km 120) y Totoras (RN 34, km 60). Las tres nacen con cobro electrónico y modalidad Free Flow, sin barreras.
+- **Se suman:** Leones (RN 9), San Francisco (RN 19, km 120) y Totoras (RN 34, km 60). Las tres cobran cuando Vialidad Nacional las habilite.
 
 ## La tarifa
 

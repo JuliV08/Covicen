@@ -16,7 +16,7 @@ Las obras que fija el pliego del Tramo Centro, en este orden:
 3. **Banquinas pavimentadas** en la RN 9 entre Rosario y Carcarañá.
 4. **Puente sobre el río Carcarañá** (RN 34), con su plan de conservación.
 5. **Rehabilitación asfáltica** por secciones, con toneladas mínimas por año.
-6. **Estaciones nuevas con Free Flow** en Leones, San Francisco y Totoras.
+6. **Estaciones de peaje nuevas** en Leones, San Francisco y Totoras.
 
 El detalle de cada frente está en [Obras](../../obras/).
 
