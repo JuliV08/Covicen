@@ -48,6 +48,33 @@ console.log(`Verificando ${paginas.length} páginas (base ${base}, indexable ${i
 //   un enlace tel: con una frase entera ("Llamá al 140 o pedí asistencia…"): sin cortes de línea desbordaría en el
 //   celular, y el número (140) es una sola palabra que no puede partirse. Esos enlaces llevan la clase `tel-prosa`
 //   y la regla los saltea. Nada más se apaga.
+// 10c. El puente mecánico entre src/lib/publicado.ts y lo que se emite.
+//
+// Hasta el 20/09/2026 no había ninguno, y se notó: se escondieron cinco secciones de Tarifas por falta de
+// certificación del área y las preguntas frecuentes siguieron publicando EXACTAMENTE esos números —los
+// porcentajes de descuento, los recargos por pasar sin pagar, la tarifa vecinal—, además de mandarlos al JSON-LD.
+// El dato quedaba escondido en una página y publicado en otra, que es peor que no esconderlo. Lo encontró la
+// revisión, no los tests: cada página se había escondido por su lado y nadie miraba el conjunto.
+//
+// Esto lo mira sobre el dist entero, o sea sobre lo que ve el público, y no sobre la intención del código. Si
+// mañana aparece una página nueva con el mismo texto, se cae el build aunque no pase por ningún filtro.
+// Los patrones son las frases DISTINTIVAS de cada dato, no palabras sueltas: un falso positivo acá bloquea el
+// build de todo el sitio, así que valen más los que agarran poco y seguro.
+const TEXTOS_SIN_CERTIFICAR: Array<[keyof typeof publicado, RegExp[]]> = [
+  ['descuentosPorFrecuencia', [/pasada 36/i, /pasada 45/i, /pasada 61/i]],
+  ['tarifaDiferencial', [/tarifas? diferencial/i, /tarifa vecinal/i]],
+  ['tramiteVecinosFrentistas', [/frentista/i]],
+  ['pasasteSinPagar', [/dos tarifas/i, /tasa activa/i, /Banco Naci[oó]n/i]],
+  ['excesoDeCarga', [/veces la tarifa/i, /exceso de carga/i]],
+  ['categoriasFuturas', [/tarifa b[aá]sica/i]],
+  // `serviciosDeAreaDescanso` no tiene fila acá a propósito. Ese interruptor esconde la SECCIÓN de El tramo
+  // que prometía decir qué hay adentro de cada área (agua, sanitarios), no la existencia del área: que una
+  // estación TIENE un área de descanso es un dato cargado y confirmado, y el chip del mapa lo dice bien.
+  // Un patrón sobre «área de descanso» marcaba la home, El tramo y las tres estaciones por algo correcto.
+  // Lo que sí queda guardado, en tests/components/el-tramo.test.ts, son las dos mitades: que la sección no
+  // se renderiza y que el dato fino sigue faltando.
+];
+
 const validador = new HtmlValidate(new FileSystemConfigLoader());
 
 for (const ruta of paginas) {
@@ -82,6 +109,10 @@ for (const ruta of paginas) {
   // Los prohibidos se buscan en el HTML crudo (meta, alt, aria-label, JSON-LD incluidos); los obligatorios, en el texto visible.
   for (const p of PROHIBIDOS) if (p.test(html)) fallo(`${nombre}: contiene ${p}`);
   if (SIN_PLIEGO(nombre)) for (const p of PROHIBIDOS_USUARIO) if (p.test(html)) fallo(`${nombre}: cita el pliego en la cara del público (${p})`);
+  for (const [clave, patrones] of TEXTOS_SIN_CERTIFICAR) {
+    if (publicado[clave]) continue;
+    for (const p of patrones) if (p.test(html)) fallo(`${nombre}: publica ${p}, y publicado.${clave} está apagado`);
+  }
   const visible = textoVisible(html);
   if ((nombre === 'index.html' || nombre.startsWith('el-tramo')) && !/\b679\b/.test(visible)) fallo(`${nombre}: falta la longitud oficial (679 km)`);
   if (!visible.includes('Última actualización')) fallo(`${nombre}: falta "Última actualización" en el pie`);

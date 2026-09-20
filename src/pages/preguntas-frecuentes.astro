@@ -3,8 +3,11 @@ import Base from '@/layouts/Base.astro';
 import Faq from '@/components/Faq.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
+import { preguntasPublicables } from '@/lib/faq';
 import { jsonLdFaq } from '@/lib/seo';
-const preguntas = await datos.faq();
+// El filtro va acá arriba y no en cada uso: el JSON-LD tiene que salir de la MISMA lista que la página.
+// Si se filtrara solo lo visible, las respuestas escondidas seguirían yendo a Google en el FAQPage.
+const preguntas = preguntasPublicables(await datos.faq());
 const temas = [['general', 'General'], ['tarifas', 'Tarifas'], ['peajes', 'Peajes'], ['pago', 'Pago'], ['servicios', 'Servicios'], ['empresa', 'Empresa']] as const;
 ---
 <Base titulo="Preguntas frecuentes" descripcion="Respuestas sobre el peaje del Tramo Centro: cuánto cuesta, desde cuándo se cobra, dónde están las estaciones, TelePASE, emergencias y reclamos." jsonLd={[jsonLdFaq(preguntas)]} migas={[{ nombre: 'Preguntas frecuentes', href: '/preguntas-frecuentes' }]}>
