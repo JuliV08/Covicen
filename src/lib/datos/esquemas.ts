@@ -290,6 +290,10 @@ export type Norma = z.infer<typeof esquemaNorma>;
 export const esquemaTramite = z.object({
   id: slug,
   nombre: z.string().min(1),
+  /** Qué es y para qué sirve, en una frase. Pedido del gerente (20/09/2026): la guía tiene que decir qué podés
+   *  hacer, cómo lo hacés y qué documentación necesitás, para iniciarlo completo y no volver dos veces.
+   *  Opcional: el trámite se puede publicar sin esto, pero la ficha queda coja. */
+  queEs: z.string().min(1).optional(),
   quien: z.string().min(1),
   requisitos: z.array(z.string().min(1)),
   pasos: z.array(z.string().min(1)),

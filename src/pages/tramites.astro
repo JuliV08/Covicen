@@ -4,24 +4,45 @@ import Base from '@/layouts/Base.astro';
 import Formulario from '@/components/Formulario.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
-const [tramites, contacto] = await Promise.all([datos.tramites(), datos.contacto()]);
+import { publicado } from '@/lib/publicado';
+const [todos, contacto] = await Promise.all([datos.tramites(), datos.contacto()]);
+
+// Solo se publican los trámites con fuente oficial verificable (call del 20/09/2026). Los dos de tarifa diferencial
+// esperan que el área confirme el beneficio, el monto y dónde se tramita: hasta entonces no se muestran, porque
+// mandar a alguien a juntar papeles para un trámite que capaz no existe es peor que no decir nada.
+// Es el MISMO interruptor que esconde la sección 03 de /tarifas/: un dato, un interruptor.
+const esperaConfirmacion: Record<string, boolean> = {
+  'tarifa-diferencial-vecinal': !publicado.tramiteVecinosFrentistas,
+  'tarifa-diferencial-docente': !publicado.tramiteVecinosFrentistas,
+};
+const tramites = todos.filter((t) => !esperaConfirmacion[t.id]);
 ---
 <Base titulo="Guía de trámites" descripcion="Trámites del usuario del Tramo Centro: tarifa diferencial para vecinos, frentistas y docentes, exención de peaje por discapacidad y para ex combatientes de Malvinas, y alta de TelePASE. Quién puede, requisitos y pasos." migas={[{ nombre: 'Guía de trámites', href: '/tramites' }]}>
-  <Seccion nivel="h1" eyebrow="Guía de trámites" titulo="Quién puede, qué necesita y cómo se hace." intro="Los trámites que el pliego prevé para el usuario (PETG art. 61.5). Todos son gratuitos." class="pt-10">
+  <Seccion nivel="h1" eyebrow="Guía de trámites" titulo="Quién puede, qué necesita y cómo se hace." intro="Todos son gratuitos. De cada uno: qué es, qué documentación necesitás y cómo se hace, para que lo inicies completo y no tengas que volver." class="pt-10">
     <nav aria-label="Trámites" class="revelar mb-10 flex flex-wrap gap-2">{tramites.map((t) => <a href={`#${t.id}`} class="rounded-md border border-borde px-3 py-1.5 text-sm text-texto-2 no-underline transition-colors hover:border-borde-fuerte hover:text-texto hover:underline">{t.nombre}</a>)}</nav>
     <div class="escalonar grid gap-6">
       {tramites.map((t, i) => (
         <article id={t.id} class="tarjeta scroll-mt-32 p-8" style={`--i: ${i}`}>
           <h2 class="text-2xl">{t.nombre}</h2>
-          <p class="mt-2 text-texto-2"><span class="text-texto">Quién puede:</span> {t.quien}</p>
-          <div class="mt-6 grid gap-8 md:grid-cols-2">
-            <div><h3 class="eyebrow">Requisitos</h3><ul class="mt-3 flex flex-col gap-2 text-texto-2">{t.requisitos.map((r) => <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-acento" aria-hidden="true"></span>{r}</li>)}</ul></div>
-            <div><h3 class="eyebrow">Pasos</h3><ol class="mt-3 flex flex-col gap-2 text-texto-2">{t.pasos.map((p, j) => <li class="flex gap-3"><span class="eyebrow tabular-nums">{j + 1}</span>{p}</li>)}</ol></div>
+          {/* Los tres campos que pidió el gerente, en el orden en que los necesita quien va a hacer el trámite:
+              qué es, qué tenés que llevar y recién después cómo se hace. La documentación va ARRIBA de los pasos a
+              propósito: el pedido textual fue «que cuando lo inicies, lo inicies completo y no te demore tener que
+              estar presentando documentación». */}
+          {t.queEs && <p class="mt-3 max-w-prose text-lg text-texto-2">{t.queEs}</p>}
+          <p class="mt-4 text-texto-2"><span class="font-semibold text-texto">Quién puede hacerlo:</span> {t.quien}</p>
+          <div class="mt-8 grid gap-8 md:grid-cols-2">
+            <div>
+              <h3 class="eyebrow">Qué necesitás</h3>
+              <ul class="mt-3 flex flex-col gap-2 text-texto-2">{t.requisitos.map((r) => <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-acento" aria-hidden="true"></span>{r}</li>)}</ul>
+            </div>
+            <div>
+              <h3 class="eyebrow">Cómo se hace</h3>
+              <ol class="mt-3 flex flex-col gap-2 text-texto-2">{t.pasos.map((p, j) => <li class="flex gap-3"><span class="eyebrow tabular-nums">{j + 1}</span>{p}</li>)}</ol>
+            </div>
           </div>
-          <div class="mt-6 flex flex-wrap items-center gap-4 text-sm">
+          <div class="mt-8 flex flex-wrap items-center gap-4 text-sm">
+            {t.url && <a href={t.url} rel="noopener noreferrer" target="_blank" class="inline-flex items-center gap-1 font-semibold">Hacer el trámite en el sitio oficial <ExternalLink size={14} aria-hidden="true" /></a>}
             {t.plazo && <span class="text-texto-2">{t.plazo}</span>}
-            {t.url && <a href={t.url} rel="noopener noreferrer" target="_blank" class="inline-flex items-center gap-1 font-semibold">Sitio oficial del trámite <ExternalLink size={14} aria-hidden="true" /></a>}
-            <span class="anotacion text-xs text-texto-2">Fuente: {t.fuente}</span>
           </div>
         </article>
       ))}

@@ -17,7 +17,7 @@
       "Cada año hay que reempadronarse: el beneficio vence si no se renueva."
     ],
     "plazo": "El beneficio es anual y se renueva.",
-    "fuente": "PETP art. 4; PETG art. 56.1 y 61.5 c"
+    "fuente": "Contrato de concesión"
   },
   {
     "id": "tarifa-diferencial-docente",
@@ -35,56 +35,61 @@
       "Cada año hay que reempadronarse."
     ],
     "plazo": "El beneficio es anual y se renueva.",
-    "fuente": "PETP art. 4; PETG art. 61.5 c"
+    "fuente": "Contrato de concesión"
   },
   {
     "id": "exencion-discapacidad",
     "nombre": "Exención de peaje para personas con discapacidad",
-    "quien": "Titulares del Certificado Único de Discapacidad (CUD) con vehículo afectado a su uso.",
+    "queEs": "El pase libre en los peajes de la red nacional para el vehículo afectado al traslado de una persona con discapacidad. Es gratuito, se hace entero desde la aplicación Mi Argentina y se acredita en el TelePASE.",
+    "quien": "Personas con Certificado Único de Discapacidad vigente e identidad validada en Mi Argentina. Si la persona es menor de edad o fue declarada incapaz judicialmente, el trámite lo hace su padre, madre, tutor o curador.",
     "requisitos": [
-      "Certificado Único de Discapacidad vigente.",
-      "DNI.",
-      "Cédula del vehículo (o del vehículo afectado al traslado).",
-      "Dispositivo TelePASE habilitado a este efecto."
+      "Identidad validada en Mi Argentina.",
+      "Certificado Único de Discapacidad (CUD) vigente.",
+      "Símbolo Internacional de Acceso vigente, emitido en Mi Argentina y vinculado al dominio del vehículo.",
+      "El dominio del vehículo ya asignado en Mi Argentina: si no lo tenés, hacelo antes de empezar."
     ],
     "pasos": [
-      "Presentás la solicitud ante Vialidad Nacional según su reglamento vigente de exentos.",
-      "Con la exención otorgada, se habilita el TelePASE en los sectores de detención segura de las estaciones."
+      "Entrás a Mi Argentina con tu usuario y contraseña y vas a Mis Trámites.",
+      "Elegís «Solicitá tu pase libre», verificás el dominio del vehículo y confirmás los datos.",
+      "Si ya tenés TelePASE, la exención se acredita sola y no hacés nada más.",
+      "Si no tenés TelePASE, cargás tus datos de contacto y la marca, el modelo y el color del vehículo, y tenés 90 días para pasar por un Centro de Atención a que te coloquen el dispositivo."
     ],
-    "fuente": "PETG art. 52 y 56.1"
+    "plazo": "Si te falta el TelePASE, 90 días para colocarlo.",
+    "url": "https://www.argentina.gob.ar/servicio/obtener-la-exencion-de-pago-de-peaje-para-personas-con-discapacidad",
+    "fuente": "Vialidad Nacional, argentina.gob.ar"
   },
   {
     "id": "exencion-malvinas",
     "nombre": "Exención de peaje para ex combatientes de Malvinas",
-    "quien": "Veteranos de la guerra de Malvinas con certificación oficial.",
+    "queEs": "La exención de pago de peaje en la red nacional para ex combatientes de Malvinas. Es gratuita y se hace online ante Vialidad Nacional, por correo electrónico.",
+    "quien": "Ex soldados, conscriptos y civiles que participaron en las acciones bélicas entre el 2 de abril y el 14 de junio de 1982 en Malvinas; quienes combatieron en el Atlántico Sur dentro de las 200 millas náuticas; y quienes estuvieron asignados al Crucero ARA General Belgrano hasta el 2 de mayo de 1982.",
     "requisitos": [
-      "Certificado de veterano de guerra.",
-      "DNI.",
-      "Cédula del vehículo.",
-      "Dispositivo TelePASE habilitado a este efecto."
+      "La Declaración Jurada del trámite, que se descarga del sitio oficial, firmada de puño y letra o digitalmente.",
+      "Copia de las dos caras del DNI vigente."
     ],
     "pasos": [
-      "Hacés el trámite nacional en argentina.gob.ar.",
-      "Con la exención otorgada, se habilita el TelePASE en los sectores de detención segura de las estaciones."
+      "Descargás la Declaración Jurada del sitio oficial y la completás.",
+      "La enviás, junto con la copia del DNI, a atencionalusuario@vialidad.gob.ar.",
+      "Esperás la confirmación del Centro de Atención al Usuario de Vialidad Nacional."
     ],
     "url": "https://www.argentina.gob.ar/servicio/exencion-de-pago-de-peaje-ex-combatientes-de-malvinas",
-    "fuente": "PETG art. 52 y 56.1"
+    "fuente": "Vialidad Nacional, argentina.gob.ar"
   },
   {
     "id": "alta-telepase",
     "nombre": "Alta de TelePASE",
-    "quien": "Cualquier usuario. Es gratuito: adhesión, primer dispositivo, colocación, renovación y reposición.",
+    "queEs": "El dispositivo que te deja cruzar las vías automáticas sin frenar a pagar, y que sirve en toda la red nacional. La adhesión, el primer dispositivo por vehículo, su colocación, la renovación, la cancelación y la reposición no tienen costo: lo obliga el contrato de concesión.",
+    "quien": "Cualquier usuario. También es el dispositivo con el que se gestionan las exenciones.",
     "requisitos": [
-      "DNI.",
-      "Cédula del vehículo.",
-      "Un medio de pago (prepago o pospago con tarjeta)."
+      "Los datos del vehículo.",
+      "Un medio de pago: tarjeta de crédito, tarjeta de débito o MercadoPago. También se puede adherir sin débito automático."
     ],
     "pasos": [
-      "Te adherís en telepase.com.ar o en un punto de colocación.",
-      "Elegís prepago (cargás saldo) o pospago (se factura a mes vencido con el detalle de pasadas).",
+      "Te adherís en el sitio oficial de TelePASE o en un punto de colocación.",
+      "Elegís la modalidad: prepago, cargando saldo por adelantado, o pospago, que se factura a mes vencido con el detalle de las pasadas.",
       "Retirás y colocás el dispositivo, sin cargo."
     ],
     "url": "https://www.telepase.com.ar/",
-    "fuente": "PETG art. 50.1.3, 50.5 y 51.1"
+    "fuente": "telepase.com.ar; contrato de concesión"
   }
 ]
