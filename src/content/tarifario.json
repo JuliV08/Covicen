@@ -8,53 +8,14 @@
   "alicuotaIva": 0.21,
   "origen": "heredado",
   "resolucion": "Resolución 248/2026 de la Dirección Nacional de Vialidad",
-  "cabinas": [
-    "carcarana",
-    "james-craik",
-    "franck"
-  ],
+  "cabinas": ["carcarana", "james-craik", "franck"],
   "categoriaDestacada": "cat-1",
   "tarifas": [
-    {
-      "categoria": "cat-1",
-      "icono": "auto",
-      "nombre": "Categoría 1",
-      "descripcion": "Vehículos de hasta 2 ejes y hasta 2,30 m de altura, sin rueda doble.",
-      "montoSinIva": 1239.67,
-      "montoManualSinIva": 1239.67
-    },
-    {
-      "categoria": "cat-2",
-      "icono": "camioneta",
-      "nombre": "Categoría 2",
-      "descripcion": "Hasta 2 ejes y más de 2,30 m de altura y/o con rueda doble; o más de 2 y hasta 4 ejes, menos de 2,30 m, sin rueda doble.",
-      "montoSinIva": 2479.34,
-      "montoManualSinIva": 2479.34
-    },
-    {
-      "categoria": "cat-3",
-      "icono": "camion-3-4",
-      "nombre": "Categoría 3",
-      "descripcion": "Más de 2 y hasta 4 ejes, más de 2,30 m de altura y/o con rueda doble.",
-      "montoSinIva": 3719.01,
-      "montoManualSinIva": 3719.01
-    },
-    {
-      "categoria": "cat-4",
-      "icono": "camion-5-6",
-      "nombre": "Categoría 4",
-      "descripcion": "Más de 4 y hasta 6 ejes.",
-      "montoSinIva": 4958.68,
-      "montoManualSinIva": 4958.68
-    },
-    {
-      "categoria": "cat-5",
-      "icono": "camion-7",
-      "nombre": "Categoría 5",
-      "descripcion": "Más de 6 ejes.",
-      "montoSinIva": 6198.35,
-      "montoManualSinIva": 6198.35
-    }
+    { "categoria": "cat-1", "icono": "auto", "nombre": "Categoría 1", "descripcion": "Vehículos de hasta 2 ejes y hasta 2,30 m de altura, sin rueda doble.", "montoSinIva": 1239.67, "montoManualSinIva": 1239.67 },
+    { "categoria": "cat-2", "icono": "camioneta", "nombre": "Categoría 2", "descripcion": "Hasta 2 ejes y más de 2,30 m de altura y/o con rueda doble; o más de 2 y hasta 4 ejes, menos de 2,30 m, sin rueda doble.", "montoSinIva": 2479.34, "montoManualSinIva": 2479.34 },
+    { "categoria": "cat-3", "icono": "camion-3-4", "nombre": "Categoría 3", "descripcion": "Más de 2 y hasta 4 ejes, más de 2,30 m de altura y/o con rueda doble.", "montoSinIva": 3719.01, "montoManualSinIva": 3719.01 },
+    { "categoria": "cat-4", "icono": "camion-5-6", "nombre": "Categoría 4", "descripcion": "Más de 4 y hasta 6 ejes.", "montoSinIva": 4958.68, "montoManualSinIva": 4958.68 },
+    { "categoria": "cat-5", "icono": "camion-7", "nombre": "Categoría 5", "descripcion": "Más de 6 ejes.", "montoSinIva": 6198.35, "montoManualSinIva": 6198.35 }
   ],
   "fuente": {
     "nombre": "Resolución 248/2026 — Boletín Oficial, 24/02/2026",

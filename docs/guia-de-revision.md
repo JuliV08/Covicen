@@ -222,10 +222,10 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 **Header (72 px)**
 - Logo **sin descriptor** (ya no dice "Corredor Vial del Centro" en ningún lado: ni en el header, ni en el título, ni en la imagen para redes).
-- Menú: Tarifas · El tramo · Servicios · Obras · Novedades · **Nosotros** (desplegable: abre con clic o Enter, cierra con Esc o clic afuera, el chevron gira) · Contacto. La página actual queda subrayada en celeste.
+- Menú: Tarifas · El tramo · Servicios · Novedades · **Nosotros** (desplegable: abre con clic o Enter, cierra con Esc o clic afuera, el chevron gira) · Contacto. **Desde el 20/09** cada opción va en su propia pastilla, Obras salió del menú y el desplegable Nosotros pasó a ser: Quiénes somos · Políticas · Transparencia · **Proveedores**. La página actual queda marcada con una barrita celeste adentro de la pastilla.
 - **Probá "Nosotros" con el mouse y también con el teclado** (Tab hasta que quede marcado, Enter): tiene que funcionar exactamente igual que antes. Lo que se corrigió no se ve: era un dato que el sitio le pasaba a los lectores de pantalla y estaba mal, decía "cerrado" aunque el menú estuviera abierto.
 - El **140 grande** amarillo con "Emergencias" arriba, desde 640 px de ancho. Debajo de 640 px desaparece del header y aparece la **barra fija de abajo** con el 140 y, a la derecha, el botón de asistencia (ícono de mira) que lleva a `/asistencia/`.
-- Al scrollear, el header gana fondo translúcido y borde.
+- Al scrollear, el header gana fondo translúcido y borde. **Mirá esto en tema claro y scrolleando despacio**: es la pantalla donde el menú se perdía sobre la foto, y lo que lo arregla es la pastilla, no el fondo.
 
 **Interruptor de tema**
 - Nace oculto y **aparece con JavaScript**: sin JS no puede funcionar, así que no se muestra un botón muerto. Si lo ves sin JS habilitado, es un bug.
@@ -236,19 +236,19 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 **Footer**
 - Columna marca: isotipo + COVICEN, texto "Concesionaria del Tramo Centro… RN 9 · RN 19 · RN 34 · Córdoba y Santa Fe". La fila de redes **no aparece** (no hay cuentas cargadas).
-- Usuarios (Tarifas, Medios de pago, Emergencias, Asistencia en ruta, Guía de trámites, Seguridad vial, Preguntas frecuentes) y Empresa (Quiénes somos, Obras, Novedades, Políticas, Transparencia, Trabajá con nosotros). Los links del footer no van subrayados hasta el hover (son menú).
+- Usuarios (Tarifas, Medios de pago, Emergencias, Asistencia en ruta, Guía de trámites, Seguridad vial, Preguntas frecuentes) y Empresa (Quiénes somos, Novedades, Políticas, Transparencia). Los links del footer no van subrayados hasta el hover (son menú). **Desde el 20/09** la columna Empresa perdió Obras y Trabajá con nosotros; Proveedores sigue en la columna de Contacto y además subió al menú de arriba.
 - Contacto: "Emergencias 140" (llama), Formulario de contacto, Proveedores. **Ocultos** hasta tener el dato: 0800, correo de atención al usuario, WhatsApp.
 - **Datos registrales: no aparecen** (razón social, CUIT y domicilio son `null`). Cuando existan los tres, aparece la columna y, si además está `public/qr-afip.png`, el QR de Data Fiscal enlazando a la constancia.
 - **Fila institucional**: Vialidad Nacional · Secretaría de Transporte · Presidencia de la Nación · Red Federal de Concesiones · TelePASE, hoy como rótulos de texto (cuando tengas los SVG oficiales monocromos en `src/assets/institucional/<id>.svg` se reemplazan solos), más el botón amarillo 140. Todos abren en otra pestaña.
 - Línea inferior: "Sociedad en formación · Adjudicación: Resolución 1379/2026 del Ministerio de Economía. Privacidad · Boletín Oficial" y **"Última actualización: <fecha y hora>"**. Es la fecha y hora **del build**, en hora argentina, no la de la visita: en local es el momento en que corriste `pnpm dev`/`build`; en Pages, el último deploy (el workflow reconstruye a diario a las 03:00, así que nunca tiene más de un día).
 
 **Formularios (todos los del sitio)**
-- Los **desplegables ahora arrancan en "Elegí una opción"** en vez de mostrar la primera opción real ya elegida: Contacto (Motivo y Tema), TelePASE (Tipo de consulta), Trámites (Trámite), Proveedores (Rubro), Trabajá con nosotros (Zona y Área) y Asistencia (Qué pasó y Vehículo). Si mandás el formulario sin tocarlos, tiene que aparecer en rojo **"Elegí una opción."** debajo del desplegable. Antes se mandaba la primera opción sin que vos la hubieras elegido.
+- Los **desplegables ahora arrancan en "Elegí una opción"** en vez de mostrar la primera opción real ya elegida: Contacto (Motivo y Tema), TelePASE (Tipo de consulta), Trámites (Trámite) y Asistencia (Qué pasó y Vehículo). Proveedores (Rubro) también; el de Trabajá con nosotros se fue con la página el 20/09. Si mandás el formulario sin tocarlos, tiene que aparecer en rojo **"Elegí una opción."** debajo del desplegable. Antes se mandaba la primera opción sin que vos la hubieras elegido.
 - Debajo del botón aparece una **línea de aviso al mandarlo** ("Abrimos WhatsApp en otra pestaña con el mensaje armado. Si no se abrió, fijate si el navegador bloqueó la ventana."). Hoy, sin canal cargado, eso solo se ve en `/asistencia/`.
 
 **Legibilidad (pliego 61.7), en cualquier página**
 - Los links dentro del texto van **subrayados** (1 px; en hover 2 px). Menú, botones, tarjetas-enlace, navs de anclas y footer no (el pliego lo permite).
-- Ningún texto menor de 14 px, salvo las **anotaciones** de 12 px: "sin IVA" bajo los precios, "Fuente: PETG art. …", "Publicado el…", las etiquetas de las novedades, los chips ("Cuadro vigente", "Gratis", "Operativa"). Nada justificado.
+- Ningún texto menor de 14 px, salvo las **anotaciones** de 12 px: "sin IVA" bajo los precios, "Publicado el…", las etiquetas de las novedades, los chips ("Cuadro vigente", "Gratis", "Operativa"). Nada justificado. **Desde el 20/09 ya no hay anotaciones "Fuente: PETG art. …"**: el dato sigue en el JSON, pero no se le muestra al usuario.
 - Teclado: apretá Tab al entrar → aparece "Saltar al contenido" (amarillo) → Enter → un **anillo celeste hacia adentro** marca el contenido. Seguí con Tab por menú, 140, cinta de avisos, mapa (cada estación), formularios: siempre se ve dónde estás. La cinta se frena sola cuando el foco entra en ella.
 - **Imprimir** (Ctrl+P en cualquier página): papel blanco, tinta negra, sin header ni barras ni footer de navegación ni botones ni fondos animados; arriba el encabezado **"Covicen · <sitio> · impreso el <fecha de hoy>"**; los enlaces externos muestran su URL entre paréntesis; las migas quedan. El detalle en Tarifas, abajo.
 - Al navegar entre páginas hay un fundido suave; el header no parpadea y el tema no cambia.
@@ -324,7 +324,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 > **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió servicios: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
 
-- **Sin costo (01)**: seis tarjetas con chip verde "Gratis": Emergencias 140; Grúa y remolque para despejar la calzada (30 min livianos / 60 pesados); Móviles de seguridad vial; TelePASE sin costo; Atención al usuario; Sanitarios públicos. Cada una con alcance, tiempos y "Fuente: PETG art. …" en 12 px.
+- **Sin costo (01)**: seis tarjetas con chip verde "Gratis": Emergencias 140; Grúa y remolque para despejar la calzada (30 min livianos / 60 pesados); Móviles de seguridad vial; TelePASE sin costo; Atención al usuario; Sanitarios públicos. Cada una con alcance y tiempos. **Desde el 20/09 sin la anotación "Fuente: PETG art. …"**.
 - **Con costo (02)**: Mecánica general; Remolque más allá del punto gratuito (chip "Con costo").
 - **Canales y plazos (03)**: tabla completa Canal · Disponibilidad · Acuse · Respuesta, seis filas: Emergencias 140 (inmediato), Botón de asistencia en ruta, Formulario web (acuse 24 h, respuesta 5 días hábiles), Correo, Línea 0800, WhatsApp. Los tres últimos **no muestran un dato inventado**: dicen "Se habilita con la toma de posesión, el 5 de octubre de 2026".
 - **Más adelante (04)**: huecos "Oficina virtual" y "Seguimiento de reclamos" (Próximamente + alternativa real).

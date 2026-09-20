@@ -10,6 +10,14 @@ import { bloqueClaro, bloqueRoot, bloqueTheme, declaracionesDe } from '../../scr
 // ítem del menú lleve su propia superficie opaca (la pill), así deja de depender de lo que pase por atrás.
 // El logotipo y la hamburguesa NO llevan pill y hoy pasan con 4,95:1: entran igual, porque 0,45 de margen es poco y
 // este proyecto ya perdió ese margen dos veces al cambiar la foto del hero.
+//
+// Dos cosas que el modelo NO incluye, y por qué no lo hacen mentir:
+// - `backdrop-filter: blur(12px)` del header: un desenfoque promedia píxeles vecinos, no aclara una zona oscura,
+//   y además no está garantizado en todos los navegadores.
+// - `.velo-hero` y `.hero-luz`, que están entre la foto y el header: el velo empuja el píxel hacia
+//   `--color-fondo`, que en los dos temas es del MISMO lado que el texto, así que solo puede mejorar el
+//   contraste.
+// O sea que esto mide un escenario peor que el real: si pasa acá, pasa en pantalla.
 type Crudo = { data: Buffer; info: { width: number; height: number; channels: number } };
 type Sharp = (archivo: string) => {
   resize: (ancho: number, alto: number, opciones: { fit: 'fill' }) => { raw: () => { toBuffer: (o: { resolveWithObject: true }) => Promise<Crudo> } };
@@ -69,9 +77,15 @@ const PANTALLAS: Array<[string, number, number]> = [
 const CORTE = 1024;                  // --alto-header baja a 4.5rem abajo de acá (tokens.css)
 const ALTO_ANCHO = 112, ALTO_ANGOSTO = 72;
 const ALTO_BARRA = 40;               // BarraSuperior: opaca (bg-fondo-2) y solo en escritorio
-const SCROLL_MAX = 220;
+/** Hasta dónde barrer el scroll. Se DERIVA del rango de la animación en vez de cablearse: `--color-cabecera`
+ *  tiene alfa, así que la foto nunca deja de pasar por detrás del header, y con un tope fijo bastaría que
+ *  alguien pusiera `animation-range: 0 400px` para que el test dejara de cubrir el tramo malo, en silencio. */
+const scrollMax = (rango: number) => rango + ALTO_ANCHO + 48;
 
 describe('contraste del header sobre la foto del hero (pliego 61.7)', () => {
+  // Esto mira la REGLA. La otra mitad —que el marcado de cada ítem lleve la clase— se verifica sobre el HTML
+  // renderizado en tests/components/layout.test.ts: si alguien sacara `nav-item` de los <a>, la regla seguiría
+  // acá y este test quedaría verde con el texto otra vez apoyado en la foto.
   it('la pill del menú existe y su fondo es un token opaco', () => {
     const token = tokenPill();
     expect(token, 'los ítems del menú no declaran fondo: siguen apoyados en la foto').not.toBeNull();
@@ -118,7 +132,7 @@ describe('contraste del header sobre la foto del hero (pliego 61.7)', () => {
             if (r < 4.5) flojos.push(`${nombre}, ${pieza.cual} sobre la pill: ${r.toFixed(2)}:1`);
             continue;
           }
-          for (let s = 0; s <= SCROLL_MAX; s += 2) {
+          for (let s = 0; s <= scrollMax(rango); s += 2) {
             const alfa = cabecera.alfa * Math.min(1, s / rango);
             for (let y = bandaTop; y <= bandaBot; y += 2) {
               const heroY = s + y - altoHeader;   // y dentro del hero; negativo = todavía no hay foto detrás

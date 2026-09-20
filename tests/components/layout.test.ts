@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
+import { parseHTML } from 'linkedom';
 import { describe, expect, it } from 'vitest';
 import Base from '@/layouts/Base.astro';
 import Header from '@/components/Header.astro';
@@ -70,6 +71,23 @@ describe('Header', () => {
     expect(html).toMatch(/href="\/tarifas\/"[^>]*aria-current="page"/);
     expect(html).toContain('popovertarget="menu-mobile"');
   });
+  // La mitad de marcado de la guarda de contraste del header (la otra está en tests/styles/header-foto.test.ts,
+  // que mide los píxeles). Cada opción del menú se apoya en su propia superficie opaca; si alguien saca la clase
+  // de los <a>, la regla CSS sigue existiendo y el test de píxeles quedaría verde con el texto otra vez sobre la
+  // foto del hero. Acá se mira el HTML de verdad.
+  it('cada opción del menú lleva la clase de la pill', async () => {
+    const c = await AstroContainer.create();
+    const { document } = parseHTML(await c.renderToString(Header, { props: await props() }));
+    const items = [...document.querySelectorAll('nav[aria-label="Principal"] > ul > li')];
+    expect(items.length, 'esperaba varios ítems de menú').toBeGreaterThan(3);
+    for (const li of items) {
+      // <li><a> en los enlaces; <li><details><summary> en el desplegable Nosotros.
+      const primero = li.firstElementChild!;
+      const control = primero.tagName.toLowerCase() === 'details' ? primero.querySelector('summary')! : primero;
+      expect(control.getAttribute('class') ?? '', `sin pill: ${control.textContent?.trim()}`).toContain('nav-item');
+    }
+  });
+
   it('el desplegable Nosotros no sale con aria-expanded fijo: sin JS mentiría', async () => {
     // El <summary> nativo ya expone si el <details> está abierto. Un aria-expanded="false" en el marcado lo pisa y,
     // sin JS que lo sincronice, el lector anuncia "contraído" sobre un menú abierto: peor que no poner nada.
