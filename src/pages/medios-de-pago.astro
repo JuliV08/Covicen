@@ -18,19 +18,19 @@ const oficina = contacto.enlaces.oficinaVirtual;
 // en la otra, que es peor que no esconderlo.
 const secciones = [true, true, publicado.pasasteSinPagar];
 const [nTelepase, nMiCuenta, nSinPagar] = indices(secciones);
-// Modalidades del pliego (PETG 51.1).
+// Modalidades de pago que fija el contrato de concesión.
 const modalidades = [
-  { titulo: 'Prepago con TelePASE', texto: 'Cargás saldo por adelantado y cada pasada se descuenta a la tarifa vigente de tu categoría.', fuente: 'PETG art. 51.1.1' },
-  { titulo: 'Pospago con TelePASE', texto: 'Asociás una tarjeta de crédito o débito y pagás a mes vencido. La factura detalla pasadas, estaciones e importes.', fuente: 'PETG art. 51.1.2' },
-  { titulo: 'Contado en la vía', texto: `Efectivo o medios electrónicos en las vías habilitadas de las estaciones con cabina (${conCabina.join(', ')}).`, fuente: 'PETG art. 51.1.3' },
+  { titulo: 'Prepago con TelePASE', texto: 'Cargás saldo por adelantado y cada pasada se descuenta a la tarifa vigente de tu categoría.' },
+  { titulo: 'Pospago con TelePASE', texto: 'Asociás una tarjeta de crédito o débito y pagás a mes vencido. La factura detalla pasadas, estaciones e importes.' },
+  { titulo: 'Contado en la vía', texto: `Efectivo o medios electrónicos en las vías habilitadas de las estaciones con cabina (${conCabina.join(', ')}).` },
 ];
 ---
 <Base titulo="Medios de pago" descripcion="Cómo pagar el peaje en el Tramo Centro: TelePASE prepago o pospago, pago en la vía en Carcarañá, James Craik y Franck, y qué hacer si pasaste sin pagar." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Medios de pago', href: '/medios-de-pago' }]}>
   <Seccion nivel="h1" eyebrow="Medios de pago" titulo="Cómo pagar el peaje." intro="Con TelePASE se paga lo mismo que en la vía. El dispositivo es gratis y sirve en toda la red nacional." class="pt-10">
-    <ul class="escalonar grid gap-4 md:grid-cols-3">{modalidades.map((m, i) => <li style={`--i: ${i}`}><Card><h2 class="text-xl">{m.titulo}</h2><p class="mt-2 text-texto-2">{m.texto}</p><p class="anotacion mt-3 text-xs text-texto-2">Fuente: {m.fuente}</p></Card></li>)}</ul>
+    <ul class="escalonar grid gap-4 md:grid-cols-3">{modalidades.map((m, i) => <li style={`--i: ${i}`}><Card><h2 class="text-xl">{m.titulo}</h2><p class="mt-2 text-texto-2">{m.texto}</p></Card></li>)}</ul>
   </Seccion>
 
-  <Seccion id="telepase" indice={nTelepase} eyebrow="TelePASE" titulo="Gratis, y en todas las estaciones." intro="La adhesión, el primer dispositivo por vehículo, su colocación, la renovación, la cancelación y la reposición no tienen costo para el usuario (PETG art. 50.5). Los exentos y las tarifas diferenciales también se gestionan con TelePASE." fondo="fondo-2">
+  <Seccion id="telepase" indice={nTelepase} eyebrow="TelePASE" titulo="Gratis, y en todas las estaciones." intro="La adhesión, el primer dispositivo por vehículo, su colocación, la renovación, la cancelación y la reposición no tienen costo para el usuario. Los exentos y las tarifas diferenciales también se gestionan con TelePASE." fondo="fondo-2">
     <div class="revelar grid gap-6 md:grid-cols-2">
       <div class="tarjeta p-6"><h3 class="text-xl">Cómo adherirte</h3><p class="mt-2 text-texto-2">En el sitio oficial de TelePASE o en un punto de colocación. Elegís prepago o pospago y retirás el dispositivo sin cargo.</p><div class="mt-4"><Boton href={contacto.enlaces.telepase} variante="secundario" externo>Ir a TelePASE <ExternalLink size={16} aria-hidden="true" /></Boton></div></div>
       <div class="tarjeta p-6"><h3 class="text-xl">Dónde se coloca</h3>{colocacion.length > 0 ? <p class="mt-2 text-texto-2">En los sectores de detención segura de {colocacion.join(', ')}, en días hábiles.</p> : <p class="mt-2 text-texto-2">En los sectores de detención segura de las estaciones, con horarios señalizados en cada una. Publicamos las ubicaciones cuando Covicen las defina.</p>}</div>
@@ -44,7 +44,7 @@ const modalidades = [
   </Seccion>
 
   {publicado.pasasteSinPagar && (
-  <Seccion id="sin-pagar" indice={nSinPagar} eyebrow="Pasaste sin pagar" titulo="Cómo regularizarlo." intro="Si cruzás una estación sin TelePASE vigente y sin pagar (PETG art. 51.1.4):">
+  <Seccion id="sin-pagar" indice={nSinPagar} eyebrow="Pasaste sin pagar" titulo="Cómo regularizarlo." intro="Si cruzás una estación sin TelePASE vigente y sin pagar:">
     <ol class="revelar grid gap-4 md:grid-cols-2">
       <li class="tarjeta p-6"><p class="eyebrow">Dentro de los 30 días</p><p class="mt-2 text-texto-2">La tarifa que correspondía más <strong class="text-texto">una tarifa</strong> de tu categoría.</p></li>
       <li class="tarjeta p-6"><p class="eyebrow">Después de los 30 días</p><p class="mt-2 text-texto-2">La tarifa más <strong class="text-texto">dos tarifas</strong> de tu categoría, con intereses a la tasa activa del Banco Nación.</p></li>

@@ -65,7 +65,10 @@ const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
     </nav>
 
     <div class="flex items-center gap-3">
-      <!-- El 140 grande: número corto de emergencia del pliego (PETG 59). Debajo de 640 px lo muestra BarraEmergencias. -->
+      {/* El 140 grande: el número corto de emergencia que obliga el contrato. Debajo de 640 px lo muestra
+          BarraEmergencias.
+          Esta nota va en comentario de expresión y no en comentario HTML: un comentario HTML de un template Astro
+          se publica al navegador, y esta nota salía en las 27 páginas del sitio. */}
       <a href={telHref} class="btn-vial btn-140 hidden sm:inline-flex" aria-label={`Llamar a emergencias, ${tel}`}>
         <Phone size={22} aria-hidden="true" class="telefono" />
         <span class="flex flex-col text-left leading-none">

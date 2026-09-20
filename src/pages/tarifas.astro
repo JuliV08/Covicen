@@ -25,7 +25,7 @@ const proximas = tramo.cabinas.filter((c) => !cabinaOperativa(c));
 // docs/pendientes-de-confirmacion.md. Los índices se corren solos: ver src/lib/indices.ts.
 const secciones = [publicado.descuentosPorFrecuencia, true, publicado.tarifaDiferencial, publicado.pasasteSinPagar, publicado.excesoDeCarga, publicado.categoriasFuturas];
 const [nDescuentos, nExenciones, nDiferencial, nSinPagar, nExceso, nCategorias] = indices(secciones);
-// Categorías que rigen después de las Obras Iniciales de Puesta en Valor (PETG 53.2): informativas, sin precio.
+// Categorías que rigen después de las Obras Iniciales de Puesta en Valor: informativas, sin precio.
 const futuras = [
   ['0', 'Motocicletas', '0,5'], ['1', 'Hasta 2 ejes y hasta 2,30 m de altura, sin rueda doble', '1'],
   ['2', 'Hasta 2 ejes y más de 2,30 m con rueda doble; o 3 ejes, menos de 2,30 m, sin rueda doble', '2'],
@@ -33,8 +33,8 @@ const futuras = [
   ['7', 'Más de 6 ejes', '7'], ['8', 'Más de 8 ejes', '9'], ['Especial', 'Con permiso de circulación especial', 'cantidad de ejes'],
 ] as const;
 const descuentos = [['A partir de la pasada 36 en el mes', '15 %'], ['A partir de la pasada 45 en el mes', '25 %'], ['A partir de la pasada 61 en el mes', '35 %']] as const;
-// Tarifa de peaje por exceso de carga (PETG art. 83), tal como está en el cuadro del pliego: el tramo de exceso y por
-// cuánto se multiplica la tarifa vigente de la categoría. No es una multa de tránsito: es la tarifa de esa pasada.
+// Tarifa de peaje por exceso de carga, tal como está en el cuadro del contrato de concesión: el tramo de exceso y
+// por cuánto se multiplica la tarifa vigente de la categoría. No es una multa de tránsito: es la tarifa de esa pasada.
 const excesoDeCarga = [['Exceso del 10 % al 30 %', '50 veces'], ['Exceso de más del 30 %', '100 veces']] as const;
 // El listado de ocho viñetas era lo que pesaba de esta sección (pedido del gerente, 20/09/2026: más corta). Las
 // categorías de organismos se agrupan en una línea —nadie llega a esta página preguntándose si pasa gratis una
@@ -79,13 +79,13 @@ const exentos = [
     {proximas.length > 0 && (
       <div class="revelar mt-12 rounded-md border border-dashed border-borde-fuerte p-6">
         <h3 class="text-xl">Estaciones sin habilitar</h3>
-        <p class="mt-2 text-texto-2">{proximas.map((c) => c.nombre).join(', ')}: cobran cuando Vialidad Nacional las habilite, con el cuadro tarifario de Carcarañá (PETP art. 3). Hasta entonces, en esas estaciones no se paga.</p>
+        <p class="mt-2 text-texto-2">{proximas.map((c) => c.nombre).join(', ')}: cobran cuando Vialidad Nacional las habilite, con el cuadro tarifario de Carcarañá. Hasta entonces, en esas estaciones no se paga.</p>
       </div>
     )}
   </Seccion>
 
   {publicado.descuentosPorFrecuencia && (
-  <Seccion indice={nDescuentos} eyebrow="Descuentos por frecuencia" titulo="Cuanto más pasás, menos pagás." intro="Para autos, con TelePASE, por estación y por mes calendario, en ambos sentidos. Es una obligación del contrato (PETG art. 53.3)." fondo="fondo-2">
+  <Seccion indice={nDescuentos} eyebrow="Descuentos por frecuencia" titulo="Cuanto más pasás, menos pagás." intro="Para autos, con TelePASE, por estación y por mes calendario, en ambos sentidos. Es una obligación del contrato de concesión." fondo="fondo-2">
     <dl class="revelar grid gap-4 md:grid-cols-3">
       {descuentos.map(([pasadas, pct]) => <div class="tarjeta p-6"><dt class="eyebrow">{pasadas}</dt><dd class="mt-2 text-4xl font-extrabold text-texto">{pct}</dd><dd class="mt-1 text-sm text-texto-2">de descuento a partir de esa pasada</dd></div>)}
     </dl>
@@ -123,17 +123,16 @@ const exentos = [
     <dl class="revelar grid gap-4 md:grid-cols-2">
       {excesoDeCarga.map(([tramoExceso, multiplicador]) => <div class="tarjeta p-6"><dt class="eyebrow">{tramoExceso}</dt><dd class="mt-2 text-4xl font-extrabold text-texto">{multiplicador}</dd><dd class="mt-1 text-sm text-texto-2">la tarifa vigente de su categoría</dd></div>)}
     </dl>
-    <p class="revelar mt-6 text-texto-2">Además, el exceso hay que descargarlo o pasarlo a otro vehículo antes de seguir viaje, por cuenta de quien transporta, y se cobra el canon por deterioro del artículo 57 del Decreto 779/95 (PETG art. 75 y 76).</p>
-    <p class="anotacion revelar mt-4 text-xs text-texto-2">Fuente: PETG art. 83.</p>
+    <p class="revelar mt-6 text-texto-2">Además, el exceso hay que descargarlo o pasarlo a otro vehículo antes de seguir viaje, por cuenta de quien transporta, y se cobra el canon por deterioro del artículo 57 del Decreto 779/95.</p>
   </Seccion>
   )}
 
   {/* Sin fondo-2: las secciones alternan liso y grilla cinética, y la de exceso de carga ya ocupa ese turno. */}
   {publicado.categoriasFuturas && (
-  <Seccion indice={nCategorias} eyebrow="Después de las obras iniciales" titulo="Las categorías que van a regir." intro="Cuando terminen las Obras Iniciales de Puesta en Valor, el cuadro pasa a las categorías del pliego (PETG art. 53.2): cada una es un múltiplo de la tarifa básica. Acá va la estructura; los precios, cuando Vialidad Nacional homologue el cuadro.">
+  <Seccion indice={nCategorias} eyebrow="Después de las obras iniciales" titulo="Las categorías que van a regir." intro="Cuando terminen las Obras Iniciales de Puesta en Valor, el cuadro pasa a las categorías del contrato de concesión: cada una es un múltiplo de la tarifa básica. Acá va la estructura; los precios, cuando Vialidad Nacional homologue el cuadro.">
     <section class="bloque-oscuro revelar overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label="Categorías futuras de vehículos">
       <table class="w-full border-collapse text-left">
-        <caption class="sr-only">Categorías de vehículos del pliego y su múltiplo sobre la tarifa básica.</caption>
+        <caption class="sr-only">Categorías de vehículos del contrato de concesión y su múltiplo sobre la tarifa básica.</caption>
         <thead class="bg-fondo-2 text-sm uppercase tracking-wider text-texto-2"><tr><th scope="col" class="px-4 py-3">Categoría</th><th scope="col" class="px-4 py-3">Vehículos</th><th scope="col" class="px-4 py-3 text-right">Tarifa básica ×</th></tr></thead>
         <tbody class="divide-y divide-borde">{futuras.map(([cat, veh, mult]) => <tr class="hover:bg-superficie"><th scope="row" class="px-4 py-3 font-semibold text-texto">{cat}</th><td class="px-4 py-3 text-texto-2">{veh}</td><td class="px-4 py-3 text-right tabular-nums text-texto">{mult}</td></tr>)}</tbody>
       </table>

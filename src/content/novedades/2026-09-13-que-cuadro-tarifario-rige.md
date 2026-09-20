@@ -5,7 +5,7 @@ resumen: "Desde la toma de posesión, en Carcarañá, James Craik y Franck se co
 etiquetas: ["tarifas", "transparencia"]
 destacada: false
 ---
-El 5 de octubre Covicen toma posesión del Tramo Centro. Ese día **no cambia el precio del peaje**: el pliego manda aplicar el cuadro tarifario vigente en el tramo a la fecha de la toma de posesión (PETP art. 3).
+El 5 de octubre Covicen toma posesión del Tramo Centro. Ese día **no cambia el precio del peaje**: el contrato de concesión manda aplicar el cuadro tarifario que ya regía en el tramo a la fecha de la toma de posesión.
 
 ## Qué cuadro es
 

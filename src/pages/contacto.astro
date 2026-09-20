@@ -20,7 +20,7 @@ const pasosReclamo = [
 ] as const;
 ---
 <Base titulo="Contacto" descripcion="Reclamos, consultas y sugerencias a Covicen con acuse en 24 horas y respuesta en 5 días hábiles. Consultas de TelePASE. Emergencias en ruta: 140, las 24 horas." migas={[{ nombre: 'Contacto', href: '/contacto' }]}>
-  <Seccion nivel="h1" eyebrow="Contacto" titulo="Reclamos, consultas y sugerencias." intro="Con los plazos que fija el pliego. Para emergencias en la ruta, llamá al 140." class="pt-10">
+  <Seccion nivel="h1" eyebrow="Contacto" titulo="Reclamos, consultas y sugerencias." intro="Con los plazos que fija el contrato de concesión. Para emergencias en la ruta, llamá al 140." class="pt-10">
     <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.3fr]">
       <div class="flex flex-col gap-4">
         <div class="tarjeta tarjeta-vial p-5"><p class="eyebrow flex items-center gap-2"><Phone size={14} aria-hidden="true" /> Emergencias 24 h</p><a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="mt-2 block text-3xl font-extrabold tabular-nums text-vial-texto no-underline" aria-label={`Llamar a emergencias, ${tel}`}>{tel}</a></div>
@@ -43,7 +43,7 @@ const pasosReclamo = [
     </div>
   </Seccion>
 
-  <Seccion id="telepase" indice="01" eyebrow="TelePASE" titulo="Consultas sobre tu TelePASE." intro="Cobros, dispositivo, adhesión o factura. Las respuestas a TelePASE tienen prioridad (PETG art. 61.5 b)." fondo="fondo-2">
+  <Seccion id="telepase" indice="01" eyebrow="TelePASE" titulo="Consultas sobre tu TelePASE." intro="Cobros, dispositivo, adhesión o factura. Las respuestas a TelePASE tienen prioridad." fondo="fondo-2">
     <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.3fr]">
       <p class="text-texto-2">Si tu consulta es sobre la cuenta o la facturación del dispositivo, también podés resolverla en el <a href={contacto.enlaces.telepase} rel="noopener noreferrer" target="_blank">sitio de TelePASE</a>.</p>
       <Formulario id="formulario-telepase" asunto="Consulta de TelePASE" whatsapp={contacto.whatsapp.numero} email={correo} {plazos} campos={[

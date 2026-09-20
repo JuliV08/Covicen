@@ -21,6 +21,15 @@ const fallos: string[] = [];
 const fallo = (m: string) => fallos.push(m);
 
 const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/];
+// Citas del pliego en la cara del público. Pedido del gerente (call del 20/09/2026): «hace mención del pliego; esas
+// cosas que no aparezcan». Vale para las siglas Y para la palabra escrita con todas las letras: son la misma mención,
+// y había ocho lugares que la escribían larga («según el Pliego de Especificaciones Técnicas Particulares…»), que
+// ningún filtro de siglas habría agarrado.
+// EXCEPCIÓN: /transparencia/, donde la normativa ES el contenido y citarla es justamente lo institucional.
+// La `fuente` de cada dato NO se borra de src/content/ —es la trazabilidad de por qué la web dice lo que dice—:
+// deja de pintarse. Se apaga la UI, no se rompe el dato.
+const PROHIBIDOS_USUARIO = [/\bPET[GP]\b/, /\bpliego/i];
+const SIN_PLIEGO = (nombre: string) => !nombre.startsWith('transparencia');
 // Mientras el estado de la traza se publique con datos de muestra, ninguna página puede mostrar marcadores de incidente
 // sin el cartel que lo aclara (spec §10.1): un corte de ruta inventado que se lee como real es el error más caro del sitio.
 const estadoDeMuestra = (JSON.parse(readFileSync('src/content/estado-ruta.json', 'utf8')) as { ejemplo?: boolean }).ejemplo === true;
@@ -72,6 +81,7 @@ for (const ruta of paginas) {
   // 10. textos prohibidos y datos oficiales (spec 2026-09-13 §2, §3, §12.1.2): criterio "esconder", marca y 679 km.
   // Los prohibidos se buscan en el HTML crudo (meta, alt, aria-label, JSON-LD incluidos); los obligatorios, en el texto visible.
   for (const p of PROHIBIDOS) if (p.test(html)) fallo(`${nombre}: contiene ${p}`);
+  if (SIN_PLIEGO(nombre)) for (const p of PROHIBIDOS_USUARIO) if (p.test(html)) fallo(`${nombre}: cita el pliego en la cara del público (${p})`);
   const visible = textoVisible(html);
   if ((nombre === 'index.html' || nombre.startsWith('el-tramo')) && !/\b679\b/.test(visible)) fallo(`${nombre}: falta la longitud oficial (679 km)`);
   if (!visible.includes('Última actualización')) fallo(`${nombre}: falta "Última actualización" en el pie`);

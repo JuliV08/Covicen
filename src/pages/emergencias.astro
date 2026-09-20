@@ -27,7 +27,6 @@ const pasos = consejos.filter((c) => c.categoria === 'emergencia');
         <h2 class="text-2xl">{grua.nombre}: gratis y con tiempos comprometidos</h2>
         <p class="mt-2 text-texto-2">{grua.descripcion} {grua.alcance}</p>
         <ul class="mt-4 flex flex-col gap-1 text-texto-2">{grua.tiempos?.map((t) => <li class="flex gap-2"><span aria-hidden="true">—</span>{t}</li>)}</ul>
-        <p class="anotacion mt-3 text-xs text-texto-2">Fuente: {grua.fuente}</p>
       </div>
     )}
     <div class="revelar mt-12"><h2 class="mb-4 text-2xl">Canales y plazos</h2><Canales canales={contacto.canales} compacto /></div>
