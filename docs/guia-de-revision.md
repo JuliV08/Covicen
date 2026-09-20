@@ -1,4 +1,6 @@
-# Guía de revisión — web de Covicen (actualización de septiembre de 2026)
+# Guía de revisión — web de Covicen
+
+**Al día al 20 de septiembre de 2026.** Empezá por «Lo que cambió el 20 de septiembre», que es la tanda más nueva; lo que sigue después es el estado de septiembre, con un aviso en cada pantalla que cambió.
 
 Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/superpowers/plans/2026-09-13-actualizacion-web.md`, más la **revisión final del 14 y 15 de septiembre**) se hizo **sin pruebas visuales**: esta guía es la lista de lo que hay que mirar a mano, pantalla por pantalla, más lo que quedó oculto a propósito y cómo cargarlo.
 
@@ -12,6 +14,132 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 **Si tenés "reducir movimiento" activado en Windows** (Configuración › Accesibilidad › Efectos visuales): todo queda estático, **la cinta de avisos no desfila** (se recorre a mano, de costado) y el botón de pausa ni aparece, porque no hay nada que frenar. El cambio de tema también es instantáneo, sin la disolvencia. Si no usás esa opción, ignorá este punto.
 
 ---
+
+## Lo que cambió el 20 de septiembre — mirá esto primero
+
+Es la tanda que salió de la call con el gerente. Está en la rama `web-ajustes-2026-09-20`, **sin push**: para verlo,
+`git switch web-ajustes-2026-09-20` y `pnpm dev`.
+
+La idea de fondo de toda la tanda: **lo que no está confirmado no se publica con salvedades, se esconde.** Qué quedó
+escondido, qué hay que ir a preguntar y a quién está en
+**`C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`**, que es el papel que le llevás al gerente.
+
+**El sitio pasó de 30 páginas a 27**: se fueron `/obras/` (escondida) y `/trabaja-con-nosotros/` (eliminada), y
+además se despublicó una novedad que hablaba de obras.
+
+### 1 · El menú, en pastillas
+
+Cada opción del menú ahora va en su propia pastilla, con fondo sólido y un borde finito. **No es solo estético:** el
+fondo del header es traslúcido y se va opacando con el scroll, así que las letras del menú caían sobre la foto del
+hero y, en **tema claro**, quedaban en 2,22 de contraste cuando el mínimo exigido es 4,5. Con la pastilla, el menú se
+apoya en su propio fondo y deja de depender de lo que pase por detrás.
+
+- **Qué mirar:** poné el **tema claro** (el sol/luna arriba a la derecha), parate en la portada y **scrolleá despacio**
+  los primeros centímetros. El menú tiene que leerse en todo momento. Probá también en tema oscuro.
+- El **vidrio esmerilado del header quedó igual**: no se tocó ni el color ni la animación.
+- El logo y el botón del 140 **no** llevan pastilla: se midió y ya se leían bien (4,95). El 140 ya era una pastilla.
+- En el celular, la hamburguesa también quedó redonda con fondo, para que la barra tenga un solo idioma.
+
+### 2 · La portada, en cinco secciones
+
+Quedó: **foto y título → los cuatro botones de acceso → El tramo con el mapa → novedades → cierre de contacto.**
+Nada más.
+
+- Se fueron de la portada: la tarifa destacada, obras, servicios, el consorcio y las preguntas frecuentes. **Siguen
+  existiendo en sus páginas**, a las que se llega por el menú.
+- El mapa interactivo **ya estaba** en la portada desde septiembre: no hubo que moverlo.
+- El texto de la sección El tramo pasó a ser el mismo que el gerente dio por perfecto en la página El tramo.
+- **Lo que falta:** el título y el párrafo grandes de la portada **todavía no se cambiaron**. Están esperando que
+  elijas entre las opciones. Hasta entonces siguen los de antes.
+
+### 3 · Obras: escondida, no borrada
+
+- **`/obras/` no existe en el sitio publicado.** No es que no esté enlazada: no se genera. Si la escribís a mano en
+  el navegador, no está. Esto es a propósito: una página viva sin enlaces la indexa Google igual.
+- Salió del menú de arriba y del pie.
+- Se barrieron las menciones a obras de la portada, de Quiénes somos, de una pregunta frecuente y de una novedad.
+- La novedad que *era* la página de obras se despublicó entera.
+- **Todo el contenido sigue en el repo** y vuelve cambiando un `false` por un `true`.
+
+### 4 · Trabajá con nosotros: eliminada
+
+Pedido explícito: «directamente sacarlo». Se fue la página, el ítem del menú, el del pie y la pregunta frecuente que
+la nombraba, que ahora habla solo de proveedores.
+
+### 5 · Proveedores subió al menú
+
+Estaba solo en el pie. Ahora está en el desplegable **Nosotros**, arriba, y también en el menú del celular.
+
+### 6 · Free Flow: fuera de toda la web
+
+«No está asegurado que sea de esa manera y no se sabe cómo va a ser».
+
+- Leones, San Francisco y Totoras ahora dicen **«Próxima»** a secas, en el mapa, en las tarjetas y en su página.
+- Se fue la sección «Free Flow» de Medios de pago y la pregunta frecuente que lo explicaba.
+- **Qué mirar:** buscá «Free Flow» en cualquier página. No tiene que aparecer en ningún lado.
+
+### 7 · Tarifas: queda el cuadro, se esconde lo que no está certificado
+
+- **Queda tal cual** lo que pediste mantener: el cuadro tarifario por estación, con el precio de cada categoría en
+  Carcarañá, James Craik y Franck. Y **las dos tarjetas de discapacidad y Malvinas**, que marcaste dos veces.
+- **Se escondieron enteras** (ni el título, ni los números): descuentos por frecuencia, tarifa diferencial, qué pasa
+  si pasás sin pagar, exceso de carga y las categorías futuras.
+- **Exenciones quedó más corta**: las ocho viñetas de vehículos se agruparon en tres líneas. No se sacó ninguna
+  categoría, se dicen en menos renglones.
+- Los tres botones del final (Cómo pagar · Dónde están los peajes · Preguntas frecuentes) **siguen**: vivían adentro
+  de una sección que se escondió y se mudaron afuera.
+- **Qué mirar:** que los números del cuadro estén completos y que no haya quedado ningún porcentaje ni recargo suelto
+  en la página.
+
+### 8 · El tramo: sin cuadros repetidos y sin áreas de descanso vacías
+
+- Se fue la sección **«Cuadros tarifarios»**: era reiterativa, eso vive en Tarifas. Queda un botón que lleva ahí.
+- Se fue **«Áreas de descanso y servicios»**: lo único cargado era «tiene área de descanso» y «grúa gratuita», igual
+  para las tres estaciones, que no responde qué hay de verdad (baños, agua). Vuelve cuando exista el dato.
+- **La sección 01 no se tocó**, salvo la cita al pliego.
+- La barra de anclas de arriba ahora tiene **dos** ítems en vez de cuatro.
+
+### 9 · Guía de trámites: ahora guía
+
+Cada trámite dice **qué es · qué necesitás · cómo se hace**, en ese orden, con la documentación **antes** de los
+pasos. Y solo están los que tienen fuente oficial verificable.
+
+**Ojo, esto es importante:** al ir a la fuente oficial aparecieron **dos trámites mal publicados**.
+
+- **Exención por discapacidad:** decíamos «presentás la solicitud ante Vialidad Nacional según su reglamento». El
+  trámite real es **100 % digital por la app Mi Argentina** y pide el **Símbolo Internacional de Acceso vinculado al
+  dominio**, que no nombrábamos. Alguien pudo haber ido a una oficina al pedo. Ya está corregido, y ahora enlaza
+  directo al trámite oficial (antes no tenía enlace).
+- **Exención de ex combatientes de Malvinas:** pedíamos certificado de veterano, cédula del vehículo y TelePASE. El
+  trámite real es **una declaración jurada más copia del DNI, por correo a atencionalusuario@vialidad.gob.ar**. Ya
+  está corregido.
+- **TelePASE quedó más corto a propósito:** su sitio oficial no publica qué documentación piden, y no se inventa. Va
+  a pendientes.
+- Los dos trámites de tarifa diferencial se escondieron: mandar a alguien a juntar papeles para un beneficio que
+  capaz no existe es peor que no decir nada.
+
+### 10 · Fuera las citas del pliego
+
+Ninguna página le cita el pliego al usuario. Donde decía «(PETG art. 52)» o «según el pliego», ahora dice «el
+contrato de concesión». **La única excepción es Transparencia**, donde la normativa es el contenido.
+
+**Hallazgo del camino, que conviene saber:** la guarda marcó las 27 páginas, incluidas Privacidad y Proveedores, que
+no hablan de tarifas. La causa era un comentario interno nuestro en el código del header. **Los comentarios escritos
+en formato HTML se publican al navegador**, así que esa nota venía viajando en todas las páginas del sitio. Ya no.
+
+### 11 · Tono institucional
+
+Se reescribieron los títulos que sonaban a folleto. Por ejemplo: «Vamos a comprar mucho. Queremos comprar bien.» →
+«Registro de proveedores.» · «Somos quienes van a cuidar las rutas del centro.» → «La concesionaria del Tramo
+Centro.» · «Qué te da el peaje, y qué se cobra aparte.» → «Servicios al usuario.»
+
+**No se tocó** la sección 01 de El tramo ni Contacto, reclamos y sugerencias, que ya diste por buenos.
+
+### Cómo volver a mostrar algo que está escondido
+
+Abrís **`C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`**, buscás la línea de la sección y cambiás su `false` por
+`true`. Nada más: la sección vuelve entera y los números de sección se reacomodan solos. Cuál es cuál y qué dato hace
+falta antes está en `C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`.
 
 ## La portada de «Próximamente» (19 de septiembre) — mirá esto primero
 
@@ -130,6 +258,8 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Home `/`
 
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió la portada: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
+
 - **Hero fijo** (cambió el 15/09/2026, pedido tuyo): volanta, el título "Las rutas del centro del país tienen quien responda", el párrafo con "679,03 km sobre RN 9, RN 19, RN 34", los botones Ver tarifas / Conocer el tramo y la cuenta regresiva al 5 de octubre. **No rota nada**: el carrusel que alternaba esto con las novedades destacadas se sacó. Las destacadas siguen en la home, en la sección Novedades. **No hay popup** de bienvenida a propósito.
 - Lo que hay que mirar es justamente que **no se mueva**: quedate medio minuto en la home y lo único que se tiene que mover es la foto (avance lento) y la cuenta regresiva.
 - Abajo del todo del hero, pegada al borde, está la **cinta de avisos**. Fijate que no le tape nada al texto ni a la cuenta regresiva, ni en la compu ni en el celular.
@@ -152,6 +282,8 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Tarifas `/tarifas/`
 
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió tarifas: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
+
 - Cabecera: ícono de auto, "Categoría 1 · …", **$ 1.500 al público, con IVA**, "$ 1.239,67 sin IVA · igual con TelePASE que con pago en la vía". Chips "Cuadro vigente" (verde) y "Desde el 26 de febrero de 2026". "Resolución 248/2026 de la Dirección Nacional de Vialidad. Ver en el Boletín Oficial." "Rige el mismo cuadro en Carcarañá, James Craik, Franck." Botón **Imprimir el cuadro**.
 - **Imprimir**: tocá el botón (o Ctrl+P). En la vista previa: papel blanco, sin header ni barras, el encabezado "Covicen · <sitio> · impreso el <hoy>", las **tres tablas completas** (sin scroll horizontal, con todas las filas), los enlaces externos con la URL entre paréntesis, sin botones. Cerrá sin imprimir.
 - Nav de anclas con las tres estaciones y **tres tablas iguales**, una por estación: Categoría (con ícono) · Tipo de vehículo · **TelePASE** · **Pago electrónico o manual**. Las dos columnas tienen **el mismo valor** hoy: la Res. 248/2026 fija un solo precio (la diferencia llega cuando las vías sean 100 % automáticas). Cinco categorías: $ 1.500 · $ 3.000 · $ 4.500 · $ 6.000 · $ 7.500 con IVA; el sin IVA en chico debajo de cada precio. La fila se tiñe al pasar el mouse. En el celular: "Deslizá la tabla hacia el costado…" y scroll horizontal. Debajo de cada tabla, los avisos y "Publicado el … Fuente: Resolución 248/2026…" (link al BO).
@@ -165,6 +297,8 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 - Tres botones al pie: Cómo pagar · Dónde están los peajes · Preguntas frecuentes.
 
 ## El tramo `/el-tramo/`
+
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió el tramo: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
 
 - Título "679 kilómetros de centro." y, debajo, la **sub-navegación pegada** bajo el header (Rutas y longitudes · Estaciones de peaje · Cuadros tarifarios · Áreas de descanso y servicios); en el celular se desliza de costado.
 - **Cartel gris arriba del mapa: "DATOS DE EJEMPLO: EL MÓDULO SE ACTIVA CON LA OPERACIÓN".** Es lo más importante de esta pantalla: abajo hay un marcador rojo sobre la RN 34 que anuncia un **corte total por vuelco de camión** y ese corte **es inventado**. Mientras el cartel esté, nadie lo puede leer como real; cuando Covicen cargue el estado de verdad (`ejemplo: false`), el cartel se va solo.
@@ -180,11 +314,15 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Páginas de estación `/peajes/<slug>/`
 
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió las páginas de estación: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
+
 - **`/peajes/carcarana/`** (operativa): título "Peaje Carcarañá", eyebrow "RN 9 · km 340", intro "Carcarañá, Santa Fe. Operativa."; a la izquierda la tarjeta completa (10 vías, ambos sentidos, servicios, "Pedir asistencia", 140); a la derecha **su tabla de tarifas y el botón Imprimir**; abajo "Cómo pagar" y "Emergencias 140" (amarillo). Migas: Inicio › El tramo › Peaje Carcarañá. El título de la pestaña lleva la ubicación ("Peaje Carcarañá — RN 9 km 340 | Covicen").
 - **`/peajes/totoras/`** (próxima): chip amarillo "Próxima · Free Flow"; en vez de la tabla, el texto "Esta estación todavía no cobra: la habilita Vialidad Nacional cuando esté construida. Va a operar con Free Flow… con el mismo cuadro tarifario que Carcarañá"; sin botón Imprimir; la tarjeta dice "Cobra cuando Vialidad Nacional la habilite".
 - Las seis: `carcarana`, `james-craik`, `franck`, `leones`, `san-francisco`, `totoras`.
 
 ## Servicios `/servicios/`
+
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió servicios: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
 
 - **Sin costo (01)**: seis tarjetas con chip verde "Gratis": Emergencias 140; Grúa y remolque para despejar la calzada (30 min livianos / 60 pesados); Móviles de seguridad vial; TelePASE sin costo; Atención al usuario; Sanitarios públicos. Cada una con alcance, tiempos y "Fuente: PETG art. …" en 12 px.
 - **Con costo (02)**: Mecánica general; Remolque más allá del punto gratuito (chip "Con costo").
@@ -210,6 +348,8 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Medios de pago `/medios-de-pago/`
 
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió medios de pago: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
+
 - Tres modalidades del pliego con fuente: Prepago con TelePASE · Pospago con TelePASE · Contado en la vía (Carcarañá, James Craik, Franck).
 - **TelePASE (01)**: "Gratis, y en todas las estaciones" (adhesión, dispositivo, colocación, renovación sin costo, PETG 50.5); "Cómo adherirte" con botón a TelePASE; "Dónde se coloca" con texto genérico hasta que Covicen defina los sectores (`servicios.colocacionTelepase` por estación).
 - **Free Flow (02)**: Leones, San Francisco, Totoras: pórticos sin barreras; cobran cuando Vialidad las habilite.
@@ -217,6 +357,8 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 - **Pasaste sin pagar (04)**: las dos tarjetas de recargo y "El medio para pagar la deuda se publica acá cuando esté habilitado" (la cuenta bancaria es `null`).
 
 ## Guía de trámites `/tramites/`
+
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió la guía de trámites: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
 
 - Nav de anclas y **cinco trámites**: tarifa diferencial para vecinos y frentistas; para docentes; exención por discapacidad; exención para ex combatientes de Malvinas; alta de TelePASE. Cada uno con "Quién puede", Requisitos, Pasos, plazo, "Sitio oficial del trámite" cuando hay URL (Malvinas, TelePASE) y "Fuente: …" en 12 px. "Todos son gratuitos."
 - **Iniciá tu trámite**: formulario con select de trámite, deshabilitado con el aviso hasta tener canal.
@@ -230,6 +372,8 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Quiénes somos `/quienes-somos/`
 
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió quiénes somos: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
+
 - Texto **original** (se chequeó con `pnpm originalidad` contra otras concesionarias): "Nacimos de tres empresas… ganaron ofreciendo el peaje más bajo de los 8 tramos…"; párrafo "La sociedad está en formación. Cuando se complete la inscripción, publicamos acá y en el pie de página la razón social, el CUIT y los domicilios." **Ya no dice "+10 prorrogables"**: era un dato de prensa sin artículo del pliego que lo respalde. Decisión: ver al final.
 - Mojones 20 años · 6 peajes. **Ocho compromisos** exigibles (conservar los 679 km, losas de hormigón, banquinas Rosario–Carcarañá, puente sobre el Carcarañá, rehabilitación asfáltica, auxilio gratis 30/60 min, 140 con personas, cobrar solo lo habilitado), todos con base en el pliego.
 - Quién nos controla: ficha (régimen, tramo, plazo, adjudicación con link al BO, control) y misión/visión.
@@ -241,16 +385,21 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 - **Póliza de responsabilidad civil (01)**: "Se publica con la toma de posesión, el 5 de octubre de 2026" (con `empresa.polizaRc` cargado aparece la ficha: aseguradora, número, vigencia, documento).
 - **Datos registrales (02)**: "La sociedad está en formación…" hasta tener razón social, CUIT y domicilio.
 
-## Obras `/obras/`
+## Obras `/obras/` — **no existe desde el 20/09/2026**
 
-- Foto `obras-nocturnas.jpg` 21:9 arriba; línea de tiempo con las **seis obras del pliego**, todas "Planificada": puesta en valor inicial, losas de hormigón, banquinas Rosario–Carcarañá, puente sobre el Carcarañá, rehabilitación asfáltica, estaciones nuevas con Free Flow; cada una con tipo · ruta, descripción y "Fuente: PETP art. …". Sin barra de avance (el avance es `null`; con un número aparece la barra amarilla).
-- Al final, el **Estado de la traza** (el mismo de ejemplo de la home, con el cartel).
+La página se escondió entera (call con el gerente: «no se sabe nada del tema obras»). **No está en el sitio**: no
+es que no esté enlazada, directamente no se genera. Escribirla a mano en el navegador da 404.
+
+Vuelve, con todo su contenido intacto, cambiando `obras` a `true` en `C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`.
+Qué hay que preguntar antes: punto 6 de `C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`.
 
 ## Seguridad vial `/seguridad-vial/`
 
 - **Ocho hábitos** numerados en dos columnas (distancia, velocidad, luces bajas, niebla, animales sueltos, cansancio, sobrepaso, cinturón y sillas) y "**Ante una emergencia**": los cinco pasos en fila. Botones "Llamar al 140" (amarillo) y "Emergencias y auxilio". El texto lo tiene que revisar Seguridad Vial de Covicen (pendiente de ellos).
 
 ## Preguntas frecuentes `/preguntas-frecuentes/`
+
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió las preguntas frecuentes: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
 
 - Nav por seis temas (General, Tarifas, Peajes, Pago, Servicios, Empresa); **17 preguntas** con acordeón (`<details>`, chevron que gira); `FAQPage` en JSON-LD (verificado por script).
 - **Imprimila** (Ctrl+P y mirá la vista previa, no hace falta gastar papel): antes salía la lista de preguntas y **ninguna respuesta**, porque el navegador imprime las preguntas tal como están en pantalla, o sea cerradas. Ahora tienen que salir **todas las preguntas con su respuesta abajo**, aunque en pantalla estén cerradas. Fijate que ninguna pregunta quede en el pie de una hoja con la respuesta arrancando en la siguiente. Lo mismo en la home, en el bloque de preguntas frecuentes del final (el 07).
@@ -262,17 +411,24 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 - Listado de **cinco** con fecha y etiquetas (12 px, anotación). La más nueva (13/9) explica qué cuadro tarifario rige desde el 5 de octubre. Las marcadas como destacadas ya no suben al hero (que dejó de rotar): se ven acá y en la sección Novedades de la home.
 - Detalle: prosa con **más aire entre párrafos** (1,5 veces el interlineado, como pide el pliego), links subrayados, botón volver.
 
-## Políticas, Privacidad, Trabajá con nosotros, Proveedores
+## Políticas, Privacidad, Proveedores
 
 - **Políticas**: tres artículos por anclas; en Anticorrupción, hueco "Canal ético anónimo" cuya alternativa hoy es el formulario de contacto (el correo de ética es `null`).
 - **Privacidad**: responsable "Covicen, sociedad en formación"; sin cuentas, cookies de terceros ni seguimiento; los datos viajan por el canal que elige el usuario. **Sección nueva "Ubicación"**, entre "Qué datos recibimos" y "Para qué", con un enlace a `/asistencia/`: dice que la ubicación se pide solo ahí, solo si tocás el botón y das permiso, que no se guarda ni se envía sola. **Leela para ver si te cierra cómo está redactada.**
-- **Trabajá con nosotros** ("679 km necesitan gente.") y **Proveedores** (hueco "Portal de proveedores y licitaciones"): formularios deshabilitados con el aviso hasta tener canal.
+- **Proveedores** (hueco "Portal de proveedores y licitaciones"): formulario deshabilitado con el aviso hasta tener canal. Desde el 20/09 el título es "Registro de proveedores." y la página se enlaza desde el menú Nosotros, no solo desde el pie.
+- **Trabajá con nosotros: eliminada el 20/09/2026.** Pedido explícito del gerente. No está la página, ni el ítem del menú, ni el del pie.
 
 ---
 
 ## Qué está oculto hasta tener el dato
 
 Nada de esto dice "a confirmar" ni "próximamente" en el sitio: directamente no se renderiza, y `pnpm verificar` falla si alguna página dijera "a confirmar".
+
+> **Esta lista es la de los datos de la empresa y de contacto** (razón social, CUIT, 0800, WhatsApp, redes,
+> póliza…), que esperan desde septiembre. Lo que se escondió el **20/09 por falta de certificación del área**
+> —descuentos, tarifa diferencial, recargos, exceso de carga, categorías futuras, obras, áreas de descanso— va en
+> una lista aparte, con la pregunta ya redactada para cada uno:
+> **`C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`**
 
 - Razón social, CUIT, domicilio legal y comercial, constancia de inscripción y QR de Data Fiscal (footer, Transparencia, Privacidad).
 - Número 0800, correo de atención al usuario, WhatsApp (footer, canales, formularios habilitados, "También por WhatsApp" en Emergencias).
