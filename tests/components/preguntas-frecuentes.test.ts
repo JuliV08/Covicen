@@ -41,10 +41,14 @@ describe('/preguntas-frecuentes/', () => {
     expect(preguntas.length, 'el filtro dejó la página casi vacía').toBeGreaterThan(8);
   });
 
-  it('el filtro esconde exactamente tres preguntas y ninguna más', async () => {
+  // El número de escondidas no se clava: se cuenta contra la tabla del filtro, así que esconder una cuarta con su
+  // interruptor no rompe el test, pero esconder una sin declararla sí.
+  it('esconde exactamente las preguntas que declara el filtro', async () => {
     const todas = await fuenteLocalJson.faq();
     const publicables = preguntasPublicables(todas);
-    expect(todas.length - publicables.length).toBe(3);
+    const declaradas = (readFileSync('src/lib/faq.ts', 'utf8').match(/^\s*'[a-z0-9-]+':/gm) ?? []).length;
+    expect(declaradas, 'no pude leer la tabla del filtro').toBeGreaterThan(0);
+    expect(todas.length - publicables.length).toBe(declaradas);
     expect(publicado.descuentosPorFrecuencia || publicado.pasasteSinPagar || publicado.tarifaDiferencial,
       'se prendió algún interruptor: este test mide el otro estado').toBe(false);
   });

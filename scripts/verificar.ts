@@ -61,12 +61,21 @@ console.log(`Verificando ${paginas.length} páginas (base ${base}, indexable ${i
 // Los patrones son las frases DISTINTIVAS de cada dato, no palabras sueltas: un falso positivo acá bloquea el
 // build de todo el sitio, así que valen más los que agarran poco y seguro.
 const TEXTOS_SIN_CERTIFICAR: Array<[keyof typeof publicado, RegExp[]]> = [
-  ['descuentosPorFrecuencia', [/pasada 36/i, /pasada 45/i, /pasada 61/i]],
+  ['descuentosPorFrecuencia', [/pasada 36/i, /pasada 45/i, /pasada 61/i, /descuentos? por frecuencia/i]],
   ['tarifaDiferencial', [/tarifas? diferencial/i, /tarifa vecinal/i]],
-  ['tramiteVecinosFrentistas', [/frentista/i]],
-  ['pasasteSinPagar', [/dos tarifas/i, /tasa activa/i, /Banco Naci[oó]n/i]],
-  ['excesoDeCarga', [/veces la tarifa/i, /exceso de carga/i]],
-  ['categoriasFuturas', [/tarifa b[aá]sica/i]],
+  // Los dos trámites escondidos son vecinos-frentistas Y docentes, y los interruptores son independientes a
+  // propósito (el trámite se puede confirmar antes que el monto, o al revés). Sin /docente/i, prender el monto y
+  // no el trámite dejaba pasar el de docentes.
+  ['tramiteVecinosFrentistas', [/frentista/i, /docente/i]],
+  // `/una tarifa/` a secas NO sirve: una novedad publicada habla de «una tarifa tope», que es otra cosa.
+  ['pasasteSinPagar', [/dos tarifas/i, /m[aá]s una tarifa/i, /tasa activa/i, /Banco Naci[oó]n/i, /pas(ar|aste|ás|an|é) sin pagar/i]],
+  ['excesoDeCarga', [/veces la tarifa/i, /exceso de carga/i, /exceso del \d+ ?%/i]],
+  // `/tarifa básica/` es un término genérico del contrato de concesión: el día que Transparencia explique cómo se
+  // compone la tarifa, reventaría el build entero. Se guarda lo que es exclusivo de esa sección.
+  ['categoriasFuturas', [/categor[ií]as que van a regir/i, /permiso de circulaci[oó]n especial/i]],
+  // `obras` tiene además dos candados propios —la ruta no se genera (11b) y no queda ningún enlace (chequeo 1)—,
+  // así que acá va solo lo que esos no cubren: prometerle al usuario un plan o un avance de obra.
+  ['obras', [/avance de (las )?obras/i, /plan de obras/i]],
   // `serviciosDeAreaDescanso` no tiene fila acá a propósito. Ese interruptor esconde la SECCIÓN de El tramo
   // que prometía decir qué hay adentro de cada área (agua, sanitarios), no la existencia del área: que una
   // estación TIENE un área de descanso es un dato cargado y confirmado, y el chip del mapa lo dice bien.
@@ -109,11 +118,17 @@ for (const ruta of paginas) {
   // Los prohibidos se buscan en el HTML crudo (meta, alt, aria-label, JSON-LD incluidos); los obligatorios, en el texto visible.
   for (const p of PROHIBIDOS) if (p.test(html)) fallo(`${nombre}: contiene ${p}`);
   if (SIN_PLIEGO(nombre)) for (const p of PROHIBIDOS_USUARIO) if (p.test(html)) fallo(`${nombre}: cita el pliego en la cara del público (${p})`);
+  // Sobre el HTML crudo Y sobre el texto visible normalizado. Lo segundo no es redundante: una frase partida por
+  // una etiqueta («50 veces» y «la tarifa vigente» salen en dos <dd> distintos) NUNCA puede coincidir en el crudo, y
+  // así se colaba entera. Lo primero tampoco sobra: agarra lo que vive en meta, alt, aria-label y JSON-LD.
+  const plano = textoVisible(html).replace(/\s+/g, ' ');
   for (const [clave, patrones] of TEXTOS_SIN_CERTIFICAR) {
     if (publicado[clave]) continue;
-    for (const p of patrones) if (p.test(html)) fallo(`${nombre}: publica ${p}, y publicado.${clave} está apagado`);
+    for (const p of patrones) {
+      if (p.test(html) || p.test(plano)) fallo(`${nombre}: publica ${p}, y publicado.${clave} está apagado`);
+    }
   }
-  const visible = textoVisible(html);
+  const visible = plano;
   if ((nombre === 'index.html' || nombre.startsWith('el-tramo')) && !/\b679\b/.test(visible)) fallo(`${nombre}: falta la longitud oficial (679 km)`);
   if (!visible.includes('Última actualización')) fallo(`${nombre}: falta "Última actualización" en el pie`);
   // El cartel tiene que ir ANTES del primer marcador: leerlo después del triángulo rojo llega tarde. (El selector del

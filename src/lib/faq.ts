@@ -11,11 +11,15 @@
 import type { Pregunta } from '@/lib/datos/esquemas';
 import { publicado } from '@/lib/publicado';
 
-/** Preguntas cuya RESPUESTA es un dato sin certificar. No se reescriben: la pregunta entera espera. */
+/** Preguntas cuya RESPUESTA es un dato sin certificar. No se reescriben: la pregunta entera espera.
+ *  `tarifa-vecinal` depende de LOS DOS interruptores porque su respuesta dice dos cosas: que el beneficio existe
+ *  (`tarifaDiferencial`) y dónde se tramita (`tramiteVecinosFrentistas`). Son interruptores independientes a
+ *  propósito —uno se puede confirmar antes que el otro—, así que atarla a uno solo la haría volver apuntando a
+ *  fichas de la Guía de trámites que siguen escondidas. */
 const ESPERA_CONFIRMACION: Record<string, boolean> = {
   'descuentos-por-frecuencia': !publicado.descuentosPorFrecuencia,
   'pase-sin-pagar': !publicado.pasasteSinPagar,
-  'tarifa-vecinal': !publicado.tarifaDiferencial,
+  'tarifa-vecinal': !(publicado.tarifaDiferencial && publicado.tramiteVecinosFrentistas),
 };
 
 export const preguntasPublicables = (preguntas: Pregunta[]): Pregunta[] =>

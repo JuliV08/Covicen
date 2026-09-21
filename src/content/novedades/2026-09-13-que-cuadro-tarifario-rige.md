@@ -13,7 +13,7 @@ El que aprobó la Dirección Nacional de Vialidad por la **Resolución 248/2026*
 
 ## Cuándo cambia
 
-Cuando terminen las obras iniciales de puesta en valor y Vialidad Nacional homologue el cuadro propio de Covicen, basado en la tarifa que ofertamos en la licitación. Hasta entonces, el cuadro se actualiza por los índices oficiales que fija el contrato, cada tres meses, y cada cambio se publica acá con su resolución.
+Cuando el tramo alcance las **condiciones de transitabilidad óptima** que verifica Vialidad Nacional y se homologue el cuadro propio de Covicen, basado en la tarifa que ofertamos en la licitación. Hasta entonces, el cuadro se actualiza por los índices oficiales que fija el contrato, cada tres meses, y cada cambio se publica acá con su resolución.
 
 ## Dónde controlarlo
 

@@ -1,8 +1,13 @@
 ---
 import { ChevronDown } from '@lucide/astro';
 import type { Pregunta } from '@/lib/datos/esquemas';
+import { preguntasPublicables } from '@/lib/faq';
 interface Props { preguntas: Pregunta[]; class?: string }
-const { preguntas, class: clase = '' } = Astro.props;
+const { preguntas: recibidas, class: clase = '' } = Astro.props;
+// El filtro se aplica ACA y no (solo) en la pagina: este es el unico componente que renderiza preguntas en todo el
+// sitio, asi que dejar de publicar una respuesta sin certificar no depende de que alguien se acuerde de llamarlo.
+// La pagina igual lo llama antes, porque el JSON-LD tiene que salir de la misma lista; esto es el piso.
+const preguntas = preguntasPublicables(recibidas);
 ---
 <div class:list={['faq escalonar divide-y divide-borde border-y border-borde', clase]}>
   {preguntas.map((p, i) => (

@@ -46,7 +46,7 @@ const exentos = [
   'Vehículos afectados a ex combatientes de Malvinas, según el reglamento de Vialidad Nacional.',
 ];
 ---
-<Base titulo="Tarifas" descripcion={`Cuadro tarifario vigente en los peajes del Tramo Centro (Carcarañá, James Craik y Franck): ${precio !== null ? moneda(precio) : ''} por auto, Resolución 248/2026 de Vialidad Nacional. TelePASE, pago en la vía, descuentos por frecuencia y exenciones.`} migas={[{ nombre: 'Tarifas', href: '/tarifas' }]}>
+<Base titulo="Tarifas" descripcion={`Cuadro tarifario vigente en los peajes del Tramo Centro (Carcarañá, James Craik y Franck): ${precio !== null ? moneda(precio) : ''} por auto, Resolución 248/2026 de Vialidad Nacional. Cuadro tarifario por estación, TelePASE, pago en la vía y exenciones.`} migas={[{ nombre: 'Tarifas', href: '/tarifas' }]}>
   <Seccion nivel="h1" eyebrow="Tarifas" titulo="Cuánto cuesta el peaje." intro={tarifario.vigencia.descripcion} class="pt-10">
     <div class="revelar mb-12 grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
       <div class="bloque-oscuro rounded-md border border-borde bg-superficie/50 p-8">

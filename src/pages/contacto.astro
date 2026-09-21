@@ -29,7 +29,7 @@ const pasosReclamo = [
       </div>
       <Formulario id="reclamos" asunto="Reclamo, consulta o sugerencia" whatsapp={contacto.whatsapp.numero} email={correo} {plazos} campos={[
         { nombre: 'motivo', etiqueta: 'Motivo', tipo: 'select', opciones: ['Reclamo', 'Consulta', 'Sugerencia'], requerido: true },
-        { nombre: 'tema', etiqueta: 'Tema', tipo: 'select', opciones: ['Tarifas y cobro', 'Estado de la ruta y obras', 'Atención recibida', 'Seguridad vial', 'Otro'], requerido: true },
+        { nombre: 'tema', etiqueta: 'Tema', tipo: 'select', opciones: ['Tarifas y cobro', 'Estado de la ruta', 'Atención recibida', 'Seguridad vial', 'Otro'], requerido: true },
         { nombre: 'lugar', etiqueta: 'Ruta y kilómetro, o estación', placeholder: `RN 9, km 350 · ${estaciones.join(' / ')}` },
         { nombre: 'fecha', etiqueta: 'Fecha del hecho', placeholder: 'dd/mm/aaaa' },
         { nombre: 'patente', etiqueta: 'Patente (opcional, para reclamos de cobro)' },

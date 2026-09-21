@@ -25,7 +25,7 @@ const modalidades = [
   { titulo: 'Contado en la vía', texto: `Efectivo o medios electrónicos en las vías habilitadas de las estaciones con cabina (${conCabina.join(', ')}).` },
 ];
 ---
-<Base titulo="Medios de pago" descripcion="Cómo pagar el peaje en el Tramo Centro: TelePASE prepago o pospago, pago en la vía en Carcarañá, James Craik y Franck, y qué hacer si pasaste sin pagar." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Medios de pago', href: '/medios-de-pago' }]}>
+<Base titulo="Medios de pago" descripcion="Cómo pagar el peaje en el Tramo Centro: TelePASE prepago o pospago, pago en la vía en Carcarañá, James Craik y Franck, y dónde se coloca el dispositivo." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Medios de pago', href: '/medios-de-pago' }]}>
   <Seccion nivel="h1" eyebrow="Medios de pago" titulo="Cómo pagar el peaje." intro="Con TelePASE se paga lo mismo que en la vía. El dispositivo es gratis y sirve en toda la red nacional." class="pt-10">
     <ul class="escalonar grid gap-4 md:grid-cols-3">{modalidades.map((m, i) => <li style={`--i: ${i}`}><Card><h2 class="text-xl">{m.titulo}</h2><p class="mt-2 text-texto-2">{m.texto}</p></Card></li>)}</ul>
   </Seccion>
@@ -33,7 +33,11 @@ const modalidades = [
   <Seccion id="telepase" indice={nTelepase} eyebrow="TelePASE" titulo="Gratis, y en todas las estaciones." intro="La adhesión, el primer dispositivo por vehículo, su colocación, la renovación, la cancelación y la reposición no tienen costo para el usuario. Las exenciones de peaje también se gestionan con TelePASE." fondo="fondo-2">
     <div class="revelar grid gap-6 md:grid-cols-2">
       <div class="tarjeta p-6"><h3 class="text-xl">Cómo adherirte</h3><p class="mt-2 text-texto-2">En el sitio oficial de TelePASE o en un punto de colocación. Elegís prepago o pospago y retirás el dispositivo sin cargo.</p><div class="mt-4"><Boton href={contacto.enlaces.telepase} variante="secundario" externo>Ir a TelePASE <ExternalLink size={16} aria-hidden="true" /></Boton></div></div>
-      <div class="tarjeta p-6"><h3 class="text-xl">Dónde se coloca</h3>{colocacion.length > 0 ? <p class="mt-2 text-texto-2">En los sectores de detención segura de {colocacion.join(', ')}, en días hábiles.</p> : <p class="mt-2 text-texto-2">En los sectores de detención segura de las estaciones, con horarios señalizados en cada una. Publicamos las ubicaciones cuando Covicen las defina.</p>}</div>
+      {/* Sin el dato de en qué estaciones se coloca, la tarjeta entera no va. El texto que estaba acá de fallback
+          —«en los sectores de detención segura de las estaciones… publicamos las ubicaciones cuando Covicen las
+          defina»— era un dato sin confirmar más un «próximamente» en prosa: las dos cosas que la regla de la casa
+          prohíbe. Viene de antes del 20/09 y se limpia ahora. El pedido está en pendientes-de-confirmación. */}
+      {colocacion.length > 0 && <div class="tarjeta p-6"><h3 class="text-xl">Dónde se coloca</h3><p class="mt-2 text-texto-2">En los sectores de detención segura de {colocacion.join(', ')}, en días hábiles.</p></div>}
     </div>
   </Seccion>
 
