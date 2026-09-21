@@ -183,6 +183,22 @@ Covicen no lo dice (no se inventa).
 
 ---
 
+## 12 · Dónde se coloca el TelePASE
+
+**Qué falta:** en qué estaciones y con qué horarios se puede colocar el dispositivo.
+
+> «¿En qué estaciones se va a poder colocar el TelePASE, y en qué días y horarios? Lo preguntamos para poder
+> decirlo en Medios de pago: hoy la web no lo dice en ningún lado.»
+
+- **A quién:** Operaciones.
+- **Qué vuelve:** la tarjeta «Dónde se coloca» de Medios de pago, que hoy no se muestra.
+- **Dónde se carga:** `C:\Users\Villex\dev\Covicen\src\content\tramo.json`, en `cabinas[].servicios.colocacionTelepase`.
+- **Por qué se sacó:** esta tarjeta decía «en los sectores de detención segura de las estaciones… publicamos las
+  ubicaciones cuando Covicen las defina». Eso era un dato sin confirmar más un «próximamente» en prosa, que es
+  justo lo que la regla de la casa prohíbe. Venía de antes de esta tanda y se limpió el 20/09.
+
+---
+
 ## Además: lo que ya venía esperando desde antes
 
 Esta lista **no reemplaza** la que ya existía. Los datos de la empresa y de contacto que faltan desde septiembre
