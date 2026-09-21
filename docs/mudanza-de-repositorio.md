@@ -1,6 +1,6 @@
 # Mudanza al repositorio de la organización
 
-**Fecha:** 21 de septiembre de 2026. **Estado:** frenado, esperando permisos.
+**Fecha:** 21 de septiembre de 2026. **Estado:** rama `dev` subida. Lo que sigue depende del acceso a AWS.
 
 ---
 
@@ -28,16 +28,49 @@ Por eso no alcanza con cargar variables en Amplify: hay que llevar el código.
 
 ---
 
-## Los cuatro bloqueos, y quién los destraba
+## Lo que ya se hizo
+
+- **Permiso de escritura: otorgado.** Admin sobre `covicen/website`, confirmado el 21/09.
+- **Rama `dev` subida**, con la historia completa y el `amplify.yml`. **No publicó nada**: Amplify todavía no mira
+  esa rama. El código real ya está en la organización.
+
+## Los bloqueos que quedan, y quién los destraba
 
 | # | Bloqueo | Quién |
 |---|---|---|
-| 1 | Acceso de **solo lectura**. Sin permiso de escritura no se puede hacer absolutamente nada. | Martín |
-| 2 | El repositorio quedó **privado**. Se había decidido público, entre otras cosas porque en privado la compuerta obligatoria del CI pasa a ser paga. | Martín / Gustavo |
-| 3 | **Las historias no tienen ancestro común.** Un `git push` normal se rechaza: hay que reemplazar. | Se resuelve con el permiso del punto 1 |
-| 4 | Falta decidir **qué muestra producción** (ver abajo). | Juli / Fernando |
+| 1 | **El acceso a Amplify de Juli sigue pendiente.** Sin eso no se puede enganchar la rama `dev`, ni cargarle las variables, ni ponerle la contraseña. **Tres de las cinco tareas asignadas a Juli dependen de esta.** | Martín |
+| 2 | **Las variables de Amplify no están cargadas.** Hasta que estén, tocar `main` no sirve: el build falla (ver abajo). | Martín o Gustavo, hasta que Juli tenga acceso |
+| 3 | El repositorio quedó **privado**. Se había decidido público, entre otras cosas porque en privado la compuerta obligatoria del CI pasa a ser paga. | Martín / Gustavo |
+| 4 | La URL del ambiente de desarrollo y su entrada de DNS. | Gustavo |
+
+### Por qué no se puede tocar `main` todavía
+
+Simulado el 21/09 corriendo el build de Amplify tal como quedaría hoy, sin variables cargadas:
+
+```
+Verificando 1 páginas (base /, indexable false, PORTADA SOLA)…
+1 fallo(s):
+- index.html: canonical apunta a localhost en un build hospedado (falta PUBLIC_SITE_URL)
+```
+
+O sea: **el build falla y no publica**. Falla del lado seguro —producción queda como está, no se rompe nada— pero
+no avanza. Es la guarda que se agregó justamente para que no se repita el build del 18/09, que salió con todas las
+etiquetas `canonical` apuntando a `localhost` y por eso Google nunca lo indexó.
+
+Se destraba cargando `PUBLIC_SITE_URL` y `PUBLIC_BASE_PATH` en la rama `main` de Amplify. Un minuto de consola.
 
 ---
+
+## Una tarea de la lista que no hay que hacer
+
+En el reparto de tareas figura, para Juli: *«Generar versión light (próximamente covicen) en branch main»*.
+
+**No hay nada que generar.** Esa versión ya existe en el código desde el 19/09, y sale sola: la rama `main` publica
+la portada de «Próximamente» **con solo no cargarle** la variable `PUBLIC_SITIO_COMPLETO`. El interruptor está al
+revés a propósito, para que el olvido falle hacia el lado seguro.
+
+Lo que sí hay que hacer es cargarle a `main` las otras variables (`PUBLIC_SITE_URL`, `PUBLIC_BASE_PATH`), sin las
+cuales el build ni siquiera arranca.
 
 ## La decisión que falta, y que no es técnica
 
@@ -120,21 +153,29 @@ confunda de repositorio más adelante.
 
 > Martín, cuando puedas, tres cosas para poder arrancar:
 >
-> **1.** Necesito permiso de escritura en `covicen/website` (con admin mejor, o write con force-push habilitado
-> sobre `main`). Hoy tengo solo lectura y no puedo subir nada.
+> **1.** Gracias por el admin. Ya subí la rama `dev` con el código al día y el `amplify.yml`. No publicó nada,
+> porque Amplify todavía no mira esa rama.
 >
 > **2.** Lo que está subido ahí no es un clon: son dos commits (`Initial commit` y `upload webiste`) con el código
 > del 15 de septiembre, sin historia. De mi lado hay 29 commits posteriores, así que las historias no tienen
 > ancestro común y voy a tener que reemplazar `main` con un force-push en vez de agregar encima. Te aviso para que
 > no te sorprenda ver la historia cambiada de golpe.
 >
-> **3.** El repositorio quedó privado. ¿Lo podemos dejar público? Es una web institucional estática, no tiene
+> **3.** Lo que me falta para seguir es el acceso a Amplify: sin eso no puedo enganchar `dev`, ni cargarle las
+> variables, ni ponerle la contraseña. Son tres de las cinco tareas que me tocan. Si te resulta más rápido
+> hacerlo vos, con cargar `PUBLIC_SITE_URL` y `PUBLIC_BASE_PATH` en las dos ramas ya me destrabás.
+>
+> **4.** El repositorio quedó privado. ¿Lo podemos dejar público? Es una web institucional estática, no tiene
 > claves ni datos de nadie adentro, y en privado la protección de rama —que el CI tenga que pasar antes de
 > mergear a `main`— deja de ser gratis y pasa a necesitar el plan Team.
 >
 > Al margen: agregué un `amplify.yml` al repositorio con los tests adentro del build. Amplify no corre los GitHub
 > Actions, así que sin eso un merge a `main` publicaría aunque los tests estén en rojo.
 >
-> Y una aclaración sobre lo que se ve hoy en producción: no es un problema de configuración. El código que está
-> ahí es anterior al interruptor de «Próximamente», o sea que ni siquiera puede publicar el cartel. Se arregla
-> llevando el código, no tocando variables.
+> Y dos aclaraciones sobre producción:
+>
+> - Lo que se ve hoy no es un problema de configuración. El código que está ahí es anterior al interruptor de
+>   «Próximamente», o sea que ni siquiera puede publicar el cartel. Se arregla llevando el código.
+> - La tarea «generar versión light» no tiene trabajo: el cartel sale solo si a `main` **no** se le carga
+>   `PUBLIC_SITIO_COMPLETO`. Lo que sí hace falta es cargarle `PUBLIC_SITE_URL` y `PUBLIC_BASE_PATH`, porque
+>   sin eso el build falla (lo probé: el canonical queda apuntando a localhost y la compuerta lo frena).
