@@ -1,0 +1,43 @@
+# Cómo compila AWS Amplify este sitio.
+#
+# POR QUÉ EXISTE ESTE ARCHIVO, que es lo que importa: Amplify NO corre los GitHub Actions. Tiene su propio pipeline,
+# y sin esto compilaría y publicaría aunque los tests estuvieran en rojo. La compuerta de calidad del proyecto
+# quedaría decorativa justo en el camino que llega al público.
+#
+# Con esto, los mismos chequeos que corre el CI (.github/workflows/pages.yml) corren DENTRO del build que publica:
+# si uno falla, el build falla y no se sube nada. No se puede saltear, porque es la misma máquina que despliega.
+#
+# Qué NO va acá: las variables de entorno. Esas se cargan en la consola de Amplify, por rama, y son las que deciden
+# si esa rama publica el sitio entero o la portada de «Próximamente». Ver docs/deploy-produccion.md.
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        # El proyecto pide Node >= 22.12 (package.json, "engines"). La imagen por defecto de Amplify trae una
+        # versión más vieja: sin estas dos líneas el primer build falla con un error que no dice qué pasó.
+        - nvm install 24
+        - nvm use 24
+        # pnpm 10, tomado de "packageManager" en package.json para no tener la versión escrita en dos lugares.
+        - export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+        - corepack enable
+        - corepack prepare --activate
+        # El store dentro del repo para que el caché de abajo lo agarre; por defecto vive en $HOME y se pierde.
+        - pnpm config set store-dir .pnpm-store
+        - pnpm install --frozen-lockfile
+    build:
+      commands:
+        - pnpm check
+        - pnpm test
+        # Los DOS modos pasan por la compuerta, y el de la portada PRIMERO. El orden no es cosmético: cada uno deja
+        # su propio dist/, así que el último que corre es el que se publica. Con `verificar` al final, la rama sube
+        # lo que le corresponda según sus variables: el sitio entero en dev, «Próximamente» en main.
+        - pnpm verificar:portada
+        - pnpm verificar
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - .pnpm-store/**/*

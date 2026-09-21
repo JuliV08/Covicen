@@ -16,6 +16,9 @@ const base = `/${(env.PUBLIC_BASE_PATH || '/').replace(/^\/+|\/+$/g, '')}/`.repl
 const sitioCompleto = env.PUBLIC_SITIO_COMPLETO === 'true';
 // Misma definición que src/lib/config.ts: una portada de «Próximamente» no es indexable aunque haya dominio.
 const indexable = env.PUBLIC_INDEXABLE === 'true' && sitioCompleto;
+// ¿Este build va a parar a un hosting, o es alguien compilando en su máquina? `CI` lo pone GitHub Actions;
+// `AWS_APP_ID`, el build de Amplify. Sirve para exigir cosas que en local serían molestas y afuera son errores.
+const hospedado = Boolean(process.env.CI || process.env.AWS_APP_ID);
 const DIST = 'dist';
 const fallos: string[] = [];
 const fallo = (m: string) => fallos.push(m);
@@ -97,6 +100,11 @@ for (const ruta of paginas) {
   if (!/<meta name="description" content="[^"]{20,}"/.test(html)) fallo(`${nombre}: falta description (≥ 20 chars)`);
   if (!/<link rel="canonical" href="https?:\/\//.test(html)) fallo(`${nombre}: falta canonical absoluta`);
   if (indexable && /<link rel="canonical" href="http:\/\/localhost/.test(html)) fallo(`${nombre}: canonical apunta a localhost con PUBLIC_INDEXABLE=true (falta PUBLIC_SITE_URL)`);
+  // Y en un build que va a un hosting, un canonical a localhost está mal SIEMPRE, con o sin indexación. No es
+  // teórico: el build del 18/09/2026 que estuvo publicado en www.covicen.com.ar salió así, porque se compiló sin
+  // PUBLIC_SITE_URL. El chequeo de arriba no lo agarró justamente porque ese build tampoco era indexable.
+  // `CI` lo pone GitHub Actions; `AWS_APP_ID`, el build de Amplify. En la máquina de uno, localhost es correcto.
+  if (hospedado && /<link rel="canonical" href="http:\/\/localhost/.test(html)) fallo(`${nombre}: canonical apunta a localhost en un build hospedado (falta PUBLIC_SITE_URL)`);
   if ((html.match(/<h1[\s>]/g) ?? []).length !== 1) fallo(`${nombre}: debe haber exactamente un <h1>`);
   if (!html.includes('<html lang="es-AR"')) fallo(`${nombre}: falta lang="es-AR"`);
   // 3. JSON-LD
