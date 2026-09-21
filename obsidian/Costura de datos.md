@@ -156,3 +156,35 @@ rest con `getStaticPaths` devolviendo `[]` no genera nada, ni siquiera la entrad
 base: './src/content/novedades' })`, así que un `_borradores/README.md` entró igual a la colección y `astro
 check` lo rechazó por no cumplir el schema. La única forma de sacar algo de una colección es sacarlo de la
 carpeta base: quedó en `src/content/novedades-despublicadas/`.
+
+### Esconder por página no es esconder (lección del 20/09/2026)
+
+Las cinco secciones de Tarifas se escondieron bien. **Y las preguntas frecuentes siguieron publicando los mismos
+números**: los porcentajes de descuento, los recargos por pasar sin pagar y la tarifa vecinal, palabra por
+palabra, y además al JSON-LD, o sea a Google. Lo encontró la revisión, no los tests. La causa es tonta y cara:
+**cada página se escondió por su lado y nadie miró el conjunto**.
+
+> Un dato escondido en una página y publicado en otra es **peor** que no esconderlo: da la sensación de que se
+> ocultó algo, y el que lo encuentra deja de creerle al resto del sitio.
+
+El arreglo que importa no fue tapar las tres preguntas: fue el **chequeo 10c de `scripts/verificar.ts`**, que ata
+`publicado.ts` con el `dist` entero. Antes no había NADA mecánico entre el interruptor y lo que se emite, y por
+eso el error sobrevivió a 544 tests. Apenas se prendió, el candado encontró solo **cuatro fugas más** que ni el
+autor ni el revisor habían listado a ojo, incluidas **dos meta descriptions** que seguían ofreciendo en los
+resultados de Google cosas que el sitio ya no publicaba.
+
+**Tres reglas que deja, y que valen para cualquier interruptor de visibilidad:**
+
+1. **El candado va sobre lo que se publica, no sobre el código.** Un filtro en una página cubre esa página; un
+   barrido del `dist` cubre las que todavía no existen.
+2. **Un barrido sobre HTML crudo no ve las frases partidas por una etiqueta.** «50 veces» y «la tarifa vigente»
+   salen en dos `<dd>` distintos: el patrón `/veces la tarifa/` era un patrón muerto y parecía cobertura. Hay que
+   correrlo también sobre el texto visible normalizado.
+3. **Un filtro opt-in se olvida.** `preguntasPublicables` empezó llamándose desde la página; terminó llamándose
+   desde `Faq.astro`, que es el único render de preguntas del sitio. El piso no puede depender de que alguien se
+   acuerde.
+
+Y una cuarta, que no es de código: **la coherencia también se escapa por página**. La FAQ decía que la tarifa
+ofertada llega «cuando Vialidad homologue el cuadro» y cuatro novedades publicadas decían «cuando terminen las
+obras iniciales». Las dos son defendibles; las dos juntas, no. Se unificó en la condición del contrato
+(transitabilidad óptima verificada por Vialidad), que es un hecho con fuente y no un cronograma.
