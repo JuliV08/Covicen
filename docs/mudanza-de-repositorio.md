@@ -14,7 +14,7 @@ Con el acceso ya otorgado se pudo mirar de verdad, y no es eso.
 | «Cloné tu repositorio» | `covicen/website` tiene **2 commits**: `Initial commit` y `upload webiste`. No hay historia: es una subida de archivos. |
 | «Es el código del viernes 18» | El código subido es del **15 de septiembre**, no del 18. |
 | «Tu repositorio es privado» | El de acá es **público**. El de la organización es el **privado**. |
-| Juli puede empezar a trabajar ahí | El acceso otorgado es **solo de lectura** (`pull`). No se puede pushear. |
+| Juli puede empezar a trabajar ahí | El primer acceso otorgado fue **solo de lectura**. Se corrigió el mismo día: hoy es admin. |
 
 **Faltan 29 commits** de este repositorio en el de la organización.
 
@@ -97,14 +97,14 @@ Es un renglón en la consola. Se puede cambiar cuando se quiera, sin tocar códi
 Pensado para que **nada llegue a producción por accidente**: primero se lleva el código a una rama que Amplify no
 mira, se prueba ahí, y recién al final se toca `main`.
 
-### 1. Que Martín dé permiso de escritura
+### 1. Permiso de escritura ✅
 
-Con `admin` sobre el repositorio, o al menos `write` **más** el permiso de force-push sobre `main` (porque las
-historias no encajan y hay que reemplazar, no agregar).
+Otorgado el 21/09: admin sobre el repositorio. Hacía falta admin y no solo `write`, porque las historias no encajan
+y hay que reemplazar `main`, no agregar encima.
 
-### 2. Subir la rama de desarrollo primero
+### 2. Subir la rama de desarrollo primero ✅
 
-`dev` todavía no está enganchada a Amplify, así que **esto no publica nada**. Sirve para llevar el código a la
+Hecho el 21/09. `dev` todavía no está enganchada a Amplify, así que **esto no publica nada**. Sirve para llevar el código a la
 organización sin ningún riesgo.
 
 ```
