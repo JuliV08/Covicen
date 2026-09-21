@@ -49,8 +49,9 @@ Nada más.
   existiendo en sus páginas**, a las que se llega por el menú.
 - El mapa interactivo **ya estaba** en la portada desde septiembre: no hubo que moverlo.
 - El texto de la sección El tramo pasó a ser el mismo que el gerente dio por perfecto en la página El tramo.
-- **Lo que falta:** el título y el párrafo grandes de la portada **todavía no se cambiaron**. Están esperando que
-  elijas entre las opciones. Hasta entonces siguen los de antes.
+- **El título y el párrafo grandes** de la portada son nuevos: «679 kilómetros de rutas nacionales, bajo una
+  misma responsabilidad», con el párrafo institucional debajo. Los elegiste vos con tu equipo sobre tres
+  opciones. Los 679 km y la fecha del 5 de octubre salen del dato, no escritos a mano.
 
 ### 3 · Obras: escondida, no borrada
 

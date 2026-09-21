@@ -777,9 +777,9 @@ export const estadoCabina = (c: Cabina): EstadoOperativo =>
 
 Resultado: la home queda en **Hero → AccesosRapidos → ElTramo (con el mapa) → NovedadesRecientes → ContactoCta** y nada más. Los textos de la portada los eligió Juli.
 
-### Tarea 6.1: Los textos de la portada — **CHECKPOINT CON JULI · PENDIENTE**
+### Tarea 6.1: Los textos de la portada — **CHECKPOINT CON JULI · CERRADO**
 
-> **Estado al 20/09/2026:** es lo único que queda abierto de todo el plan. Juli lo está decidiendo con sus compañeros. El resto se ejecutó entero. Hasta que elija, el hero conserva el título y el párrafo de septiembre.
+> **Resuelto el 20/09/2026:** Juli eligió con su equipo la **opción B, «la magnitud primero»**. Aplicada, con los km y la fecha saliendo del dato y no escritos a mano. `pnpm originalidad` contra Corresur y CVSA: 0 secuencias de 6 palabras en común.
 
 **Files:**
 - Modify: `src/components/home/Hero.astro:41-48`
@@ -798,10 +798,10 @@ Resultado: la home queda en **Hero → AccesosRapidos → ElTramo (con el mapa) 
 > **Al servicio de quien transita el centro del país.**
 > Covicen es la concesionaria del Tramo Centro de la Red Federal de Concesiones: 679,03 km sobre las rutas nacionales 9, 19 y 34, en Córdoba y Santa Fe, desde el 5 de octubre de 2026.
 
-- [ ] **Step 1: `AskUserQuestion` con las tres, `preview` con el h1 y el párrafo juntos.**
-- [ ] **Step 2: Aplicar la elegida** manteniendo lo que el `<p>` ya hace bien: los `<strong>` de los km y de la fecha, `{numero(c.km, 2)}` y `{fechaLarga(c.inicioOperacion)}` desde los datos (nunca a mano), y la clase `text-texto` en color pleno — hay un test (`tests/components/home.test.ts`) y una guarda de píxeles (`tests/styles/hero-foto.test.ts`) que dependen de eso.
-- [ ] **Step 3: `pnpm build && pnpm originalidad https://www.corresur.com.ar/ https://cvsa.com.ar/`** → 0 secuencias de 6 palabras en común. Si aparece alguna, se ajusta el texto elegido y se vuelve a correr.
-- [ ] **Step 4: Commit** — `feat(home): la portada habla en clave institucional`.
+- [x] **Step 1: `AskUserQuestion` con las tres, `preview` con el h1 y el párrafo juntos.**
+- [x] **Step 2: Aplicar la elegida** manteniendo lo que el `<p>` ya hace bien: los `<strong>` de los km y de la fecha, `{numero(c.km, 2)}` y `{fechaLarga(c.inicioOperacion)}` desde los datos (nunca a mano), y la clase `text-texto` en color pleno — hay un test (`tests/components/home.test.ts`) y una guarda de píxeles (`tests/styles/hero-foto.test.ts`) que dependen de eso.
+- [x] **Step 3: `pnpm build && pnpm originalidad https://www.corresur.com.ar/ https://cvsa.com.ar/`** → 0 secuencias de 6 palabras en común. Si aparece alguna, se ajusta el texto elegido y se vuelve a correr.
+- [x] **Step 4: Commit** — `feat(home): la portada habla en clave institucional`.
 
 ---
 
