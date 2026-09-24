@@ -33,7 +33,7 @@ Este es el vault del proyecto (vive en el repo, viaja con el código). El punter
   - **Dos hallazgos al ir al pliego:**
     - El PETG **61.5 b** exige el formulario de consultas de TelePASE «haya o no» oficina virtual. El equipo pidió sacarlo, así que se escondió con `publicado.formularioTelepase`, con un test del estado prendido y el pedido primero en `docs/pendientes-de-confirmacion.md`. Ver [[Obligaciones del pliego para la web]].
     - El **art. 82 a)** ajusta por costos el cuadro del día de la toma. Queda como pregunta al área por si el 5/10 no rige tal cual el $1.500.
-  - **Revisión.** Pasó una vuelta de `rev-bro`: aprobado con observaciones, todas aplicadas.
+  - **Revisión.** Pasó una vuelta de `rev-bro`: aprobado con observaciones, aplicadas todas menos una a propósito: `oficinaVirtual` y `ticketingReclamos` siguen en `src/lib/datos/capacidades.ts` aunque hoy no los lea nadie, porque ese archivo es la lista de sistemas que no existen, no de lo que se muestra (y `ticketingReclamos` es el que va a encender el envío real de los formularios). Segunda pasada sobre los arreglos: aprobada.
   - **Verificación final:**
     - `astro check`: 0 errores en 181 archivos.
     - Tests: **564** en 64 archivos.

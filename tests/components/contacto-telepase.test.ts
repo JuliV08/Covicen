@@ -22,5 +22,7 @@ describe('/contacto/ con el formulario de TelePASE prendido', () => {
     // Con TelePASE en el medio, TelePASE lleva la grilla y «Cómo hacer un reclamo» vuelve a liso.
     const telepase = /<section id="telepase"[^>]*class="([^"]*)"/.exec(html)?.[1] ?? '';
     expect(telepase).toContain('seccion-cinetica');
+    const reclamo = html.split('<section').find((s) => s.includes('Cuatro pasos, con plazos.')) ?? '';
+    expect(/^[^>]*class="([^"]*)"/.exec(reclamo)?.[1], '«Cómo hacer un reclamo» no volvió a liso').not.toContain('seccion-cinetica');
   });
 });

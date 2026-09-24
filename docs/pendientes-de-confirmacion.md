@@ -253,19 +253,24 @@ conviene preguntarlo todo en la misma charla con Operaciones.
 
 **Agregado el 24/09/2026.** No es algo escondido: la web publica que desde la toma de posesión rige el cuadro de la
 Resolución 248/2026 ($ 1.500 el auto). Pero al releer el pliego para estas correcciones apareció el **PETG art. 82,
-inciso a)** («Tarifas a aplicar a la fecha de Toma de Posesión»): toma las últimas tarifas vigentes antes de la toma y
-las **ajusta por un coeficiente de variación de costos** (índices del INDEC) para fijar el cuadro del primer día. Si
-ese ajuste se aplica, el 5/10 el precio podría no ser el de hoy. Conviene que el área lo confirme antes de esa fecha.
+inciso a)** («Tarifas a aplicar a la fecha de Toma de Posesión»): toma las últimas tarifas aplicadas antes de la toma
+y dice que **se ajustarán** multiplicando cada una, sin IVA, por el **coeficiente de variación de la tarifa (Cvt)**,
+que sale de índices del INDEC. El ajuste es obligatorio; lo que no se sabe es **cuánto da**, porque depende del mes que
+se tome como base. Si da distinto de 1, el 5/10 el precio no sería el de hoy. Conviene que el área lo confirme antes.
 
 > «El artículo 82 a) del pliego dice que el cuadro del día de la toma de posesión sale de ajustar las últimas tarifas
-> por el coeficiente de variación de costos. ¿El 5 de octubre se sigue cobrando el cuadro de la Resolución 248/2026
-> tal cual ($ 1.500 el auto), o va a salir un cuadro ajustado? Si sale uno nuevo, ¿con qué resolución y desde qué
-> fecha?»
+> por el coeficiente de variación de la tarifa (Cvt). ¿Cuánto da ese coeficiente para el 5 de octubre? ¿Se sigue
+> cobrando el cuadro de la Resolución 248/2026 tal cual ($ 1.500 el auto), o va a salir un cuadro ajustado? Si sale
+> uno nuevo, ¿con qué resolución y desde qué fecha?»
 
 - **A quién:** el responsable del área de tarifas.
-- **Qué cambia si la respuesta es «sale uno nuevo»:** los montos y la resolución en
-  `C:\Users\Villex\dev\Covicen\src\content\tarifario.json`, y la novedad «Qué cuadro tarifario rige desde el 5 de
-  octubre», que hoy dice que ese día no cambia el precio.
+- **Qué cambia si la respuesta es «sale uno nuevo»:** los montos, la resolución y la vigencia en
+  `C:\Users\Villex\dev\Covicen\src\content\tarifario.json` (de ahí salen las tablas y el precio de la descripción para
+  buscadores de Tarifas). Y además, porque tienen el precio o «el mismo cuadro» escrito a mano:
+  - las preguntas frecuentes `03-cuanto-cuesta-el-peaje.json`, `05-desde-cuando-se-cobra.json` y
+    `12-peajes-existentes.json`, en `C:\Users\Villex\dev\Covicen\src\content\faq\`;
+  - las novedades «Qué cuadro tarifario rige desde el 5 de octubre» (dice que ese día no cambia el precio) y «Qué
+    cambia el 5 de octubre…», en `C:\Users\Villex\dev\Covicen\src\content\novedades\`.
 
 ---
 
