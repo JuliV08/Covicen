@@ -2,7 +2,7 @@
   "publicadoEl": "2026-09-13",
   "vigencia": {
     "desde": "2026-02-26",
-    "descripcion": "Cuadro tarifario de Corredores Viales S.A. aprobado por la Resolución 248/2026 de Vialidad Nacional, que Covicen aplica desde la toma de posesión, según el contrato de concesión. Rige el mismo cuadro en Carcarañá, James Craik y Franck."
+    "descripcion": "Cuadro tarifario aprobado por la Resolución 248/2026 de Vialidad Nacional, aplicado desde la toma de posesión. Rige el mismo cuadro tarifario para las estaciones Carcarañá, James Craik y Franck."
   },
   "moneda": "ARS",
   "alicuotaIva": 0.21,
@@ -21,9 +21,5 @@
     "nombre": "Resolución 248/2026 — Boletín Oficial, 24/02/2026",
     "url": "https://www.boletinoficial.gob.ar/detalleAviso/primera/338657/20260224"
   },
-  "avisos": [
-    "Pago electrónico manual: modalidad de pago manual electrónico (medios de pago electrónicos en punto de cobro, distintos de TelePASE), en oportunidad de contar con todas las vías automáticas y/o mixtas.",
-    "La tarifa se actualiza por índices oficiales según el contrato de concesión, cada tres meses.",
-    "El criterio de las categorías es el del esquema de cinco categorías de la red nacional; el cuadro definitivo de Covicen lo homologa Vialidad Nacional."
-  ]
+  "avisos": []
 }

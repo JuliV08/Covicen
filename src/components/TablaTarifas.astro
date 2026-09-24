@@ -1,16 +1,17 @@
 ---
 // Cuadro tarifario de UNA estación (o el general si no se pasa cabina): categoría, tipo de vehículo, TelePASE y pago
 // electrónico o manual, precio al público (con IVA, como en la cabina) y sin IVA en anotación. Los textos del operador
-// (avisos, vigencia, fuente) se pintan como texto, nunca set:html; la URL de la fuente solo se enlaza si pasa esHttp
-// (lib/rutas), la misma guarda que usan TarifaDestacada y /tarifas/. Los dos precios al público salen resueltos de
+// (avisos, vigencia, resolución) se pintan como texto, nunca set:html. Los dos precios al público salen resueltos de
 // `tarifasParaCabina`: acá no se recalcula nada, así las dos columnas nunca se parten en dos números con el mismo sin IVA.
+// Sin pie fijo (pedido del gerente, 24/09/2026): se fueron las tres notas del tarifario —se vaciaron en el dato— y el
+// renglón «Publicado el… Fuente…», que repetía el enlace al Boletín Oficial que ya está arriba en /tarifas/. Los avisos
+// siguen siendo del operador: si el día de mañana carga uno, aparece debajo de la tabla; si no hay, no queda nada.
 import IconoVehiculo from '@/components/ilustraciones/IconoVehiculo.astro';
 import type { Cabina, Tarifario } from '@/lib/datos/esquemas';
-import { fechaCorta, fechaLarga, kmTexto, moneda } from '@/lib/formato';
-import { esHttp } from '@/lib/rutas';
+import { fechaLarga, kmTexto, moneda } from '@/lib/formato';
 import { iconoDeTarifa, tarifasParaCabina } from '@/lib/tarifas';
-interface Props { tarifario: Tarifario; cabina?: Cabina; id?: string; compacta?: boolean }
-const { tarifario: t, cabina, id, compacta = false } = Astro.props;
+interface Props { tarifario: Tarifario; cabina?: Cabina; id?: string }
+const { tarifario: t, cabina, id } = Astro.props;
 const filas = tarifasParaCabina(t, cabina?.slug);
 const vigencia = t.vigencia.desde ? `Vigencia: desde el ${fechaLarga(t.vigencia.desde)}.` : `Vigencia: ${t.vigencia.descripcion}`;
 const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km !== null ? ` km ${kmTexto(cabina.km)}` : ''}` : 'Todas las estaciones operativas';
@@ -45,8 +46,7 @@ const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km
     </table>
   </section>
   <p class="mt-2 text-sm text-texto-2 sm:hidden">Deslizá la tabla hacia el costado para ver todas las columnas.</p>
-  {!compacta && <ul class="mt-6 flex flex-col gap-2 text-sm text-texto-2">{t.avisos.map((a) => <li class="flex gap-2"><span aria-hidden="true">—</span>{a}</li>)}</ul>}
-  {!compacta && <p class="anotacion mt-4 text-xs text-texto-2">Publicado el {fechaCorta(t.publicadoEl)}. Fuente: {esHttp(t.fuente.url) ? <a href={t.fuente.url} rel="noopener noreferrer" target="_blank" aria-label={`${t.fuente.nombre} (se abre en otra pestaña)`}>{t.fuente.nombre}</a> : t.fuente.nombre}.</p>}
+  {t.avisos.length > 0 && <ul class="mt-6 flex flex-col gap-2 text-sm text-texto-2">{t.avisos.map((a) => <li class="flex gap-2"><span aria-hidden="true">—</span>{a}</li>)}</ul>}
 </div>
 <style>
   .fila:hover :global(.icono) { color: var(--color-acento); }

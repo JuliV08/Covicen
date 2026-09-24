@@ -55,7 +55,9 @@ describe('contenido del repo', () => {
     expect(t.tarifas.every((x) => x.montoSinIva !== null && x.montoManualSinIva === x.montoSinIva)).toBe(true);
     expect(t.tarifas.map((x) => Math.round(x.montoSinIva! * 1.21))).toEqual([1500, 3000, 4500, 6000, 7500]);
     expect(t.tarifas.map((x) => x.icono)).toEqual(['auto', 'camioneta', 'camion-3-4', 'camion-5-6', 'camion-7']);
-    expect(t.avisos.some((a) => a.includes('en oportunidad de contar con todas las vías automáticas'))).toBe(true);
+    // Las tres notas del pie (leyenda de pago manual, actualización trimestral, criterio de categorías) se sacaron por
+    // pedido del gerente el 24/09/2026. Si vuelven, que sea a propósito.
+    expect(t.avisos).toEqual([]);
   });
   it('servicios: gratuitos con los tiempos del pliego y onerosos separados', async () => {
     const s = await fuenteLocalJson.servicios();

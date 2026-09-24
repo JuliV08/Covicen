@@ -27,8 +27,26 @@ describe('TablaTarifas', () => {
     expect(html).toContain('$ 1.239,67 sin IVA');
     expect(html).toContain('Vigencia: desde el 26 de febrero de 2026');
     expect(html).toContain('Resolución 248/2026');
-    expect(html).toContain('en oportunidad de contar con todas las vías automáticas');
     expect(html).not.toMatch(/a confirmar/i);
+  });
+  // Pedido del gerente (24/09/2026): «eso debajo de cada cuadro sacarlo». Las tres notas se vaciaron en el dato y el
+  // renglón «Publicado el… Fuente…» salió del componente (el enlace al Boletín Oficial ya está arriba en /tarifas/).
+  it('la tabla no lleva pie: ni las notas, ni «Publicado el», ni la fuente', async () => {
+    const c = await AstroContainer.create();
+    const [tarifario, tramo] = await Promise.all([fuenteLocalJson.tarifario(), fuenteLocalJson.tramo()]);
+    expect(tarifario.avisos, 'volvieron las notas al pie del tarifario').toEqual([]);
+    const html = await c.renderToString(TablaTarifas, { props: { tarifario, cabina: tramo.cabinas[0] } });
+    expect(html).not.toContain('en oportunidad de contar con todas las vías automáticas');
+    expect(html).not.toContain('Publicado el');
+    expect(html).not.toContain(tarifario.fuente.nombre);
+    expect(html, 'quedó una lista vacía debajo de la tabla').not.toMatch(/<ul[^>]*>\s*<\/ul>/);
+  });
+  // Los avisos siguen siendo del operador: si carga uno, aparece. Vaciar el dato no apagó la función.
+  it('si el operador carga un aviso, aparece debajo de la tabla', async () => {
+    const c = await AstroContainer.create();
+    const tarifario = { ...(await fuenteLocalJson.tarifario()), avisos: ['Desde el lunes rige un cuadro nuevo.'] };
+    const html = await c.renderToString(TablaTarifas, { props: { tarifario } });
+    expect(html).toContain('Desde el lunes rige un cuadro nuevo.');
   });
   it('sin valor publicado: guion visible y texto solo para lectores, sin aria-label en spans', async () => {
     const c = await AstroContainer.create();
@@ -47,7 +65,7 @@ describe('TablaTarifas con textos del sistema', () => {
     const tarifario = {
       ...base,
       vigencia: { ...base.vigencia, descripcion: '<b>peligro</b> desde hoy' },
-      fuente: { ...base.fuente, nombre: '<script>x()</script> Resolución' },
+      resolucion: '<script>x()</script> Resolución',
       tarifas: base.tarifas.map((t) => ({ ...t, nota: '<img src=x onerror=alert(1)>' })),
       avisos: ['<b>aviso</b>'],
     };
@@ -59,19 +77,6 @@ describe('TablaTarifas con textos del sistema', () => {
     expect([...document.querySelectorAll('script')].some((s) => s.textContent?.includes('x()'))).toBe(false);
     expect(html).toContain('&lt;b&gt;peligro&lt;/b&gt; desde hoy');
     expect(html).toContain('&lt;script&gt;x()&lt;/script&gt; Resolución');
-  });
-
-  it('solo enlaza la fuente si es http(s); con otra cosa muestra el nombre como texto', async () => {
-    const c = await AstroContainer.create();
-    const base = await fuenteLocalJson.tarifario();
-    for (const url of ['javascript:alert(1)', 'data:text/html,hola']) {
-      const html = await c.renderToString(TablaTarifas, { props: { tarifario: { ...base, fuente: { nombre: 'Res. 1/2026', url } } } });
-      const { document } = parseHTML(html);
-      expect([...document.querySelectorAll('a')].some((a) => a.getAttribute('href') === url)).toBe(false);
-      expect(html).toContain('Res. 1/2026');
-    }
-    const ok = await c.renderToString(TablaTarifas, { props: { tarifario: { ...base, fuente: { nombre: 'Res. 1/2026', url: 'https://boletinoficial.gob.ar/x' } } } });
-    expect(parseHTML(ok).document.querySelector('a[href="https://boletinoficial.gob.ar/x"]')).not.toBeNull();
   });
 
   it('muestra el "con IVA" que manda el sistema cuando viene, y lo calcula si no', async () => {
@@ -96,7 +101,7 @@ describe('TablaTarifas con textos del sistema', () => {
 });
 
 // La URL de la fuente del tarifario la va a mandar el backend (FUENTE_DATOS=api). Además del contrato, cada
-// componente que la mete en un href pasa por esHttp: la misma regla que ya cumplía TablaTarifas.
+// componente que la mete en un href pasa por esHttp: la misma regla que cumple /tarifas/.
 describe('TarifaDestacada', () => {
   const render = async (tarifario: unknown) => (await AstroContainer.create()).renderToString(TarifaDestacada, { props: { tarifario } });
 
@@ -161,6 +166,18 @@ describe('/tarifas/', () => {
     for (const destino of ['/medios-de-pago/', '/el-tramo/', '/preguntas-frecuentes/']) {
       expect(html.includes(`href="${destino}"`), `se perdió la salida a ${destino}`).toBe(true);
     }
+  });
+
+  // Pedidos del 24/09/2026: la bajada con el texto exacto que mandó el cliente, fuera el recuadro grande del precio del
+  // auto (el precio está en la tabla de cada estación), y las estaciones dichas una sola vez.
+  it('la bajada es la del cliente, sin recuadro de precio y sin repetir las estaciones', async () => {
+    // Los <caption> de las tablas (solo para lectores de pantalla) repiten la vigencia a propósito: no cuentan.
+    const html = (await render()).replace(/<caption[\s\S]*?<\/caption>/g, '');
+    const visible = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+    expect(visible).toContain('Cuadro tarifario aprobado por la Resolución 248/2026 de Vialidad Nacional, aplicado desde la toma de posesión. Rige el mismo cuadro tarifario para las estaciones Carcarañá, James Craik y Franck.');
+    expect(visible, 'volvió el recuadro grande del precio').not.toContain('al público, con IVA');
+    expect(visible.match(/rige el mismo cuadro/gi)?.length, 'las estaciones se dicen dos veces').toBe(1);
+    expect(visible).not.toContain('Corredores Viales S.A.');
   });
 
   it('enlaza el Boletín Oficial de la resolución vigente', async () => {

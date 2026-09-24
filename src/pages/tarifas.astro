@@ -2,7 +2,6 @@
 import { Printer } from '@lucide/astro';
 import Base from '@/layouts/Base.astro';
 import TablaTarifas from '@/components/TablaTarifas.astro';
-import IconoVehiculo from '@/components/ilustraciones/IconoVehiculo.astro';
 import Boton from '@/components/ui/Boton.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import Senal from '@/components/ui/Senal.astro';
@@ -11,7 +10,7 @@ import { cabinaOperativa } from '@/lib/datos/esquemas';
 import { fechaLarga, moneda } from '@/lib/formato';
 import { esHttp, ruta } from '@/lib/rutas';
 import { publicado } from '@/lib/publicado';
-import { cabinasDelCuadro, iconoDeTarifa, publico, tarifaDestacada } from '@/lib/tarifas';
+import { cabinasDelCuadro, publico, tarifaDestacada } from '@/lib/tarifas';
 const [tarifario, tramo] = await Promise.all([datos.tarifario(), datos.tramo()]);
 const destacada = tarifaDestacada(tarifario);
 const precio = publico(destacada.montoSinIva, destacada.montoConIva, tarifario.alicuotaIva);
@@ -45,25 +44,16 @@ const exentos = [
 ---
 <Base titulo="Tarifas" descripcion={`Cuadro tarifario vigente en los peajes del Tramo Centro (Carcarañá, James Craik y Franck): ${precio !== null ? moneda(precio) : ''} por auto, Resolución 248/2026 de Vialidad Nacional. Cuadro tarifario por estación, TelePASE, pago en la vía y exenciones.`} migas={[{ nombre: 'Tarifas', href: '/tarifas' }]}>
   <Seccion nivel="h1" eyebrow="Tarifas" titulo="Cuánto cuesta el peaje." intro={tarifario.vigencia.descripcion} class="pt-10">
-    <div class="revelar mb-12 grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
-      <div class="bloque-oscuro rounded-md border border-borde bg-superficie/50 p-8">
-        <div class="flex items-center gap-3 text-texto-2"><IconoVehiculo icono={iconoDeTarifa(destacada)} size={32} /> <span>{destacada.nombre} · {destacada.descripcion}</span></div>
-        {precio !== null && destacada.montoSinIva !== null && (
-          <>
-            <p class="mt-5 flex flex-wrap items-baseline gap-x-3">
-              <span class="font-extrabold leading-none tracking-[var(--tracking-titulo)] text-texto" style="font-size: clamp(3rem, 2rem + 5vw, 6rem)">{moneda(precio)}</span>
-              <span class="text-lg text-texto-2">al público, con IVA</span>
-            </p>
-            <p class="mt-3 text-texto-2">{moneda(destacada.montoSinIva)} sin IVA · igual con TelePASE que con pago en la vía.</p>
-          </>
-        )}
-      </div>
+    {/* Pedido del gerente (24/09/2026): sale el recuadro grande con el precio del auto, porque el precio de cada
+        categoría ya está en la tabla de cada estación, dos pasos más abajo. Lo que estaba a su derecha pasa a
+        ocupar todo el ancho: vigencia y resolución a la izquierda, Imprimir a la derecha. La línea «rige el mismo
+        cuadro en…» no se repite acá: la bajada de la página ya lo dice con esas mismas palabras. */}
+    <div class="revelar mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div class="flex flex-col gap-3">
         <div class="flex flex-wrap gap-2"><Senal variante="ok">Cuadro vigente</Senal>{tarifario.vigencia.desde && <Senal variante="frio">Desde el {fechaLarga(tarifario.vigencia.desde)}</Senal>}</div>
         {tarifario.resolucion && <p class="text-texto-2">{tarifario.resolucion}.{esHttp(tarifario.fuente.url) && <> <a href={tarifario.fuente.url} rel="noopener noreferrer" target="_blank">Ver en el Boletín Oficial</a>.</>}</p>}
-        <p class="text-texto-2">Rige el mismo cuadro en {cabinas.map((c) => c.nombre).join(', ')}.</p>
-        <div><button type="button" class="inline-flex items-center gap-2 rounded-md border border-borde px-4 py-2 font-semibold text-texto hover:border-borde-fuerte hover:bg-superficie" data-imprimir><Printer size={18} aria-hidden="true" /> Imprimir el cuadro</button></div>
       </div>
+      <div class="shrink-0"><button type="button" class="inline-flex items-center gap-2 rounded-md border border-borde px-4 py-2 font-semibold text-texto hover:border-borde-fuerte hover:bg-superficie" data-imprimir><Printer size={18} aria-hidden="true" /> Imprimir el cuadro</button></div>
     </div>
 
     <nav aria-label="Estaciones" class="revelar mb-8 flex flex-wrap gap-2">
