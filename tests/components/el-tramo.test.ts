@@ -67,9 +67,24 @@ describe('/el-tramo/', () => {
     expect(html.includes('href="/tarifas/"'), 'se perdió la salida a Tarifas').toBe(true);
   });
 
-  // La sección 01 la dio por perfecta el gerente: no se toca más que lo que exige sacar la cita del pliego.
-  it('la sección 01 conserva su título', async () => {
-    expect(await render()).toContain('Tres rutas nacionales bajo una misma concesión.');
+  // Pedidos del 24/09/2026. Título y bajada nuevos (los eligió Juli): la bajada vieja no nombraba la RN 34. Y cada
+  // bloque se llama como su ancla, sin bajada y sin las notas de abajo de las estaciones.
+  it('título nuevo, bajada con las tres rutas, y bloques titulados como sus anclas', async () => {
+    const { document } = parseHTML(await render());
+    expect(document.querySelector('h1')?.textContent).toBe('Rutas nacionales 9, 19 y 34.');
+    const bajada = document.querySelector('h1')?.nextElementSibling?.textContent ?? '';
+    expect(bajada).toContain('679 km entre Santa Fe y Córdoba');
+    for (const ruta of ['Rosario–Córdoba', 'RN 19', 'RN 34']) expect(bajada, `la bajada no nombra ${ruta}`).toContain(ruta);
+    for (const [id, titulo] of [['rutas', 'Rutas y longitudes.'], ['estaciones', 'Estaciones de peaje.']]) {
+      const encabezado = document.querySelector(`section#${id} header`)!;
+      expect(encabezado.querySelector('h2')?.textContent).toBe(titulo);
+      expect(encabezado.querySelector('p'), `${id} volvió a tener eyebrow o bajada`).toBeNull();
+    }
+    const visible = document.body.textContent ?? '';
+    for (const viejo of ['679 kilómetros de centro', 'Dónde se paga', 'Tres rutas nacionales bajo una misma concesión',
+                         'Longitudes, extremos, progresivas', 'cobran cuando Vialidad Nacional las habilite.', 'deja de operar con el inicio']) {
+      expect(visible.includes(viejo), `volvió «${viejo}»`).toBe(false);
+    }
   });
 
   // Lo que el gerente pidió el 20/09/2026 es que esta sección diga QUÉ HAY DE VERDAD en cada área de descanso
