@@ -71,6 +71,63 @@ sale con el canonical en localhost. En la máquina de uno sigue siendo válido, 
 
 ---
 
+## Primera vez en la consola de AWS: cargar las variables
+
+Escrito para alguien que nunca entró a AWS. Son cinco minutos y no hay forma de romper nada: cargar variables no
+dispara ningún cambio por sí solo.
+
+### 1. Entrar
+
+Se entra con el enlace y el usuario que da el equipo de infraestructura. Suele ser una URL del estilo
+`https://<numero-de-cuenta>.signin.aws.amazon.com/console`, o un acceso de SSO. Si pide un *IAM user name*, ese es
+el usuario; no es el mail.
+
+### 2. Elegir la región — **acá es donde todos se pierden la primera vez**
+
+Arriba a la derecha, al lado del nombre de usuario, hay un selector de región. Tiene que decir
+**São Paulo** (`sa-east-1`).
+
+> **Si la región está mal, Amplify aparece vacío** y parece que no hay nada. No es que no tengas permisos: estás
+> mirando otra parte del mundo.
+
+### 3. Abrir Amplify
+
+En la barra de arriba hay un buscador. Escribir **Amplify** y entrar al servicio. Va a aparecer una lista con la
+aplicación del sitio.
+
+### 4. Buscar las variables de entorno
+
+Entrar a la aplicación. En el menú de la izquierda, buscar **Environment variables**. Según la versión de la
+consola puede estar suelto, bajo **Hosting**, o bajo **App settings**. Es el mismo lugar.
+
+### 5. Cargar las cuatro
+
+Botón **Manage variables** y después **Add variable**, una por una. Ojo con los espacios al copiar y pegar.
+
+| Variable | Valor |
+|---|---|
+| `PUBLIC_SITE_URL` | `https://www.covicen.com.ar` |
+| `PUBLIC_BASE_PATH` | `/` |
+| `PUBLIC_INDEXABLE` | `false` |
+| `FUENTE_DATOS` | `local` |
+
+Si hay una columna de **Branch** o dice *Applies to*, dejarlas en **All branches** por ahora.
+
+### 6. La quinta que NO va
+
+**`PUBLIC_SITIO_COMPLETO` no se carga.** Su ausencia es lo que hace que salga la portada de «Próximamente». Es el
+interruptor al revés: se agrega, con valor `true`, recién el día que haya que publicar el sitio entero.
+
+### 7. Guardar
+
+Botón **Save**. **No pasa nada visible, y está bien**: las variables se aplican en el build siguiente, no
+retroactivamente. El sitio publicado no cambia hasta que haya un deploy nuevo.
+
+### Qué no tocar
+
+Nada más. En particular: ni *Custom domains*, ni *Rewrites and redirects*, ni *Build settings* (esa última la
+maneja el `amplify.yml` del repositorio, y editarla a mano en la consola la desincroniza).
+
 ## La compuerta
 
 `amplify.yml`, en la raíz del repositorio, define qué corre antes de publicar:
