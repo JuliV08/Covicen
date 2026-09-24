@@ -45,7 +45,10 @@ const textoEnviar = canal === 'whatsapp' ? textoBoton : canal === 'email' ? 'Env
       )}
     </p>
   </noscript>
-  <fieldset class="m-0 grid min-w-0 gap-5 border-0 p-0 disabled:opacity-60" disabled={deshabilitado}>
+  {/* Apagado SIN opacidad (24/09/2026): con el fieldset al 60 %, los campos dejaban ver la grilla del fondo y el
+      formulario se leía «transparente y mal». Ahora cada campo sigue opaco y lo apagado se marca con el borde
+      punteado —el mismo del aviso de arriba—, las etiquetas en gris y el cursor. Estilos abajo. */}
+  <fieldset class="m-0 grid min-w-0 gap-5 border-0 p-0" disabled={deshabilitado}>
     <legend class="sr-only">{asunto}</legend>
     {campos.map((c) => (
       <div class="grid gap-2">
@@ -66,7 +69,7 @@ const textoEnviar = canal === 'whatsapp' ? textoBoton : canal === 'email' ? 'Env
     ))}
   </fieldset>
   <div class="flex flex-wrap items-center gap-4">
-    <button type="submit" disabled={deshabilitado} class="btn-enviar inline-flex min-h-11 items-center gap-2 rounded-md bg-acento px-5 py-3 font-semibold text-sobre-acento transition hover:-translate-y-px hover:bg-acento-hover hover:shadow-[0_10px_28px_-10px_var(--color-glow)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:bg-acento disabled:hover:shadow-none">
+    <button type="submit" disabled={deshabilitado} class="btn-enviar inline-flex min-h-11 items-center gap-2 rounded-md bg-acento px-5 py-3 font-semibold text-sobre-acento transition hover:-translate-y-px hover:bg-acento-hover hover:shadow-[0_10px_28px_-10px_var(--color-glow)] disabled:cursor-not-allowed disabled:bg-superficie-2 disabled:text-texto-2 disabled:hover:translate-y-0 disabled:hover:bg-superficie-2 disabled:hover:shadow-none">
       {canal === 'whatsapp' ? <MessageCircle size={18} aria-hidden="true" /> : canal === 'email' ? <Mail size={18} aria-hidden="true" /> : modoCopiar ? <Copy size={18} aria-hidden="true" /> : null} {textoEnviar}
     </button>
     {!deshabilitado && canal === 'whatsapp' && email && <a href={`mailto:${email}?subject=${encodeURIComponent(asunto)}`} class="text-sm text-texto-2">o escribinos a {email}</a>}
@@ -91,7 +94,8 @@ const textoEnviar = canal === 'whatsapp' ? textoBoton : canal === 'email' ? 'Env
   .campo:focus { outline: none; border-color: var(--color-acento); box-shadow: 0 0 0 3px var(--color-glow); }
   .campo[aria-invalid="true"] { border-color: var(--color-error); }
   .campo::placeholder { color: var(--color-texto-3); }
-  fieldset:disabled .campo { cursor: not-allowed; }
+  fieldset:disabled .campo { cursor: not-allowed; border-style: dashed; border-color: var(--color-borde-fuerte); }
+  fieldset:disabled label { color: var(--color-texto-2); }
   .campo-lectura { background: var(--color-superficie); color: var(--color-texto-2); }
   /* El texto armado se lee como texto del sitio, no como código, pero conserva los saltos de línea del mensaje. */
   .texto-copia { font-family: inherit; white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }

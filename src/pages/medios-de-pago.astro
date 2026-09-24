@@ -4,7 +4,6 @@ import Base from '@/layouts/Base.astro';
 import Boton from '@/components/ui/Boton.astro';
 import Card from '@/components/ui/Card.astro';
 import Seccion from '@/components/ui/Seccion.astro';
-import Senal from '@/components/ui/Senal.astro';
 import { datos } from '@/lib/datos';
 import { cabinaOperativa } from '@/lib/datos/esquemas';
 import { publicado } from '@/lib/publicado';
@@ -39,11 +38,16 @@ const modalidades = [
     </div>
   </Seccion>
 
+  {/* Todavía no se sabe si va a haber oficina virtual (24/09/2026). Sin enlace, esta sección decía «se habilita con
+      la toma de posesión»: una promesa en prosa, justo lo que la regla de la casa prohíbe. Aparece entera el día que
+      se cargue `contacto.enlaces.oficinaVirtual`, igual que el acceso «Mi cuenta» del header. */}
+  {oficina && (
   <Seccion id="mi-cuenta" eyebrow="Mi cuenta" titulo="Tus pasadas, facturas y pagos en un solo lugar." intro="La oficina virtual de TelePASE: consultás pasadas y facturas, ves si tenés deuda, descargás comprobantes y pagás." fondo="fondo-2">
     <div class="revelar flex flex-wrap items-center gap-4">
-      {oficina ? <Boton href={oficina} externo>Entrar a Mi cuenta <ExternalLink size={16} aria-hidden="true" /></Boton> : <><Senal variante="frio">Se habilita con la toma de posesión</Senal><p class="text-texto-2">El acceso se publica acá y en la barra superior del sitio cuando esté disponible.</p></>}
+      <Boton href={oficina} externo>Entrar a Mi cuenta <ExternalLink size={16} aria-hidden="true" /></Boton>
     </div>
   </Seccion>
+  )}
 
   {publicado.pasasteSinPagar && (
   <Seccion id="sin-pagar" eyebrow="Pasaste sin pagar" titulo="Cómo regularizarlo." intro="Si cruzás una estación sin TelePASE vigente y sin pagar:">

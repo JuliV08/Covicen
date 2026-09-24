@@ -13,6 +13,7 @@ describe('publicado', () => {
     for (const clave of [
       'obras', 'descuentosPorFrecuencia', 'tarifaDiferencial', 'pasasteSinPagar',
       'excesoDeCarga', 'categoriasFuturas', 'tramiteVecinosFrentistas', 'serviciosDeAreaDescanso',
+      'formularioTelepase',
     ] as const) {
       expect(publicado, `falta la clave ${clave}`).toHaveProperty(clave);
       expect(typeof publicado[clave], `${clave} tiene que ser booleano`).toBe('boolean');

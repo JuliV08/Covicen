@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import Formulario from '@/components/Formulario.astro';
@@ -73,6 +74,16 @@ describe('Formulario', () => {
     expect(html).toContain('data-modo="enviar"');
     expect(html).toMatch(/<fieldset[^>]*\sdisabled[\s>]/);
     expect(html).not.toContain('data-copiar-texto');
+  });
+  // 24/09/2026: el formulario apagado se veía «transparente y mal». Era la opacidad al 60 % del fieldset y del botón:
+  // sobre la grilla del fondo, los campos la dejaban ver. Apagado sí, pero opaco: lo marcan el borde punteado y el gris.
+  it('apagado sin transparencia: ni el fieldset ni el botón bajan la opacidad', async () => {
+    const html = await render({ whatsapp: null, email: null });
+    expect(/<fieldset[^>]*>/.exec(html)?.[0], 'el fieldset apagado volvió a ser translúcido').not.toMatch(/opacity/);
+    expect(/<button type="submit"[^>]*>/.exec(html)?.[0], 'el botón apagado volvió a ser translúcido').not.toMatch(/opacity/);
+    const estilo = /<style>([\s\S]*)<\/style>/.exec(readFileSync('src/components/Formulario.astro', 'utf8'))?.[1] ?? '';
+    expect(estilo).toMatch(/fieldset:disabled \.campo\s*\{[^}]*border-style:\s*dashed/);
+    expect(estilo).not.toMatch(/opacity/);
   });
   it('campo de solo lectura: input readonly con su label (entra al mensaje)', async () => {
     const html = await render({ whatsapp: '5493510000000', email: null, campos: [{ nombre: 'ubicacion', etiqueta: 'Ubicación', tipo: 'readonly', valor: '' }] });

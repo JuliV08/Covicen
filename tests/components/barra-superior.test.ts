@@ -14,11 +14,20 @@ const cinta = async (avisos: unknown[], props: Record<string, unknown> = {}) => 
 };
 
 describe('BarraSuperior', () => {
-  it('accesos: TelePASE externo, Mi cuenta a Medios de pago mientras no haya oficina virtual, y el interruptor', async () => {
+  // Todavía no se sabe si va a haber oficina virtual (24/09/2026). Sin enlace, «Mi cuenta» mandaba a una sección que la
+  // prometía «con la toma de posesión»: ahora el acceso no se dibuja hasta que se cargue la URL, y entonces va directo.
+  it('accesos: TelePASE externo y el interruptor; sin oficina virtual no hay «Mi cuenta»', async () => {
     const html = await render();
     expect(html).toMatch(/href="https:\/\/www\.telepase\.com\.ar\/"[^>]*target="_blank"/);
-    expect(html).toContain('href="/medios-de-pago/#mi-cuenta"');
+    expect(html).not.toContain('Mi cuenta');
+    expect(html).not.toContain('#mi-cuenta');
     expect(html).toContain('data-tema-boton');
+  });
+  it('con la oficina virtual cargada, «Mi cuenta» lleva directo a ella', async () => {
+    const base = await fuenteLocalJson.contacto();
+    const contacto = { ...base, enlaces: { ...base.enlaces, oficinaVirtual: 'https://oficina.covicen.test/' } };
+    const html = await (await AstroContainer.create()).renderToString(BarraSuperior, { props: { contacto } });
+    expect(html).toMatch(/href="https:\/\/oficina\.covicen\.test\/"[^>]*>Mi cuenta</);
   });
   // Los avisos se fueron a la cinta el 15/09/2026: acá no queda nada que rote.
   it('ya no lleva anuncios rotando', async () => {

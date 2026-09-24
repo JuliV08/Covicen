@@ -28,8 +28,8 @@ const activo = (href: string) => rutaActual.startsWith(ruta(href));
 const nosotrosActivo = nosotros.some((n) => activo(n.href));
 const tel = contacto.emergencias.telefono;
 const telHref = `tel:${tel.replace(/[^\d+]/g, '')}`;
+// «Mi cuenta» solo con la oficina virtual cargada: el mismo criterio que la barra superior (ver BarraSuperior.astro).
 const oficina = contacto.enlaces.oficinaVirtual;
-const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
 ---
 <header class="cabecera fixed inset-x-0 top-0 z-50 border-b" transition:animate="none">
   <BarraSuperior {contacto} />
@@ -98,7 +98,7 @@ const miCuenta = oficina ?? ruta('/medios-de-pago#mi-cuenta');
     </ul>
     <ul class="flex flex-col border-t border-borde p-3">
       <li><a href={contacto.enlaces.telepase} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 no-underline hover:bg-superficie hover:text-texto" rel="noopener noreferrer" target="_blank">TelePASE</a></li>
-      <li><a href={miCuenta} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 no-underline hover:bg-superficie hover:text-texto" rel={oficina ? 'noopener noreferrer' : undefined} target={oficina ? '_blank' : undefined}>Mi cuenta</a></li>
+      {oficina && <li><a href={oficina} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 no-underline hover:bg-superficie hover:text-texto" rel="noopener noreferrer" target="_blank">Mi cuenta</a></li>}
     </ul>
   </nav>
 </header>

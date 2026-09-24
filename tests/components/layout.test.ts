@@ -108,13 +108,18 @@ describe('Header', () => {
     expect(html, 'Trabajá con nosotros volvió al menú').not.toContain('href="/trabaja-con-nosotros/"');
     expect(html.match(/href="\/proveedores\/"/g)?.length, 'Proveedores tiene que estar en escritorio y en celular').toBe(2);
   });
-  it('lleva la barra superior con los accesos y, en el menú mobile, TelePASE y Mi cuenta', async () => {
+  // «Mi cuenta» (la oficina virtual) no se dibuja mientras no haya enlace: todavía no se sabe si va a existir (24/09/2026).
+  it('lleva la barra superior con los accesos y, en el menú mobile, TelePASE; Mi cuenta solo con oficina virtual', async () => {
     const c = await AstroContainer.create();
     const html = await c.renderToString(Header, { props: await props() });
     // Los avisos se fueron del header a la cinta (components/Marquesina.astro) el 15/09/2026.
     expect(html).not.toContain('data-anuncios');
     expect(html.match(/>TelePASE</g)?.length).toBe(2);
-    expect(html.match(/>Mi cuenta</g)?.length).toBe(2);
+    expect(html).not.toContain('>Mi cuenta<');
     expect(html).not.toContain('Corredor Vial del Centro');
+    const base = await props();
+    const conOficina = { ...base, contacto: { ...base.contacto, enlaces: { ...base.contacto.enlaces, oficinaVirtual: 'https://oficina.covicen.test/' } } };
+    const html2 = await c.renderToString(Header, { props: conOficina });
+    expect(html2.match(/href="https:\/\/oficina\.covicen\.test\/"[^>]*>Mi cuenta</g)?.length, 'Mi cuenta en escritorio y en celular').toBe(2);
   });
 });

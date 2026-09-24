@@ -1,7 +1,6 @@
 ---
 import Base from '@/layouts/Base.astro';
 import Canales from '@/components/Canales.astro';
-import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import Senal from '@/components/ui/Senal.astro';
 import { datos } from '@/lib/datos';
@@ -31,10 +30,6 @@ const onerosos = servicios.filter((s) => !s.gratuito);
   <Seccion id="canales" eyebrow="Atención" titulo="Canales y plazos de respuesta." intro="Los que fija el contrato de concesión. Los que todavía no están habilitados lo dicen." fondo="fondo-2">
     <div class="revelar"><Canales canales={contacto.canales} /></div>
   </Seccion>
-  <Seccion eyebrow="Más adelante" titulo="Lo que se suma cuando existan los sistemas.">
-    <div class="grid gap-4 md:grid-cols-2">
-      <HuecoCapacidad capacidad="oficinaVirtual" titulo="Oficina virtual" descripcion="Pasadas, facturas, deuda, comprobantes y pagos de TelePASE en línea." alternativaHref="/medios-de-pago#mi-cuenta" alternativaTexto="Qué vas a poder hacer" />
-      <HuecoCapacidad capacidad="ticketingReclamos" titulo="Seguimiento de reclamos" descripcion="Número de reclamo y estado en línea." alternativaHref="/contacto" alternativaTexto="Cómo hacer un reclamo hoy" />
-    </div>
-  </Seccion>
+  {/* La sección «Más adelante» (oficina virtual y seguimiento de reclamos, las dos «Próximamente») se sacó el
+      24/09/2026 por pedido del gerente: la página dice lo que hay, no lo que algún día se suma. */}
 </Base>
