@@ -79,6 +79,20 @@ describe('TablaTarifas con textos del sistema', () => {
     expect(html).toContain('&lt;script&gt;x()&lt;/script&gt; Resolución');
   });
 
+  // La URL de la fuente la va a mandar el backend: con `enlazarFuente` (páginas de estación) solo se enlaza si es http(s).
+  it('con enlazarFuente, solo enlaza la fuente si es http(s)', async () => {
+    const c = await AstroContainer.create();
+    const base = await fuenteLocalJson.tarifario();
+    for (const url of ['javascript:alert(1)', 'data:text/html,hola']) {
+      const html = await c.renderToString(TablaTarifas, { props: { tarifario: { ...base, fuente: { nombre: 'Res. 1/2026', url } }, enlazarFuente: true } });
+      expect([...parseHTML(html).document.querySelectorAll('a')].some((a) => a.getAttribute('href') === url), url).toBe(false);
+    }
+    const ok = await c.renderToString(TablaTarifas, { props: { tarifario: { ...base, fuente: { nombre: 'Res. 1/2026', url: 'https://boletinoficial.gob.ar/x' } }, enlazarFuente: true } });
+    expect(parseHTML(ok).document.querySelector('a[href="https://boletinoficial.gob.ar/x"]')).not.toBeNull();
+    const sin = await c.renderToString(TablaTarifas, { props: { tarifario: { ...base, fuente: { nombre: 'Res. 1/2026', url: 'https://boletinoficial.gob.ar/x' } } } });
+    expect(parseHTML(sin).document.querySelector('a[href="https://boletinoficial.gob.ar/x"]'), 'sin enlazarFuente no va el enlace').toBeNull();
+  });
+
   it('muestra el "con IVA" que manda el sistema cuando viene, y lo calcula si no', async () => {
     const c = await AstroContainer.create();
     const base = await fuenteLocalJson.tarifario();
@@ -180,9 +194,10 @@ describe('/tarifas/', () => {
     expect(visible).not.toContain('Corredores Viales S.A.');
   });
 
-  it('enlaza el Boletín Oficial de la resolución vigente', async () => {
+  it('enlaza el Boletín Oficial de la resolución vigente, una sola vez', async () => {
     const html = await render();
-    expect(html).toContain('Ver en el Boletín Oficial');
+    // Una vez, en el encabezado: las tablas no lo repiten (el enlace de TablaTarifas es solo para las estaciones).
+    expect(html.match(/>Ver en el Boletín Oficial</g)?.length).toBe(1);
     expect(html).toMatch(/href="https:\/\/[^"]*boletinoficial[^"]*"/i);
   });
 

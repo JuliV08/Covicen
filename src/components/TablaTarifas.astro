@@ -6,12 +6,16 @@
 // Sin pie fijo (pedido del gerente, 24/09/2026): se fueron las tres notas del tarifario —se vaciaron en el dato— y el
 // renglón «Publicado el… Fuente…», que repetía el enlace al Boletín Oficial que ya está arriba en /tarifas/. Los avisos
 // siguen siendo del operador: si el día de mañana carga uno, aparece debajo de la tabla; si no hay, no queda nada.
+// `enlazarFuente` pone el enlace al Boletín Oficial en la línea de vigencia, ARRIBA de la tabla: lo usan las páginas de
+// estación, que no tienen otro. En /tarifas/ no va, porque el enlace ya está en el encabezado de la página y con tres
+// tablas quedaría cuatro veces. La URL pasa por esHttp (lib/rutas), la misma guarda que usa /tarifas/.
 import IconoVehiculo from '@/components/ilustraciones/IconoVehiculo.astro';
 import type { Cabina, Tarifario } from '@/lib/datos/esquemas';
 import { fechaLarga, kmTexto, moneda } from '@/lib/formato';
+import { esHttp } from '@/lib/rutas';
 import { iconoDeTarifa, tarifasParaCabina } from '@/lib/tarifas';
-interface Props { tarifario: Tarifario; cabina?: Cabina; id?: string }
-const { tarifario: t, cabina, id } = Astro.props;
+interface Props { tarifario: Tarifario; cabina?: Cabina; id?: string; enlazarFuente?: boolean }
+const { tarifario: t, cabina, id, enlazarFuente = false } = Astro.props;
 const filas = tarifasParaCabina(t, cabina?.slug);
 const vigencia = t.vigencia.desde ? `Vigencia: desde el ${fechaLarga(t.vigencia.desde)}.` : `Vigencia: ${t.vigencia.descripcion}`;
 const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km !== null ? ` km ${kmTexto(cabina.km)}` : ''}` : 'Todas las estaciones operativas';
@@ -21,7 +25,7 @@ const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km
 <div class="revelar scroll-mt-32" {id}>
   <div class="mb-4 flex flex-wrap items-baseline justify-between gap-3">
     <h3 class="text-xl">{titulo}</h3>
-    <p class="text-sm text-texto-2">{vigencia}{t.resolucion && ` ${t.resolucion}.`}</p>
+    <p class="text-sm text-texto-2">{vigencia}{t.resolucion && ` ${t.resolucion}.`}{enlazarFuente && esHttp(t.fuente.url) && <> <a href={t.fuente.url} rel="noopener noreferrer" target="_blank">Ver en el Boletín Oficial</a>.</>}</p>
   </div>
   <section class="bloque-oscuro overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label={`Tabla de tarifas, ${titulo}`}>
     <table class="w-full border-collapse text-left">

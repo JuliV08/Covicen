@@ -3,6 +3,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import Home from '@/components/home/Home.astro';
 import Hero from '@/components/home/Hero.astro';
+import NovedadesRecientes from '@/components/home/NovedadesRecientes.astro';
 import TarifaDestacada from '@/components/home/TarifaDestacada.astro';
 import Faq from '@/components/Faq.astro';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
@@ -55,13 +56,17 @@ describe('Hero', () => {
     expect(html).toContain('href="/tarifas/"');
     expect(html).toContain('href="/el-tramo/"');
   });
-  // Pedido del 24/09/2026: que la portada se lea definitiva. La fecha de inicio salía dos veces, en el párrafo y en
-  // la cuenta regresiva de abajo; sacar solo una no cumplía el pedido, así que se fueron las dos.
-  it('la portada no anuncia la fecha de inicio ni trae cuenta regresiva', async () => {
-    const html = await render(Hero, { empresa: await fuenteLocalJson.empresa() });
-    expect(html).not.toContain('5 de octubre');
+  // Pedido del 24/09/2026: que la portada se lea definitiva. La fecha de inicio salía TRES veces sobre la foto: en el
+  // párrafo, en la cuenta regresiva y en el aviso de la cinta que va pegada al borde del hero. Se fueron las tres.
+  // Se mira la home entera y no el Hero solo, porque la cinta entra por un slot desde Home.astro. (Las tarjetas de
+  // novedades, que sí nombran el 5 de octubre en sus títulos, no aparecen acá: fuera de un build la colección está
+  // vacía. Son noticias con fecha y quedan como están.)
+  it('la portada no anuncia la fecha de inicio: ni el párrafo, ni la cuenta regresiva, ni la cinta', async () => {
+    const html = await renderHome();
+    expect(html, 'la home volvió a anunciar la fecha de inicio').not.toContain('5 de octubre');
     expect(html).not.toContain('data-cuenta-regresiva');
     expect(html).not.toContain('responsabilidad');
+    expect(html, 'la cinta de avisos desapareció de la home').toContain('Emergencias en la ruta');
   });
   // Decisión de Juli (15/09/2026): la primera pantalla del sitio dice UNA cosa y la dice quieta. El hero tenía un
   // carrusel que alternaba la portada con las novedades destacadas y se sacó; las destacadas siguen en la home, en
@@ -122,6 +127,22 @@ describe('Hero', () => {
     // Una foto por tema: global.css muestra la que corresponde con `display` según html[data-tema].
     expect(html.match(/parallax[^"]*solo-oscuro/g)?.length, 'falta la foto nocturna').toBe(1);
     expect(html.match(/parallax[^"]*solo-claro/g)?.length, 'falta la foto de día').toBe(1);
+  });
+});
+
+// En la home entera NovedadesRecientes no aparece (astro:content está vacío fuera de un build), así que se prueba
+// suelta con novedades armadas acá. Pedido del 24/09/2026: el título es «Novedades.», sin número, sin volanta y sin
+// «Lo último».
+describe('NovedadesRecientes', () => {
+  it('se titula «Novedades.», sin número ni volanta', async () => {
+    const novedad = (n: number) => ({ slug: `n-${n}`, titulo: `Novedad ${n}`, fecha: '2026-09-13', resumen: 'Resumen.', etiquetas: [], destacada: false });
+    const html = await render(NovedadesRecientes, { novedades: [novedad(1), novedad(2)] });
+    // Se mira el encabezado de la sección: las fechas de las tarjetas también usan la clase eyebrow, y está bien.
+    const encabezado = /<header[\s\S]*?<\/header>/.exec(html)?.[0] ?? '';
+    expect(encabezado).toMatch(/<h2[^>]*>Novedades\.<\/h2>/);
+    expect(encabezado, 'volvió la volanta sobre el título').not.toContain('eyebrow');
+    expect(html).not.toContain('Lo último');
+    expect(html, 'volvió un número de sección').not.toMatch(/>0\d</);
   });
 });
 

@@ -84,8 +84,8 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
   .costura::after { content: ""; position: absolute; left: 20%; right: 20%; top: 50%; height: 120px; transform: translateY(-50%); pointer-events: none;
     background: radial-gradient(60% 100% at 50% 50%, var(--color-luz), transparent 70%); }
   /* Volanta. 12 px a propósito y declarada acá como anotación del pliego (61.7, spec §11): una volanta nunca es cuerpo
-     de texto, es el rótulo que encabeza otra cosa —el índice y la etiqueta de una sección, el título de columna del
-     footer, la ruta y el km de una estación—. Junto con .anotacion es la única excepción a los 14 px, y lo guarda
+     de texto, es el rótulo que encabeza otra cosa —la etiqueta de una sección, el título de columna del footer, la
+     ruta y el km de una estación—. Junto con .anotacion es la única excepción a los 14 px, y lo guarda
      tests/styles/legibilidad.test.ts: los 12 px escritos a mano fuera de .anotacion o .eyebrow hacen fallar. */
   .eyebrow { @apply font-medium uppercase text-texto-2; letter-spacing: var(--tracking-eyebrow); font-size: 0.75rem; }
   /* texto largo (privacidad, novedades) */

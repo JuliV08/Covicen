@@ -6,11 +6,13 @@ import Card from '@/components/ui/Card.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
 import { cabinaOperativa } from '@/lib/datos/esquemas';
+import { alternarFondos } from '@/lib/fondos';
 import { publicado } from '@/lib/publicado';
 const [tramo, contacto] = await Promise.all([datos.tramo(), datos.contacto()]);
 const conCabina = tramo.cabinas.filter(cabinaOperativa).map((c) => c.nombre);
 const colocacion = tramo.cabinas.filter((c) => c.servicios?.colocacionTelepase).map((c) => c.nombre);
 const oficina = contacto.enlaces.oficinaVirtual;
+const [fTelepase, fMiCuenta, fSinPagar] = alternarFondos([true, Boolean(oficina), publicado.pasasteSinPagar]);
 // «Pasaste sin pagar» aparece acá y en /tarifas/: es EL MISMO dato sin certificar («certificar que va a ser así»),
 // así que lo gobierna el mismo interruptor, `publicado.pasasteSinPagar`. Un dato, un interruptor: si no, se esconde
 // en una página y se publica en la otra, que es peor que no esconderlo.
@@ -27,7 +29,7 @@ const modalidades = [
     <ul class="escalonar grid gap-4 md:grid-cols-3">{modalidades.map((m, i) => <li style={`--i: ${i}`}><Card><h2 class="text-xl">{m.titulo}</h2><p class="mt-2 text-texto-2">{m.texto}</p></Card></li>)}</ul>
   </Seccion>
 
-  <Seccion id="telepase" eyebrow="TelePASE" titulo="Gratis, y en todas las estaciones." intro="La adhesión, el primer dispositivo por vehículo, su colocación, la renovación, la cancelación y la reposición no tienen costo para el usuario. Las exenciones de peaje también se gestionan con TelePASE." fondo="fondo-2">
+  <Seccion id="telepase" eyebrow="TelePASE" titulo="Gratis, y en todas las estaciones." intro="La adhesión, el primer dispositivo por vehículo, su colocación, la renovación, la cancelación y la reposición no tienen costo para el usuario. Las exenciones de peaje también se gestionan con TelePASE." fondo={fTelepase}>
     <div class="revelar grid gap-6 md:grid-cols-2">
       <div class="tarjeta p-6"><h3 class="text-xl">Cómo adherirte</h3><p class="mt-2 text-texto-2">En el sitio oficial de TelePASE o en un punto de colocación. Elegís prepago o pospago y retirás el dispositivo sin cargo.</p><div class="mt-4"><Boton href={contacto.enlaces.telepase} variante="secundario" externo>Ir a TelePASE <ExternalLink size={16} aria-hidden="true" /></Boton></div></div>
       {/* Sin el dato de en qué estaciones se coloca, la tarjeta entera no va. El texto que estaba acá de fallback
@@ -42,7 +44,7 @@ const modalidades = [
       la toma de posesión»: una promesa en prosa, justo lo que la regla de la casa prohíbe. Aparece entera el día que
       se cargue `contacto.enlaces.oficinaVirtual`, igual que el acceso «Mi cuenta» del header. */}
   {oficina && (
-  <Seccion id="mi-cuenta" eyebrow="Mi cuenta" titulo="Tus pasadas, facturas y pagos en un solo lugar." intro="La oficina virtual de TelePASE: consultás pasadas y facturas, ves si tenés deuda, descargás comprobantes y pagás." fondo="fondo-2">
+  <Seccion id="mi-cuenta" eyebrow="Mi cuenta" titulo="Tus pasadas, facturas y pagos en un solo lugar." intro="La oficina virtual de TelePASE: consultás pasadas y facturas, ves si tenés deuda, descargás comprobantes y pagás." fondo={fMiCuenta}>
     <div class="revelar flex flex-wrap items-center gap-4">
       <Boton href={oficina} externo>Entrar a Mi cuenta <ExternalLink size={16} aria-hidden="true" /></Boton>
     </div>
@@ -50,7 +52,7 @@ const modalidades = [
   )}
 
   {publicado.pasasteSinPagar && (
-  <Seccion id="sin-pagar" eyebrow="Pasaste sin pagar" titulo="Cómo regularizarlo." intro="Si cruzás una estación sin TelePASE vigente y sin pagar:">
+  <Seccion id="sin-pagar" eyebrow="Pasaste sin pagar" titulo="Cómo regularizarlo." intro="Si cruzás una estación sin TelePASE vigente y sin pagar:" fondo={fSinPagar}>
     <ol class="revelar grid gap-4 md:grid-cols-2">
       <li class="tarjeta p-6"><p class="eyebrow">Dentro de los 30 días</p><p class="mt-2 text-texto-2">La tarifa que correspondía más <strong class="text-texto">una tarifa</strong> de tu categoría.</p></li>
       <li class="tarjeta p-6"><p class="eyebrow">Después de los 30 días</p><p class="mt-2 text-texto-2">La tarifa más <strong class="text-texto">dos tarifas</strong> de tu categoría, con intereses a la tasa activa del Banco Nación.</p></li>

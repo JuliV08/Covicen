@@ -79,6 +79,10 @@ const TEXTOS_SIN_CERTIFICAR: Array<[keyof typeof publicado, RegExp[]]> = [
   // `obras` tiene además dos candados propios —la ruta no se genera (11b) y no queda ningún enlace (chequeo 1)—,
   // así que acá va solo lo que esos no cubren: prometerle al usuario un plan o un avance de obra.
   ['obras', [/avance de (las )?obras/i, /plan de obras/i]],
+  // El formulario de consultas de TelePASE (24/09/2026). No es un dato sin certificar sino una decisión pendiente de
+  // gerencia —el PETG 61.5 b lo exige—, pero el candado es el mismo: apagado, no puede quedar ni la sección ni el
+  // formulario en ninguna página. Se guardan el título de la sección y el id del formulario, que son exclusivos.
+  ['formularioTelepase', [/consultas sobre tu telepase/i, /formulario-telepase/]],
   // `serviciosDeAreaDescanso` no tiene fila acá a propósito. Ese interruptor esconde la SECCIÓN de El tramo
   // que prometía decir qué hay adentro de cada área (agua, sanitarios), no la existencia del área: que una
   // estación TIENE un área de descanso es un dato cargado y confirmado, y el chip del mapa lo dice bien.

@@ -9,9 +9,9 @@
 // en el componente, NO acá: este archivo se lee de un vistazo o no sirve para lo que fue hecho. Lo guarda
 // tests/lib/publicado.test.ts, que lo revienta si aparece lógica, un import o una variable de entorno.
 //
-// No confundir con src/lib/datos/capacidades.ts: aquello es «el sistema todavía no existe» (oficina virtual,
-// ticketing) y muestra un hueco con una alternativa real. Esto es «el dato existe pero nadie lo certificó», y no
-// muestra nada: ni el rótulo, ni un guion, ni un «próximamente».
+// No confundir con src/lib/datos/capacidades.ts: aquello es «el sistema todavía no existe» (portal de proveedores,
+// canal ético anónimo) y muestra un hueco con una alternativa real. Esto es «el dato existe pero nadie lo
+// certificó», y no muestra nada: ni el rótulo, ni un guion, ni un «próximamente».
 //
 // Criterio del 20/09/2026 (call con el gerente): queda lo que tiene fuente oficial publicada —el cuadro tarifario de
 // la Res. 248/2026, las exenciones del contrato, los trámites nacionales de argentina.gob.ar— y se esconde todo lo

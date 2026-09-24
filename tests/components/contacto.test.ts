@@ -17,15 +17,14 @@ describe('/contacto/', () => {
   });
 
   // Pedido del 24/09/2026: el formulario de TelePASE sale hasta que se defina si va a haber oficina virtual. Lo esconde
-  // `publicado.formularioTelepase`. El PETG 61.5 b lo exige desde la toma de posesión: por eso este test fija las dos
-  // mitades, que hoy no está y que el formulario de reclamos (el 61.5 a) sigue estando.
-  it('sin el interruptor prendido no hay formulario de TelePASE, y el de reclamos sigue', async () => {
-    expect(publicado.formularioTelepase, 'se prendió el formulario de TelePASE: revisar este test').toBe(false);
+  // `publicado.formularioTelepase`. El PETG 61.5 b lo exige desde la toma de posesión, así que prenderlo tiene que ser
+  // cambiar un false por un true y nada más: este test sigue al interruptor en vez de fijar un valor. El estado prendido
+  // se prueba aparte, en contacto-telepase.test.ts. El formulario de reclamos (el 61.5 a) va siempre.
+  it('el formulario de TelePASE está si y solo si el interruptor está prendido, y el de reclamos va siempre', async () => {
     const html = await render();
-    expect(html).not.toContain('id="formulario-telepase"');
-    expect(html).not.toContain('id="telepase"');
-    expect(html).not.toContain('Consultas sobre tu TelePASE');
-    expect(html).not.toContain('Consultas de TelePASE');
+    for (const marca of ['id="formulario-telepase"', 'id="telepase"', 'Consultas sobre tu TelePASE', 'Consultas de TelePASE']) {
+      expect(html.includes(marca), `${marca} con publicado.formularioTelepase en ${publicado.formularioTelepase}`).toBe(publicado.formularioTelepase);
+    }
     expect(html).toContain('id="reclamos"');
   });
 
