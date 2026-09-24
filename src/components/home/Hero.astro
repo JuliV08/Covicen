@@ -1,13 +1,12 @@
 ---
 import { ArrowRight } from '@lucide/astro';
-import CuentaRegresiva from '@/components/CuentaRegresiva.astro';
 import HeroRuta from '@/components/ilustraciones/HeroRuta.astro';
 import ParallaxProfundidad from '@/components/ilustraciones/ParallaxProfundidad.astro';
 import Boton from '@/components/ui/Boton.astro';
 import Eyebrow from '@/components/ui/Eyebrow.astro';
 import type { Empresa } from '@/lib/datos/esquemas';
 import { imagenAtmosfera, variantesHero } from '@/lib/atmosfera';
-import { fechaLarga, numero } from '@/lib/formato';
+import { numero } from '@/lib/formato';
 interface Props { empresa: Empresa }
 const { empresa } = Astro.props;
 const c = empresa.concesion;
@@ -40,22 +39,23 @@ const hayDosFotos = fotos.length === 2;
   <div class="contenedor flex min-h-[calc(100dvh-var(--alto-header))] flex-col justify-center py-20 pb-32">
     <div class="entrada">
       <div style="--i: 0"><Eyebrow>Concesionaria del Tramo Centro · {c.rutas.join(' · ')}</Eyebrow></div>
-      {/* Texto elegido por Juli con su equipo el 20/09/2026 sobre tres opciones (call con el gerente: «que
-          suene lo más institucional posible»). Entra por la magnitud, que es lo que la gente recuerda, y
-          recién después se presenta. Los km salen del dato, nunca escritos a mano: `verificar.ts` exige que
-          la home diga 679, y si algún día el pliego corrige la longitud, esto la sigue sola. */}
-      <h1 class="mt-6 max-w-4xl" style="--i: 1">{numero(c.km)} kilómetros de rutas nacionales, bajo una misma responsabilidad.</h1>
+      {/* Texto de Juli (24/09/2026). El gerente pidió por segunda vez cambiar el anterior («679 kilómetros de rutas
+          nacionales, bajo una misma responsabilidad»): al usuario no le interesa la responsabilidad. La referencia
+          fueron Corresur y CVSA, breves y al grano, que le hablan al que maneja. */}
+      <h1 class="mt-6 max-w-4xl" style="--i: 1">Viajá por nuestras rutas en el centro del país.</h1>
       {/* En color pleno, no texto-2: es el único párrafo del sitio que cae sobre una foto a pantalla completa, y con
           la foto de día en tema claro el gris quedaba en 3,1:1 sobre el asfalto (el pliego 61.7 pide 4,5:1). En
-          pleno da 7:1 sin tocar el velo, así que la foto se sigue viendo igual. Lo mide hero-foto.test.ts. */}
+          pleno da 7:1 sin tocar el velo, así que la foto se sigue viendo igual. Lo mide hero-foto.test.ts.
+          La magnitud bajó del título a este párrafo, y los km siguen saliendo del dato, nunca escritos a mano:
+          `verificar.ts` exige que la home diga 679. Sin fecha de inicio ni cuenta regresiva (pedido del 24/09/2026:
+          que la portada se lea definitiva, no como el anuncio de algo que va a pasar). */}
       <p class="mt-6 max-w-2xl text-lg text-texto md:text-xl" style="--i: 2">
-        Covicen opera y conserva el Tramo Centro de la Red Federal de Concesiones: <strong>{c.rutas.join(', ').replace(/, ([^,]*)$/, ' y $1')}</strong>, entre {c.provincias.join(' y ')}. La operación comienza el <strong>{fechaLarga(c.inicioOperacion)}</strong>.
+        Covicen opera y conserva los {numero(c.km)} km del Tramo Centro de la Red Federal de Concesiones: <strong>{c.rutas.join(', ').replace(/, ([^,]*)$/, ' y $1')}</strong>, entre {c.provincias.join(' y ')}.
       </p>
       <div class="mt-10 flex flex-wrap items-center gap-4" style="--i: 3">
         <Boton href="/tarifas">Ver tarifas <ArrowRight size={18} aria-hidden="true" /></Boton>
         <Boton href="/el-tramo" variante="secundario">Conocer el tramo</Boton>
       </div>
-      <div class="mt-10" style="--i: 4"><CuentaRegresiva fecha={c.inicioOperacion} /></div>
     </div>
   </div>
   <slot name="marquesina" />
@@ -63,7 +63,6 @@ const hayDosFotos = fotos.length === 2;
       disolvencia se vería el texto del tema viejo sobre el fondo del nuevo. Lo maneja scripts/tema.ts. */}
   {hayDosFotos && <div class="velo-tema" data-velo-tema aria-hidden="true"></div>}
 </section>
-<script src="../../scripts/cuenta-regresiva.ts"></script>
 <style>
   /* Luz suave que sigue al cursor (spotlight.ts setea --mx/--my en la sección). */
   .hero { --mx: 70%; --my: 40%; }

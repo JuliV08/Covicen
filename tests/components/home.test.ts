@@ -5,7 +5,6 @@ import Home from '@/components/home/Home.astro';
 import Hero from '@/components/home/Hero.astro';
 import TarifaDestacada from '@/components/home/TarifaDestacada.astro';
 import Faq from '@/components/Faq.astro';
-import CuentaRegresiva from '@/components/CuentaRegresiva.astro';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
 
 const render = async (C: unknown, props: Record<string, unknown>) => (await AstroContainer.create()).renderToString(C as never, { props });
@@ -49,12 +48,21 @@ describe('Home', () => {
 });
 
 describe('Hero', () => {
-  it('un h1, la fecha de inicio y los dos CTAs', async () => {
+  it('un h1, los km del dato y los dos CTAs', async () => {
     const html = await render(Hero, { empresa: await fuenteLocalJson.empresa() });
     expect(html.match(/<h1/g)?.length).toBe(1);
-    expect(html).toContain('5 de octubre de 2026');
+    expect(html).toContain('Viajá por nuestras rutas en el centro del país.');
+    expect(html).toContain('679 km del Tramo Centro');
     expect(html).toContain('href="/tarifas/"');
     expect(html).toContain('href="/el-tramo/"');
+  });
+  // Pedido del 24/09/2026: que la portada se lea definitiva. La fecha de inicio salía dos veces, en el párrafo y en
+  // la cuenta regresiva de abajo; sacar solo una no cumplía el pedido, así que se fueron las dos.
+  it('la portada no anuncia la fecha de inicio ni trae cuenta regresiva', async () => {
+    const html = await render(Hero, { empresa: await fuenteLocalJson.empresa() });
+    expect(html).not.toContain('5 de octubre');
+    expect(html).not.toContain('data-cuenta-regresiva');
+    expect(html).not.toContain('responsabilidad');
   });
   // Decisión de Juli (15/09/2026): la primera pantalla del sitio dice UNA cosa y la dice quieta. El hero tenía un
   // carrusel que alternaba la portada con las novedades destacadas y se sacó; las destacadas siguen en la home, en
@@ -147,14 +155,5 @@ describe('Faq', () => {
     const html = await render(Faq, { preguntas: (await fuenteLocalJson.faq()).slice(0, 2) });
     expect(html.match(/<details/g)?.length).toBe(2);
     expect(html).toContain('<summary');
-  });
-});
-
-describe('CuentaRegresiva', () => {
-  it('renderiza texto estático con la fecha y los data-attributes para el script', async () => {
-    const html = await render(CuentaRegresiva, { fecha: '2026-10-05' });
-    expect(html).toContain('data-cuenta-regresiva');
-    expect(html).toContain('data-fecha="2026-10-05"');
-    expect(html).toContain('5 de octubre de 2026');
   });
 });
