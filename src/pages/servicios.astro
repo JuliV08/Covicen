@@ -11,7 +11,7 @@ const onerosos = servicios.filter((s) => !s.gratuito);
 ---
 <Base titulo="Servicios al usuario" descripcion="Servicios de Covicen en el Tramo Centro: emergencias 140, grúa y remolque gratuitos con tiempos comprometidos, móviles de seguridad vial, TelePASE sin costo, atención al usuario con plazos, y qué servicios se cobran." migas={[{ nombre: 'Servicios', href: '/servicios' }]}>
   <Seccion nivel="h1" eyebrow="Servicios" titulo="Servicios al usuario." intro="El contrato de concesión obliga a prestarlos y a informar cuáles son gratuitos y cuáles tienen costo." class="pt-10 pb-0" />
-  <Seccion id="gratuitos" indice="01" eyebrow="Sin costo" titulo="Servicios gratuitos." fondo="fondo-2">
+  <Seccion id="gratuitos" eyebrow="Sin costo" titulo="Servicios gratuitos." fondo="fondo-2">
     <ul class="escalonar grid gap-4 md:grid-cols-2">
       {gratuitos.map((s, i) => (
         <li class="tarjeta p-6" style={`--i: ${i}`}>
@@ -23,15 +23,15 @@ const onerosos = servicios.filter((s) => !s.gratuito);
       ))}
     </ul>
   </Seccion>
-  <Seccion id="con-costo" indice="02" eyebrow="Con costo" titulo="Servicios que se cobran." intro="Estos servicios no están cubiertos por la tarifa de peaje.">
+  <Seccion id="con-costo" eyebrow="Con costo" titulo="Servicios que se cobran." intro="Estos servicios no están cubiertos por la tarifa de peaje.">
     <ul class="escalonar grid gap-4 md:grid-cols-2">
       {onerosos.map((s, i) => <li class="tarjeta p-6" style={`--i: ${i}`}><div class="flex items-start justify-between gap-3"><h3 class="text-xl">{s.nombre}</h3><Senal variante="frio">Con costo</Senal></div><p class="mt-2 text-texto-2">{s.descripcion}</p></li>)}
     </ul>
   </Seccion>
-  <Seccion id="canales" indice="03" eyebrow="Atención" titulo="Canales y plazos de respuesta." intro="Los que fija el contrato de concesión. Los que todavía no están habilitados lo dicen." fondo="fondo-2">
+  <Seccion id="canales" eyebrow="Atención" titulo="Canales y plazos de respuesta." intro="Los que fija el contrato de concesión. Los que todavía no están habilitados lo dicen." fondo="fondo-2">
     <div class="revelar"><Canales canales={contacto.canales} /></div>
   </Seccion>
-  <Seccion indice="04" eyebrow="Más adelante" titulo="Lo que se suma cuando existan los sistemas.">
+  <Seccion eyebrow="Más adelante" titulo="Lo que se suma cuando existan los sistemas.">
     <div class="grid gap-4 md:grid-cols-2">
       <HuecoCapacidad capacidad="oficinaVirtual" titulo="Oficina virtual" descripcion="Pasadas, facturas, deuda, comprobantes y pagos de TelePASE en línea." alternativaHref="/medios-de-pago#mi-cuenta" alternativaTexto="Qué vas a poder hacer" />
       <HuecoCapacidad capacidad="ticketingReclamos" titulo="Seguimiento de reclamos" descripcion="Número de reclamo y estado en línea." alternativaHref="/contacto" alternativaTexto="Cómo hacer un reclamo hoy" />

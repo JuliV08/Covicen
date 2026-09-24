@@ -72,13 +72,6 @@ describe('/el-tramo/', () => {
     expect(await render()).toContain('Tres rutas nacionales bajo una misma concesión.');
   });
 
-  it('los índices quedan corridos, sin huecos', async () => {
-    const visible = (await render()).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-    expect(visible).toContain(' 01 ');
-    expect(visible).toContain(' 02 ');
-    expect(visible.includes(' 03 '), 'quedó un índice de una sección que ya no está').toBe(false);
-  });
-
   // Lo que el gerente pidió el 20/09/2026 es que esta sección diga QUÉ HAY DE VERDAD en cada área de descanso
   // (agua, baños). Ese dato no existe. Lo único cargado es grueso —«tiene área de descanso» y «grúa gratuita», igual
   // para las tres operativas, y la grúa ni siquiera es de la estación: es de toda la red—, así que la sección se

@@ -24,14 +24,14 @@ const registrales = e.razonSocial && e.cuit && e.domicilioLegal;
       ))}
     </ol>
   </Seccion>
-  <Seccion indice="01" eyebrow="Seguro" titulo="Póliza de responsabilidad civil." intro="El contrato de concesión exige publicar la aseguradora y los datos de la póliza que cubre a los usuarios (PETG art. 61.6)." fondo="fondo-2">
+  <Seccion eyebrow="Seguro" titulo="Póliza de responsabilidad civil." intro="El contrato de concesión exige publicar la aseguradora y los datos de la póliza que cubre a los usuarios (PETG art. 61.6)." fondo="fondo-2">
     {e.polizaRc ? (
       <dl class="revelar grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-texto-2"><dt class="eyebrow">Aseguradora</dt><dd>{e.polizaRc.aseguradora}</dd><dt class="eyebrow">Póliza</dt><dd>{e.polizaRc.numero}</dd><dt class="eyebrow">Vigencia</dt><dd>hasta el {fechaLarga(e.polizaRc.vigenciaHasta)}</dd>{e.polizaRc.url && <><dt class="eyebrow">Documento</dt><dd><a href={e.polizaRc.url} rel="noopener noreferrer" target="_blank" class="inline-flex items-center gap-1">Ver la póliza <ExternalLink size={12} aria-hidden="true" /></a></dd></>}</dl>
     ) : (
       <p class="revelar text-texto-2">Se publica con la toma de posesión, el {fechaLarga(e.concesion.inicioOperacion)}.</p>
     )}
   </Seccion>
-  <Seccion indice="02" eyebrow="La sociedad" titulo="Datos registrales.">
+  <Seccion eyebrow="La sociedad" titulo="Datos registrales.">
     {registrales ? (
       <dl class="revelar grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-texto-2"><dt class="eyebrow">Razón social</dt><dd>{e.razonSocial}</dd><dt class="eyebrow">CUIT</dt><dd>{e.cuit}</dd><dt class="eyebrow">Domicilio legal</dt><dd>{e.domicilioLegal}</dd>{e.domicilioComercial && <><dt class="eyebrow">Domicilio comercial</dt><dd>{e.domicilioComercial}</dd></>}</dl>
     ) : (

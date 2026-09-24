@@ -31,9 +31,8 @@ describe('Home', () => {
     }
     // El mapa interactivo viaja adentro de El tramo (está en la home desde septiembre, no hubo que moverlo).
     expect(html, 'la home perdió el mapa interactivo').toContain('data-estacion=');
-    // Y los índices quedan corridos: El tramo es 01.
-    expect(html).toContain('>01<');
-    expect(html, 'quedó un índice salteado').not.toContain('>03<');
+    // Sin números de sección (24/09/2026): el «01» de El tramo se fue con los del resto del sitio.
+    expect(html, 'volvió un número de sección').not.toMatch(/>0\d</);
   });
 
   // Call del 20/09/2026: obras se esconde y el estado de la traza no va a la home (los datos de estado-ruta.json

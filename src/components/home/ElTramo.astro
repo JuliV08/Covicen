@@ -16,7 +16,7 @@ const enumerar = (xs: string[]) => xs.join(', ').replace(/, ([^,]*)$/, ' y $1');
 const rutas = enumerar(tramo.rutas.map((r) => r.nombre));
 const provincias = enumerar(tramo.provincias);
 ---
-<Seccion id="tramo" indice="01" eyebrow="El tramo" titulo="Tres rutas nacionales bajo una misma concesión." intro={`${rutas} en ${provincias}. Tocá una estación para ver su ficha: en verde las que cobran hoy, en amarillo las próximas.`} fondo="fondo-2">
+<Seccion id="tramo" eyebrow="El tramo" titulo="Tres rutas nacionales bajo una misma concesión." intro={`${rutas} en ${provincias}. Tocá una estación para ver su ficha: en verde las que cobran hoy, en amarillo las próximas.`} fondo="fondo-2">
   <div class="revelar tarjeta tarjeta-panel">
     <MapaInteractivo {tramo} modo="scroll" disposicion="lado" />
     <div class="escalonar mt-10 grid gap-8 border-t border-borde pt-8 sm:grid-cols-3">

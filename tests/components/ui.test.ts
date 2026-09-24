@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import Boton from '@/components/ui/Boton.astro';
@@ -37,11 +39,26 @@ describe('Mojon', () => {
 });
 
 describe('Seccion', () => {
-  it('renderiza índice, eyebrow y h2 con id', async () => {
-    const html = await render(Seccion, { id: 'tarifas', indice: '03', eyebrow: 'Tarifas', titulo: 'Cuánto cuesta' });
+  it('renderiza eyebrow y h2 con id', async () => {
+    const html = await render(Seccion, { id: 'tarifas', eyebrow: 'Tarifas', titulo: 'Cuánto cuesta' });
     expect(html).toContain('<section id="tarifas"');
-    expect(html).toContain('03');
-    expect(html).toContain('<h2');
+    expect(html).toContain('Tarifas');
+    expect(html).toMatch(/<h2[^>]*>Cuánto cuesta<\/h2>/);
+  });
+  // Sin eyebrow, el título es lo primero del encabezado: el margen que lo separaba del eyebrow sobra.
+  it('con título solo, el h2 no arrastra el margen del eyebrow', async () => {
+    const html = await render(Seccion, { id: 'novedades', titulo: 'Novedades.' });
+    expect(html).toMatch(/<h2[^>]*>Novedades\.<\/h2>/);
+    expect(html).not.toContain('class="eyebrow');
+    expect(html.match(/<h2[^>]*>/)?.[0]).not.toContain('mt-3');
+  });
+  // El cliente marcó dos veces el número de sección («01», «02») y se sacó de todo el sitio el 24/09/2026. Esta
+  // guarda impide que vuelva de a una página: el componente ya no lo acepta, y ninguna página puede pasárselo.
+  it('ninguna sección del sitio lleva número', () => {
+    const conIndice = readdirSync('src', { recursive: true, encoding: 'utf8' })
+      .filter((f) => f.endsWith('.astro'))
+      .filter((f) => /\bindice[=:]/.test(readFileSync(join('src', f), 'utf8')));
+    expect(conIndice, `volvió el número de sección en: ${conIndice.join(', ')}`).toEqual([]);
   });
 });
 

@@ -155,13 +155,6 @@ describe('/tarifas/', () => {
     }
   });
 
-  // Los índices se calculan con src/lib/indices.ts: apagar una sección no puede dejar la numeración salteada.
-  it('la única sección que queda numerada es la 01', async () => {
-    const visible = (await render()).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-    expect(visible).toContain('01');
-    for (const n of ['02', '03', '04', '05', '06']) expect(visible.includes(` ${n} `), `quedó el índice ${n}`).toBe(false);
-  });
-
   // Las salidas de la página vivían adentro de la sección 06, que se escondió. Sin esto, Tarifas queda sin puentes.
   it('conserva las salidas a Medios de pago, El tramo y Preguntas frecuentes', async () => {
     const html = await render();
