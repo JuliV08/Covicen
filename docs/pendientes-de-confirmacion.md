@@ -1,6 +1,7 @@
 # Qué falta confirmar, y a quién preguntárselo
 
-**Fecha:** 20 de septiembre de 2026 · **Sale de:** la call con el gerente del 20/09.
+**Fecha:** 20 de septiembre de 2026, actualizado el 24/09 · **Sale de:** la call con el gerente del 20/09 y las
+correcciones del 24/09 (el formulario de TelePASE, arriba de todo, y el 13).
 
 En esa call quedó una regla: **lo que no está confirmado no se publica con salvedades, se esconde**. Este documento
 es la otra mitad de esa decisión — la lista de qué hay que ir a preguntar para que vuelva a aparecer.
@@ -11,6 +12,35 @@ nada de la web para hacerla.
 Cuando llegue una respuesta, el que carga el dato abre
 `C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`, **cambia un `false` por un `true`**, y la sección vuelve
 entera. No hay que tocar nada más.
+
+---
+
+## ⚠️ Antes del 5 de octubre · El formulario de TelePASE lo exige el pliego
+
+**Agregado el 24/09/2026.** Por pedido del equipo, el formulario de consultas de TelePASE de Contacto **se sacó**
+«hasta que definamos si va a haber o no oficina virtual». Hay que saber una cosa antes de decidir: **son dos cosas
+distintas, y el formulario es obligatorio.** El PETG, art. 61.5, dice que el concesionario «deberá disponer en su
+Sitio Web» de tres formularios, y el b) es:
+
+> «Un Formulario Web con el objeto de canalizar consultas especificas del servicio de TelePASE. El CONCESIONARIO
+> deberá buscar brindar respuesta en un plazo menor a este tipo de consultas…»
+
+O sea: haya o no oficina virtual, desde la toma de posesión la web tiene que tener ese formulario. Hoy sacarlo no
+cambia nada en la práctica (ningún formulario del sitio funciona hasta que haya un WhatsApp o un correo cargado), pero
+el 5/10 tiene que estar.
+
+> «El pliego (PETG 61.5 b) nos obliga a tener en la web un formulario para consultas de TelePASE desde el 5 de
+> octubre, con o sin oficina virtual. ¿Lo volvemos a poner para esa fecha? Y la oficina virtual (“Mi cuenta”, para
+> ver pasadas, facturas y deuda): ¿va a existir? ¿Con qué dirección?»
+
+- **A quién:** gerencia.
+- **Qué vuelve:** la sección «Consultas sobre tu TelePASE» de Contacto, con su formulario.
+- **Dónde se carga:** `publicado.formularioTelepase` → `true`, en
+  `C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`. Nada más.
+- **La oficina virtual es aparte:** si existe, se carga su dirección en
+  `C:\Users\Villex\dev\Covicen\src\content\contacto.json`, campo `enlaces.oficinaVirtual`, y aparecen solos el acceso
+  «Mi cuenta» arriba del sitio y la sección «Mi cuenta» en Medios de pago. Hoy no aparece ninguno de los dos: antes
+  la web la prometía «con la toma de posesión», y eso se sacó el 24/09.
 
 ---
 
@@ -196,6 +226,26 @@ Covicen no lo dice (no se inventa).
 - **Por qué se sacó:** esta tarjeta decía «en los sectores de detención segura de las estaciones… publicamos las
   ubicaciones cuando Covicen las defina». Eso era un dato sin confirmar más un «próximamente» en prosa, que es
   justo lo que la regla de la casa prohíbe. Venía de antes de esta tanda y se limpió el 20/09.
+
+---
+
+## 13 · Ficha de cada estación — ubicación, teléfono y atención
+
+**Agregado el 24/09/2026**, a pedido del equipo: para completar la ficha de cada estación hace falta que Covicen diga
+dónde está cada cosa. Va junto con el 8 (qué hay en cada área de descanso) y el 9 (ubicaciones exactas del mapa):
+conviene preguntarlo todo en la misma charla con Operaciones.
+
+> «Estación por estación (Carcarañá, James Craik y Franck, y las nuevas cuando se habiliten): ¿dónde está ubicada el
+> área de descanso (en qué kilómetro y de qué lado de la ruta)? ¿Qué número de teléfono de atención tiene cada
+> estación? ¿Hay atención al usuario en persona? Si la hay, ¿dónde está y en qué horario atiende?»
+
+- **A quién:** Operaciones.
+- **Qué vuelve:** en la ficha de cada estación (el mapa de El tramo y la página `/peajes/<estación>/`), el teléfono
+  y el horario de atención.
+- **Dónde se carga:** el teléfono y el horario ya tienen su lugar: `telefono` y `horarioAtencion` de cada estación en
+  `C:\Users\Villex\dev\Covicen\src\content\tramo.json` (`cabinas[]`), y aparecen solos. **La ubicación del área de
+  descanso y la del puesto de atención todavía no tienen campo**: cuando llegue el dato hay que sumarlo al contrato de
+  datos (un cambio chico, del lado del código).
 
 ---
 
