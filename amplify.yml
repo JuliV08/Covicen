@@ -14,12 +14,16 @@ frontend:
   phases:
     preBuild:
       commands:
-        # El proyecto pide Node >= 22.12 (package.json, "engines") y el CI corre con 24: esto busca esa paridad.
-        # Va con `|| true` a propósito: si la imagen de Amplify no trajera `nvm`, esta línea haría fallar el build
-        # entero por un intento de mejora, y no por un problema real. El Node de la imagen ya alcanza —el build del
-        # 19/09 pasó sin tocarlo—, y si algún día no alcanzara, quien avisa es `pnpm install`, que lee "engines" y
-        # falla con un mensaje que dice exactamente eso.
-        - nvm install 24 && nvm use 24 || echo "nvm no disponible: sigo con el Node de la imagen"
+        # El proyecto pide Node >= 22.12 (package.json, "engines") y el CI corre con 24. Esto busca esa paridad, y
+        # termina en `|| echo` a propósito: si la imagen de Amplify no trajera `nvm`, sin eso el build entero se
+        # caería por un intento de mejora y no por un problema real. El Node de la imagen ya alcanza —el build del
+        # 19/09 pasó sin tocarlo—, y si algún día no alcanzara, quien avisa es `pnpm install`, que lee "engines".
+        #
+        # OJO CON LAS COMILLAS: un comando con dos puntos rompe el YAML y Amplify aborta el build entero antes de
+        # clonar nada, con «The commands provided in the buildspec are malformed». Pasó el 24/09/2026, justamente
+        # con un mensaje explicativo que llevaba dos puntos adentro. Todo comando con `:` va entre comillas simples.
+        # Lo guarda tests/scripts/amplify-buildspec.test.ts.
+        - 'nvm install 24 && nvm use 24 || echo "nvm no disponible, sigo con el Node de la imagen"'
         # pnpm 10, tomado de "packageManager" en package.json para no tener la versión escrita en dos lugares.
         - export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
         - corepack enable
@@ -34,7 +38,7 @@ frontend:
         # Los DOS modos pasan por la compuerta, y el de la portada PRIMERO. El orden no es cosmético: cada uno deja
         # su propio dist/, así que el último que corre es el que se publica. Con `verificar` al final, la rama sube
         # lo que le corresponda según sus variables: el sitio entero en dev, «Próximamente» en main.
-        - pnpm verificar:portada
+        - 'pnpm verificar:portada'
         - pnpm verificar
   artifacts:
     baseDirectory: dist

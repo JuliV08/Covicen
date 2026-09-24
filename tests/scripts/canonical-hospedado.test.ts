@@ -31,15 +31,6 @@ describe('canonical en un build hospedado', () => {
     expect(def).toContain('AWS_APP_ID');
   });
 
-  // La compuerta de Amplify es la que hace que todo esto sirva: sin ella, Amplify publica sin correr nada.
-  it('amplify.yml corre los mismos chequeos que el CI, y en el orden correcto', () => {
-    const spec = readFileSync('amplify.yml', 'utf8');
-    for (const comando of ['pnpm check', 'pnpm test', 'pnpm verificar:portada', 'pnpm verificar']) {
-      expect(spec.includes(comando), `la compuerta de Amplify no corre ${comando}`).toBe(true);
-    }
-    // `verificar:portada` ANTES que `verificar`: cada uno deja su propio dist/ y el último es el que se publica.
-    expect(spec.indexOf('pnpm verificar:portada')).toBeLessThan(spec.lastIndexOf('pnpm verificar'));
-    // Y que el artefacto que sube sea el dist, no otra carpeta.
-    expect(spec).toMatch(/baseDirectory:\s*dist/);
-  });
+  // La compuerta de Amplify es lo que hace que todo esto sirva: sin ella, Amplify publica sin correr nada.
+  // El buildspec tiene sus propias guardas en tests/scripts/amplify-buildspec.test.ts.
 });
