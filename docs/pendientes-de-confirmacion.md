@@ -15,7 +15,7 @@ entera. No hay que tocar nada más.
 
 ---
 
-## ⚠️ Antes del 5 de octubre · El formulario de TelePASE lo exige el pliego
+## Antes del 5 de octubre · El formulario de TelePASE lo exige el pliego
 
 **Agregado el 24/09/2026.** Por pedido del equipo, el formulario de consultas de TelePASE de Contacto **se sacó**
 «hasta que definamos si va a haber o no oficina virtual». Hay que saber una cosa antes de decidir: **son dos cosas
@@ -246,6 +246,26 @@ conviene preguntarlo todo en la misma charla con Operaciones.
   `C:\Users\Villex\dev\Covicen\src\content\tramo.json` (`cabinas[]`), y aparecen solos. **La ubicación del área de
   descanso y la del puesto de atención todavía no tienen campo**: cuando llegue el dato hay que sumarlo al contrato de
   datos (un cambio chico, del lado del código).
+
+---
+
+## Para confirmar aunque esté publicado · el precio del 5 de octubre
+
+**Agregado el 24/09/2026.** No es algo escondido: la web publica que desde la toma de posesión rige el cuadro de la
+Resolución 248/2026 ($ 1.500 el auto). Pero al releer el pliego para estas correcciones apareció el **PETG art. 82,
+inciso a)** («Tarifas a aplicar a la fecha de Toma de Posesión»): toma las últimas tarifas vigentes antes de la toma y
+las **ajusta por un coeficiente de variación de costos** (índices del INDEC) para fijar el cuadro del primer día. Si
+ese ajuste se aplica, el 5/10 el precio podría no ser el de hoy. Conviene que el área lo confirme antes de esa fecha.
+
+> «El artículo 82 a) del pliego dice que el cuadro del día de la toma de posesión sale de ajustar las últimas tarifas
+> por el coeficiente de variación de costos. ¿El 5 de octubre se sigue cobrando el cuadro de la Resolución 248/2026
+> tal cual ($ 1.500 el auto), o va a salir un cuadro ajustado? Si sale uno nuevo, ¿con qué resolución y desde qué
+> fecha?»
+
+- **A quién:** el responsable del área de tarifas.
+- **Qué cambia si la respuesta es «sale uno nuevo»:** los montos y la resolución en
+  `C:\Users\Villex\dev\Covicen\src\content\tarifario.json`, y la novedad «Qué cuadro tarifario rige desde el 5 de
+  octubre», que hoy dice que ese día no cambia el precio.
 
 ---
 

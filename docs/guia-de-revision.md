@@ -27,7 +27,9 @@ la derecha) y que no haya quedado un número suelto en ningún lado.
 
 **Portada `/`**
 - Título: «Viajá por nuestras rutas en el centro del país.» Debajo, el párrafo con los **679 km** y sin la fecha de
-  inicio. Tampoco está la pastilla de la cuenta regresiva: decía lo mismo.
+  inicio. Tampoco está la pastilla de la cuenta regresiva, ni el aviso de la cinta de abajo del hero que decía «Covicen
+  opera el Tramo Centro desde el 5 de octubre de 2026»: las tres cosas anunciaban la misma fecha sobre la foto. En la
+  cinta quedan los avisos del 140 y del cuadro tarifario.
 - Mirá el título en **celular**: es más corto que el anterior, así que el hero puede verse con más aire. Revisá que
   se lea bien sobre la foto en los dos temas (de día y de noche).
 - «Novedades.» es ahora el título de esa sección, sin «02» ni «Lo último». La tercera tarjeta dice «…por las rutas
@@ -37,11 +39,16 @@ la derecha) y que no haya quedado un número suelto en ningún lado.
 **Tarifas `/tarifas/`**
 - La bajada es el texto exacto del equipo. **No está el recuadro grande del $1.500.**
 - Donde estaba el recuadro, la vigencia y la resolución ocupan todo el ancho, con «Imprimir el cuadro» a la derecha.
-  Mirá cómo queda en escritorio y en celular (en celular, el botón va abajo).
-- La frase de las estaciones está **una sola vez**, en la bajada: no se repite en el bloque de la derecha.
+  Mirá cómo queda en escritorio y en celular (en celular, el botón va abajo). Debajo, «Exenciones» pasó a llevar la
+  grilla de fondo: con las secciones escondidas desde el 20/09 quedaban dos fondos lisos seguidos. Ahora el fondo se
+  alterna solo según qué se ve, acá, en Medios de pago y en Contacto.
+- La frase de las estaciones está **una sola vez**, en la bajada: no se repite en el bloque de vigencia y resolución.
 - Debajo de cada tabla **no hay nada**: ni las tres notas ni «Publicado el… Fuente…». El enlace al Boletín Oficial
   sigue arriba.
 - Probá **Imprimir**: que el cuadro salga bien sin el recuadro.
+- **Páginas de estación** (`/peajes/carcarana/`, por ejemplo): como debajo de la tabla ya no va nada, el enlace a la
+  resolución en el Boletín Oficial pasó **arriba de la tabla**, al final de la línea de vigencia. Tocalo y fijate que
+  abra el Boletín Oficial.
 
 **El tramo `/el-tramo/`**
 - Título «Rutas nacionales 9, 19 y 34.», con una bajada que ahora nombra las tres rutas (la anterior no nombraba la
@@ -198,7 +205,7 @@ Centro.» · «Qué te da el peaje, y qué se cobra aparte.» → «Servicios al
 ### Cómo volver a mostrar algo que está escondido
 
 Abrís **`C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`**, buscás la línea de la sección y cambiás su `false` por
-`true`. Nada más: la sección vuelve entera y los números de sección se reacomodan solos. Cuál es cuál y qué dato hace
+`true`. Nada más: la sección vuelve entera (desde el 24/09 las secciones no llevan número, así que no hay nada que reacomodar; el fondo liso o con grilla se alterna solo). Cuál es cuál y qué dato hace
 falta antes está en `C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`.
 
 ## La portada de «Próximamente» (19 de septiembre) — mirá esto primero

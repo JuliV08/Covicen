@@ -4,7 +4,7 @@ Concepto rector, tokens, tipografía, movimiento. Fuente completa: spec §6. Ver
 
 ## Concepto: "La ruta, de noche"
 
-El sitio es el corredor visto de noche. Navy profundo (asfalto y cielo); **la ruta como hilo luminoso celeste** que une todas las páginas (se dibuja en el hero, acompaña el scroll en el margen, es el trazo del mapa con las **cabinas como balizas**); lo práctico habla en **señalética** (amarillo vial, Archivo 800, mayúsculas); los números grandes son **mojones** (tabulares, enormes, unidad chica). Registro tech: grilla de plano tenue, esquineros finos, índices `01 / 09`, glow solo en el hilo y las balizas. Sin glassmorphism, partículas, cursor custom ni scroll-jacking. Cero emojis.
+El sitio es el corredor visto de noche. Navy profundo (asfalto y cielo); **la ruta como hilo luminoso celeste** que une todas las páginas (se dibuja en el hero, acompaña el scroll en el margen, es el trazo del mapa con las **cabinas como balizas**); lo práctico habla en **señalética** (amarillo vial, Archivo 800, mayúsculas); los números grandes son **mojones** (tabulares, enormes, unidad chica). Registro tech: grilla de plano tenue, esquineros finos, glow solo en el hilo y las balizas. Sin glassmorphism, partículas, cursor custom ni scroll-jacking. Cero emojis.
 
 Dos líneas rojas de Juli: navegación intuitiva y directa (la tarifa a un clic) y nada de sobre-animación.
 
@@ -111,3 +111,19 @@ método de `tests/styles/hero-foto.test.ts`. Cada celda: menú (`texto-2`) · lo
 
 Las dos piezas sin pill entran igual a `tests/styles/header-foto.test.ts`, aunque hoy estén en verde: 0,45 de
 margen es poco, y este proyecto ya lo perdió **dos veces** al cambiar la foto del hero.
+
+## Encabezados sin número, y el formulario apagado sin transparencia (2026-09-24)
+
+**Sin números de sección.** El «01», «02» que iba a la izquierda de cada título se sacó de todo el sitio: el cliente
+lo marcó dos veces, y sacarlo de dos páginas dejaba el resto con otro estilo. `Seccion` ya no acepta `indice` y una
+guarda en `tests/components/ui.test.ts` impide que vuelva de a una página. De paso, el encabezado quedó alineado con
+el contenido de abajo (antes entraba sangrado por la columna del número). En El tramo y en la sección Novedades del
+inicio, el pedido fue más allá: **el nombre del bloque es el título**, sin eyebrow ni bajada, y coincide con la barra
+de anclas. En el resto del sitio los títulos no se tocaron.
+
+**Lección durable: apagar con opacidad transparenta lo que hay detrás.** Los formularios sin canal se apagaban con
+`opacity: 0.6` en el `fieldset` y en el botón. Sobre fondo liso eso se lee como «gris»; sobre la **grilla cinética**
+(`fondo-2`), los campos dejaban ver las líneas y el cliente lo describió exacto: «se ve transparente y mal». Un
+estado apagado se marca con **colores opacos de los tokens** (borde punteado, etiquetas en `texto-2`, botón en
+`superficie-2` con `texto-2`, par ya verificado en `scripts/lib/pares.ts`), nunca bajando la opacidad de un
+contenedor. Lo guarda `tests/components/formulario.test.ts`. Ver [[Costura de datos]] y [[Home]].

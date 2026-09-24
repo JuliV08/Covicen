@@ -61,7 +61,7 @@ Criterio desde sept. 2026: **esconder, no "a confirmar"**. Un dato `null` no se 
 | `lineaGratuita` (0800), `atencionUsuario` (correo), `whatsapp.numero`, `email.*` | `contacto.json` | Filas del footer; los formularios pasan de deshabilitados a "Enviar por WhatsApp" / "Enviar por correo"; Emergencias suma "También por WhatsApp"; el hueco del canal ético usa `email.etica`. |
 | `canales[].valor` de `correo`, `linea-0800`, `whatsapp` | `contacto.json` | El enlace en la tabla de canales, en vez de "Se habilita con la toma de posesión, el 5 de octubre de 2026". |
 | `redes { instagram, facebook, linkedin, youtube, x }` | `contacto.json` | Fila de redes en el footer (por nombre hasta tener los logos oficiales). |
-| `enlaces.oficinaVirtual`, `enlaces.atencionDnv` | `contacto.json` | "Mi cuenta" (barra superior, menú y Medios de pago) pasa a abrir la oficina virtual; enlace a la atención al usuario de la DNV en la línea inferior del footer. |
+| `enlaces.oficinaVirtual`, `enlaces.atencionDnv` | `contacto.json` | Aparece "Mi cuenta" (barra superior, menú y la sección de Medios de pago) y abre la oficina virtual; **sin la URL no se muestra nada** de Mi cuenta desde el 24/09/2026 (antes la prometía «con la toma de posesión», y no se sabe si va a existir). Enlace a la atención al usuario de la DNV en la línea inferior del footer. |
 | `cuentaRegularizacion` | `contacto.json` | Cómo pagar la deuda en "Pasaste sin pagar" (Medios de pago). |
 | `cabinas[].telefono`, `horarioAtencion`, `vias`, `sentido`, `servicios.*` (`detencionSegura`, `sanitarios`, `colocacionTelepase` en ninguna todavía) | `tramo.json` | Filas de la tarjeta de estación; la leyenda del mapa y "Dónde se coloca" el TelePASE listan solo lo que alguna estación tiene. |
 | `ejemplo: true` | `estado-ruta.json` | Mientras sea `true`, cartel "Datos de ejemplo" en el estado de la traza; con `false` (datos del centro de operaciones) desaparece. |
@@ -129,7 +129,7 @@ congelado de booleanos, uno por sección, con su comentario de por qué está ap
 |---|---|---|
 | Qué dice | «el sistema todavía no existe» | «el dato existe pero nadie lo certificó» |
 | Qué muestra | un hueco con una alternativa real («Próximamente» + a dónde ir mientras tanto) | **nada**: ni el rótulo, ni un guion, ni un «próximamente» |
-| Ejemplos | oficina virtual, ticketing de reclamos, portal de proveedores | descuentos por frecuencia, tarifa diferencial, recargos, obras |
+| Ejemplos | portal de proveedores, canal ético anónimo (la oficina virtual y el ticketing de reclamos dejaron de mostrarse el 24/09/2026: el cliente no quiere «Próximamente» de sistemas que no se sabe si van a existir) | descuentos por frecuencia, tarifa diferencial, recargos, obras, formulario de TelePASE |
 
 **Reglas que lo sostienen, y que tienen test:**
 
@@ -144,8 +144,8 @@ congelado de booleanos, uno por sección, con su comentario de por qué está ap
 4. **La contracara es obligatoria.** Cada `false` tiene su fila en `docs/pendientes-de-confirmacion.md`, con la
    pregunta redactada, a quién va, qué vuelve y dónde se carga. Esconder sin esa lista es perder el dato.
 
-Los números de sección no se escriben a mano: `src/lib/indices.ts` los corre solos a partir de qué se ve, así que
-apagar una sección no deja la numeración salteada ni obliga a renumerar a mano al volver a prenderla.
+Los números de sección («01», «02») **ya no existen** desde el 24/09/2026: el cliente los marcó dos veces y se sacaron
+de todo el sitio, con `src/lib/indices.ts`, que los corría solos. Esconder una sección ya no deja nada que renumerar.
 
 **Cómo se esconde una página entera**, que es distinto de esconder una sección: ver
 [[Arquitectura de informacion de la landing]]. Astro no deja quitar una ruta fija desde un hook, pero una ruta
