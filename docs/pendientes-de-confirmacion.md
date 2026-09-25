@@ -1,7 +1,8 @@
 # Qué falta confirmar, y a quién preguntárselo
 
-**Fecha:** 20 de septiembre de 2026, actualizado el 24/09 · **Sale de:** la call con el gerente del 20/09 y las
-correcciones del 24/09 (el formulario de TelePASE, arriba de todo, y el 13).
+**Fecha:** 20 de septiembre de 2026, actualizado el 24/09 y el 25/09 · **Sale de:** la call con el gerente del 20/09
+y las correcciones del 24/09 (el 13 y la pregunta del precio del 5 de octubre). El formulario de TelePASE, que se
+agregó el 24/09, quedó resuelto el 25/09.
 
 En esa call quedó una regla: **lo que no está confirmado no se publica con salvedades, se esconde**. Este documento
 es la otra mitad de esa decisión — la lista de qué hay que ir a preguntar para que vuelva a aparecer.
@@ -15,32 +16,21 @@ entera. No hay que tocar nada más.
 
 ---
 
-## Antes del 5 de octubre · El formulario de TelePASE lo exige el pliego
+## Resuelto el 25/09 · El formulario de TelePASE volvió
 
-**Agregado el 24/09/2026.** Por pedido del equipo, el formulario de consultas de TelePASE de Contacto **se sacó**
-«hasta que definamos si va a haber o no oficina virtual». Hay que saber una cosa antes de decidir: **son dos cosas
-distintas, y el formulario es obligatorio.** El PETG, art. 61.5, dice que el concesionario «deberá disponer en su
+El 24/09 el equipo pidió sacar el formulario de consultas de TelePASE de Contacto «hasta que definamos si va a haber o
+no oficina virtual». El 25/09 se definió: la oficina virtual es **Autogestión**, la web de autogestión de Telepeaje
+Plus (https://www.telepeajeplus.com/Login), y el formulario **volvió**.
+
+**Que no se vuelva a apagar sin saber esto:** el PETG, art. 61.5, dice que el concesionario «deberá disponer en su
 Sitio Web» de tres formularios, y el b) es:
 
 > «Un Formulario Web con el objeto de canalizar consultas especificas del servicio de TelePASE. El CONCESIONARIO
 > deberá buscar brindar respuesta en un plazo menor a este tipo de consultas…»
 
-O sea: haya o no oficina virtual, desde la toma de posesión la web tiene que tener ese formulario. Hoy sacarlo no
-cambia nada en la práctica (ningún formulario del sitio funciona hasta que haya un WhatsApp o un correo cargado), pero
-el 5/10 tiene que estar.
-
-> «El pliego (PETG 61.5 b) nos obliga a tener en la web un formulario para consultas de TelePASE desde el 5 de
-> octubre, con o sin oficina virtual. ¿Lo volvemos a poner para esa fecha? Y la oficina virtual (“Mi cuenta”, para
-> ver pasadas, facturas y deuda): ¿va a existir? ¿Con qué dirección?»
-
-- **A quién:** gerencia.
-- **Qué vuelve:** la sección «Consultas sobre tu TelePASE» de Contacto, con su formulario.
-- **Dónde se carga:** `publicado.formularioTelepase` → `true`, en
-  `C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`. Nada más.
-- **La oficina virtual es aparte:** si existe, se carga su dirección en
-  `C:\Users\Villex\dev\Covicen\src\content\contacto.json`, campo `enlaces.oficinaVirtual`, y aparecen solos el acceso
-  «Mi cuenta» arriba del sitio y la sección «Mi cuenta» en Medios de pago. Hoy no aparece ninguno de los dos: antes
-  la web la prometía «con la toma de posesión», y eso se sacó el 24/09.
+O sea: haya o no oficina virtual, desde la toma de posesión la web tiene que tener ese formulario. El interruptor
+(`publicado.formularioTelepase`, en `C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`) sigue existiendo, pero
+apagarlo es incumplir el pliego.
 
 ---
 
@@ -278,7 +268,7 @@ se tome como base. Si da distinto de 1, el 5/10 el precio no sería el de hoy. C
 
 Esta lista **no reemplaza** la que ya existía. Los datos de la empresa y de contacto que faltan desde septiembre
 —razón social, CUIT, domicilios, línea 0800, casilla de atención al usuario, WhatsApp, redes, póliza de
-responsabilidad civil, oficina virtual de TelePASE, organigrama— siguen pendientes y están detallados, con el
+responsabilidad civil, organigrama— siguen pendientes (la oficina virtual se cargó el 25/09) y están detallados, con el
 archivo y el efecto de cada uno, en:
 
 **`C:\Users\Villex\dev\Covicen\docs\guia-de-revision.md`**, sección «Qué está oculto hasta tener el dato» y

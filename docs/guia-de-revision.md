@@ -1,6 +1,6 @@
 # Guía de revisión — web de Covicen
 
-**Al día al 24 de septiembre de 2026.** Empezá por «Lo que cambió el 24 de septiembre», que es la tanda más nueva; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
+**Al día al 25 de septiembre de 2026.** Empezá por «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
 
 Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/superpowers/plans/2026-09-13-actualizacion-web.md`, más la **revisión final del 14 y 15 de septiembre**) se hizo **sin pruebas visuales**: esta guía es la lista de lo que hay que mirar a mano, pantalla por pantalla, más lo que quedó oculto a propósito y cómo cargarlo.
 
@@ -15,11 +15,42 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 
 ---
 
+## Lo que cambió el 25 de septiembre — mirá esto primero
+
+Dos cambios que pidió el equipo sobre la marcha, en la misma rama `web-ajustes-2026-09-24` (sin push).
+
+**1 · «Mi cuenta» pasó a llamarse «Autogestión»** y abre https://www.telepeajeplus.com/Login (la web de autogestión de
+Telepeaje Plus) en otra pestaña.
+- Arriba del sitio (escritorio): TelePASE · **Autogestión** · sol/luna. En el celular, lo mismo dentro del menú.
+- **Medios de pago**: vuelve la sección, ahora «Autogestión» («Tu cuenta, en línea.»), con el botón «Entrar a
+  Autogestión». El texto dice solo lo que Telepeaje Plus publica que se hace ahí (gestionar la cuenta y cambiar la forma
+  de pago); ya no promete pasadas, facturas, deuda ni comprobantes. Tocá el botón y fijate que abra el ingreso de
+  Telepeaje Plus.
+- **Vuelve el formulario de consultas de TelePASE en Contacto**: la condición para esconderlo era «hasta que definamos
+  si va a haber oficina virtual», y ya se definió. Sigue apagado, como todos, hasta que haya WhatsApp o correo cargado.
+
+**2 · Logos oficiales en el pie**, en lugar de los nombres. La fila de abajo del pie quedó: **Presidencia de la
+Nación · Secretaría de Transporte · Vialidad Nacional · TelePASE** y el botón amarillo del 140. De dónde sale cada logo:
+`C:\Users\Villex\dev\Covicen\src\assets\institucional\README.md`.
+- Mirá el pie en los **dos temas**: los logos tienen que verse blancos en el oscuro y azul marino en el claro, nítidos
+  (sin bordes serruchados), con rayitas finas entre uno y otro en la compu, y ponerse celestes o azules al pasar el
+  mouse. Tocá cada uno: abren su sitio en otra pestaña.
+- En el **celular** la fila se parte en renglones y no lleva rayitas. Fijate que no quede ningún logo cortado.
+- **Transporte** dice «Secretaría de Transporte · Ministerio de Economía», no «Transporte · República Argentina» como
+  el ejemplo: es la versión del manual oficial. La del ejemplo no aparece en ninguna fuente oficial.
+- **Red Federal de Concesiones** no tiene logo oficial, así que salió de la fila y quedó como enlace en el texto de
+  arriba del pie: «Concesionaria del Tramo Centro de la *Red Federal de Concesiones*».
+- **Data Fiscal** no está: el QR lo genera ARCA con el CUIT, y la sociedad todavía no lo tiene. Cuando exista, se carga
+  en `C:\Users\Villex\dev\Covicen\public\qr-afip.png` y aparece solo en esta fila, después de TelePASE.
+- **Imprimí cualquier página** (Ctrl+P): en la vista previa, los logos del pie tienen que salir en negro, no como huecos.
+
+---
+
 ## Lo que cambió el 24 de septiembre — mirá esto primero
 
 Son las 14 correcciones que mandó el equipo. Están en la rama `web-ajustes-2026-09-24`, **sin push**, un commit por
-tanda: para verlo, `git switch web-ajustes-2026-09-24` y `pnpm dev`. El formulario de TelePASE se sacó, pero **el
-pliego lo exige desde el 5/10**: está primero en `C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`.
+tanda: para verlo, `git switch web-ajustes-2026-09-24` y `pnpm dev`. El formulario de TelePASE se sacó ese día y
+**volvió el 25/09** (ver arriba): el pliego lo exige desde el 5/10.
 
 **En todo el sitio: sin números de sección.** El «01», «02» que iba a la izquierda de cada título se fue de las nueve
 páginas que lo tenían. Mirá que los títulos queden alineados con el contenido de abajo (antes entraban corridos hacia
@@ -61,14 +92,14 @@ la derecha) y que no haya quedado un número suelto en ningún lado.
 **Servicios `/servicios/`**: ya no está la sección «Más adelante» (Oficina virtual y Seguimiento de reclamos).
 
 **Contacto `/contacto/`**
-- **No está el formulario de TelePASE** (lo esconde `publicado.formularioTelepase`). Tampoco la tarjeta «Seguimiento
+- **No está el formulario de TelePASE** (lo esconde `publicado.formularioTelepase`; **volvió el 25/09**). Tampoco la tarjeta «Seguimiento
   de reclamos · Próximamente». «Cómo hacer un reclamo» pasó a llevar la grilla de fondo, para que las secciones sigan
   alternando.
 - **El formulario de reclamos ya no se ve transparente.** Sigue apagado (no hay WhatsApp ni correo cargado), pero
   ahora con los campos sólidos, borde punteado y etiquetas en gris; el botón «Enviar», gris sólido. Mirá esto en los
   **dos temas**, y también en Guía de trámites y Proveedores, que usan el mismo formulario.
 
-**«Mi cuenta» (la oficina virtual) no aparece en ningún lado** mientras no se cargue su dirección: ni arriba del sitio
+**«Mi cuenta» (la oficina virtual) no aparece en ningún lado** mientras no se cargue su dirección (**el 25/09 se cargó y pasó a llamarse «Autogestión»**): ni arriba del sitio
 (escritorio), ni en el menú del celular, ni en Medios de pago. Antes llevaba a una sección que la prometía «con la
 toma de posesión».
 
@@ -284,7 +315,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 - El contenido sale del mismo archivo de siempre, así que el día que exista el backoffice se edita desde ahí sin tocar la web.
 
 **Barra superior (40 px, solo en escritorio)**
-- Quedó con **TelePASE** (abre telepase.com.ar en otra pestaña), **Mi cuenta** (hoy lleva a Medios de pago › Mi cuenta; cuando exista la URL de la oficina virtual, la abre en otra pestaña) y el **sol/luna**.
+- Quedó con **TelePASE** (abre telepase.com.ar en otra pestaña), **Autogestión** (desde el 25/09; abre la web de autogestión de Telepeaje Plus en otra pestaña) y el **sol/luna**.
 - **En el celular ya no existe**: esos tres accesos viven en el menú y, sin los avisos, la barra quedaba vacía comiendo 40 px de pantalla. El header pasa a medir 72 px en vez de 112.
 
 **Header (72 px)**
@@ -306,7 +337,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 - Usuarios (Tarifas, Medios de pago, Emergencias, Asistencia en ruta, Guía de trámites, Seguridad vial, Preguntas frecuentes) y Empresa (Quiénes somos, Novedades, Políticas, Transparencia). Los links del footer no van subrayados hasta el hover (son menú). **Desde el 20/09** la columna Empresa perdió Obras y Trabajá con nosotros; Proveedores sigue en la columna de Contacto y además subió al menú de arriba.
 - Contacto: "Emergencias 140" (llama), Formulario de contacto, Proveedores. **Ocultos** hasta tener el dato: 0800, correo de atención al usuario, WhatsApp.
 - **Datos registrales: no aparecen** (razón social, CUIT y domicilio son `null`). Cuando existan los tres, aparece la columna y, si además está `public/qr-afip.png`, el QR de Data Fiscal enlazando a la constancia.
-- **Fila institucional**: Vialidad Nacional · Secretaría de Transporte · Presidencia de la Nación · Red Federal de Concesiones · TelePASE, hoy como rótulos de texto (cuando tengas los SVG oficiales monocromos en `src/assets/institucional/<id>.svg` se reemplazan solos), más el botón amarillo 140. Todos abren en otra pestaña.
+- **Fila institucional** (desde el 25/09, con logos oficiales): Presidencia de la Nación · Secretaría de Transporte · Vialidad Nacional · TelePASE, más el botón amarillo 140. Todos abren en otra pestaña. La Red Federal de Concesiones, que no tiene logo, quedó como enlace en el texto del pie.
 - Línea inferior: "Sociedad en formación · Adjudicación: Resolución 1379/2026 del Ministerio de Economía. Privacidad · Boletín Oficial" y **"Última actualización: <fecha y hora>"**. Es la fecha y hora **del build**, en hora argentina, no la de la visita: en local es el momento en que corriste `pnpm dev`/`build`; en Pages, el último deploy (el workflow reconstruye a diario a las 03:00, así que nunca tiene más de un día).
 
 **Formularios (todos los del sitio)**
@@ -415,12 +446,12 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Medios de pago `/medios-de-pago/`
 
-> **Ojo:** lo de abajo describe cómo quedó en septiembre. Las tandas del 20/09 y del 24/09 cambiaron medios de pago: leé primero «Lo que cambió el 24 de septiembre» y «Lo que cambió el 20 de septiembre», arriba de todo.
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. Las tandas del 20/09, del 24/09 y del 25/09 cambiaron medios de pago: leé primero «Lo que cambió el 25 de septiembre», «Lo que cambió el 24 de septiembre» y «Lo que cambió el 20 de septiembre», arriba de todo.
 
 - Tres modalidades del pliego con fuente: Prepago con TelePASE · Pospago con TelePASE · Contado en la vía (Carcarañá, James Craik, Franck).
 - **TelePASE (01)**: "Gratis, y en todas las estaciones" (adhesión, dispositivo, colocación, renovación sin costo, PETG 50.5); "Cómo adherirte" con botón a TelePASE; "Dónde se coloca" con texto genérico hasta que Covicen defina los sectores (`servicios.colocacionTelepase` por estación).
 - **Free Flow (02)**: Leones, San Francisco, Totoras: pórticos sin barreras; cobran cuando Vialidad las habilite.
-- **Mi cuenta**: desde el 24/09 **no aparece** mientras no esté cargada `contacto.enlaces.oficinaVirtual` (antes decía "Se habilita con la toma de posesión"). Con la URL cargada aparece la sección con el botón "Entrar a Mi cuenta".
+- **Autogestión** (hasta el 24/09, «Mi cuenta»): aparece porque desde el 25/09 está cargada `contacto.enlaces.oficinaVirtual` (la web de Telepeaje Plus), con el botón "Entrar a Autogestión". Sin esa URL no se muestra (antes decía "Se habilita con la toma de posesión").
 - **Pasaste sin pagar (04)**: las dos tarjetas de recargo y "El medio para pagar la deuda se publica acá cuando esté habilitado" (la cuenta bancaria es `null`).
 
 ## Guía de trámites `/tramites/`
@@ -432,7 +463,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Contacto `/contacto/`
 
-> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 24/09 cambió contacto: leé primero «Lo que cambió el 24 de septiembre», arriba de todo.
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. Las tandas del 24/09 y del 25/09 cambiaron contacto: leé primero «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», arriba de todo.
 
 - Izquierda: tarjeta amarilla con el 140; **tabla de canales compacta** (Canal · Acuse · Respuesta); hueco "Seguimiento de reclamos en línea". Derecha: **formulario de reclamos, consultas y sugerencias** (motivo, tema, ruta y km o estación, fecha, patente, nombre, apellido, DNI, correo, teléfono, mensaje), hoy deshabilitado con el aviso; con canal, "Enviar por WhatsApp" o "Enviar por correo" y los plazos "Acuse en 24 horas · Respuesta en 5 días hábiles" al lado del botón.
 - **TelePASE (01)**: texto con link al sitio de TelePASE y un **segundo formulario** (tipo de consulta, patente, TAG, estación, fecha, correo, qué pasó). Las respuestas a TelePASE tienen prioridad (PETG 61.5 b).
@@ -504,11 +535,11 @@ Nada de esto dice "a confirmar" ni "próximamente" en el sitio: directamente no 
 - Razón social, CUIT, domicilio legal y comercial, constancia de inscripción y QR de Data Fiscal (footer, Transparencia, Privacidad).
 - Número 0800, correo de atención al usuario, WhatsApp (footer, canales, formularios habilitados, "También por WhatsApp" en Emergencias).
 - Redes sociales (footer).
-- URL de la oficina virtual: sin ella, desde el 24/09 **no se muestra nada** de «Mi cuenta» (ni en la barra superior, ni en el menú, ni en Medios de pago). Con ella, aparecen las tres. Y la URL de la atención al usuario de la DNV (footer).
+- ~~URL de la oficina virtual~~: **cargada el 25/09** (Autogestión, Telepeaje Plus). Sigue faltando la URL de la atención al usuario de la DNV (footer).
 - Cuenta para regularizar deuda (Medios de pago).
 - Póliza de responsabilidad civil (Transparencia).
 - Teléfono, horario de atención, sectores de detención segura, sanitarios y colocación de TelePASE por estación (tarjetas y leyenda del mapa).
-- Organigrama (Quiénes somos), logos institucionales en SVG (footer), foto del hero de día (tema claro).
+- Organigrama (Quiénes somos). (Los logos institucionales del pie ya están desde el 25/09, y la foto del hero de día, desde el 15/09.)
 - Monto de la tarifa diferencial (Tarifas, Trámites): se dice que se informa al tramitar.
 - **Cuántos pasajeros lleva la grúa** (PETG 54.3): el pliego obliga a publicarlo junto con los tiempos, y hoy la tarjeta "Grúa y remolque" de `/servicios/` (y la de `/emergencias/`) no lo dice porque **Covicen todavía no pasó el dato**. No hay campo propio en el contrato: se carga como texto (ver la tabla de abajo).
 - Ubicación y horario de los **sectores de detención segura** (`cabinas[].servicios.detencionSegura` en `tramo.json`): hoy ninguna estación lo tiene cargado, así que ni la tarjeta ni la leyenda del mapa lo nombran.
@@ -532,7 +563,7 @@ Nada de esto dice "a confirmar" ni "próximamente" en el sitio: directamente no 
 | `whatsapp.numero` | `src/content/contacto.json` | WhatsApp en el footer, "También por WhatsApp" en Emergencias, formularios habilitados con "Enviar por WhatsApp". También `canales[].valor` del canal `whatsapp`. |
 | `email.rrhh`, `email.proveedores`, `email.etica`, `email.general` | `src/content/contacto.json` | Destinos alternativos de Trabajá, Proveedores, canal ético y formularios. |
 | `redes { instagram, facebook, linkedin, youtube, x }` | `src/content/contacto.json` | Fila de redes en el footer (por nombre; logos oficiales después). |
-| `enlaces.oficinaVirtual` | `src/content/contacto.json` | Aparece "Mi cuenta" (barra superior, menú y la sección de Medios de pago), que abre la oficina virtual. Sin la URL, no se muestra nada. |
+| `enlaces.oficinaVirtual` | `src/content/contacto.json` | Cargada el 25/09 (Telepeaje Plus): aparece "Autogestión" (barra superior, menú y la sección de Medios de pago), que abre la oficina virtual. Sin la URL, no se muestra nada. |
 | `enlaces.atencionDnv` | `src/content/contacto.json` | Link "Atención al usuario de Vialidad Nacional" en el footer. |
 | `cuentaRegularizacion` | `src/content/contacto.json` | Cómo pagar la deuda en "Pasaste sin pagar". |
 | Cuántos pasajeros lleva la grúa (PETG 54.3) | `src/content/servicios.json`, servicio `grua-y-remolque` | **No tiene campo propio**: va como **un ítem más del array `tiempos`** (queda como un renglón más abajo de los tiempos de respuesta, que es donde el pliego lo pide) o, si preferís que se lea como parte del alcance, sumado al texto de `alcance`. Aparece en la tarjeta de `/servicios/` y en la de `/emergencias/`. Ejemplo: `"Llevamos hasta N acompañantes del vehículo remolcado."` |
@@ -557,7 +588,7 @@ El paso a paso completo está en `README.md` ("Migración al dominio propio"). E
 
 ## Qué NO está (por diseño)
 
-Backoffice y sistemas (repo aparte), estado de rutas en vivo (datos de ejemplo hasta que exista el centro de operaciones), oficina virtual, seguimiento de reclamos, portal de proveedores, canal ético anónimo, popup de novedades, pagos en línea, calculadora de tarifa, chatbot, página por ruta, franjas horarias.
+Backoffice y sistemas (repo aparte), estado de rutas en vivo (datos de ejemplo hasta que exista el centro de operaciones), oficina virtual propia (la Autogestión es la de Telepeaje Plus, enlazada), seguimiento de reclamos, portal de proveedores, canal ético anónimo, popup de novedades, pagos en línea, calculadora de tarifa, chatbot, página por ruta, franjas horarias.
 
 ## Decisiones tomadas en la ejecución que quedan a tu criterio
 

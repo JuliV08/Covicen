@@ -127,3 +127,20 @@ de anclas. En el resto del sitio los títulos no se tocaron.
 estado apagado se marca con **colores opacos de los tokens** (borde punteado, etiquetas en `texto-2`, botón en
 `superficie-2` con `texto-2`, par ya verificado en `scripts/lib/pares.ts`), nunca bajando la opacidad de un
 contenedor. Lo guarda `tests/components/formulario.test.ts`. Ver [[Costura de datos]] y [[Home]].
+
+## Logos institucionales del pie (2026-09-25)
+
+**Se pintan como máscara, no se insertan.** Cada logo oficial es un archivo aparte en `src/assets/institucional/`
+que el pie usa como `mask-image` sobre un `background-color: currentColor`: el mismo archivo sale blanco en el tema
+oscuro, azul marino en el claro y del color de acento al pasar el mouse. La alternativa obvia —el SVG adentro del
+HTML— salía cara: los dos escudos pesan ~50 KB cada uno y se hubieran repetido en las 27 páginas. Como archivo, el
+navegador lo baja una vez. Tres cosas que hacen falta para que la máscara no falle: ancho y alto explícitos desde la
+proporción del archivo (`src/lib/institucional.ts` la lee del viewBox o de las medidas del PNG), `print-color-adjust:
+exact` (al imprimir los fondos se omiten y el logo saldría en blanco) y `forced-color-adjust: none` con `LinkText`
+para el alto contraste de Windows. Y el archivo tiene que ser **de un solo color, sin blancos ni opacidades**: la
+máscara toma la forma, no el color (lo guarda `tests/lib/institucional.test.ts`).
+
+**Trampa al sacar logos de un PDF: la precisión de svgo rompe las letras.** El texto de los logos sale como glifos
+definidos en unidades de «em» (entre 0 y 1) y reusados con `<use>`. Con `floatPrecision: 1` el escudo queda
+perfecto, pero las letras se deforman («Vialidad» salía con huecos), porque 0,1 em es una letra entera. Con 3
+decimales quedan bien, y el peso casi no cambia: lo pesado es el escudo, no el texto.
