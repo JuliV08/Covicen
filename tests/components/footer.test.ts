@@ -28,12 +28,34 @@ describe('Footer', () => {
     expect(html).toContain('href="https://instagram.com/covicen"');
     expect(html).not.toContain('Sociedad en formación');
   });
-  it('fila institucional: Vialidad, Transporte, Presidencia, Red Federal, TelePASE y 140', async () => {
+  // 25/09/2026: la fila va con los logos oficiales (pedido del equipo, con el pie de otra concesionaria como ejemplo),
+  // en ese orden, y el 140 al final. La Red Federal de Concesiones no tiene logo propio: pasó al texto del pie.
+  it('fila institucional: Presidencia, Transporte, Vialidad y TelePASE con su logo, y el 140', async () => {
     const html = await render(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto());
-    for (const u of ['https://www.argentina.gob.ar/transporte/vialidad-nacional', 'https://www.argentina.gob.ar/transporte', 'https://www.argentina.gob.ar/', 'https://www.argentina.gob.ar/transporte/vialidad-nacional/red-federal-de-concesiones', 'https://www.telepase.com.ar/']) {
-      expect(html).toContain(`href="${u}"`);
+    const fila = /<ul[^>]*aria-label="Sitios institucionales"[\s\S]*?<\/ul>/.exec(html)?.[0] ?? '';
+    const esperados = [
+      ['Presidencia de la Nación', 'https://www.argentina.gob.ar/'],
+      ['Secretaría de Transporte', 'https://www.argentina.gob.ar/transporte'],
+      ['Vialidad Nacional', 'https://www.argentina.gob.ar/transporte/vialidad-nacional'],
+      ['TelePASE', 'https://www.telepase.com.ar/'],
+    ] as const;
+    const enlaces = [...fila.matchAll(/<a href="([^"]+)"[^>]*aria-label="([^"]+) \(se abre en otra pestaña\)"[^>]*>([\s\S]*?)<\/a>/g)];
+    expect(enlaces.map((m) => [m[2], m[1]])).toEqual(esperados);
+    for (const [, , nombre, adentro] of enlaces) {
+      // Con logo: la máscara con su archivo y su tamaño, y ningún nombre en texto (ese queda para cuando falte el archivo).
+      // (En desarrollo y en los tests, la dirección del PNG trae parámetros de Astro al final; en el build sale limpia.)
+      expect(adentro, `${nombre} sin logo`).toMatch(/class="logo-institucional"[^>]*style="--logo: url\(&quot;[^"]+?\.(svg|png)(\?[^"]*?)?&quot;\); --alto: [\d.]+rem; --proporcion: [\d.]+"/);
+      expect(adentro, `${nombre} quedó en texto`).not.toContain('eyebrow');
     }
-    expect(html).toContain('aria-label="Sitios institucionales"');
+    expect(fila).toContain('href="tel:140"');
+    expect(fila, 'la Red Federal volvió a la fila').not.toContain('red-federal-de-concesiones');
+    // La Red Federal sigue enlazada, en el texto del pie.
+    expect(html).toMatch(/Concesionaria del Tramo Centro de la <a href="https:\/\/www\.argentina\.gob\.ar\/transporte\/vialidad-nacional\/red-federal-de-concesiones"[^>]*>Red Federal de Concesiones<\/a>/);
+  });
+  // Data Fiscal pasó a la fila de logos, pero sigue atado al CUIT: sin CUIT no hay QR (lo genera ARCA con ese número).
+  it('sin CUIT no hay QR de Data Fiscal', async () => {
+    const html = await render(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto());
+    expect(html).not.toContain('qr-afip.png');
   });
 });
 

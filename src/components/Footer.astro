@@ -4,7 +4,7 @@ import { Phone } from '@lucide/astro';
 import Isotipo from '@/components/marca/Isotipo.astro';
 import type { Contacto, Empresa } from '@/lib/datos/esquemas';
 import { fechaHoraLarga } from '@/lib/formato';
-import { enlacesInstitucionales, logoInstitucional } from '@/lib/institucional';
+import { enlacesInstitucionales, logoInstitucional, redFederal } from '@/lib/institucional';
 import { ruta } from '@/lib/rutas';
 import { enlaceWhatsapp } from '@/lib/whatsapp';
 
@@ -18,8 +18,10 @@ const tel = contacto.emergencias.telefono;
 const soloDigitos = (t: string) => t.replace(/[^\d+]/g, '');
 // Criterio "esconder, no a confirmar": los datos registrales aparecen completos o no aparecen.
 const registrales = empresa.razonSocial && empresa.cuit && empresa.domicilioLegal;
-// El QR de Data Fiscal lo carga Juli en public/qr-afip.png cuando exista el CUIT.
+// El QR de Data Fiscal lo carga Juli en public/qr-afip.png cuando exista el CUIT (lo genera ARCA con ese CUIT). Desde el
+// 25/09/2026 va en la fila de logos institucionales, como en el ejemplo que pasó el equipo.
 const hayQr = Boolean(empresa.cuit) && existsSync('public/qr-afip.png');
+const sitios = enlacesInstitucionales.map((e) => ({ ...e, logo: logoInstitucional(e.id) }));
 // Lucide retiró los íconos de marcas: las redes van por nombre. Cuando haya cuentas, se suman los logos oficiales como SVG.
 const redes = [['instagram', 'Instagram'], ['facebook', 'Facebook'], ['linkedin', 'LinkedIn'], ['youtube', 'YouTube'], ['x', 'X']] as const;
 const ahora = new Date();
@@ -29,7 +31,7 @@ const actualizado = fechaHoraLarga(ahora);
   <div class="contenedor grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
     <div>
       <div class="flex items-center gap-3"><Isotipo size={40} /><span class="text-xl font-extrabold">COVICEN</span></div>
-      <p class="mt-4 text-sm text-texto-2">Concesionaria del Tramo Centro de la Red Federal de Concesiones. {empresa.concesion.rutas.join(' · ')} · {empresa.concesion.provincias.join(' y ')}.</p>
+      <p class="mt-4 text-sm text-texto-2">Concesionaria del Tramo Centro de la <a href={redFederal.url} rel="noopener noreferrer" target="_blank">{redFederal.nombre}</a>. {empresa.concesion.rutas.join(' · ')} · {empresa.concesion.provincias.join(' y ')}.</p>
       {(Object.keys(contacto.redes).length > 0) && (
         <ul class="mt-5 flex flex-wrap gap-2" aria-label="Redes sociales">
           {redes.map(([clave, nombre]) => contacto.redes[clave] && (
@@ -65,25 +67,32 @@ const actualizado = fechaHoraLarga(ahora);
             <dt>Domicilio legal</dt><dd>{empresa.domicilioLegal}</dd>
             {empresa.domicilioComercial && <><dt>Domicilio comercial</dt><dd>{empresa.domicilioComercial}</dd></>}
           </dl>
-          {hayQr && (
-            <a href={empresa.constanciaUrl ?? undefined} class="mt-4 inline-block no-underline" rel={empresa.constanciaUrl ? 'noopener noreferrer' : undefined} target={empresa.constanciaUrl ? '_blank' : undefined}>
-              <img src={ruta('/qr-afip.png')} alt="Código QR de Data Fiscal de AFIP: constancia de inscripción de Covicen" width="96" height="96" loading="lazy" class="rounded-sm bg-white p-1" />
-            </a>
-          )}
         </>
       )}
     </div>
   </div>
   <div class="border-t border-borde">
-    <ul class="contenedor flex flex-wrap items-center justify-center gap-x-8 gap-y-4 py-8" aria-label="Sitios institucionales">
-      {enlacesInstitucionales.map((e) => (
-        <li>
-          <a href={e.url} rel="noopener noreferrer" target="_blank" class="institucional inline-flex items-center gap-2 text-texto-2 no-underline hover:text-texto" aria-label={`${e.nombre} (se abre en otra pestaña)`}>
-            {logoInstitucional(e.id) ? <span class="logo-institucional" set:html={logoInstitucional(e.id)} /> : <span class="eyebrow border-l-2 border-borde-fuerte pl-2 text-texto-2">{e.nombre}</span>}
+    {/* Logos oficiales en lugar de los nombres (pedido del 24/09/2026, con el pie de otra concesionaria como ejemplo).
+        Cada logo es una máscara pintada con el color del texto: blanco en el tema oscuro, azul marino en el claro, y
+        el color de acento al pasar el mouse. El nombre lo lleva el aria-label del enlace. */}
+    <ul class="contenedor flex flex-wrap items-center justify-center gap-x-8 gap-y-6 py-8" aria-label="Sitios institucionales">
+      {sitios.map((e) => (
+        <li class="sitio flex items-center self-stretch">
+          <a href={e.url} rel="noopener noreferrer" target="_blank" class="institucional inline-flex items-center text-texto no-underline hover:text-acento" aria-label={`${e.nombre} (se abre en otra pestaña)`}>
+            {e.logo
+              ? <span class="logo-institucional" style={`--logo: url("${e.logo.url}"); --alto: ${e.alto}rem; --proporcion: ${e.logo.proporcion.toFixed(3)}`} aria-hidden="true"></span>
+              : <span class="eyebrow border-l-2 border-borde-fuerte pl-2 text-texto-2">{e.nombre}</span>}
           </a>
         </li>
       ))}
-      <li><a href={`tel:${soloDigitos(tel)}`} class="btn-vial inline-flex items-center gap-2 px-3 py-1 text-base font-extrabold" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={16} aria-hidden="true" /> {tel}</a></li>
+      {hayQr && (
+        <li class="sitio flex items-center self-stretch">
+          <a href={empresa.constanciaUrl ?? undefined} class="inline-block no-underline" rel={empresa.constanciaUrl ? 'noopener noreferrer' : undefined} target={empresa.constanciaUrl ? '_blank' : undefined}>
+            <img src={ruta('/qr-afip.png')} alt="Código QR de Data Fiscal de ARCA: constancia de inscripción de Covicen" width="56" height="56" loading="lazy" class="rounded-sm bg-white p-1" />
+          </a>
+        </li>
+      )}
+      <li class="flex items-center self-stretch"><a href={`tel:${soloDigitos(tel)}`} class="btn-vial inline-flex items-center gap-2 px-3 py-1 text-base font-extrabold" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={16} aria-hidden="true" /> {tel}</a></li>
     </ul>
   </div>
   <div class="border-t border-borde">
@@ -94,6 +103,19 @@ const actualizado = fechaHoraLarga(ahora);
   </div>
 </footer>
 <style>
-  .logo-institucional :global(svg) { height: 1.75rem; width: auto; fill: currentColor; }
+  /* El logo es la máscara; el color, el del enlace. Ancho y alto explícitos: reservan el lugar antes de que llegue el
+     archivo, así la fila no salta. Al imprimir, los fondos se omiten por defecto y el logo saldría en blanco: por eso
+     `print-color-adjust`. Con colores forzados (alto contraste de Windows) el fondo se reemplaza y el logo
+     desaparecería: se lo pinta con el color de enlace del sistema. */
+  .logo-institucional {
+    display: block; height: var(--alto); width: calc(var(--alto) * var(--proporcion));
+    background-color: currentColor;
+    -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  @media (forced-colors: active) { .logo-institucional { forced-color-adjust: none; background-color: LinkText; } }
+  /* Separadores finos entre logos, como en el ejemplo. Solo desde tablet: en el celular la fila se parte en renglones
+     y una raya al principio de un renglón no separa nada. */
+  @media (min-width: 48rem) { .sitio + .sitio { border-left: 1px solid var(--color-borde-fuerte); padding-left: 2rem; } }
   .institucional { transition: color var(--dur-micro) var(--ease-salida); }
 </style>
