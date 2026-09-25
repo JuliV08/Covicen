@@ -36,10 +36,10 @@ export const publicado = Object.freeze({
   /** El tramo 04 · qué hay de verdad en cada área de descanso (agua, sanitarios, detención segura).
    *  Acá el dato directamente no existe: nadie lo cargó todavía en src/content/tramo.json. */
   serviciosDeAreaDescanso: false,
-  /** Contacto · formulario de consultas de TelePASE. Pedido del 24/09/2026: «hasta que no definamos si va a haber o
-   *  no oficina virtual, que directamente lo saquemos». OJO: el PETG art. 61.5 b obliga a tenerlo en la web desde la
-   *  toma de posesión, haya o no oficina virtual. Está primero en docs/pendientes-de-confirmacion.md. */
-  formularioTelepase: false,
+  /** Contacto · formulario de consultas de TelePASE. Se escondió el 24/09/2026 «hasta que definamos si va a haber o
+   *  no oficina virtual» y volvió el 25/09, cuando se definió (Autogestión de Telepeaje Plus). El PETG art. 61.5 b
+   *  obliga a tenerlo desde la toma de posesión, haya o no oficina virtual: apagarlo de nuevo es incumplir el pliego. */
+  formularioTelepase: true,
 });
 
 export type ClavePublicada = keyof typeof publicado;

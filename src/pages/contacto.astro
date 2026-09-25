@@ -44,9 +44,9 @@ const pasosReclamo = [
     </div>
   </Seccion>
 
-  {/* Escondido por pedido del 24/09/2026 hasta que se defina si va a haber oficina virtual. El PETG art. 61.5 b lo
-      exige desde la toma de posesión, haya o no oficina virtual: el pedido de definirlo está primero en
-      docs/pendientes-de-confirmacion.md, y vuelve con `publicado.formularioTelepase` en true. */}
+  {/* Se escondió el 24/09/2026 «hasta que se defina si va a haber oficina virtual» y volvió el 25/09, cuando se
+      definió (Autogestión). El PETG art. 61.5 b lo exige desde la toma de posesión, haya o no oficina virtual: el
+      interruptor `publicado.formularioTelepase` queda, pero apagarlo es incumplir el pliego. */}
   {publicado.formularioTelepase && (
   <Seccion id="telepase" eyebrow="TelePASE" titulo="Consultas sobre tu TelePASE." intro="Cobros, dispositivo, adhesión o factura. Las respuestas a TelePASE tienen prioridad." fondo={fTelepase}>
     <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.3fr]">
