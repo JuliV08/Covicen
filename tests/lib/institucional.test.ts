@@ -37,4 +37,18 @@ describe('logos institucionales', () => {
       expect(svg, `${archivo} tiene opacidades`).not.toMatch(/opacity/);
     }
   });
+
+  // Sacados de un PDF, los SVG arrastraban el sello de firma de la página («IF-2025-… · Página 9 de 22») como glifos
+  // lejos del logo: invisibles, fuera del viewBox, pero eran el 20 % del peso. Ningún glifo puede quedar afuera.
+  it('ningún glifo queda fuera del recorte del logo', () => {
+    for (const archivo of readdirSync(carpeta).filter((f) => f.endsWith('.svg'))) {
+      const svg = readFileSync(`${carpeta}/${archivo}`, 'utf8');
+      const [vx, vy, vw, vh] = /viewBox="([^"]+)"/.exec(svg)![1]!.split(/[\s,]+/).map(Number) as [number, number, number, number];
+      for (const [, matriz] of svg.matchAll(/<use\b[^>]*transform="matrix\(([^)]+)\)"/g)) {
+        const [a, , , , e, f] = matriz!.split(/[\s,]+/).map(Number) as [number, number, number, number, number, number];
+        const em = Math.abs(a);
+        expect(e + em >= vx && e <= vx + vw && f >= vy && f - em <= vy + vh, `${archivo}: glifo en (${e}, ${f}), fuera del recorte`).toBe(true);
+      }
+    }
+  });
 });

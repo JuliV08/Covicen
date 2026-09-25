@@ -19,10 +19,12 @@ export const redFederal = { nombre: 'Red Federal de Concesiones', url: 'https://
 
 export interface LogoInstitucional { url: string; proporcion: number }
 
-// Los logos NO van adentro del HTML: los dos escudos pesan ~50 KB cada uno y se repetirían en las 27 páginas. Van como
-// archivos aparte (`?url`), que el navegador baja una vez, y el pie los pinta como máscara del color del texto. La
-// proporción sale del propio archivo (viewBox del SVG, medidas del PNG) para reservar el lugar sin saltos.
-const svgUrl = import.meta.glob<string>('/src/assets/institucional/*.svg', { eager: true, query: '?url', import: 'default' });
+// Los logos NO van adentro del HTML: los dos escudos pesan ~45 KB cada uno y se repetirían en las 27 páginas. Van como
+// archivos aparte (`?url`), que el navegador baja una vez, y el pie los pinta como máscara del color del texto. El
+// `no-inline` es porque Vite mete en la página como `data:` todo lo que pesa menos de 4 KB (le pasaba a Vialidad): así
+// los cuatro se comportan igual. La proporción sale del propio archivo (viewBox del SVG, medidas del PNG) para
+// reservar el lugar sin saltos.
+const svgUrl = import.meta.glob<string>('/src/assets/institucional/*.svg', { eager: true, query: '?url&no-inline', import: 'default' });
 const svgTexto = import.meta.glob<string>('/src/assets/institucional/*.svg', { eager: true, query: '?raw', import: 'default' });
 const png = import.meta.glob<{ default: ImageMetadata }>('/src/assets/institucional/*.png', { eager: true });
 

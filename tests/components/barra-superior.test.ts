@@ -22,6 +22,8 @@ describe('BarraSuperior', () => {
     expect(html).toMatch(/href="https:\/\/www\.telepeajeplus\.com\/Login"[^>]*target="_blank"[^>]*>Autogestión</);
     expect(html).not.toContain('Mi cuenta');
     expect(html).toContain('data-tema-boton');
+    // Se cae en el ingreso de otra empresa: el nombre accesible lo dice, y empieza con la palabra visible (WCAG 2.5.3).
+    expect(html).toContain('aria-label="Autogestión de Telepeaje Plus (se abre en otra pestaña)"');
   });
   // Sin la dirección cargada no se promete nada: ni el acceso, ni un enlace a una sección que lo anuncie.
   it('sin oficina virtual cargada, no hay acceso a Autogestión', async () => {

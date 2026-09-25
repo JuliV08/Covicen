@@ -73,14 +73,14 @@ const actualizado = fechaHoraLarga(ahora);
   </div>
   <div class="border-t border-borde">
     {/* Logos oficiales en lugar de los nombres (pedido del 24/09/2026, con el pie de otra concesionaria como ejemplo).
-        Cada logo es una máscara pintada con el color del texto: blanco en el tema oscuro, azul marino en el claro, y
-        el color de acento al pasar el mouse. El nombre lo lleva el aria-label del enlace. */}
+        Cada logo es una máscara pintada con el color del texto: blanco en el tema oscuro, azul marino en el claro. El
+        nombre lo lleva el aria-label del enlace; el de adentro del logo es solo la alternativa sin máscara. */}
     <ul class="contenedor flex flex-wrap items-center justify-center gap-x-8 gap-y-6 py-8" aria-label="Sitios institucionales">
       {sitios.map((e) => (
         <li class="sitio flex items-center self-stretch">
-          <a href={e.url} rel="noopener noreferrer" target="_blank" class="institucional inline-flex items-center text-texto no-underline hover:text-acento" aria-label={`${e.nombre} (se abre en otra pestaña)`}>
+          <a href={e.url} rel="noopener noreferrer" target="_blank" class="institucional inline-flex items-center text-texto no-underline" aria-label={`${e.nombre} (se abre en otra pestaña)`}>
             {e.logo
-              ? <span class="logo-institucional" style={`--logo: url("${e.logo.url}"); --alto: ${e.alto}rem; --proporcion: ${e.logo.proporcion.toFixed(3)}`} aria-hidden="true"></span>
+              ? <span class="logo-institucional" style={`--logo: url("${e.logo.url}"); --alto: ${e.alto}rem; --proporcion: ${e.logo.proporcion.toFixed(3)}`} aria-hidden="true"><span class="logo-nombre eyebrow border-l-2 border-borde-fuerte pl-2 text-texto-2">{e.nombre}</span></span>
               : <span class="eyebrow border-l-2 border-borde-fuerte pl-2 text-texto-2">{e.nombre}</span>}
           </a>
         </li>
@@ -88,7 +88,9 @@ const actualizado = fechaHoraLarga(ahora);
       {hayQr && (
         <li class="sitio flex items-center self-stretch">
           <a href={empresa.constanciaUrl ?? undefined} class="inline-block no-underline" rel={empresa.constanciaUrl ? 'noopener noreferrer' : undefined} target={empresa.constanciaUrl ? '_blank' : undefined}>
-            <img src={ruta('/qr-afip.png')} alt="Código QR de Data Fiscal de ARCA: constancia de inscripción de Covicen" width="56" height="56" loading="lazy" class="rounded-sm bg-white p-1" />
+            {/* 64 px: el QR se usa sobre todo como enlace a la constancia, pero tiene que poder escanearse desde un
+                celular; cuando llegue el real, confirmar que se lea a este tamaño. */}
+            <img src={ruta('/qr-afip.png')} alt="Código QR de Data Fiscal de ARCA: constancia de inscripción de Covicen" width="64" height="64" loading="lazy" class="rounded-sm bg-white p-1" />
           </a>
         </li>
       )}
@@ -106,16 +108,24 @@ const actualizado = fechaHoraLarga(ahora);
   /* El logo es la máscara; el color, el del enlace. Ancho y alto explícitos: reservan el lugar antes de que llegue el
      archivo, así la fila no salta. Al imprimir, los fondos se omiten por defecto y el logo saldría en blanco: por eso
      `print-color-adjust`. Con colores forzados (alto contraste de Windows) el fondo se reemplaza y el logo
-     desaparecería: se lo pinta con el color de enlace del sistema. */
-  .logo-institucional {
-    display: block; height: var(--alto); width: calc(var(--alto) * var(--proporcion));
-    background-color: currentColor;
-    -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat;
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+     desaparecería: se lo pinta con el color de enlace del sistema.
+     Todo va dentro de @supports: un navegador sin máscara pintaría un rectángulo macizo del color del texto. Ahí se ve
+     el nombre en texto, igual que cuando falta el archivo. Ningún navegador vigente cae en ese caso. */
+  @supports (mask-image: none) or (-webkit-mask-image: none) {
+    .logo-institucional {
+      display: block; height: var(--alto); width: calc(var(--alto) * var(--proporcion));
+      background-color: currentColor;
+      -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .logo-nombre { display: none; }
+    @media (forced-colors: active) { .logo-institucional { forced-color-adjust: none; background-color: LinkText; } }
   }
-  @media (forced-colors: active) { .logo-institucional { forced-color-adjust: none; background-color: LinkText; } }
   /* Separadores finos entre logos, como en el ejemplo. Solo desde tablet: en el celular la fila se parte en renglones
      y una raya al principio de un renglón no separa nada. */
   @media (min-width: 48rem) { .sitio + .sitio { border-left: 1px solid var(--color-borde-fuerte); padding-left: 2rem; } }
-  .institucional { transition: color var(--dur-micro) var(--ease-salida); }
+  /* Los logos oficiales no cambian de color al pasar el mouse: el manual de Vialidad los admite solo en azul, negro o
+     blanco. La respuesta al puntero es una leve transparencia (el fondo del pie es liso, no hay nada que se transparente). */
+  .institucional { transition: opacity var(--dur-micro) var(--ease-salida); }
+  .institucional:hover { opacity: 0.75; }
 </style>

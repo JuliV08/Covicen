@@ -16,16 +16,21 @@ describe('/contacto/', () => {
     expect(html).not.toContain('una sola vez');
   });
 
-  // Pedido del 24/09/2026: el formulario de TelePASE sale hasta que se defina si va a haber oficina virtual. Lo esconde
-  // `publicado.formularioTelepase`. El PETG 61.5 b lo exige desde la toma de posesión, así que prenderlo tiene que ser
-  // cambiar un false por un true y nada más: este test sigue al interruptor en vez de fijar un valor. El estado prendido
-  // se prueba aparte, en contacto-telepase.test.ts. El formulario de reclamos (el 61.5 a) va siempre.
-  it('el formulario de TelePASE está si y solo si el interruptor está prendido, y el de reclamos va siempre', async () => {
+  // PETG 61.5 b: el formulario de consultas de TelePASE es obligatorio desde la toma de posesión, haya o no oficina
+  // virtual. Se escondió el 24/09/2026 «hasta que se defina si va a haber oficina virtual» y volvió el 25/09, cuando se
+  // definió (Autogestión). Apagarlo es incumplir el pliego: este test y `verificar.ts` lo frenan. El estado apagado del
+  // interruptor se prueba aparte, en contacto-telepase.test.ts. El formulario de reclamos (el 61.5 a) va siempre.
+  it('el formulario de TelePASE está (PETG 61.5 b), con su sección, al lado del de reclamos', async () => {
+    expect(publicado.formularioTelepase, 'se apagó el formulario de TelePASE: el PETG 61.5 b lo exige').toBe(true);
     const html = await render();
     for (const marca of ['id="formulario-telepase"', 'id="telepase"', 'Consultas sobre tu TelePASE', 'Consultas de TelePASE']) {
-      expect(html.includes(marca), `${marca} con publicado.formularioTelepase en ${publicado.formularioTelepase}`).toBe(publicado.formularioTelepase);
+      expect(html, `falta ${marca}`).toContain(marca);
     }
     expect(html).toContain('id="reclamos"');
+    // Las secciones alternan: TelePASE lleva la grilla y «Cómo hacer un reclamo» vuelve a liso.
+    expect(/<section id="telepase"[^>]*class="([^"]*)"/.exec(html)?.[1]).toContain('seccion-cinetica');
+    const reclamo = html.split('<section').find((s) => s.includes('Cuatro pasos, con plazos.')) ?? '';
+    expect(/^[^>]*class="([^"]*)"/.exec(reclamo)?.[1]).not.toContain('seccion-cinetica');
   });
 
   // La tarjeta «Seguimiento de reclamos · Próximamente» es la misma que el gerente pidió sacar de Servicios.
