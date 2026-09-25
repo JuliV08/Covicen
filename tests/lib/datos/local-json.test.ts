@@ -21,7 +21,8 @@ describe('contenido del repo', () => {
     expect(c.lineaGratuita).toBeNull();
     expect(c.atencionUsuario).toBeNull();
     expect(c.enlaces.telepase).toMatch(/^https:\/\/www\.telepase\.com\.ar/);
-    expect(c.enlaces.oficinaVirtual).toBeNull();
+    // La oficina virtual se definió el 25/09/2026: Autogestión, la web de Telepeaje Plus.
+    expect(c.enlaces.oficinaVirtual).toBe('https://www.telepeajeplus.com/Login');
     expect(c.canales.map((k) => k.id)).toEqual(['emergencias-140', 'asistencia', 'formulario', 'correo', 'linea-0800', 'whatsapp']);
     expect(c.canales.find((k) => k.id === 'formulario')).toMatchObject({ acuse: '24 horas', respuesta: '5 días hábiles' });
   });
