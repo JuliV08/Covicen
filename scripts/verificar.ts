@@ -250,6 +250,14 @@ if (sitioCompleto && /Próximamente/.test(readFileSync(join(DIST, 'index.html'),
 const css = readdirSync(join(DIST, '_astro')).filter((f) => f.endsWith('.css')).map((f) => readFileSync(join(DIST, '_astro', f), 'utf8')).join('\n');
 if (!css.includes('@media print')) fallo('el CSS emitido no tiene la hoja de impresión (@media print)');
 if (!css.includes('attr(data-fecha)') || !css.includes('attr(href)')) fallo('la hoja de impresión emitida perdió el encabezado o las URL de los enlaces');
+// 12b. Los logos del pie se pintan con una máscara dentro de un @supports que tiene que conservar la variante con
+// prefijo. Con la condición al revés, el compilador de CSS la reducía a `(mask-image:none)` y los Chrome anteriores al
+// 120 y los Safari anteriores al 15.4 mostraban el nombre en vez del logo. Se mira acá, en el CSS emitido, porque el
+// fuente estaba bien y el problema lo generaba el build. Solo si el pie está en el build (la portada sola no lo tiene).
+// (El compilador envuelve la condición en otro paréntesis: `@supports ((-webkit-mask-image:none) or (mask-image:none))`.)
+if (css.includes('logo-institucional') && !/@supports[^{]*-webkit-mask-image:\s*none/.test(css)) {
+  fallo('el CSS emitido perdió la variante -webkit- del @supports de los logos del pie');
+}
 
 // 9. presupuesto de JS enviado
 const archivosJs = readdirSync(join(DIST, '_astro')).filter((f) => f.endsWith('.js'));

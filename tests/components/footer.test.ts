@@ -64,14 +64,19 @@ describe('Footer', () => {
   // Los estilos de la máscara. Van dentro de @supports: sin máscara, un navegador pintaría un rectángulo macizo del
   // color del texto, y ahí tiene que verse el nombre. Y los logos no cambian de color al pasar el mouse: el manual de
   // Vialidad los admite solo en azul, negro o blanco.
+  // (El orden de la condición importa en el CSS compilado: eso lo mira verificar.ts sobre dist/, no este test.)
   it('la máscara va dentro de @supports, con el nombre como alternativa, y el hover no cambia el color', () => {
     const fuente = readFileSync('src/components/Footer.astro', 'utf8');
     const estilo = /<style>([\s\S]*)<\/style>/.exec(fuente)?.[1] ?? '';
-    const soporte = /@supports \(mask-image: none\) or \(-webkit-mask-image: none\) \{([\s\S]*?)\n  \}/.exec(estilo)?.[1] ?? '';
-    expect(soporte, 'la máscara salió del @supports').toMatch(/\.logo-institucional \{[^}]*mask: var\(--logo\)/);
+    const soporte = /@supports \(-webkit-mask-image: none\) or \(mask-image: none\) \{([\s\S]*?)\n  \}/.exec(estilo)?.[1] ?? '';
+    expect(soporte, 'la máscara salió del @supports (o se invirtió el orden de la condición)').toMatch(/\.logo-institucional \{[^}]*mask: var\(--logo\)/);
     expect(soporte).toMatch(/\.logo-institucional \{[^}]*background-color: currentColor/);
     expect(soporte, 'con máscara, el nombre de adentro tiene que esconderse').toMatch(/\.logo-nombre \{ display: none; \}/);
-    expect(estilo.replace(soporte, ''), 'hay estilos de máscara fuera del @supports').not.toMatch(/mask:|background-color: currentColor/);
+    // El hover aclara solo el logo, y solo cuando hay máscara: el nombre en texto de la alternativa, aclarado, perdía contraste.
+    expect(soporte).toMatch(/\.institucional:hover \.logo-institucional \{ opacity: [\d.]+; \}/);
+    const afuera = estilo.replace(soporte, '');
+    expect(afuera, 'hay estilos de máscara fuera del @supports').not.toMatch(/mask:|background-color: currentColor/);
+    expect(afuera, 'el hover volvió a aclarar el enlace entero').not.toMatch(/\.institucional:hover|opacity/);
     expect(fuente, 'los logos vuelven a cambiar de color al pasar el mouse').not.toMatch(/class="institucional[^"]*hover:text-/);
   });
 });
