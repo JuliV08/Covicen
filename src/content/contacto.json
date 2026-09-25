@@ -5,7 +5,7 @@
   "whatsapp": { "numero": null },
   "email": { "general": null, "rrhh": null, "proveedores": null, "etica": null },
   "redes": {},
-  "enlaces": { "telepase": "https://www.telepase.com.ar/", "oficinaVirtual": null, "atencionDnv": null },
+  "enlaces": { "telepase": "https://www.telepase.com.ar/", "oficinaVirtual": "https://www.telepeajeplus.com/Login", "atencionDnv": null },
   "canales": [
     { "id": "emergencias-140", "nombre": "Emergencias 140", "tipo": "telefono", "valor": "140", "disponibilidad": "24 horas, los 365 días del año", "acuse": "Inmediato", "respuesta": "Inmediata", "fuente": "PETG art. 58 y 59" },
     { "id": "asistencia", "nombre": "Botón de asistencia en ruta", "tipo": "web", "valor": "/asistencia", "disponibilidad": "24 horas", "acuse": "Inmediato", "respuesta": "Inmediata", "fuente": "PETG art. 58 y 60.5" },

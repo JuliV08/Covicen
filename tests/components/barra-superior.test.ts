@@ -14,20 +14,21 @@ const cinta = async (avisos: unknown[], props: Record<string, unknown> = {}) => 
 };
 
 describe('BarraSuperior', () => {
-  // Todavía no se sabe si va a haber oficina virtual (24/09/2026). Sin enlace, «Mi cuenta» mandaba a una sección que la
-  // prometía «con la toma de posesión»: ahora el acceso no se dibuja hasta que se cargue la URL, y entonces va directo.
-  it('accesos: TelePASE externo y el interruptor; sin oficina virtual no hay «Mi cuenta»', async () => {
+  // 25/09/2026: la oficina virtual es la web de autogestión de Telepeaje Plus y el acceso se llama «Autogestión» (hasta
+  // el 24/09 fue «Mi cuenta»). Va directo a esa web, en otra pestaña.
+  it('accesos: TelePASE externo, Autogestión a Telepeaje Plus y el interruptor', async () => {
     const html = await render();
     expect(html).toMatch(/href="https:\/\/www\.telepase\.com\.ar\/"[^>]*target="_blank"/);
+    expect(html).toMatch(/href="https:\/\/www\.telepeajeplus\.com\/Login"[^>]*target="_blank"[^>]*>Autogestión</);
     expect(html).not.toContain('Mi cuenta');
-    expect(html).not.toContain('#mi-cuenta');
     expect(html).toContain('data-tema-boton');
   });
-  it('con la oficina virtual cargada, «Mi cuenta» lleva directo a ella', async () => {
+  // Sin la dirección cargada no se promete nada: ni el acceso, ni un enlace a una sección que lo anuncie.
+  it('sin oficina virtual cargada, no hay acceso a Autogestión', async () => {
     const base = await fuenteLocalJson.contacto();
-    const contacto = { ...base, enlaces: { ...base.enlaces, oficinaVirtual: 'https://oficina.covicen.test/' } };
+    const contacto = { ...base, enlaces: { ...base.enlaces, oficinaVirtual: null } };
     const html = await (await AstroContainer.create()).renderToString(BarraSuperior, { props: { contacto } });
-    expect(html).toMatch(/href="https:\/\/oficina\.covicen\.test\/"[^>]*>Mi cuenta</);
+    expect(html).not.toContain('Autogestión');
   });
   // Los avisos se fueron a la cinta el 15/09/2026: acá no queda nada que rote.
   it('ya no lleva anuncios rotando', async () => {

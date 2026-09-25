@@ -28,7 +28,7 @@ const activo = (href: string) => rutaActual.startsWith(ruta(href));
 const nosotrosActivo = nosotros.some((n) => activo(n.href));
 const tel = contacto.emergencias.telefono;
 const telHref = `tel:${tel.replace(/[^\d+]/g, '')}`;
-// «Mi cuenta» solo con la oficina virtual cargada: el mismo criterio que la barra superior (ver BarraSuperior.astro).
+// «Autogestión» solo con la oficina virtual cargada: el mismo criterio que la barra superior (ver BarraSuperior.astro).
 const oficina = contacto.enlaces.oficinaVirtual;
 ---
 <header class="cabecera fixed inset-x-0 top-0 z-50 border-b" transition:animate="none">
@@ -98,7 +98,7 @@ const oficina = contacto.enlaces.oficinaVirtual;
     </ul>
     <ul class="flex flex-col border-t border-borde p-3">
       <li><a href={contacto.enlaces.telepase} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 no-underline hover:bg-superficie hover:text-texto" rel="noopener noreferrer" target="_blank">TelePASE</a></li>
-      {oficina && <li><a href={oficina} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 no-underline hover:bg-superficie hover:text-texto" rel="noopener noreferrer" target="_blank">Mi cuenta</a></li>}
+      {oficina && <li><a href={oficina} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 no-underline hover:bg-superficie hover:text-texto" rel="noopener noreferrer" target="_blank">Autogestión</a></li>}
     </ul>
   </nav>
 </header>

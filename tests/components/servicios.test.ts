@@ -23,8 +23,8 @@ describe('Canales', () => {
 });
 
 // 24/09/2026. El gerente pidió sacar de Servicios la sección «Más adelante» (oficina virtual y seguimiento de reclamos,
-// las dos «Próximamente»). Y como todavía no se sabe si va a haber oficina virtual, Medios de pago deja de prometerla
-// «con la toma de posesión»: la sección «Mi cuenta» aparece recién cuando se cargue el enlace.
+// las dos «Próximamente»). La oficina virtual se definió el 25/09 (Autogestión de Telepeaje Plus): en Medios de pago
+// aparece su sección, que dice solo lo que Telepeaje Plus publica que se hace ahí.
 describe('lo que no existe todavía no se promete', () => {
   const render = async (Pagina: unknown, url: string) =>
     (await AstroContainer.create()).renderToString(Pagina as never, { request: new Request(`https://covicen.test${url}`) });
@@ -35,11 +35,24 @@ describe('lo que no existe todavía no se promete', () => {
     expect(html).not.toContain('Próximamente');
     expect(html).not.toContain('data-capacidad=');
   });
-  it('/medios-de-pago/ no muestra «Mi cuenta» sin oficina virtual cargada', async () => {
-    expect((await fuenteLocalJson.contacto()).enlaces.oficinaVirtual, 'se cargó la oficina virtual: revisar este test').toBeNull();
+  it('/medios-de-pago/ muestra Autogestión con su dirección, sin prometer lo que no está verificado', async () => {
+    expect((await fuenteLocalJson.contacto()).enlaces.oficinaVirtual).toBe('https://www.telepeajeplus.com/Login');
     const html = await render(MediosDePago, '/medios-de-pago/');
+    const seccion = /<section id="autogestion"[\s\S]*?<\/section>/.exec(html)?.[0] ?? '';
+    expect(seccion, 'falta la sección de Autogestión').toContain('Telepeaje Plus');
+    expect(seccion).toMatch(/href="https:\/\/www\.telepeajeplus\.com\/Login"/);
+    // La versión anterior prometía pasadas, facturas, deuda, comprobantes y pagos: nadie lo verificó.
+    for (const promesa of ['pasadas', 'facturas', 'deuda', 'comprobantes']) expect(seccion, `volvió a prometer «${promesa}»`).not.toContain(promesa);
     expect(html).not.toContain('id="mi-cuenta"');
     expect(html).not.toContain('Se habilita con la toma de posesión');
     expect(html).toContain('id="telepase"');
+  });
+  // La descripción para buscadores ofrecía «dónde se coloca el dispositivo», una tarjeta escondida desde el 20/09.
+  it('/medios-de-pago/ no ofrece en Google lo que la página no muestra', async () => {
+    const html = await render(MediosDePago, '/medios-de-pago/');
+    const descripcion = /<meta name="description" content="([^"]*)"/.exec(html)?.[1] ?? '';
+    expect(descripcion).toContain('autogestión');
+    expect(html.includes('Dónde se coloca'), 'se cargó la colocación: revisar este test').toBe(false);
+    expect(descripcion).not.toContain('dónde se coloca');
   });
 });

@@ -1,5 +1,5 @@
 ---
-// Barra de 40 px pegada arriba del header: TelePASE · Mi cuenta · interruptor de tema. Los avisos, que antes rotaban
+// Barra de 40 px pegada arriba del header: TelePASE · Autogestión · interruptor de tema. Los avisos, que antes rotaban
 // acá a la izquierda, pasaron a la cinta (components/Marquesina.astro) el 15/09/2026.
 // Solo existe en escritorio: en celular esos tres accesos viven en el menú, así que la barra quedaría vacía y solo
 // estaría comiendo 40 px de pantalla. Por eso --alto-header vale menos abajo de 1024 px (tokens.css).
@@ -7,16 +7,16 @@ import InterruptorTema from '@/components/InterruptorTema.astro';
 import type { Contacto } from '@/lib/datos/esquemas';
 interface Props { contacto: Contacto }
 const { contacto } = Astro.props;
-// «Mi cuenta» es la oficina virtual, y todavía no se sabe si va a existir (24/09/2026). Antes, sin enlace, apuntaba a
-// una sección de Medios de pago que la prometía «con la toma de posesión»: una promesa que nadie puede sostener. Ahora
-// el acceso aparece solo cuando se carga `contacto.enlaces.oficinaVirtual`, y lleva directo ahí.
+// «Autogestión» es la oficina virtual (la web de autogestión de Telepeaje Plus, definida el 25/09/2026; hasta el 24/09
+// se llamaba «Mi cuenta»). El acceso aparece solo si está cargado `contacto.enlaces.oficinaVirtual`, y lleva directo
+// ahí: antes, sin enlace, apuntaba a una sección que la prometía «con la toma de posesión».
 const oficina = contacto.enlaces.oficinaVirtual;
 ---
 <div class="barra-superior hidden h-10 border-b border-borde bg-fondo-2 text-sm lg:block">
   <div class="contenedor flex h-full items-center justify-end gap-4">
     <nav aria-label="Accesos" class="flex shrink-0 items-center gap-1">
       <a href={contacto.enlaces.telepase} class="acceso" rel="noopener noreferrer" target="_blank">TelePASE</a>
-      {oficina && <a href={oficina} class="acceso" rel="noopener noreferrer" target="_blank">Mi cuenta</a>}
+      {oficina && <a href={oficina} class="acceso" rel="noopener noreferrer" target="_blank">Autogestión</a>}
       <InterruptorTema class="ml-1 inline-flex h-8 w-8" />
     </nav>
   </div>

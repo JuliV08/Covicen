@@ -88,7 +88,7 @@
   --color-tinta-suave: #999999;
 }
 
-/* La barra superior (TelePASE · Mi cuenta · tema) solo se muestra en escritorio: en celular esos tres accesos viven
+/* La barra superior (TelePASE · Autogestión · tema) solo se muestra en escritorio: en celular esos tres accesos viven
    en el menú, así que abajo de 1024 px la barra no existe y el header mide solo sus 4,5rem. Todo lo que se apoya en
    el alto del header —el relleno del <main>, el alto del hero, el scroll-margin de las anclas— sale de este token. */
 @media (width < 64rem) {

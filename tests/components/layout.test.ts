@@ -108,18 +108,18 @@ describe('Header', () => {
     expect(html, 'Trabajá con nosotros volvió al menú').not.toContain('href="/trabaja-con-nosotros/"');
     expect(html.match(/href="\/proveedores\/"/g)?.length, 'Proveedores tiene que estar en escritorio y en celular').toBe(2);
   });
-  // «Mi cuenta» (la oficina virtual) no se dibuja mientras no haya enlace: todavía no se sabe si va a existir (24/09/2026).
-  it('lleva la barra superior con los accesos y, en el menú mobile, TelePASE; Mi cuenta solo con oficina virtual', async () => {
+  // «Autogestión» (la oficina virtual, 25/09/2026) va en escritorio y en el menú del celular, y solo si hay dirección.
+  it('lleva la barra superior con los accesos y, en el menú mobile, TelePASE y Autogestión', async () => {
     const c = await AstroContainer.create();
     const html = await c.renderToString(Header, { props: await props() });
     // Los avisos se fueron del header a la cinta (components/Marquesina.astro) el 15/09/2026.
     expect(html).not.toContain('data-anuncios');
     expect(html.match(/>TelePASE</g)?.length).toBe(2);
-    expect(html).not.toContain('>Mi cuenta<');
+    expect(html.match(/href="https:\/\/www\.telepeajeplus\.com\/Login"[^>]*>Autogestión</g)?.length, 'Autogestión en escritorio y en celular').toBe(2);
+    expect(html).not.toContain('Mi cuenta');
     expect(html).not.toContain('Corredor Vial del Centro');
     const base = await props();
-    const conOficina = { ...base, contacto: { ...base.contacto, enlaces: { ...base.contacto.enlaces, oficinaVirtual: 'https://oficina.covicen.test/' } } };
-    const html2 = await c.renderToString(Header, { props: conOficina });
-    expect(html2.match(/href="https:\/\/oficina\.covicen\.test\/"[^>]*>Mi cuenta</g)?.length, 'Mi cuenta en escritorio y en celular').toBe(2);
+    const sinOficina = { ...base, contacto: { ...base.contacto, enlaces: { ...base.contacto.enlaces, oficinaVirtual: null } } };
+    expect(await c.renderToString(Header, { props: sinOficina }), 'sin dirección no se ofrece Autogestión').not.toContain('Autogestión');
   });
 });

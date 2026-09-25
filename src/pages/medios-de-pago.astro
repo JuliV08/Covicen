@@ -12,7 +12,12 @@ const [tramo, contacto] = await Promise.all([datos.tramo(), datos.contacto()]);
 const conCabina = tramo.cabinas.filter(cabinaOperativa).map((c) => c.nombre);
 const colocacion = tramo.cabinas.filter((c) => c.servicios?.colocacionTelepase).map((c) => c.nombre);
 const oficina = contacto.enlaces.oficinaVirtual;
-const [fTelepase, fMiCuenta, fSinPagar] = alternarFondos([true, Boolean(oficina), publicado.pasasteSinPagar]);
+const [fTelepase, fAutogestion, fSinPagar] = alternarFondos([true, Boolean(oficina), publicado.pasasteSinPagar]);
+// La descripción para buscadores ofrece solo lo que la página muestra: «dónde se coloca el dispositivo» seguía ahí
+// aunque esa tarjeta está escondida desde el 20/09 por falta del dato (la misma trampa que ya se había cerrado en
+// otras dos páginas). Cada parte opcional entra con la sección que la respalda.
+const descripcion = `Cómo pagar el peaje en el Tramo Centro: TelePASE prepago o pospago y pago en la vía en ${conCabina.join(', ').replace(/, ([^,]*)$/, ' y $1')}${[
+  colocacion.length > 0 && 'dónde se coloca el dispositivo', oficina && 'autogestión de tu cuenta'].filter(Boolean).map((p) => `; ${p}`).join('')}.`;
 // «Pasaste sin pagar» aparece acá y en /tarifas/: es EL MISMO dato sin certificar («certificar que va a ser así»),
 // así que lo gobierna el mismo interruptor, `publicado.pasasteSinPagar`. Un dato, un interruptor: si no, se esconde
 // en una página y se publica en la otra, que es peor que no esconderlo.
@@ -24,7 +29,7 @@ const modalidades = [
   { titulo: 'Contado en la vía', texto: `Efectivo o medios electrónicos en las vías habilitadas de las estaciones con cabina (${conCabina.join(', ')}).` },
 ];
 ---
-<Base titulo="Medios de pago" descripcion="Cómo pagar el peaje en el Tramo Centro: TelePASE prepago o pospago, pago en la vía en Carcarañá, James Craik y Franck, y dónde se coloca el dispositivo." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Medios de pago', href: '/medios-de-pago' }]}>
+<Base titulo="Medios de pago" descripcion={descripcion} migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Medios de pago', href: '/medios-de-pago' }]}>
   <Seccion nivel="h1" eyebrow="Medios de pago" titulo="Cómo pagar el peaje." intro="Con TelePASE se paga lo mismo que en la vía. El dispositivo es gratis y sirve en toda la red nacional." class="pt-10">
     <ul class="escalonar grid gap-4 md:grid-cols-3">{modalidades.map((m, i) => <li style={`--i: ${i}`}><Card><h2 class="text-xl">{m.titulo}</h2><p class="mt-2 text-texto-2">{m.texto}</p></Card></li>)}</ul>
   </Seccion>
@@ -40,13 +45,15 @@ const modalidades = [
     </div>
   </Seccion>
 
-  {/* Todavía no se sabe si va a haber oficina virtual (24/09/2026). Sin enlace, esta sección decía «se habilita con
-      la toma de posesión»: una promesa en prosa, justo lo que la regla de la casa prohíbe. Aparece entera el día que
-      se cargue `contacto.enlaces.oficinaVirtual`, igual que el acceso «Mi cuenta» del header. */}
+  {/* Autogestión (25/09/2026): la oficina virtual es la web de autogestión de Telepeaje Plus. La sección aparece solo
+      con `contacto.enlaces.oficinaVirtual` cargado, igual que el acceso del header. El texto dice lo que el propio
+      Telepeaje Plus publica que se hace ahí —gestionar la cuenta y cambiar la forma de pago— y nada más: la versión
+      anterior prometía pasadas, facturas, deuda, comprobantes y pagos, que nadie verificó. Y la nombra, para que el
+      usuario no se sorprenda al caer en el ingreso de otro sitio. */}
   {oficina && (
-  <Seccion id="mi-cuenta" eyebrow="Mi cuenta" titulo="Tus pasadas, facturas y pagos en un solo lugar." intro="La oficina virtual de TelePASE: consultás pasadas y facturas, ves si tenés deuda, descargás comprobantes y pagás." fondo={fMiCuenta}>
+  <Seccion id="autogestion" eyebrow="Autogestión" titulo="Tu cuenta, en línea." intro="En la web de autogestión de Telepeaje Plus gestionás tu cuenta y cambiás tu forma de pago. Se entra con tu usuario; si todavía no tenés uno, te registrás ahí mismo." fondo={fAutogestion}>
     <div class="revelar flex flex-wrap items-center gap-4">
-      <Boton href={oficina} externo>Entrar a Mi cuenta <ExternalLink size={16} aria-hidden="true" /></Boton>
+      <Boton href={oficina} externo>Entrar a Autogestión <ExternalLink size={16} aria-hidden="true" /></Boton>
     </div>
   </Seccion>
   )}
