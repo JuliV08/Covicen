@@ -27,6 +27,15 @@ Este es el vault del proyecto (vive en el repo, viaja con el código). El punter
   - **Autogestión.** «Mi cuenta» pasó a «Autogestión» y abre la web de autogestión de Telepeaje Plus (`https://www.telepeajeplus.com/Login`, cargada en `contacto.enlaces.oficinaVirtual`). En Medios de pago vuelve la sección, con un texto que dice solo lo que Telepeaje Plus publica que se hace ahí (gestionar la cuenta, cambiar la forma de pago), no lo que prometía antes (pasadas, facturas, deuda). Con eso se cumplió la condición del equipo y **volvió el formulario de TelePASE** en Contacto: el pliego 61.5 b lo exige, haya o no oficina virtual.
   - **Logos oficiales en el pie**, en lugar de los nombres: Presidencia, Secretaría de Transporte, Vialidad Nacional y TelePASE. Los tres primeros salen del **manual de identidad visual de Vialidad Nacional (oct. 2024, publicado en InfoLEG)**, extraídos en vectores del PDF; el de TelePASE, del PNG oficial de su sitio. Fuentes en `src/assets/institucional/README.md`. La **Red Federal de Concesiones no tiene logo oficial** (ni en su página, ni en los pliegos, ni en el manual): quedó como enlace en el texto del pie. Transporte va como «Secretaría de Transporte · Ministerio de Economía» (versión del manual), no como en el ejemplo que pasó el equipo. Cómo se pintan y por qué: [[Sistema de diseno]].
   - De paso: la descripción para buscadores de Medios de pago ofrecía «dónde se coloca el dispositivo», una tarjeta escondida desde el 20/09.
+  - **Tercera pasada de `rev-bro`** (aprobada con observaciones, aplicadas):
+    - `verificar.ts` ahora **exige** el formulario de TelePASE en /contacto/ (PETG 61.5 b), y el test del interruptor apagado pasó a un mock.
+    - Los SVG arrastraban el sello de firma del PDF como glifos invisibles (un 20 % del peso).
+    - La máscara va dentro de `@supports`, con el nombre como alternativa.
+    - Data Fiscal tiene test del caso positivo (mock de `node:fs`).
+    - «Autogestión» dice en su nombre accesible que lleva a Telepeaje Plus.
+    - Los logos no cambian de color al pasar el mouse: el manual los admite solo en azul, negro o blanco.
+  - **Queda para Juli:** el OK de Vialidad para usar los logos oficiales en el pie; el manual regula solo lo que emite el Estado. Está en `docs/pendientes-de-confirmacion.md`.
+  - **Detalle de historia:** los commits 6a2121a y dfca38a tienen un test en rojo que arregla 41bb390. No afecta a CI, que prueba la punta de la rama.
 - **2026-09-24 (14 correcciones del equipo sobre la web)**: rama `web-ajustes-2026-09-24`, un commit por tanda, sin push.
   - **Portada.** Título nuevo, de Juli: «Viajá por nuestras rutas en el centro del país.». El gerente pidió por segunda vez sacar «la responsabilidad» y la referencia fueron Corresur y CVSA. Los 679 km bajan al párrafo, siempre desde el dato. La fecha de inicio salía **tres** veces sobre la foto (párrafo, cuenta regresiva y aviso de la cinta) y se fueron las tres.
   - **Sin números de sección en todo el sitio**, con una guarda. El Tramo lleva H1 «Rutas nacionales 9, 19 y 34.» y bloques titulados como sus anclas, sin bajada.

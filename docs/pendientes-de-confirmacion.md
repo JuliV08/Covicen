@@ -239,6 +239,23 @@ conviene preguntarlo todo en la misma charla con Operaciones.
 
 ---
 
+## Para confirmar aunque esté publicado · los logos oficiales del pie
+
+**Agregado el 25/09/2026.** El pie muestra los logos de Presidencia de la Nación, Secretaría de Transporte y Vialidad
+Nacional (sacados del manual de identidad de Vialidad, oct. 2024) y el de TelePASE. Otras concesionarias de la red lo
+hacen así, pero el manual de Vialidad regula solo lo que publica el propio Estado y no dice nada de que los use un
+privado, y el pliego pide los enlaces, no los logos. Conviene tener el OK por escrito.
+
+> «En el pie de la web de Covicen pusimos los logos de Presidencia de la Nación, Secretaría de Transporte y Vialidad
+> Nacional, en un solo color y enlazando a sus sitios, como hacen otras concesionarias de la Red Federal. ¿Está bien
+> que los usemos así? ¿Hay alguna versión o regla que tengamos que respetar?»
+
+- **A quién:** el contacto de Covicen en Vialidad Nacional.
+- **Si dicen que no:** se borran los logos de `C:\Users\Villex\dev\Covicen\src\assets\institucional\` y el pie vuelve
+  a mostrar los nombres en texto (del lado del código, solo hay que ajustar el test que exige los logos).
+
+---
+
 ## Para confirmar aunque esté publicado · el precio del 5 de octubre
 
 **Agregado el 24/09/2026.** No es algo escondido: la web publica que desde la toma de posesión rige el cuadro de la

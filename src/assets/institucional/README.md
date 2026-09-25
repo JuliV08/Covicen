@@ -20,7 +20,14 @@ todas las páginas.
 | `telepase.png` | Sitio oficial de TelePASE: https://www.telepase.com.ar/assets/img/logo.png (blanco con transparencia). |
 
 Los tres SVG se sacaron del PDF en vectores (PyMuPDF, con el texto convertido a trazos), recortados al ras y
-optimizados con svgo. El PNG de TelePASE es el oficial, solo recortado al ras.
+optimizados con svgo. Se les sacó el sello de firma de la página del PDF («IF-2025-… · Página 9 de 22»), que venía
+como glifos fuera del recorte: no se veía, pero pesaba un 20 % (lo guarda `tests/lib/institucional.test.ts`). El PNG
+de TelePASE es el oficial, solo recortado al ras.
+
+**Uso de estos logos:** el manual de Vialidad regula lo que emite el propio Estado y no dice nada de terceros, y el
+pliego (PETG 61.6) pide los enlaces, no los logos. Otras concesionarias de la red los muestran así; el OK formal de
+Vialidad está pedido en `docs/pendientes-de-confirmacion.md`. Por el mismo manual, no se les cambia el color: solo
+azul, negro o blanco (en el sitio, el color del texto de cada tema).
 
 **No hay logo de la Red Federal de Concesiones**: no figura en su página de argentina.gob.ar, ni en los pliegos, ni en
 el manual de Vialidad (todos la nombran solo en texto). Por eso va como enlace en el texto del pie. Si Vialidad

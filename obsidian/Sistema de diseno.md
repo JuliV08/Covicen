@@ -142,5 +142,11 @@ máscara toma la forma, no el color (lo guarda `tests/lib/institucional.test.ts`
 
 **Trampa al sacar logos de un PDF: la precisión de svgo rompe las letras.** El texto de los logos sale como glifos
 definidos en unidades de «em» (entre 0 y 1) y reusados con `<use>`. Con `floatPrecision: 1` el escudo queda
-perfecto, pero las letras se deforman («Vialidad» salía con huecos), porque 0,1 em es una letra entera. Con 3
-decimales quedan bien, y el peso casi no cambia: lo pesado es el escudo, no el texto.
+perfecto, pero las letras se deforman («Vialidad» salía con huecos), porque 0,1 em es una letra entera. Con 2 o 3
+decimales quedan bien, y el peso casi no cambia: lo pesado es el escudo, no el texto. **Segunda trampa**: los SVG
+arrastraban el sello de firma de la página del PDF («IF-2025-… · Página 9 de 22») como glifos lejos del logo —el
+borrado por zona de PyMuPDF no los tocó—; no se veían, pero eran el 20 % del peso. Se filtran los `<use>` cuya
+posición cae fuera del recorte (lo guarda `tests/lib/institucional.test.ts`). **Tercera**: Vite mete como `data:`
+adentro de la página todo asset de menos de 4 KB, también con `?url`; para que los cuatro logos sean archivos
+cacheables, el glob usa `?url&no-inline`. Y el hover no les cambia el color (el manual los admite solo en azul, negro o
+blanco): se aclaran un poco.

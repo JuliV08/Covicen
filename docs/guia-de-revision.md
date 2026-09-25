@@ -33,8 +33,9 @@ Telepeaje Plus) en otra pestaña.
 Nación · Secretaría de Transporte · Vialidad Nacional · TelePASE** y el botón amarillo del 140. De dónde sale cada logo:
 `C:\Users\Villex\dev\Covicen\src\assets\institucional\README.md`.
 - Mirá el pie en los **dos temas**: los logos tienen que verse blancos en el oscuro y azul marino en el claro, nítidos
-  (sin bordes serruchados), con rayitas finas entre uno y otro en la compu, y ponerse celestes o azules al pasar el
-  mouse. Tocá cada uno: abren su sitio en otra pestaña.
+  (sin bordes serruchados), con rayitas finas entre uno y otro en la compu, y reaccionar al pasar el
+  mouse (se aclaran un poco; no cambian de color, porque el manual oficial los admite solo en azul, negro o blanco).
+  Tocá cada uno: abren su sitio en otra pestaña.
 - En el **celular** la fila se parte en renglones y no lleva rayitas. Fijate que no quede ningún logo cortado.
 - **Transporte** dice «Secretaría de Transporte · Ministerio de Economía», no «Transporte · República Argentina» como
   el ejemplo: es la versión del manual oficial. La del ejemplo no aparece en ninguna fuente oficial.
@@ -336,7 +337,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 - Columna marca: isotipo + COVICEN, texto "Concesionaria del Tramo Centro… RN 9 · RN 19 · RN 34 · Córdoba y Santa Fe". La fila de redes **no aparece** (no hay cuentas cargadas).
 - Usuarios (Tarifas, Medios de pago, Emergencias, Asistencia en ruta, Guía de trámites, Seguridad vial, Preguntas frecuentes) y Empresa (Quiénes somos, Novedades, Políticas, Transparencia). Los links del footer no van subrayados hasta el hover (son menú). **Desde el 20/09** la columna Empresa perdió Obras y Trabajá con nosotros; Proveedores sigue en la columna de Contacto y además subió al menú de arriba.
 - Contacto: "Emergencias 140" (llama), Formulario de contacto, Proveedores. **Ocultos** hasta tener el dato: 0800, correo de atención al usuario, WhatsApp.
-- **Datos registrales: no aparecen** (razón social, CUIT y domicilio son `null`). Cuando existan los tres, aparece la columna y, si además está `public/qr-afip.png`, el QR de Data Fiscal enlazando a la constancia.
+- **Datos registrales: no aparecen** (razón social, CUIT y domicilio son `null`). Cuando existan los tres, aparece la columna. El QR de Data Fiscal, desde el 25/09, va en la fila de logos institucionales (no en esta columna) y aparece con el CUIT cargado más el archivo `public/qr-afip.png`, enlazando a la constancia.
 - **Fila institucional** (desde el 25/09, con logos oficiales): Presidencia de la Nación · Secretaría de Transporte · Vialidad Nacional · TelePASE, más el botón amarillo 140. Todos abren en otra pestaña. La Red Federal de Concesiones, que no tiene logo, quedó como enlace en el texto del pie.
 - Línea inferior: "Sociedad en formación · Adjudicación: Resolución 1379/2026 del Ministerio de Economía. Privacidad · Boletín Oficial" y **"Última actualización: <fecha y hora>"**. Es la fecha y hora **del build**, en hora argentina, no la de la visita: en local es el momento en que corriste `pnpm dev`/`build`; en Pages, el último deploy (el workflow reconstruye a diario a las 03:00, así que nunca tiene más de un día).
 
@@ -555,7 +556,7 @@ Nada de esto dice "a confirmar" ni "próximamente" en el sitio: directamente no 
 |---|---|---|
 | `razonSocial`, `cuit`, `domicilioLegal` (los tres) | `src/content/empresa.json` | Columna "Datos registrales" del footer y bloque en Transparencia; responsable en Privacidad. |
 | `domicilioComercial` | `src/content/empresa.json` | Fila extra en los datos registrales. |
-| `constanciaUrl` + archivo `public/qr-afip.png` | `src/content/empresa.json` / `public/` | QR de Data Fiscal en el footer, enlazando a la constancia (aparece solo con `cuit` cargado). |
+| `constanciaUrl` + archivo `public/qr-afip.png` | `src/content/empresa.json` / `public/` | QR de Data Fiscal en la fila de logos del footer, enlazando a la constancia (aparece solo con `cuit` cargado). A 64 px: cuando llegue el real, confirmar que se pueda escanear con el celular. |
 | `enFormacion: false` | `src/content/empresa.json` | Saca "Sociedad en formación" del footer y el párrafo de Quiénes somos. |
 | `polizaRc { aseguradora, numero, vigenciaHasta, url? }` | `src/content/empresa.json` | Ficha de la póliza en Transparencia. |
 | `lineaGratuita` (0800) | `src/content/contacto.json` | Fila "Atención al usuario 0800…" en el footer. También `canales[].valor` del canal `linea-0800` para la tabla. |
