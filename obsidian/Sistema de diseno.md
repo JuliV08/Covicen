@@ -149,4 +149,11 @@ borrado por zona de PyMuPDF no los tocó—; no se veían, pero eran el 20 % del
 posición cae fuera del recorte (lo guarda `tests/lib/institucional.test.ts`). **Tercera**: Vite mete como `data:`
 adentro de la página todo asset de menos de 4 KB, también con `?url`; para que los cuatro logos sean archivos
 cacheables, el glob usa `?url&no-inline`. Y el hover no les cambia el color (el manual los admite solo en azul, negro o
-blanco): se aclaran un poco.
+blanco): se aclaran un poco, solo el logo (aclarar el enlace entero dejaba sin contraste el nombre en texto de la
+alternativa).
+
+**Lección durable: el compilador de CSS reescribe los `@supports`.** La condición `(mask-image: none) or
+(-webkit-mask-image: none)` estaba bien en el fuente, pero lightningcss (sin lista de navegadores) la reducía a
+`(mask-image:none)`: los Chrome anteriores al 120 y Safari anteriores al 15.4, que solo tienen `-webkit-mask`, quedaban
+afuera. Con el prefijo **primero** sobrevive. Un test sobre el fuente no lo ve: `verificar.ts` lo mira en el CSS
+emitido. Regla general: lo que depende de cómo sale el CSS se verifica en `dist/`, no en el `.astro`.

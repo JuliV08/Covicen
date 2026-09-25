@@ -34,6 +34,15 @@ Este es el vault del proyecto (vive en el repo, viaja con el código). El punter
     - Data Fiscal tiene test del caso positivo (mock de `node:fs`).
     - «Autogestión» dice en su nombre accesible que lleva a Telepeaje Plus.
     - Los logos no cambian de color al pasar el mouse: el manual los admite solo en azul, negro o blanco.
+  - **Cuarta pasada** (aprobada; aplicada):
+    - El compilador de CSS se comía la variante `-webkit-` del `@supports` de los logos. Se arregló invirtiendo el orden de la condición, y `verificar.ts` lo controla en el CSS emitido: ver [[Sistema de diseno]].
+    - El hover aclara solo el logo.
+  - **Verificación final:**
+    - `astro check`: 0 errores en 183 archivos.
+    - Tests: **572** en 66 archivos.
+    - `verificar`: 27 páginas, 0 fallos, JS 7,5 KB gz.
+    - `verificar:portada`: OK.
+    - Que el build falla si se apaga el formulario de TelePASE está probado a mano.
   - **Queda para Juli:** el OK de Vialidad para usar los logos oficiales en el pie; el manual regula solo lo que emite el Estado. Está en `docs/pendientes-de-confirmacion.md`.
   - **Detalle de historia:** los commits 6a2121a y dfca38a tienen un test en rojo que arregla 41bb390. No afecta a CI, que prueba la punta de la rama.
 - **2026-09-24 (14 correcciones del equipo sobre la web)**: rama `web-ajustes-2026-09-24`, un commit por tanda, sin push.
