@@ -1,7 +1,8 @@
 # Qué falta confirmar, y a quién preguntárselo
 
-**Fecha:** 20 de septiembre de 2026, actualizado el 24/09 y el 25/09 · **Sale de:** la call con el gerente del 20/09
-y las correcciones del 24/09 (el 13 y la pregunta del precio del 5 de octubre). El formulario de TelePASE, que se
+**Fecha:** 20 de septiembre de 2026, actualizado el 24/09, el 25/09 y el 28/09 (el inicio de actividades pasó al 7 de
+octubre) · **Sale de:** la call con el gerente del 20/09 y las correcciones del 24/09 (el 13 y la pregunta del precio
+del primer día). El formulario de TelePASE, que se
 agregó el 24/09, quedó resuelto el 25/09.
 
 En esa call quedó una regla: **lo que no está confirmado no se publica con salvedades, se esconde**. Este documento
@@ -53,7 +54,7 @@ apagarlo es incumplir el pliego.
 
 **Qué falta:** si el beneficio existe desde el día uno, cuánto es, y dónde se tramita.
 
-> «¿La tarifa diferencial para vecinos, frentistas y docentes rige desde el 5 de octubre? ¿Cuál es el monto o el
+> «¿La tarifa diferencial para vecinos, frentistas y docentes rige desde el 7 de octubre? ¿Cuál es el monto o el
 > porcentaje? ¿Dónde se tramita: por Trámites a Distancia, en la estación, por la web? ¿Qué documentación piden
 > exactamente y cada cuánto hay que renovarlo?»
 
@@ -256,17 +257,17 @@ privado, y el pliego pide los enlaces, no los logos. Conviene tener el OK por es
 
 ---
 
-## Para confirmar aunque esté publicado · el precio del 5 de octubre
+## Para confirmar aunque esté publicado · el precio del 7 de octubre
 
 **Agregado el 24/09/2026.** No es algo escondido: la web publica que desde la toma de posesión rige el cuadro de la
 Resolución 248/2026 ($ 1.500 el auto). Pero al releer el pliego para estas correcciones apareció el **PETG art. 82,
 inciso a)** («Tarifas a aplicar a la fecha de Toma de Posesión»): toma las últimas tarifas aplicadas antes de la toma
 y dice que **se ajustarán** multiplicando cada una, sin IVA, por el **coeficiente de variación de la tarifa (Cvt)**,
 que sale de índices del INDEC. El ajuste es obligatorio; lo que no se sabe es **cuánto da**, porque depende del mes que
-se tome como base. Si da distinto de 1, el 5/10 el precio no sería el de hoy. Conviene que el área lo confirme antes.
+se tome como base. Si da distinto de 1, el 7/10 el precio no sería el de hoy. Conviene que el área lo confirme antes.
 
 > «El artículo 82 a) del pliego dice que el cuadro del día de la toma de posesión sale de ajustar las últimas tarifas
-> por el coeficiente de variación de la tarifa (Cvt). ¿Cuánto da ese coeficiente para el 5 de octubre? ¿Se sigue
+> por el coeficiente de variación de la tarifa (Cvt). ¿Cuánto da ese coeficiente para el 7 de octubre? ¿Se sigue
 > cobrando el cuadro de la Resolución 248/2026 tal cual ($ 1.500 el auto), o va a salir un cuadro ajustado? Si sale
 > uno nuevo, ¿con qué resolución y desde qué fecha?»
 
@@ -276,8 +277,8 @@ se tome como base. Si da distinto de 1, el 5/10 el precio no sería el de hoy. C
   buscadores de Tarifas). Y además, porque tienen el precio o «el mismo cuadro» escrito a mano:
   - las preguntas frecuentes `03-cuanto-cuesta-el-peaje.json`, `05-desde-cuando-se-cobra.json` y
     `12-peajes-existentes.json`, en `C:\Users\Villex\dev\Covicen\src\content\faq\`;
-  - las novedades «Qué cuadro tarifario rige desde el 5 de octubre» (dice que ese día no cambia el precio) y «Qué
-    cambia el 5 de octubre…», en `C:\Users\Villex\dev\Covicen\src\content\novedades\`.
+  - las novedades «Qué cuadro tarifario rige desde el 7 de octubre» (dice que ese día no cambia el precio) y «Qué
+    cambia el 7 de octubre…», en `C:\Users\Villex\dev\Covicen\src\content\novedades\`.
 
 ---
 

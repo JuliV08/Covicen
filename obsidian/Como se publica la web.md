@@ -2,6 +2,15 @@
 
 Dónde vive `https://www.covicen.com.ar/`, cómo llega el código ahí y por qué el interruptor de lo que se publica está al revés. Medido el **2026-09-19**. Manual operativo: `README.md`, «Cómo se publica hoy» y «El interruptor de lo que se publica».
 
+> **Actualización 2026-09-28 — esto cambió: ahora SÍ hay cañería a producción.** Desde el 24/09, Amplify construye y
+> publica solo el `main` de la organización (`covicen/website`, remoto `organizacion` en este repo). Se deduce de las
+> fechas: el push de `1709a49` fue el 24/09 a las 15:45 UTC y el `index.html` de producción tiene `Last-Modified`
+> 15:48:54 UTC, con el `canonical` ya en `https://www.covicen.com.ar/` (o sea, con las variables cargadas). Publica en
+> **modo portada** («Próximamente»). En cambio, un push al `main` de `JuliV08/Covicen` (remoto `origin`) solo
+> reconstruye **GitHub Pages**, el sitio completo de revisión. Regla: **subir a `organizacion/main` es publicar en
+> producción**; se hace con el OK explícito de Juli y después de ver en un build local qué cambia en la portada. Lo que
+> sigue abajo es el estado del 19/09, antes de la mudanza (ver `docs/mudanza-de-repositorio.md`).
+
 ## El hallazgo
 
 El equipo de infra (AFEMA) deployó la web en **AWS** y avisó que «el código de Julian funciona perfecto en AWS Amplify». Lo que no dijo —y lo que había que averiguar antes de tocar nada— es que **no hay ninguna cañería entre el repo y ese hosting**. Un push a `main` reconstruye GitHub Pages y no toca producción.

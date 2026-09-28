@@ -1,6 +1,6 @@
 # Home — Covicen
 
-Landing fundacional de **Covicen**, la nueva concesionaria del **Tramo Centro** de la Red Federal de Concesiones (**679,03 km** según el pliego sobre RN 9, 19 y 34; Córdoba y Santa Fe). Arranca a operar el **5 de octubre de 2026**. La sociedad todavía está **en formación**: no tiene CUIT.
+Landing fundacional de **Covicen**, la nueva concesionaria del **Tramo Centro** de la Red Federal de Concesiones (**679,03 km** según el pliego sobre RN 9, 19 y 34; Córdoba y Santa Fe). Arranca a operar el **7 de octubre de 2026** (hasta el 28/09 se decía el 5). La sociedad todavía está **en formación**: no tiene CUIT.
 
 Este es el vault del proyecto (vive en el repo, viaja con el código). El puntero desde el cerebro global está en `C:\Users\Villex\Obsidian\Proyectos\Covicen.md`.
 
@@ -23,6 +23,7 @@ Este es el vault del proyecto (vive en el repo, viaja con el código). El punter
 - Manual de marca: `docs/marca/Logo Covicen 2.pdf` · Prompts de imágenes: `docs/marca/prompts-imagenes.md`
 
 ## Estado
+- **2026-09-28 (el inicio de actividades es el 7 de octubre, no el 5)** — Cambió `empresa.concesion.inicioOperacion` (de ahí salen la portada de «Próximamente», Quiénes somos y Transparencia) y los siete lugares que tenían la fecha escrita a mano: el aviso de los formularios apagados, la tabla de canales, dos preguntas frecuentes y tres novedades (una cambió de dirección: `que-cambia-el-7-de-octubre`). La portada de «Próximamente» ganó un test que fija la fecha, porque es lo que está en producción. **Cómo llega a producción, hoy**: desde el 24/09 Amplify publica solo el `main` de la organización (`covicen/website`, remoto `organizacion`), en modo portada; Pages sigue saliendo del `main` de `JuliV08/Covicen` (remoto `origin`). Ver [[Como se publica la web]].
 - **2026-09-25 (dos cambios sobre la marcha, misma rama `web-ajustes-2026-09-24`)**
   - **Autogestión.** «Mi cuenta» pasó a «Autogestión» y abre la web de autogestión de Telepeaje Plus (`https://www.telepeajeplus.com/Login`, cargada en `contacto.enlaces.oficinaVirtual`). En Medios de pago vuelve la sección, con un texto que dice solo lo que Telepeaje Plus publica que se hace ahí (gestionar la cuenta, cambiar la forma de pago), no lo que prometía antes (pasadas, facturas, deuda). Con eso se cumplió la condición del equipo y **volvió el formulario de TelePASE** en Contacto: el pliego 61.5 b lo exige, haya o no oficina virtual.
   - **Logos oficiales en el pie**, en lugar de los nombres: Presidencia, Secretaría de Transporte, Vialidad Nacional y TelePASE. Los tres primeros salen del **manual de identidad visual de Vialidad Nacional (oct. 2024, publicado en InfoLEG)**, extraídos en vectores del PDF; el de TelePASE, del PNG oficial de su sitio. Fuentes en `src/assets/institucional/README.md`. La **Red Federal de Concesiones no tiene logo oficial** (ni en su página, ni en los pliegos, ni en el manual): quedó como enlace en el texto del pie. Transporte va como «Secretaría de Transporte · Ministerio de Economía» (versión del manual), no como en el ejemplo que pasó el equipo. Cómo se pintan y por qué: [[Sistema de diseno]].
@@ -54,7 +55,7 @@ Este es el vault del proyecto (vive en el repo, viaja con el código). El punter
   - **Fondos.** El liso y la grilla se alternan solos según qué secciones se ven (`src/lib/fondos.ts`).
   - **Dos hallazgos al ir al pliego:**
     - El PETG **61.5 b** exige el formulario de consultas de TelePASE «haya o no» oficina virtual. El equipo pidió sacarlo, así que se escondió con `publicado.formularioTelepase`, con un test del estado prendido y el pedido primero en `docs/pendientes-de-confirmacion.md`. Ver [[Obligaciones del pliego para la web]].
-    - El **art. 82 a)** ajusta por costos el cuadro del día de la toma. Queda como pregunta al área por si el 5/10 no rige tal cual el $1.500.
+    - El **art. 82 a)** ajusta por costos el cuadro del día de la toma. Queda como pregunta al área por si el 7/10 no rige tal cual el $1.500.
   - **Revisión.** Pasó una vuelta de `rev-bro`: aprobado con observaciones, aplicadas todas menos una a propósito: `oficinaVirtual` y `ticketingReclamos` siguen en `src/lib/datos/capacidades.ts` aunque hoy no los lea nadie, porque ese archivo es la lista de sistemas que no existen, no de lo que se muestra (y `ticketingReclamos` es el que va a encender el envío real de los formularios). Segunda pasada sobre los arreglos: aprobada.
   - **Verificación final:**
     - `astro check`: 0 errores en 181 archivos.

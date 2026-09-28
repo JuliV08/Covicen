@@ -2,9 +2,9 @@
 
 Qué secciones necesita Covicen el día 1, derivado de [[Contexto del negocio (Corredores Viales)]]. Ver [[Home]].
 
-## El trabajo real del sitio el 5 de octubre
+## El trabajo real del sitio el día del inicio (7 de octubre)
 
-El 5/10 aparecen cabinas de peaje nuevas. El automovilista que las cruza va a googlear **"quién cobra este peaje" / "tarifa peaje ruta 9"**. La landing tiene que ganarle a esa búsqueda y responder en 5 segundos: **cuánto, dónde, por qué, cómo pago, a quién le reclamo.**
+El 7/10 aparecen cabinas de peaje nuevas. El automovilista que las cruza va a googlear **"quién cobra este peaje" / "tarifa peaje ruta 9"**. La landing tiene que ganarle a esa búsqueda y responder en 5 segundos: **cuánto, dónde, por qué, cómo pago, a quién le reclamo.**
 
 Eso reordena todo: no es un folleto institucional con un formulario de contacto abajo. Es una **página de servicio público con respaldo institucional**. La credibilidad corporativa es el marco; la utilidad es el contenido.
 

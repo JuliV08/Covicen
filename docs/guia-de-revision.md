@@ -1,6 +1,6 @@
 # Guía de revisión — web de Covicen
 
-**Al día al 25 de septiembre de 2026.** Empezá por «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
+**Al día al 28 de septiembre de 2026.** Empezá por «Lo que cambió el 28 de septiembre», «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
 
 Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/superpowers/plans/2026-09-13-actualizacion-web.md`, más la **revisión final del 14 y 15 de septiembre**) se hizo **sin pruebas visuales**: esta guía es la lista de lo que hay que mirar a mano, pantalla por pantalla, más lo que quedó oculto a propósito y cómo cargarlo.
 
@@ -12,6 +12,21 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 **Navegadores:** lo atado a scroll-driven animations (dibujo del mapa al scrollear, parallax del hero, fondo del header) anda en Chrome, Edge y Safari; en Firefox estable aparece ya dibujado o fijo.
 
 **Si tenés "reducir movimiento" activado en Windows** (Configuración › Accesibilidad › Efectos visuales): todo queda estático, **la cinta de avisos no desfila** (se recorre a mano, de costado) y el botón de pausa ni aparece, porque no hay nada que frenar. El cambio de tema también es instantáneo, sin la disolvencia. Si no usás esa opción, ignorá este punto.
+
+---
+
+## Lo que cambió el 28 de septiembre — mirá esto primero
+
+**El inicio de actividades es el 7 de octubre, no el 5.** Cambió el dato
+(`C:\Users\Villex\dev\Covicen\src\content\empresa.json`, `concesion.inicioOperacion`) y todo lo que tenía la fecha
+escrita a mano. Dónde mirarlo:
+- **La portada de «Próximamente»** (la que está en producción): «Operación desde el 7 de octubre de 2026».
+- **Quiénes somos** y **Transparencia** (la póliza «se publica con la toma de posesión, el 7 de octubre»): salen del dato.
+- **El aviso de los formularios apagados** (Contacto, Trámites, Proveedores) y **la tabla de canales** (Servicios,
+  Contacto, Emergencias): «Se habilita con la toma de posesión, el 7 de octubre de 2026».
+- **Preguntas frecuentes**: «¿Desde cuándo opera?» y «¿Qué tarifa se cobra desde el 7 de octubre?».
+- **Novedades**: las tres que nombraban la fecha. La de «Qué cambia el 7 de octubre…» cambió también de dirección
+  (`/novedades/2026-08-26-que-cambia-el-7-de-octubre/`).
 
 ---
 
@@ -51,7 +66,7 @@ Nación · Secretaría de Transporte · Vialidad Nacional · TelePASE** y el bot
 
 Son las 14 correcciones que mandó el equipo. Están en la rama `web-ajustes-2026-09-24`, **sin push**, un commit por
 tanda: para verlo, `git switch web-ajustes-2026-09-24` y `pnpm dev`. El formulario de TelePASE se sacó ese día y
-**volvió el 25/09** (ver arriba): el pliego lo exige desde el 5/10.
+**volvió el 25/09** (ver arriba): el pliego lo exige desde la toma de posesión, el 7/10.
 
 **En todo el sitio: sin números de sección.** El «01», «02» que iba a la izquierda de cada título se fue de las nueve
 páginas que lo tenían. Mirá que los títulos queden alineados con el contenido de abajo (antes entraban corridos hacia
@@ -88,7 +103,7 @@ la derecha) y que no haya quedado un número suelto en ningún lado.
 - «Rutas y longitudes.» y «Estaciones de peaje.» son los títulos de los dos bloques, sin bajada y sin la palabrita de
   arriba. Tocá las dos anclas de la barra pegada: el título tiene que quedar visible, no tapado por el header.
 - Debajo de las tarjetas de estaciones ya no están las tres notas (tampoco la de San Vicente, que sigue en la novedad
-  «Qué cambia el 5 de octubre…» y en las preguntas frecuentes).
+  «Qué cambia el 7 de octubre…» y en las preguntas frecuentes).
 
 **Servicios `/servicios/`**: ya no está la sección «Más adelante» (Oficina virtual y Seguimiento de reclamos).
 
@@ -107,7 +122,7 @@ toma de posesión».
 **Novedades `/novedades/`**: debajo del título está la bajada nueva («Conocé las principales novedades, avances y
 acciones…»).
 
-**Lo que no se tocó a propósito:** las otras menciones al 5 de octubre (el aviso de los formularios apagados, la tabla
+**Lo que no se tocó a propósito:** las otras menciones a la fecha de inicio (el aviso de los formularios apagados, la tabla
 de canales, las preguntas frecuentes y las novedades), porque siguen siendo ciertas; y los otros «Próximamente»
 (Proveedores y Políticas), que nadie marcó y tienen información útil.
 
@@ -310,7 +325,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 ## Todas las páginas
 
 **Cinta de avisos** (reemplaza a los anuncios que rotaban arriba del navbar)
-- Los avisos de `src/content/avisos.json` (hoy tres: el de la toma de posesión, que **vence el 5 de octubre** y desaparece solo en el build de ese día; emergencias 140; tarifas) **desfilan en una sola línea continua**, con la etiqueta amarilla "AVISOS" fija a la izquierda. Cada aviso es un link a su página.
+- Los avisos de `src/content/avisos.json` (hoy dos: emergencias 140 y tarifas; el de la toma de posesión se sacó el 24/09) **desfilan en una sola línea continua**, con la etiqueta amarilla "AVISOS" fija a la izquierda. Cada aviso es un link a su página.
 - **Dónde está**: en la home, apoyada en el borde de abajo del hero (como en la referencia de Corresur que me pasaste). En el resto de las páginas, arriba del contenido, abajo del header.
 - **Cómo se frena**: con el mouse encima, con el foco adentro (si vas con Tab) y con el botón de pausa de la derecha, que es el que manda: una vez pausado **no rearranca solo**.
 - El contenido sale del mismo archivo de siempre, así que el día que exista el backoffice se edita desde ahí sin tocar la web.
@@ -425,7 +440,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 - **Sin costo (01)**: seis tarjetas con chip verde "Gratis": Emergencias 140; Grúa y remolque para despejar la calzada (30 min livianos / 60 pesados); Móviles de seguridad vial; TelePASE sin costo; Atención al usuario; Sanitarios públicos. Cada una con alcance y tiempos. **Desde el 20/09 sin la anotación "Fuente: PETG art. …"**.
 - **Con costo (02)**: Mecánica general; Remolque más allá del punto gratuito (chip "Con costo").
-- **Canales y plazos (03)**: tabla completa Canal · Disponibilidad · Acuse · Respuesta, seis filas: Emergencias 140 (inmediato), Botón de asistencia en ruta, Formulario web (acuse 24 h, respuesta 5 días hábiles), Correo, Línea 0800, WhatsApp. Los tres últimos **no muestran un dato inventado**: dicen "Se habilita con la toma de posesión, el 5 de octubre de 2026".
+- **Canales y plazos (03)**: tabla completa Canal · Disponibilidad · Acuse · Respuesta, seis filas: Emergencias 140 (inmediato), Botón de asistencia en ruta, Formulario web (acuse 24 h, respuesta 5 días hábiles), Correo, Línea 0800, WhatsApp. Los tres últimos **no muestran un dato inventado**: dicen "Se habilita con la toma de posesión, el 7 de octubre de 2026".
 - ~~Más adelante (04)~~: **se sacó el 24/09** por pedido del gerente.
 
 ## Emergencias `/emergencias/`
@@ -442,7 +457,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 - **Cómo probarlo en el celular**: hace falta HTTPS. Por `http://<IP>:4321` el celular no entrega la ubicación (regla de los navegadores): probá en la URL de Pages después de un deploy, o en la compu en `localhost` (Chrome/Edge piden permiso y dan la ubicación aproximada).
 - **Contanos qué pasó** — **este es el cambio grande de la pantalla y hay que mirarlo sí o sí**. Los campos **ahora se escriben** (antes estaban grises y bloqueados, o sea que la página pedía datos que no dejaba cargar). Probá: cargá **Qué pasó**, **Vehículo**, cuántas personas y un teléfono, apretá **"Obtener mi ubicación"** (en el celular, con el sitio en https) y después **"Armar el texto para copiar"**. Abajo tiene que aparecer un recuadro con el mensaje completo — asunto, cada campo, y las coordenadas con el link a Google Maps — y un cartelito que diga **"Texto copiado. Pegalo donde quieras o dictáselo al operador del 140."**. Pegalo en WhatsApp o en las notas para ver que salga bien.
 - Si el navegador **no deja copiar solo** (pasa en algunos Android viejos, o si la página no está en https), el cartel dice "No se pudo copiar solo: seleccioná el texto de acá abajo y copialo a mano". **El texto igual queda a la vista: eso es lo importante.**
-- **Ya no aparece "Respuesta inmediata"** al lado del botón: mientras no haya WhatsApp ni correo cargados nadie recibe el mensaje, así que prometer un plazo sería mentira. Cuando el 5 de octubre se cargue el número, vuelve solo junto con el botón de enviar por WhatsApp.
+- **Ya no aparece "Respuesta inmediata"** al lado del botón: mientras no haya WhatsApp ni correo cargados nadie recibe el mensaje, así que prometer un plazo sería mentira. Cuando se cargue el número, vuelve solo junto con el botón de enviar por WhatsApp.
 - Con el WhatsApp cargado, el botón pasa a "Pedir asistencia por WhatsApp" y abre `wa.me` con el mensaje armado (qué pasó, vehículo, personas, ubicación, referencia, teléfono).
 
 ## Medios de pago `/medios-de-pago/`
@@ -483,7 +498,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 ## Transparencia `/transparencia/`
 
 - **Normativa aplicable**: cinco tarjetas. Res. 1379/2026, Res. 248/2026, Ley 27.742 y Decreto 97/2025 con "Ver o descargar" al Boletín Oficial; "Pliegos de la concesión" dice "Sin versión definitiva publicada todavía" (hasta tener los firmados).
-- **Póliza de responsabilidad civil (01)**: "Se publica con la toma de posesión, el 5 de octubre de 2026" (con `empresa.polizaRc` cargado aparece la ficha: aseguradora, número, vigencia, documento).
+- **Póliza de responsabilidad civil (01)**: "Se publica con la toma de posesión, el 7 de octubre de 2026" (con `empresa.polizaRc` cargado aparece la ficha: aseguradora, número, vigencia, documento).
 - **Datos registrales (02)**: "La sociedad está en formación…" hasta tener razón social, CUIT y domicilio.
 
 ## Obras `/obras/` — **no existe desde el 20/09/2026**
@@ -511,7 +526,7 @@ Qué hay que preguntar antes: punto 6 de `C:\Users\Villex\dev\Covicen\docs\pendi
 
 > **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 24/09 cambió novedades: leé primero «Lo que cambió el 24 de septiembre», arriba de todo.
 
-- Listado de **cinco** con fecha y etiquetas (12 px, anotación). La más nueva (13/9) explica qué cuadro tarifario rige desde el 5 de octubre. Las marcadas como destacadas ya no suben al hero (que dejó de rotar): se ven acá y en la sección Novedades de la home.
+- Listado de **cinco** con fecha y etiquetas (12 px, anotación). La más nueva (13/9) explica qué cuadro tarifario rige desde el 7 de octubre. Las marcadas como destacadas ya no suben al hero (que dejó de rotar): se ven acá y en la sección Novedades de la home.
 - Detalle: prosa con **más aire entre párrafos** (1,5 veces el interlineado, como pide el pliego), links subrayados, botón volver.
 
 ## Políticas, Privacidad, Proveedores
