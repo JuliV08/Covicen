@@ -53,7 +53,7 @@ Ese último dato es material de marca, no un número suelto: en un régimen dond
 La adjudicación salió el lunes 2026-08-24 y la sociedad está **en formación**. Consecuencias reales:
 
 - **Sin CUIT todavía.** El pie de página no puede llevar CUIT, domicilio legal inscripto ni datos registrales hasta que existan. Dejar los slots y completarlos después.
-- **El dominio es EL riesgo de fecha.** NIC.ar exige identificarse con Clave Fiscal de AFIP (CUIT/CUIL/CDI) para registrar un `.ar`. **Una sociedad sin CUIT no puede registrar su propio dominio.** Hay que registrarlo a nombre de un tercero (alguna empresa del consorcio, o Juli) y transferirlo cuando salga la inscripción. Con el 5/10 encima, esto va primero.
+- **El dominio es EL riesgo de fecha.** NIC.ar exige identificarse con Clave Fiscal de AFIP (CUIT/CUIL/CDI) para registrar un `.ar`. **Una sociedad sin CUIT no puede registrar su propio dominio.** Hay que registrarlo a nombre de un tercero (alguna empresa del consorcio, o Juli) y transferirlo cuando salga la inscripción. Con el inicio encima, esto iba primero (el dominio ya está en producción desde el 24/09/2026).
 - **Cuidado con el copy.** Mientras esté en formación, redactar sobre lo que sí es cierto y verificable hoy: la adjudicación, el tramo, el plazo, el consorcio. No presuponer una sociedad ya inscripta.
 - **Falta la razón social exacta.** "Covicen" puede ser marca, denominación social, o ambas. Preguntar antes de maquetar el logo con un texto legal al lado.
 

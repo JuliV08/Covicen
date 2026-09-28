@@ -50,7 +50,7 @@ Los sistemas se planifican como **continuos**, no como trimestres: el esfuerzo d
 
 ## Primer sistema: tarifario + catálogo del tramo
 
-**Por qué este y no otro.** Es lo que el automovilista busca el 7/10 (cuánto y dónde), ya tiene lugar y contrato en la landing, es obligatorio el día 1, cambia por índices oficiales, es el dominio más chico, y el catálogo que trae debajo es transversal. No depende de cabinas ni de ningún sistema externo. Licitaciones va segundo porque una sociedad sin CUIT no licita el 5/10. Trámites es el más valioso a mediano plazo pero cinco veces más grande. La mesa de ayuda de CVSA es soporte interno de IT, no aplica.
+**Por qué este y no otro.** Es lo que el automovilista busca el 7/10 (cuánto y dónde), ya tiene lugar y contrato en la landing, es obligatorio el día 1, cambia por índices oficiales, es el dominio más chico, y el catálogo que trae debajo es transversal. No depende de cabinas ni de ningún sistema externo. Licitaciones va segundo porque una sociedad sin CUIT no licita el 7/10. Trámites es el más valioso a mediano plazo pero cinco veces más grande. La mesa de ayuda de CVSA es soporte interno de IT, no aplica.
 
 **Las cinco mejoras respecto de la referencia** (todo lo demás fuera de v1):
 1. **Vigencias que no se pisan, garantizado por la base de datos.** Dos cuadros nunca rigen el mismo día.
