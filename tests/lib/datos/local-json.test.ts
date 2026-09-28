@@ -7,7 +7,8 @@ describe('contenido del repo', () => {
     const e = await fuenteLocalJson.empresa();
     expect(e.concesion.km).toBe(679.03);
     expect(e.concesion.rutas).toEqual(['RN 9', 'RN 19', 'RN 34']);
-    expect(e.concesion.inicioOperacion).toBe('2026-10-05');
+    // Era el 5/10; el 28/09/2026 avisaron que el inicio de actividades es el 7 de octubre.
+    expect(e.concesion.inicioOperacion).toBe('2026-10-07');
     expect(e.concesion.tarifaOfertadaSinIva).toBe(1399);
     expect(e.enFormacion).toBe(true);
     expect(e.cuit).toBeNull();

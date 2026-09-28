@@ -59,11 +59,11 @@ describe('Hero', () => {
   // Pedido del 24/09/2026: que la portada se lea definitiva. La fecha de inicio salía TRES veces sobre la foto: en el
   // párrafo, en la cuenta regresiva y en el aviso de la cinta que va pegada al borde del hero. Se fueron las tres.
   // Se mira la home entera y no el Hero solo, porque la cinta entra por un slot desde Home.astro. (Las tarjetas de
-  // novedades, que sí nombran el 5 de octubre en sus títulos, no aparecen acá: fuera de un build la colección está
+  // novedades, que sí nombran el 7 de octubre en sus títulos, no aparecen acá: fuera de un build la colección está
   // vacía. Son noticias con fecha y quedan como están.)
   it('la portada no anuncia la fecha de inicio: ni el párrafo, ni la cuenta regresiva, ni la cinta', async () => {
     const html = await renderHome();
-    expect(html, 'la home volvió a anunciar la fecha de inicio').not.toContain('5 de octubre');
+    expect(html, 'la home volvió a anunciar la fecha de inicio').not.toContain('de octubre');
     expect(html).not.toContain('data-cuenta-regresiva');
     expect(html).not.toContain('responsabilidad');
     expect(html, 'la cinta de avisos desapareció de la home').toContain('Emergencias en la ruta');

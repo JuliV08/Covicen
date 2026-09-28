@@ -49,7 +49,7 @@ describe('Formulario', () => {
   it('sin canales: lo dice con la fecha y el 140, y el botón queda deshabilitado sin prometer envío', async () => {
     const html = await render({ whatsapp: null, email: null });
     expect(html).toContain('data-canal="a-confirmar"');
-    expect(html).toContain('Los formularios se habilitan con la toma de posesión, el 5 de octubre de 2026. Mientras, el');
+    expect(html).toContain('Los formularios se habilitan con la toma de posesión, el 7 de octubre de 2026. Mientras, el');
     expect(html).toMatch(/<a href="tel:140"[^>]*>140<\/a> atiende emergencias las 24 horas\./);
     // El botón de envío existe (WCAG H32: todo <form> tiene uno) pero está deshabilitado y no nombra ningún canal.
     expect(html).toMatch(/<button type="submit" disabled/);

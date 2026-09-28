@@ -15,6 +15,6 @@ En este régimen el criterio de adjudicación es uno solo: gana quien ofrece la 
 
 ## Qué sigue
 
-La sociedad está en formación y la operación comienza el **5 de octubre de 2026**. Antes de aplicar la tarifa ofertada, el contrato exige alcanzar las condiciones de transitabilidad óptima, verificadas por Vialidad Nacional. Este sitio va a publicar cada paso con su fecha.
+La sociedad está en formación y la operación comienza el **7 de octubre de 2026**. Antes de aplicar la tarifa ofertada, el contrato exige alcanzar las condiciones de transitabilidad óptima, verificadas por Vialidad Nacional. Este sitio va a publicar cada paso con su fecha.
 
 Fuente: [Resolución 1379/2026 — Boletín Oficial](https://www.boletinoficial.gob.ar/detalleAviso/primera/346271/20260824).

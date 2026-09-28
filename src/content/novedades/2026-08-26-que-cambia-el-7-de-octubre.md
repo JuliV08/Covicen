@@ -1,11 +1,11 @@
 ---
-titulo: "Qué cambia el 5 de octubre para quien maneja por las rutas 9, 19 y 34"
+titulo: "Qué cambia el 7 de octubre para quien maneja por las rutas 9, 19 y 34"
 fecha: "2026-08-26"
 resumen: "Las estaciones de Carcarañá, James Craik y Franck siguen. San Vicente deja de operar. Se suman Leones, San Francisco y Totoras, con cobro electrónico. Y un número de emergencias para todo el tramo."
 etiquetas: ["usuarios", "peajes"]
 destacada: true
 ---
-El 5 de octubre de 2026 Covicen toma la operación del Tramo Centro. Esto es lo que cambia, y lo que no, para quien circula.
+El 7 de octubre de 2026 Covicen toma la operación del Tramo Centro. Esto es lo que cambia, y lo que no, para quien circula.
 
 ## Las estaciones
 

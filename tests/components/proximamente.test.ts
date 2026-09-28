@@ -30,6 +30,14 @@ describe('portada de «Próximamente»', () => {
     expect(html).toContain('Tramo Centro');
   });
 
+  // El 28/09/2026 avisaron que el inicio de actividades es el 7 de octubre, no el 5. La fecha sale del dato
+  // (empresa.concesion.inicioOperacion): esta es la pantalla que está en producción, así que se fija acá.
+  it('anuncia el inicio de actividades el 7 de octubre', async () => {
+    const html = (await render()).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+    expect(html).toContain('Operación desde el 7 de octubre de 2026');
+    expect(html).not.toContain('5 de octubre');
+  });
+
   it('no trae el sitio colgando: ni menú, ni pie, ni cinta de avisos', async () => {
     const html = await render();
     // 'Trabajá con nosotros' era uno de los centinelas y esa página se eliminó del sitio el 20/09/2026: un

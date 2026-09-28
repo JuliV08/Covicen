@@ -22,7 +22,7 @@ const enlace = (c: Canal) => {
       <tbody class="divide-y divide-borde">
         {canales.map((c) => { const e = enlace(c); return (
           <tr class="hover:bg-superficie">
-            <th scope="row" class="px-4 py-3 font-semibold text-texto">{c.nombre}<span class="block text-sm font-normal text-texto-2">{e ? <a href={e.href} rel={e.href.startsWith('http') ? 'noopener noreferrer' : undefined} target={e.href.startsWith('http') ? '_blank' : undefined}>{e.texto}</a> : 'Se habilita con la toma de posesión, el 5 de octubre de 2026.'}</span></th>
+            <th scope="row" class="px-4 py-3 font-semibold text-texto">{c.nombre}<span class="block text-sm font-normal text-texto-2">{e ? <a href={e.href} rel={e.href.startsWith('http') ? 'noopener noreferrer' : undefined} target={e.href.startsWith('http') ? '_blank' : undefined}>{e.texto}</a> : 'Se habilita con la toma de posesión, el 7 de octubre de 2026.'}</span></th>
             {!compacto && <td class="px-4 py-3 text-texto-2">{c.disponibilidad}</td>}
             <td class="px-4 py-3 text-texto-2">{c.acuse}</td>
             <td class="px-4 py-3 text-texto-2">{c.respuesta}</td>

@@ -1,11 +1,11 @@
 ---
-titulo: "Qué cuadro tarifario rige desde el 5 de octubre"
+titulo: "Qué cuadro tarifario rige desde el 7 de octubre"
 fecha: "2026-09-13"
 resumen: "Desde la toma de posesión, en Carcarañá, James Craik y Franck se cobra el mismo cuadro que hasta ahora: el de la Resolución 248/2026 de Vialidad Nacional. Qué dice, cuánto es y cuándo cambia."
 etiquetas: ["tarifas", "transparencia"]
 destacada: false
 ---
-El 5 de octubre Covicen toma posesión del Tramo Centro. Ese día **no cambia el precio del peaje**: el contrato de concesión manda aplicar el cuadro tarifario que ya regía en el tramo a la fecha de la toma de posesión.
+El 7 de octubre Covicen toma posesión del Tramo Centro. Ese día **no cambia el precio del peaje**: el contrato de concesión manda aplicar el cuadro tarifario que ya regía en el tramo a la fecha de la toma de posesión.
 
 ## Qué cuadro es
 
