@@ -1,0 +1,93 @@
+---
+// Formulario de reclamos, consultas y sugerencias servido por el CRM de atención al usuario (Bitrix24, lo administra
+// el proveedor, PREVI). Desde el 01/10/2026 reemplaza al formulario propio de /contacto/ cuando
+// `contacto.formularioCrm` está cargado; con null vuelve Formulario.astro.
+//
+// Los campos, la casilla de consentimiento y el mensaje de «enviado» se definen en el CRM, no acá: si PREVI cambia el
+// formulario, la web no se toca. Lo que sí pone la web: los colores (abajo), los plazos del contrato y el aviso de
+// privacidad, que el formulario de Bitrix no muestra.
+import { ruta } from '@/lib/rutas';
+import type { Contacto } from '@/lib/datos/esquemas';
+interface Props { crm: NonNullable<Contacto['formularioCrm']>; id: string; plazos?: string }
+const { crm, id, plazos } = Astro.props;
+// El código que entrega Bitrix, tal cual, con la dirección del cargador sacada del dato. Bitrix monta el formulario
+// en un <div> que inserta justo ANTES de este <script>, así que el script va donde tiene que aparecer el formulario.
+// La dirección entra como literal de JS con JSON.stringify, y el esquema ya la limitó a un cargador del CDN de Bitrix24.
+const cargador = `(function(w,d,u){var s=d.createElement('script');s.async=true;s.src=u+'?'+(Date.now()/180000|0);var h=d.getElementsByTagName('script')[0];h.parentNode.insertBefore(s,h);})(window,document,${JSON.stringify(crm.script)});`;
+---
+<div class="formulario-crm grid gap-5" {id}>
+  <div class="crm-montaje">
+    {/* Respaldo para cuando el formulario no llega: sin JavaScript, o con un bloqueador que frena a bitrix24. Aparece
+        recién a los 4 segundos, para no asustar mientras carga, y se va apenas el formulario se monta. */}
+    <p class="crm-respaldo rounded-md border border-dashed border-borde-fuerte p-4 text-sm text-texto-2">
+      ¿No ves el formulario? Necesita JavaScript, y algunos bloqueadores de anuncios lo frenan: probá desactivarlo en esta página. Para emergencias, llamá al <a href="tel:140">140</a>, las 24 horas.
+    </p>
+    <script is:inline data-b24-form={crm.codigo} data-skip-moving="true" set:html={cargador} />
+  </div>
+  {plazos && <p class="text-sm text-texto-2">{plazos}</p>}
+  <p class="text-sm text-texto-2">Lo que cargues en este formulario llega al sistema de atención al usuario de Covicen, que funciona sobre Bitrix24. Ver <a href={ruta('/privacidad')}>política de privacidad</a>.</p>
+</div>
+<style>
+  .crm-respaldo { animation: crm-respaldo 0s linear 4s both; }
+  @keyframes crm-respaldo { from { visibility: hidden; } to { visibility: visible; } }
+  .crm-montaje:has([class*="b24-form"]) .crm-respaldo { display: none; }
+  /* Bitrix publica estas variables como su API de estilos (el encabezado de su app.bundle.css las documenta). El
+     formulario las fija con un <style> propio sobre el id de su contenedor, con los colores que se eligen en el CRM; acá
+     se pisan con !important para que use los tokens de Covicen y siga el tema claro y el oscuro. Los pares que quedan
+     (texto sobre fondo y sobre superficie, texto-2 sobre fondo, acento sobre fondo, sobre-acento sobre acento) son
+     los que verificar.ts ya mide a 4,5:1 en los dos temas. Lo que
+     se elija como colores en el CRM, entonces, no se ve: los manda la web. El diseño del CRM (botón celeste con letra
+     blanca) daba 3,5:1, por debajo del mínimo. */
+  .crm-montaje :global(.b24-form),
+  .crm-montaje :global(.b24-form [id^="b24-"]),
+  /* Las ventanas (el texto del consentimiento, por ejemplo) Bitrix las monta en el <body>, fuera de este componente,
+     y les pone las mismas variables sobre el id de cada ventana, adentro de `.b24-window-mounts`. Solo existen en
+     /contacto/. (Los ids de Bitrix no se escriben acá con su numeral: la guarda de colores fijos los lee como hex.) */
+  :global(.b24-window-mounts [id^="b24-window-mount-"]) {
+    --b24-primary-color: var(--color-acento) !important;
+    --b24-primary-text-color: var(--color-sobre-acento) !important;
+    --b24-primary-hover-color: var(--color-acento-hover) !important;
+    --b24-text-color: var(--color-texto) !important;
+    /* Superficie y no transparente: con esta variable pinta Bitrix lo que flota encima del formulario (las listas
+       desplegables, el calendario, la franja de «leé todo» de la ventana del consentimiento), y transparente dejaba
+       un texto encima del otro. Lo único que va sin fondo es el contenedor, abajo. */
+    --b24-background-color: var(--color-superficie) !important;
+    --b24-field-border-color: var(--color-borde-fuerte) !important;
+    --b24-field-background-color: var(--color-fondo-2) !important;
+    --b24-field-focus-background-color: var(--color-fondo-2) !important;
+    --b24-popup-background-color: var(--color-superficie) !important;
+    --b24-font-family-default: var(--font-sans) !important;
+    --b24-font-family: var(--font-sans) !important;
+  }
+  /* La raya de 5 px del color del botón y la sombra son opciones del diseño del CRM: sobre la página quedaban como un
+     recuadro ajeno. */
+  .crm-montaje :global(.b24-form-wrapper) { border: 0 !important; box-shadow: none !important; background: transparent !important; }
+  /* Lo que Bitrix escribe con colores y tamaños fijos, fuera de sus variables (app.bundle.css, 01/10/2026): el texto
+     de la casilla de aceptación a 11 px, medio transparente y con el enlace en un azul suyo (el sitio no baja de
+     12 px, y eso solo en anotaciones), y los carteles de «enviando», «enviado» y «error», con fondo blanco, verde o
+     rojo propios, que en el tema oscuro eran un fogonazo. Si Bitrix cambia estos nombres, vuelve su diseño: nada se
+     rompe. */
+  .crm-montaje :global(.b24-form-field-agreement .b24-form-control-desc),
+  .crm-montaje :global(.b24-form-field-agreement .b24-form-field-agreement-link),
+  .crm-montaje :global(.b24-form-field-agreement .b24-form-control-required) {
+    font-size: 0.875rem !important;
+    line-height: 1.4 !important;
+    opacity: 1 !important;
+  }
+  .crm-montaje :global(.b24-form-field-agreement .b24-form-control-desc) { color: var(--color-texto-2) !important; }
+  .crm-montaje :global(.b24-form-field-agreement a.b24-form-field-agreement-link) { color: var(--color-acento) !important; }
+  .crm-montaje :global(.b24-from-state-on .b24-form-state-container),
+  .crm-montaje :global(.b24-form-state-container .b24-form-loader),
+  .crm-montaje :global(.b24-form-state-container .b24-form-state),
+  .crm-montaje :global(.b24-form-state-container .b24-form-success),
+  .crm-montaje :global(.b24-form-state-container .b24-form-error),
+  .crm-montaje :global(.b24-form-state-container .b24-form-warning) {
+    background-color: var(--color-superficie) !important;
+  }
+  .crm-montaje :global(.b24-form-state-text),
+  .crm-montaje :global(.b24-form-state-container .b24-form-error .b24-form-btn) {
+    color: var(--color-texto) !important;
+    opacity: 1 !important;
+  }
+  .crm-montaje :global(.b24-form-state-container .b24-form-error .b24-form-btn) { border-color: var(--color-borde-fuerte) !important; }
+</style>

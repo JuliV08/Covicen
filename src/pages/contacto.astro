@@ -3,6 +3,7 @@ import { Phone } from '@lucide/astro';
 import Base from '@/layouts/Base.astro';
 import Canales from '@/components/Canales.astro';
 import Formulario from '@/components/Formulario.astro';
+import FormularioCrm from '@/components/FormularioCrm.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
 import { cabinaOperativa } from '@/lib/datos/esquemas';
@@ -28,7 +29,9 @@ const pasosReclamo = [
         <div class="tarjeta tarjeta-vial p-5"><p class="eyebrow flex items-center gap-2"><Phone size={14} aria-hidden="true" /> Emergencias 24 h</p><a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="mt-2 block text-3xl font-extrabold tabular-nums text-vial-texto no-underline" aria-label={`Llamar a emergencias, ${tel}`}>{tel}</a></div>
         <Canales canales={contacto.canales} compacto />
       </div>
-      <Formulario id="reclamos" asunto="Reclamo, consulta o sugerencia" whatsapp={contacto.whatsapp.numero} email={correo} {plazos} campos={[
+      {/* Desde el 01/10/2026 el de reclamos es el formulario del CRM (Bitrix24, de PREVI): ver FormularioCrm.astro. El
+          propio queda como respaldo, por si `contacto.formularioCrm` vuelve a null. */}
+      {contacto.formularioCrm ? <FormularioCrm id="reclamos" crm={contacto.formularioCrm} {plazos} /> : <Formulario id="reclamos" asunto="Reclamo, consulta o sugerencia" whatsapp={contacto.whatsapp.numero} email={correo} {plazos} campos={[
         { nombre: 'motivo', etiqueta: 'Motivo', tipo: 'select', opciones: ['Reclamo', 'Consulta', 'Sugerencia'], requerido: true },
         { nombre: 'tema', etiqueta: 'Tema', tipo: 'select', opciones: ['Tarifas y cobro', 'Estado de la ruta', 'Atención recibida', 'Seguridad vial', 'Otro'], requerido: true },
         { nombre: 'lugar', etiqueta: 'Ruta y kilómetro, o estación', placeholder: `RN 9, km 350 · ${estaciones.join(' / ')}` },
@@ -40,7 +43,7 @@ const pasosReclamo = [
         { nombre: 'correo', etiqueta: 'Correo electrónico', tipo: 'email', requerido: true },
         { nombre: 'telefono', etiqueta: 'Teléfono', tipo: 'tel' },
         { nombre: 'mensaje', etiqueta: 'Mensaje', tipo: 'textarea', requerido: true },
-      ]} />
+      ]} />}
     </div>
   </Seccion>
 

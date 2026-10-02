@@ -33,6 +33,17 @@ describe('/contacto/', () => {
     expect(/^[^>]*class="([^"]*)"/.exec(reclamo)?.[1]).not.toContain('seccion-cinetica');
   });
 
+  // 01/10/2026: el de reclamos (61.5 a) es el formulario del CRM de PREVI (Bitrix24). El de TelePASE sigue siendo el
+  // propio: Bitrix no tiene todavía uno para eso.
+  it('el formulario de reclamos es el del CRM, y el de TelePASE sigue siendo el propio', async () => {
+    const html = await render();
+    expect(html).toMatch(/<div class="formulario-crm[^"]*"[^>]*id="reclamos"/);
+    expect(html).toContain('data-b24-form="inline/1/t2c138"');
+    expect(html.match(/data-b24-form=/g)?.length, 'el formulario de Bitrix se monta una sola vez').toBe(1);
+    expect(html).not.toMatch(/<form[^>]*id="reclamos"/);
+    expect(html).toMatch(/<form[^>]*id="formulario-telepase"/);
+  });
+
   // La tarjeta «Seguimiento de reclamos · Próximamente» es la misma que el gerente pidió sacar de Servicios.
   it('no promete el seguimiento de reclamos en línea', async () => {
     const html = await render();

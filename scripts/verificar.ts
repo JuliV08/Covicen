@@ -23,7 +23,9 @@ const DIST = 'dist';
 const fallos: string[] = [];
 const fallo = (m: string) => fallos.push(m);
 
-const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/];
+// `efectivo` (01/10/2026): en la vía se cobra solo con medios electrónicos, en las terminales POS. La palabra sola, no
+// «efectiva» ni «efectivamente»: en este sitio «efectivo» siempre quiso decir plata en mano.
+const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/, /\befectivo\b/i];
 // Citas del pliego en la cara del público. Pedido del gerente (call del 20/09/2026): «hace mención del pliego; esas
 // cosas que no aparezcan». Vale para las siglas Y para la palabra escrita con todas las letras: son la misma mención,
 // y había ocho lugares que la escribían larga («según el Pliego de Especificaciones Técnicas Particulares…»), que
@@ -44,7 +46,10 @@ console.log(`Verificando ${paginas.length} páginas (base ${base}, indexable ${i
 // la raíz del repo. JSON no admite comentarios, así que lo que ahí se apaga o se afina se justifica acá:
 // - no-inline-style: Astro emite `style="--i: 0"` (escalonado) y las coordenadas del mapa; son variables, no presentación.
 // - no-trailing-whitespace: espacios al final de línea del HTML emitido; cosmético, el lector no lo ve.
-// - require-sri: no se cargan scripts ni hojas de terceros (la fuente es autoalojada); no hay nada que firmar.
+// - require-sri: el único script de terceros es el cargador del formulario de Bitrix24 en /contacto/ (01/10/2026), y
+//   no se puede firmar: Bitrix lo publica con versión propia y el propio código lo pide con un parámetro que cambia cada
+//   3 minutos. Lo que entra a la página está acotado por el esquema (lib/datos/esquemas: solo un cargador del CDN de
+//   Bitrix24). Fuera de eso no hay scripts ni hojas de terceros: la fuente es autoalojada.
 // - long-title 90 (por defecto 70): los títulos de las novedades llevan además el sufijo " · Covicen".
 // - tel-non-breaking con ignoreClasses ["tel-prosa"]: la regla exige &nbsp; en TODO espacio dentro de un <a href="tel:">.
 //   Vale para "Emergencias 140" o "Llamar al 140" (se usa &nbsp;), pero la tarjeta de accesos rápidos de la home es
@@ -128,6 +133,9 @@ for (const ruta of paginas) {
   // virtual. Se escondió el 24/09/2026 y volvió el 25/09: si alguien apaga `publicado.formularioTelepase`, que el build
   // lo diga, en vez de enterarse Vialidad Nacional.
   if (nombre.startsWith('contacto') && !html.includes('id="formulario-telepase"')) fallo(`${nombre}: falta el formulario de consultas de TelePASE (PETG 61.5 b)`);
+  // PETG 61.5 a: el de reclamos, consultas y sugerencias. Desde el 01/10/2026 es el del CRM (Bitrix24) y, si el dato
+  // vuelve a null, el propio; las dos versiones llevan el mismo id, que es lo que el build exige.
+  if (nombre.startsWith('contacto') && !html.includes('id="reclamos"')) fallo(`${nombre}: falta el formulario de reclamos, consultas y sugerencias (PETG 61.5 a)`);
   // 10. textos prohibidos y datos oficiales (spec 2026-09-13 §2, §3, §12.1.2): criterio "esconder", marca y 679 km.
   // Los prohibidos se buscan en el HTML crudo (meta, alt, aria-label, JSON-LD incluidos); los obligatorios, en el texto visible.
   for (const p of PROHIBIDOS) if (p.test(html)) fallo(`${nombre}: contiene ${p}`);

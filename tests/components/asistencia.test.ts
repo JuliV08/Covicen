@@ -22,6 +22,6 @@ describe('/asistencia/', () => {
     expect(html).not.toMatch(/<button type="submit" disabled/);
     expect(html).toContain('Armar el texto para copiar');
     expect(html).toContain('data-copiar-texto');
-    expect(html).not.toContain('Los formularios se habilitan');
+    expect(html).not.toContain('Este formulario se habilita');
   });
 });

@@ -79,7 +79,7 @@ describe('esquemaContacto', () => {
     email: { general: null, rrhh: null, proveedores: null, etica: null }, redes: {},
     enlaces: { telepase: 'https://www.telepase.com.ar/', oficinaVirtual: null, atencionDnv: null },
     canales: [{ id: 'emergencias-140', nombre: 'Emergencias 140', tipo: 'telefono', valor: '140', disponibilidad: '24 horas, los 365 días', acuse: 'Inmediato', respuesta: 'Inmediata', fuente: 'PETG art. 58 y 59' }],
-    cuentaRegularizacion: null,
+    cuentaRegularizacion: null, formularioCrm: null,
   };
   it('admite los canales comerciales en null, pero el 140 es obligatorio', () => {
     expect(esquemaContacto.parse(vacio).whatsapp.numero).toBeNull();
@@ -89,13 +89,30 @@ describe('esquemaContacto', () => {
     expect(() => esquemaContacto.parse({ ...vacio, whatsapp: { numero: '+54 9 351' } })).toThrow();
     expect(() => esquemaContacto.parse({ ...vacio, canales: [{ ...vacio.canales[0], tipo: 'fax' }] })).toThrow();
   });
+  // El `script` del formulario del CRM termina siendo código que corre en /contacto/: solo pasa un cargador de
+  // formularios del CDN de Bitrix24, y el código, con la forma exacta que entrega Bitrix.
+  it('el formulario del CRM acepta el código de Bitrix24 tal cual y nada que se le parezca', () => {
+    const crm = { codigo: 'inline/1/t2c138', script: 'https://cdn.bitrix24.es/b39125905/crm/form/loader_1.js' };
+    expect(esquemaContacto.parse({ ...vacio, formularioCrm: crm }).formularioCrm).toEqual(crm);
+    for (const script of [
+      'http://cdn.bitrix24.es/b39125905/crm/form/loader_1.js',
+      'https://cdn.bitrix24.es.ataque.com/b39125905/crm/form/loader_1.js',
+      'https://cdn.bitrix24.xyz/b39125905/crm/form/loader_1.js',
+      'https://cdn.bitrix24.es/b39125905/crm/form/loader_1.js?x=1',
+      "https://cdn.bitrix24.es/b39125905/crm/form/loader_1.js');alert(1);//",
+      'https://ataque.com/crm/form/loader_1.js',
+    ]) expect(() => esquemaContacto.parse({ ...vacio, formularioCrm: { ...crm, script } }), script).toThrow();
+    for (const codigo of ['click/1/t2c138', 'inline/1/t2c138"', 'inline/1']) {
+      expect(() => esquemaContacto.parse({ ...vacio, formularioCrm: { ...crm, codigo } }), codigo).toThrow();
+    }
+  });
 });
 
 describe('esquemaEmpresa', () => {
   const base = {
     marca: 'Covicen', razonSocial: null, cuit: null, domicilioLegal: null, domicilioComercial: null, constanciaUrl: null, polizaRc: null, enFormacion: true,
     consorcio: [{ nombre: 'AFEMA S.A.', descripcion: 'Constructora vial.' }],
-    concesion: { tramo: 'Centro', km: 679.03, rutas: ['RN 9'], provincias: ['Córdoba'], plazoAnios: 20, prorrogaAnios: 10, inicioOperacion: '2026-10-05', adjudicacion: { fecha: '2026-08-24', resolucion: 'R', url: 'https://x' }, tarifaOfertadaSinIva: 1399, tarifaTopeSinIva: 3200, tramosEtapa: 8 },
+    concesion: { tramo: 'Centro', km: 679.03, rutas: ['RN 9'], provincias: ['Córdoba'], plazoAnios: 20, prorrogaAnios: 10, inicioOperacion: '2026-10-07', adjudicacion: { fecha: '2026-08-24', resolucion: 'R', url: 'https://x' }, tarifaOfertadaSinIva: 1399, tarifaTopeSinIva: 3200, tramosEtapa: 8 },
   };
   it('exige consorcio no vacío y ya no acepta descriptor', () => {
     expect(() => esquemaEmpresa.parse({ ...base, consorcio: [] })).toThrow();
@@ -103,7 +120,7 @@ describe('esquemaEmpresa', () => {
   });
   it('la póliza de RC es opcional (null) y, si viene, exige aseguradora, número y vigencia', () => {
     expect(esquemaEmpresa.parse(base).polizaRc).toBeNull();
-    expect(() => esquemaEmpresa.parse({ ...base, polizaRc: { aseguradora: 'X Seguros', numero: '1', vigenciaHasta: '2027-10-05', url: null } })).not.toThrow();
+    expect(() => esquemaEmpresa.parse({ ...base, polizaRc: { aseguradora: 'X Seguros', numero: '1', vigenciaHasta: '2027-10-07', url: null } })).not.toThrow();
     expect(() => esquemaEmpresa.parse({ ...base, polizaRc: { aseguradora: 'X Seguros' } })).toThrow();
   });
 });
