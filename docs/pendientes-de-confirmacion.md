@@ -1,7 +1,7 @@
 # Qué falta confirmar, y a quién preguntárselo
 
-**Fecha:** 20 de septiembre de 2026, actualizado el 24/09, el 25/09 y el 28/09 (el inicio de actividades pasó al 7 de
-octubre) · **Sale de:** la call con el gerente del 20/09 y las correcciones del 24/09 (el 13 y la pregunta del precio
+**Fecha:** 20 de septiembre de 2026, actualizado el 24/09, el 25/09, el 28/09 (el inicio de actividades pasó al 7 de
+octubre) y el 01/10 (lo que hay que pedirle a PREVI por el formulario de Bitrix24, primera sección) · **Sale de:** la call con el gerente del 20/09 y las correcciones del 24/09 (el 13 y la pregunta del precio
 del primer día). El formulario de TelePASE, que se
 agregó el 24/09, quedó resuelto el 25/09.
 
@@ -14,6 +14,50 @@ nada de la web para hacerla.
 Cuando llegue una respuesta, el que carga el dato abre
 `C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`, **cambia un `false` por un `true`**, y la sección vuelve
 entera. No hay que tocar nada más.
+
+---
+
+## Para PREVI · el formulario de reclamos de Bitrix24 (01/10)
+
+Desde el 01/10 el formulario de reclamos, consultas y sugerencias de Contacto es el de Bitrix24, con el código que
+mandó PREVI. **Lo de adentro —los campos, la casilla de aceptación, el mensaje de «enviado»— se arma en el CRM, no en
+la web**: lo cambia PREVI y aparece solo, sin tocar nada de nuestro lado. Hoy tiene tres cosas que solo ellos pueden
+arreglar, y las dos primeras conviene resolverlas **antes** de que el sitio completo salga al público:
+
+**1 · No hay dónde escribir el reclamo.** El formulario pide Nombre, Apellido, E-mail y Teléfono, y nada más. El
+contrato de concesión exige un formulario de reclamos, consultas y sugerencias; el nuestro pedía además motivo, tema,
+ruta y kilómetro o estación, fecha del hecho, patente y el mensaje.
+
+> «¿Pueden sumar al formulario de Bitrix los campos Motivo (Reclamo / Consulta / Sugerencia) y Mensaje, obligatorios,
+> y como opcionales Ruta y kilómetro o estación, Fecha del hecho y Patente?»
+
+**2 · La casilla «Acepto los Términos de Uso» muestra el texto de ejemplo de Bitrix24, en inglés** («Our rules are
+straightforward…»: son las reglas de Bitrix para quien arma sitios con su sistema, no un consentimiento para el
+usuario), y **viene tildada de antemano**: un consentimiento lo tiene que dar el usuario, no venir puesto.
+
+> «¿Pueden reemplazar el texto de la casilla de aceptación por el de Covicen —"Acepto la política de privacidad", con
+> enlace a la política del sitio— y que venga sin tildar?»
+
+El enlace definitivo es `https://www.covicen.com.ar/privacidad/` cuando el sitio completo esté en el dominio; hasta
+entonces, `https://juliv08.github.io/Covicen/privacidad/`.
+
+**3 · El acuse con número de gestión.** La página de Contacto promete, como dice el contrato, que dentro de las 24
+horas el usuario recibe un acuse con un número para seguir el reclamo.
+
+> «Cuando entra un reclamo por el formulario, ¿el CRM le manda al usuario el acuse con número de gestión dentro de
+> las 24 horas? El e-mail hoy es opcional: si no lo carga, ¿por dónde le llega?»
+
+**Para que sepan (no hay que preguntar nada):**
+- **Los colores los pone la web**, con los de Covicen en el tema claro y en el oscuro. Lo que se elija como colores
+  en el diseño del CRM no se va a ver. El que venía (botón celeste con letra blanca) no llegaba al contraste mínimo.
+- **El formulario de TelePASE de Contacto sigue siendo el nuestro** (el contrato lo pide aparte del de reclamos). Si
+  PREVI arma otro en Bitrix para eso, con su código se cambia igual que este.
+
+- **A quién:** PREVI, que administra el Bitrix24 de Covicen (`covicen.bitrix24.es`).
+- **Dónde se cambia en la web, si alguna vez hace falta:** `C:\Users\Villex\dev\Covicen\src\content\contacto.json`,
+  `formularioCrm`. Los dos valores salen tal cual del código que entrega Bitrix. Con `null` vuelve el formulario propio.
+  Si cambia el código (`inline/1/t2c138`), hay que actualizarlo también en dos tests que lo fijan a propósito:
+  `tests/components/formulario-crm.test.ts` y `tests/components/contacto.test.ts`.
 
 ---
 

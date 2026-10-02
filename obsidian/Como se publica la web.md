@@ -10,6 +10,13 @@ Dónde vive `https://www.covicen.com.ar/`, cómo llega el código ahí y por qu�
 > reconstruye **GitHub Pages**, el sitio completo de revisión. Regla: **subir a `organizacion/main` es publicar en
 > producción**; se hace con el OK explícito de Juli y después de ver en un build local qué cambia en la portada. Lo que
 > sigue abajo es el estado del 19/09, antes de la mudanza (ver `docs/mudanza-de-repositorio.md`).
+>
+> **2026-10-01 — los dos remotos se desfasaron y pareció un bug.** El cambio del 28/09 (inicio el 7/10) se subió a
+> `organizacion/main` y no a `origin/main`. Producción decía 7; Pages, el sitio completo que revisa el equipo, siguió
+> diciendo 5, y el equipo lo reportó como «sigue habiendo fechas del 5». Se diagnosticó con `curl` contra los dos
+> sitios y `git log origin/main..HEAD` (3 commits atrás). **Regla:** un cambio que sale a uno de los dos remotos sale
+> también al otro, salvo decisión explícita; y ante un «sigue apareciendo», mirar primero qué remoto alimenta lo que
+> está mirando quien reporta.
 
 ## El hallazgo
 

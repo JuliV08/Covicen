@@ -1,6 +1,6 @@
 # Guía de revisión — web de Covicen
 
-**Al día al 28 de septiembre de 2026.** Empezá por «Lo que cambió el 28 de septiembre», «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
+**Al día al 1 de octubre de 2026.** Empezá por «Lo que cambió el 1 de octubre», «Lo que cambió el 28 de septiembre», «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
 
 Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/superpowers/plans/2026-09-13-actualizacion-web.md`, más la **revisión final del 14 y 15 de septiembre**) se hizo **sin pruebas visuales**: esta guía es la lista de lo que hay que mirar a mano, pantalla por pantalla, más lo que quedó oculto a propósito y cómo cargarlo.
 
@@ -12,6 +12,64 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 **Navegadores:** lo atado a scroll-driven animations (dibujo del mapa al scrollear, parallax del hero, fondo del header) anda en Chrome, Edge y Safari; en Firefox estable aparece ya dibujado o fijo.
 
 **Si tenés "reducir movimiento" activado en Windows** (Configuración › Accesibilidad › Efectos visuales): todo queda estático, **la cinta de avisos no desfila** (se recorre a mano, de costado) y el botón de pausa ni aparece, porque no hay nada que frenar. El cambio de tema también es instantáneo, sin la disolvencia. Si no usás esa opción, ignorá este punto.
+
+---
+
+## Lo que cambió el 1 de octubre — mirá esto primero
+
+Tres pedidos del equipo, en la rama `web-ajustes-2026-10-01`. Todo se ve en el sitio de revisión
+(https://juliv08.github.io/Covicen/) **recién cuando se publique** (ver el punto 3). Ya verificado por la máquina:
+`astro check` sin errores (189 archivos), **588 tests**, `verificar` 27 páginas sin fallos (JS 7,5 KB gz) y la portada
+de producción sin fallos; y dos pasadas de revisión aparte. Lo que sigue es lo que hay que mirar con los ojos.
+
+**1 · El formulario de reclamos de Contacto es el de Bitrix24 (PREVI).** En `/contacto/`:
+- A la derecha, donde estaba nuestro formulario, aparece el de Bitrix. Hoy viene **en dos pasos** (Página 1: Nombre y
+  Apellido; Página 2: E-mail, Teléfono y la casilla de aceptación): **así lo armó PREVI**, no es un error de la web
+  (ver abajo qué pedirles).
+- Miralo en **tema claro y en oscuro**: tiene que tomar los colores y la letra del sitio (fondo de la página, campos
+  como los nuestros, botón con el azul de Covicen), no quedar como un recuadro blanco pegado. Si algo se ve fuera de
+  lugar, mandame una captura: es lo único de esta tanda que no se pudo controlar sin mirarlo.
+- Tocá el enlace de la casilla de aceptación: se abre una ventana con el texto. También tiene que verse con los
+  colores del sitio. Y después de enviar, el cartel de «enviado» (o el de error) tiene que ir sobre el fondo de las
+  tarjetas, no sobre un verde o un blanco que encandile en el tema oscuro.
+- **Entrá a Contacto desde otra página, andá a Tarifas y volvé con el menú** (y también con el botón «atrás»): el
+  formulario tiene que estar siempre. A Contacto se entra con la página entera a propósito, porque el formulario de
+  Bitrix no se vuelve a armar si se llega sin recargar; vas a notar que esa página carga como una página nueva.
+- Debajo del formulario: los plazos (acuse en 24 horas, respuesta en 5 días hábiles) y el aviso de que los datos van
+  al sistema de atención de Covicen (Bitrix24), con enlace a Privacidad.
+- **Si mandás uno de prueba, avisale a PREVI**: llega al CRM de verdad.
+- **Con un bloqueador de anuncios** (uBlock y parecidos) puede que no cargue: a los 4 segundos aparece un recuadro
+  punteado que lo explica y da el 140. Sin bloqueador, ese recuadro no se tiene que ver nunca.
+- El de **TelePASE**, más abajo en la misma página, **sigue siendo el nuestro**, apagado con su aviso.
+- **Privacidad** tiene una sección nueva, «Formulario de Contacto»: cuenta que es Bitrix24 y qué anota en el
+  navegador (la página, desde dónde llegaste, un identificador, y tu nombre, apellido, e-mail y teléfono para
+  completarlos la próxima vez). Antes decía que el sitio no usaba nada de seguimiento, y con el formulario de Bitrix
+  eso dejó de ser cierto en esa página.
+- **La home**: el bloque «¿Consultas, reclamos, propuestas?» decía «Escribinos por WhatsApp: completá el formulario…
+  y el motivo». Ahora: «Dejanos tu consulta, reclamo o sugerencia en el formulario de Contacto…».
+- **El aviso de los formularios apagados** (TelePASE, Trámites, Proveedores) pasó de «Los formularios se habilitan…» a
+  «Este formulario se habilita…»: en Contacto quedaba debajo de uno que ya anda.
+- **Lo que hay que pedirle a PREVI** (falta el campo para escribir el reclamo, la casilla de aceptación muestra un
+  texto de ejemplo de Bitrix en inglés y viene tildada, y el acuse con número de gestión), con las preguntas
+  redactadas: `C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`, primera sección.
+
+**2 · En la vía se paga solo con medios electrónicos, con POS.**
+- **Medios de pago**: la tercera tarjeta ahora es «Pago electrónico en la vía — Solo con medios electrónicos, en las
+  terminales POS de las vías habilitadas…». Decía «Contado en la vía — Efectivo o medios electrónicos».
+- **Tarifas** y la página de cada **estación**: la columna de la derecha de la tabla se llama «Pago electrónico en la
+  vía» (decía «Pago electrónico o manual»).
+- La palabra «efectivo» no está en ninguna página, y el build ahora falla si alguien la vuelve a escribir.
+
+**3 · El 5 de octubre que seguía apareciendo.** En el código no quedaba ninguno: se había cambiado el 28/09 y
+**producción ya dice 7** (www.covicen.com.ar: «Operación desde el 7 de octubre de 2026»). Lo que el equipo ve con el
+5 es **el sitio de revisión de GitHub Pages, que nunca recibió ese cambio**: se publicó en producción y no en Pages.
+Se arregla publicando esta rama en Pages. Lo único que quedaba con el 5 eran datos de prueba internos y tres
+renglones de esta guía, y se pasaron al 7.
+
+**De paso:** dos tests fallaban según la fecha. Uno prohibía «de octubre» en la home y el pie dice «Última
+actualización: 1 de octubre»: falló hoy. El otro, el de la portada de producción, prohibía «5 de octubre», y «15 de
+octubre» lo contiene: iba a fallar el 5, el 15 y el 25, y con él el build de producción, que corre los tests. Los dos
+miran ahora el contenido, no la fecha del pie.
 
 ---
 
@@ -74,8 +132,8 @@ la derecha) y que no haya quedado un número suelto en ningún lado.
 
 **Portada `/`**
 - Título: «Viajá por nuestras rutas en el centro del país.» Debajo, el párrafo con los **679 km** y sin la fecha de
-  inicio. Tampoco está la pastilla de la cuenta regresiva, ni el aviso de la cinta de abajo del hero que decía «Covicen
-  opera el Tramo Centro desde el 5 de octubre de 2026»: las tres cosas anunciaban la misma fecha sobre la foto. En la
+  inicio. Tampoco está la pastilla de la cuenta regresiva, ni el aviso de la cinta de abajo del hero que anunciaba
+  desde cuándo opera Covicen el Tramo Centro: las tres cosas anunciaban la misma fecha sobre la foto. En la
   cinta quedan los avisos del 140 y del cuadro tarifario.
 - Mirá el título en **celular**: es más corto que el anterior, así que el hero puede verse con más aire. Revisá que
   se lea bien sobre la foto en los dos temas (de día y de noche).
@@ -164,7 +222,7 @@ Nada más.
 - El texto de la sección El tramo pasó a ser el mismo que el gerente dio por perfecto en la página El tramo.
 - **El título y el párrafo grandes** de la portada son nuevos: «679 kilómetros de rutas nacionales, bajo una
   misma responsabilidad», con el párrafo institucional debajo. Los elegiste vos con tu equipo sobre tres
-  opciones. Los 679 km y la fecha del 5 de octubre salen del dato, no escritos a mano.
+  opciones. Los 679 km y la fecha de inicio salen del dato, no escritos a mano.
 
 ### 3 · Obras: escondida, no borrada
 
@@ -374,7 +432,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 > **Ojo:** lo de abajo describe cómo quedó en septiembre. Las tandas del 20/09 y del 24/09 cambiaron la portada: leé primero «Lo que cambió el 24 de septiembre» y «Lo que cambió el 20 de septiembre», arriba de todo.
 
-- **Hero fijo** (cambió el 15/09/2026, pedido tuyo): volanta, el título "Las rutas del centro del país tienen quien responda", el párrafo con "679,03 km sobre RN 9, RN 19, RN 34", los botones Ver tarifas / Conocer el tramo y la cuenta regresiva al 5 de octubre. **No rota nada**: el carrusel que alternaba esto con las novedades destacadas se sacó. Las destacadas siguen en la home, en la sección Novedades. **No hay popup** de bienvenida a propósito.
+- **Hero fijo** (cambió el 15/09/2026, pedido tuyo): volanta, el título "Las rutas del centro del país tienen quien responda", el párrafo con "679,03 km sobre RN 9, RN 19, RN 34", los botones Ver tarifas / Conocer el tramo y la cuenta regresiva a la fecha de inicio. **No rota nada**: el carrusel que alternaba esto con las novedades destacadas se sacó. Las destacadas siguen en la home, en la sección Novedades. **No hay popup** de bienvenida a propósito.
 - Lo que hay que mirar es justamente que **no se mueva**: quedate medio minuto en la home y lo único que se tiene que mover es la foto (avance lento) y la cuenta regresiva.
 - Abajo del todo del hero, pegada al borde, está la **cinta de avisos**. Fijate que no le tape nada al texto ni a la cuenta regresiva, ni en la compu ni en el celular.
 - **Foto del hero, una por tema** (nueva, 15/09/2026): la nocturna en tema oscuro y la diurna en tema claro, mismo encuadre. Parallax 2.5D en desktop (movete con el mouse); en el celular, la foto con un zoom lento.
@@ -464,7 +522,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 > **Ojo:** lo de abajo describe cómo quedó en septiembre. Las tandas del 20/09, del 24/09 y del 25/09 cambiaron medios de pago: leé primero «Lo que cambió el 25 de septiembre», «Lo que cambió el 24 de septiembre» y «Lo que cambió el 20 de septiembre», arriba de todo.
 
-- Tres modalidades del pliego con fuente: Prepago con TelePASE · Pospago con TelePASE · Contado en la vía (Carcarañá, James Craik, Franck).
+- Tres modalidades del pliego con fuente: Prepago con TelePASE · Pospago con TelePASE · Pago electrónico en la vía, con terminales POS (Carcarañá, James Craik, Franck). Desde el 01/10/2026 no menciona efectivo.
 - **TelePASE (01)**: "Gratis, y en todas las estaciones" (adhesión, dispositivo, colocación, renovación sin costo, PETG 50.5); "Cómo adherirte" con botón a TelePASE; "Dónde se coloca" con texto genérico hasta que Covicen defina los sectores (`servicios.colocacionTelepase` por estación).
 - **Free Flow (02)**: Leones, San Francisco, Totoras: pórticos sin barreras; cobran cuando Vialidad las habilite.
 - **Autogestión** (hasta el 24/09, «Mi cuenta»): aparece porque desde el 25/09 está cargada `contacto.enlaces.oficinaVirtual` (la web de Telepeaje Plus), con el botón "Entrar a Autogestión". Sin esa URL no se muestra (antes decía "Se habilita con la toma de posesión").
