@@ -1,6 +1,6 @@
 # Home — Covicen
 
-Landing fundacional de **Covicen**, la nueva concesionaria del **Tramo Centro** de la Red Federal de Concesiones (**679,03 km** según el pliego sobre RN 9, 19 y 34; Córdoba y Santa Fe). Arranca a operar el **7 de octubre de 2026** (hasta el 28/09 se decía el 5). La sociedad todavía está **en formación**: no tiene CUIT.
+Landing fundacional de **Covicen**, la nueva concesionaria del **Tramo Centro** de la Red Federal de Concesiones (**679,03 km** según el pliego sobre RN 9, 19 y 34; Córdoba y Santa Fe). Arranca a operar el **7 de octubre de 2026** (hasta el 28/09 se decía el 5). La sociedad es **COVICEN S.A.** (inscripta; desde el 02/10/2026 el sitio dejó de decir «en formación»); falta que llegue el número de CUIT.
 
 Este es el vault del proyecto (vive en el repo, viaja con el código). El puntero desde el cerebro global está en `C:\Users\Villex\Obsidian\Proyectos\Covicen.md`.
 
@@ -23,6 +23,14 @@ Este es el vault del proyecto (vive en el repo, viaja con el código). El punter
 - Manual de marca: `docs/marca/Logo Covicen 2.pdf` · Prompts de imágenes: `docs/marca/prompts-imagenes.md`
 
 ## Estado
+- **2026-10-02, segunda tanda (12 puntos más de la misma reunión, rama `web-ajustes-2026-10-02b`)**
+  - **Logo en pill** en el header: con el fondo traslúcido, algo oscuro pasando por detrás lo dejaba ilegible. Lo oscuro era **la cinta de avisos**: en los primeros px de scroll el header todavía es casi transparente y la cinta pasa por detrás (reproducido con una captura en tema claro a 40 px de scroll). `header-foto.test.ts` lo medía solo contra la foto del hero (4,95:1) y por eso no lo vio: **otra vez un test que modelaba una sola de las cosas que pasan por detrás**.
+  - **TelePASE y Autogestión centrados**: a 1x Chrome redondea la línea base y el texto quedaba 2 px alto (9 px arriba contra 13 abajo), aunque por las métricas de Archivo (878/-210, cap 686) daba centrado y a 3x medía exacto. Se centra por las mayúsculas con `text-box: trim-both cap alphabetic`. **Para verificar alineaciones, medir a 1x**: la alta resolución esconde el redondeo. Se midió con una captura de Chrome sin ventana y `sharp`, a pedido de Juli, que lo había visto.
+  - **COVICEN S.A.** en lugar de «Sociedad en formación» (`empresa.razonSocial`, `enFormacion: false`); falta el CUIT. Privacidad ya no arma «CUIT null».
+  - **Políticas y Transparencia escondidas** como `/obras/` (ruta rest + interruptor), y fuera del menú y del pie por `src/lib/paginas.ts`: el gerente pidió que «los ajustes se acomoden en el footer». Se eliminó «Datos registrales» de Transparencia.
+  - **Sin plazos de respuesta en ningún lado** (lo eligió Juli): `verificar.ts` rechaza las frases de plazo.
+  - **Proveedores por el CRM** (mismo formulario de Bitrix; `recarga.ts` suma `proveedores`), **estado de la traza escondido** (`estadoDeLaTraza`), **formulario de trámites escondido** con un botón a Contacto (`formularioTramites`), **velocidad sin números**.
+  - **Choques con el pliego, ya son seis**: servicios onerosos, plazos (58 y 61.6), Transparencia (normativa y póliza, 61.6), el estado de la traza (61.6) y el formulario de trámites (61.5 c). Primera sección de `docs/pendientes-de-confirmacion.md`.
 - **2026-10-02 (los 14 puntos de la revisión con el gerente del 01/10, rama `web-ajustes-2026-10-02`)**
   - **Quiénes somos**: texto de arriba nuevo con Corresur de ejemplo (orden, no frases: `pnpm originalidad` da 0 contra su institucional); se esconden «Qué asume Covicen» y «Quién nos controla»; las tarjetas del consorcio llevan a la web de cada empresa (`empresa.consorcio[].url`). La captura del punto 2 venía repetida: se tomó la sección que está entre las dos marcadas.
   - **Servicios**: bajada nueva; se esconden «Servicios que se cobran» y la tabla de canales; sale el alcance de los móviles.

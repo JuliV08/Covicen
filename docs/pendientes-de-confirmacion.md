@@ -2,7 +2,7 @@
 
 **Fecha:** 20 de septiembre de 2026, actualizado el 24/09, el 25/09, el 28/09 (el inicio de actividades pasó al 7 de
 octubre), el 01/10 (lo que hay que pedirle a PREVI por el formulario de Bitrix24) y el 02/10 (lo que se escondió en la
-reunión con el gerente del 01/10, primera sección) · **Sale de:** la call con el gerente del 20/09 y las correcciones del 24/09 (el 13 y la pregunta del precio
+reunión con el gerente del 01/10, en dos tandas: primera sección) · **Sale de:** la call con el gerente del 20/09 y las correcciones del 24/09 (el 13 y la pregunta del precio
 del primer día). El formulario de TelePASE, que se
 agregó el 24/09, quedó resuelto el 25/09.
 
@@ -29,14 +29,32 @@ dos de los pedidos de esta reunión van contra eso:
 - **«Servicios que se cobran»** (`serviciosConCosto`): el 61.6 pide los servicios gratuitos **y los onerosos**. Con
   la sección escondida, la web no informa ningún servicio con costo (mecánica general y remolque más allá del punto
   gratuito, PETG 55).
-- **La tabla de canales sin acuse ni respuesta**: el 61.6 pide los canales **con sus características y plazos**. Los
-  plazos generales siguen en Contacto (en los pasos de cómo hacer un reclamo y al lado del formulario), pero ya no
-  canal por canal (el 0800 y el 140 tienen acuse inmediato; el resto, 24 horas). La tabla de Servicios, además, se
-  escondió entera (`canalesEnServicios`); sigue en Contacto y en Emergencias.
+- **La tabla de canales sin acuse ni respuesta**: el 61.6 pide los canales **con sus características y plazos**. En
+  la segunda tanda los plazos salieron de todo el sitio (abajo). La tabla de Servicios, además, se escondió entera
+  (`canalesEnServicios`); sigue en Contacto y en Emergencias.
 
-> «En la reunión se pidió esconder los servicios con costo y los plazos de la tabla de canales. El contrato de
-> concesión (PETG 61.6) obliga a publicar las dos cosas. ¿Lo dejamos así igual, o los volvemos a mostrar antes del 7
-> de octubre?»
+**Segunda tanda (también del 02/10), cuatro choques más:**
+
+- **Los plazos de respuesta, fuera de todo el sitio.** El gerente pidió «bajarle el compromiso de los días de
+  respuesta» y Juli eligió sacarlos de todos lados: la pregunta frecuente, la tarjeta de Atención al usuario de
+  Servicios (también «el 0800 te confirma en el momento») y Contacto (los pasos, la línea al lado de los formularios y
+  la descripción para buscadores). El contrato los fija igual (PETG 58: acuse en 24 horas, respuesta en 5 días
+  hábiles) y el 61.6 pide publicarlos. Los valores siguen en `contacto.json`, y el build falla si vuelven a aparecer
+  escritos.
+- **Transparencia escondida entera** (`transparencia`): ahí estaban la normativa aplicable para descargar y la póliza
+  de responsabilidad civil, que el 61.6 pide publicar. En la reunión el propio gerente dudó con la póliza («si vas a
+  comentar toda la página, esto igual para mí tendría que estar»). **Conviene confirmar con él la póliza en
+  particular**: si la quiere publicada, se puede mostrar sola, sin el resto de Transparencia.
+- **El estado de la traza, escondido** (`estadoDeLaTraza`): el 61.6 pide un mapa interactivo con el estado de la
+  ruta (tránsito, obras, incidentes). Hoy solo había datos de ejemplo, así que en la práctica no cambia nada hasta que
+  Operaciones cargue información real.
+- **El formulario de la Guía de trámites, escondido** (`formularioTramites`): el PETG 61.5 pide tres formularios, y
+  el c) es el de trámites. En su lugar, la guía manda a Contacto (al CRM), que es lo que quiso el gerente: «resumí todo
+  en el contacto».
+
+> «En la reunión se pidió esconder los servicios con costo, los plazos de respuesta, la página de Transparencia
+> (normativa y póliza de responsabilidad civil), el estado de la traza y el formulario de trámites. El contrato de concesión (PETG 58, 61.5 y
+> 61.6) obliga a publicar todo eso. ¿Lo dejamos así igual, o volvemos a mostrar algo antes del 7 de octubre?»
 
 - **A quién:** el gerente.
 
@@ -87,8 +105,32 @@ mandarse por correo a esa casilla (también aparecería en el pie de página).
 - **A quién:** el gerente o PREVI, si atienden esa casilla.
 - **Dónde se carga:** `atencionUsuario` en `C:\Users\Villex\dev\Covicen\src\content\contacto.json`.
 
+**6 · El CUIT y los domicilios de COVICEN S.A.** Desde el 02/10 el pie dice «COVICEN S.A.» en lugar de «Sociedad en
+formación». El bloque «Datos registrales» del pie aparece solo cuando están la razón social, el CUIT y el domicilio
+legal; con el CUIT, además, se puede cargar el QR de Data Fiscal de ARCA.
+
+> «¿Cuál es el CUIT de COVICEN S.A. y sus domicilios legal y comercial? ¿Nos pasan la constancia de inscripción de ARCA
+> (para el QR de Data Fiscal)?»
+
+- **A quién:** administración.
+- **Dónde se carga:** `cuit`, `domicilioLegal`, `domicilioComercial` y `constanciaUrl` en
+  `C:\Users\Villex\dev\Covicen\src\content\empresa.json`; el QR, en `C:\Users\Villex\dev\Covicen\public\qr-afip.png`.
+
+**7 · Cosas que el gerente dijo en la reunión y quedaron en duda** (no se tocaron):
+- La novedad «Qué cambia el 7 de octubre» dice «Se suman Leones, San Francisco y Totoras… cobran cuando Vialidad
+  Nacional las habilite». El gerente: «no sé si se suman, habría que revisar».
+- El mapa de El tramo marca área de descanso en las tres estaciones operativas. El gerente: «descanso no hay en
+  ningún lado»; Fabi le dijo que en las operativas sí.
+
+> «¿Se confirma que Leones, San Francisco y Totoras se suman al tramo? ¿Hay áreas de descanso en Carcarañá, James Craik y
+> Franck?»
+
+- **A quién:** el gerente y Operaciones.
+
 **Lo que se escondió sin que falte un dato** (lo pidió el gerente, no hay nada que preguntar):
-«Qué asume Covicen» y «Quién nos controla» en Quiénes somos (`queAsumimos`, `quienNosControla`).
+«Qué asume Covicen» y «Quién nos controla» en Quiénes somos (`queAsumimos`, `quienNosControla`); la página de
+Políticas («no es para este momento»: hace falta una consultoría para escribirlas; `politicas`); y el estado de la
+traza de El tramo, que hoy son datos de ejemplo («comentar hasta que tengamos info»; `estadoDeLaTraza`).
 
 ---
 
@@ -121,6 +163,20 @@ horas el usuario recibe un acuse con un número para seguir el reclamo.
 
 > «Cuando entra un reclamo por el formulario, ¿el CRM le manda al usuario el acuse con número de gestión dentro de
 > las 24 horas? El e-mail hoy es opcional: si no lo carga, ¿por dónde le llega?»
+
+**4 · Proveedores** (02/10). El registro de proveedores también pasó a ser este formulario (el mismo código). El CRM
+recibe la dirección de la página desde la que se mandó, así que ya se pueden separar, pero el gerente pidió algo más
+claro: «ver con PREVI de agregar uno tipo "otros" o "proveedores", un tracker denominado proveedores».
+
+Ojo: mientras el formulario no tenga el campo del mensaje (punto 1), un proveedor tampoco puede decir su empresa, su
+rubro ni qué ofrece; el formulario propio pedía las tres cosas.
+
+> «¿Pueden sumar en Bitrix una forma de separar a los proveedores —un formulario propio o un tracker
+> "Proveedores"—, con campos para la empresa, el rubro y qué ofrecen? Si arman un formulario aparte, pásennos su código.»
+
+**5 · El teléfono arranca con +39 (Italia).** Se vio en la reunión: el campo del teléfono propone el código de otro país.
+
+> «¿Pueden configurar el campo Teléfono para Argentina (+54), con el formato de los celulares de acá?»
 
 **Para que sepan (no hay que preguntar nada):**
 - **Los colores los pone la web**, con los de Covicen en el tema claro y en el oscuro. Lo que se elija como colores

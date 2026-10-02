@@ -1,6 +1,6 @@
 # Guía de revisión — web de Covicen
 
-**Al día al 2 de octubre de 2026.** Empezá por «Lo que cambió el 2 de octubre», «Lo que cambió el 1 de octubre», «Lo que cambió el 28 de septiembre», «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
+**Al día al 2 de octubre de 2026.** Empezá por «Lo que cambió el 2 de octubre, segunda tanda», «Lo que cambió el 2 de octubre», «Lo que cambió el 1 de octubre», «Lo que cambió el 28 de septiembre», «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
 
 Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/superpowers/plans/2026-09-13-actualizacion-web.md`, más la **revisión final del 14 y 15 de septiembre**) se hizo **sin pruebas visuales**: esta guía es la lista de lo que hay que mirar a mano, pantalla por pantalla, más lo que quedó oculto a propósito y cómo cargarlo.
 
@@ -15,7 +15,54 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 
 ---
 
-## Lo que cambió el 2 de octubre — mirá esto primero
+## Lo que cambió el 2 de octubre, segunda tanda — mirá esto primero
+
+Los 12 puntos de la segunda tanda de la reunión con el gerente, en la rama `web-ajustes-2026-10-02b`. Leé antes la
+primera sección de `C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`: tres de estos pedidos chocan con
+el contrato (plazos de respuesta, Transparencia y el formulario de trámites).
+
+**Arriba de todo**
+- **El logo va en una píldora** (punto 1), como las opciones del menú: ya no se pierde cuando pasa algo oscuro por
+  detrás. Lo oscuro era la cinta de avisos: en tema claro, bajá apenas en cualquier página interna (Servicios,
+  Tarifas; los primeros centímetros de scroll, cuando el encabezado todavía es transparente) y mirá el logo mientras la
+  cinta pasa por atrás. En la home la cinta va abajo de la foto y no pasa por ahí.
+- **TelePASE y Autogestión con el texto centrado** (lo que marcaste hoy). A tamaño normal de pantalla el navegador
+  redondeaba la línea del texto y quedaba 2 píxeles alto; ahora se centra por la altura de las mayúsculas.
+
+**Pie de página**
+- Abajo dice **«COVICEN S.A. ·»** donde decía «Sociedad en formación» (punto 2). El bloque «Datos registrales» va a
+  aparecer solo cuando carguemos el CUIT y el domicilio (está en pendientes).
+- En la columna Empresa **ya no están Políticas ni Transparencia** (punto 6): lo que se esconde sale también del pie.
+  Tampoco están en el menú «Nosotros».
+
+**Páginas escondidas** (puntos 3 y 4): **Políticas** y **Transparencia** no se generan; si alguien entra por la
+dirección, ve la página de «no encontrada». En Transparencia se eliminó además la sección «Datos registrales» (punto
+5), para cuando vuelva. La novedad «Qué cuadro tarifario rige» ya no enlaza a Transparencia.
+
+**Plazos de respuesta** (punto 7, elegiste sacarlos en todos lados): ningún texto dice ya en cuánto tiempo se
+responde. Mirá la pregunta «¿Cómo hago un reclamo o una consulta?», la tarjeta Atención al usuario de Servicios (ya no
+dice «el 0800 te confirma en el momento») y Contacto: el paso 2 dice «Te confirmamos que lo recibimos, con un número
+para seguirlo» y el 3 «Con fundamento, por el mismo medio por el que nos escribiste». Debajo de los formularios ya no va
+la línea de los plazos, y el título de los pasos es «Cuatro pasos.».
+
+**Proveedores** (punto 8): el formulario es el de Bitrix, el mismo de Contacto. Como en Contacto, la página se carga
+entera aunque llegues desde el menú. Lo que hay que pedirle a PREVI para separar a los proveedores está en pendientes.
+
+**El tramo** (punto 9): sin el bloque «Estado de la traza», sin el cartel de datos de ejemplo y sin los marcadores de
+cortes en el mapa. Vuelve cuando haya información real.
+
+**El enlace «Servicios al usuario: gratuitos y con costo»** (punto 10) ya se había cambiado en la primera tanda: dice
+«Servicios al usuario».
+
+**Guía de trámites** (punto 11): sin «Iniciá tu trámite». Al final queda «¿Tenés una consulta sobre un trámite?» con
+un botón a Contacto.
+
+**Seguridad vial** (punto 12): la tarjeta Velocidad dice «Respetá las velocidades indicadas, y andá más despacio con
+lluvia, viento o niebla». Sin números.
+
+---
+
+## Lo que cambió el 2 de octubre
 
 Los 14 puntos de la revisión con el gerente del 1 de octubre, en la rama `web-ajustes-2026-10-02`. Lo escondido se
 vuelve a mostrar con un `true` en `C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`. Antes de mirar, leé la primera
