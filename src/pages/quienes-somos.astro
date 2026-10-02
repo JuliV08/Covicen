@@ -1,5 +1,5 @@
 ---
-import { ExternalLink } from '@lucide/astro';
+import { ArrowUpRight, ExternalLink } from '@lucide/astro';
 import { Image } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
 import ImagenAtmosfera from '@/components/ilustraciones/ImagenAtmosfera.astro';
@@ -7,10 +7,21 @@ import Mojon from '@/components/ui/Mojon.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
 import { imagenInstitucional } from '@/lib/atmosfera';
+import { alternarFondos } from '@/lib/fondos';
 import { fechaLarga, numero } from '@/lib/formato';
+import { publicado } from '@/lib/publicado';
 const [e, tramo] = await Promise.all([datos.empresa(), datos.tramo()]);
 const c = e.concesion;
 const organigrama = imagenInstitucional('organigrama');
+const [fAsumimos, fControla, fConsorcio, fOrganigrama] = alternarFondos([publicado.queAsumimos, publicado.quienNosControla, true, Boolean(organigrama)]);
+const enumerar = (xs: string[]) => xs.join(', ').replace(/, ([^,]*)$/, ' y $1');
+const rutas = `las rutas nacionales ${enumerar(c.rutas.map((r) => r.replace(/^RN /, '')))}`;
+// Texto nuevo del 02/10/2026 (reunión con el gerente del 01/10): «redactarla usando de ejemplo lo que dice Corresur,
+// no copiándolos». De Corresur se tomó el orden —primero para qué sirve una ruta, después quiénes somos, al final el
+// compromiso con quien viaja y con los pueblos del camino—, no las frases: pasa `pnpm originalidad` contra su página
+// institucional. El de antes era el de la licitación (resolución, «sociedad en formación»); la razón social y el
+// CUIT se siguen publicando en el pie cuando existan.
+const descripcion = `Covicen cuida ${numero(c.km)} km de ${rutas} entre Córdoba y Santa Fe: el Tramo Centro de la Red Federal de Concesiones. Detrás están ${enumerar(e.consorcio.map((x) => x.nombre))}.`;
 // Obligaciones tomadas del contrato de concesión del Tramo Centro y del contrato general.
 const asumimos = [
   ['Conservar los 679 km', 'Calzada, banquinas, señalización, iluminación, desagües y forestación de las tres rutas, todos los días de los veinte años.'],
@@ -23,12 +34,12 @@ const asumimos = [
   ['Cobrar solo lo habilitado', 'El peaje se cobra donde y cuando Vialidad Nacional lo autoriza, con el cuadro que ella aprueba. Las estaciones nuevas no cobran hasta estar construidas.'],
 ] as const;
 ---
-<Base titulo="Quiénes somos" descripcion="Covicen es la concesionaria del Tramo Centro de la Red Federal de Concesiones: 679 km de RN 9, RN 19 y RN 34 entre Córdoba y Santa Fe, adjudicados por la Resolución 1379/2026 a AFEMA S.A., Pablo Federico e Hijos S.A. y Guido Mogetta S.A. Qué asumimos y quién nos controla." migas={[{ nombre: 'Quiénes somos', href: '/quienes-somos' }]}>
-  <Seccion nivel="h1" eyebrow="Quiénes somos" titulo="La concesionaria del Tramo Centro." intro={`Covicen es la concesionaria del Tramo Centro de la Red Federal de Concesiones: ${numero(c.km, 2)} km de rutas nacionales entre Córdoba y Santa Fe que, desde el ${fechaLarga(c.inicioOperacion)} y por ${c.plazoAnios} años, pasan a estar bajo nuestra responsabilidad.`} class="pt-10">
+<Base titulo="Quiénes somos" {descripcion} migas={[{ nombre: 'Quiénes somos', href: '/quienes-somos' }]}>
+  <Seccion nivel="h1" eyebrow="Quiénes somos" titulo="La concesionaria del Tramo Centro." intro={`En Covicen sabemos que una ruta es mucho más que asfalto: es el camino de todos los días para ir a trabajar, llevar lo que se produce y volver a casa. Por eso, desde el ${fechaLarga(c.inicioOperacion)} y durante ${c.plazoAnios} años, cuidar nuestras rutas en el centro del país es nuestro trabajo.`} class="pt-10">
     <div class="revelar prose-covicen max-w-prose text-lg text-texto-2">
-      <p>Nacimos de tres empresas constructoras de Córdoba y Santa Fe —{e.consorcio.map((s) => s.nombre).join(', ').replace(/, ([^,]*)$/, ' y $1')}— que se unieron para presentarse a la licitación del Tramo Centro y la ganaron ofreciendo el peaje más bajo de los {c.tramosEtapa} tramos de la Etapa III. La adjudicación es la {c.adjudicacion.resolucion}, del {fechaLarga(c.adjudicacion.fecha)}.</p>
-      <p>No venimos a inaugurar una ruta: venimos a hacernos cargo de una que ya existe y que la gente usa todos los días. Las obligaciones de conservación, de inversión y de atención al usuario están en el contrato de concesión, y rigen desde el primer día.</p>
-      {e.enFormacion && <p>La sociedad está en formación. Cuando se complete la inscripción, publicamos acá y en el pie de página la razón social, el CUIT y los domicilios.</p>}
+      <p>Detrás de Covicen hay tres empresas constructoras de la región —{enumerar(e.consorcio.map((x) => x.nombre))}— que se unieron para hacerse cargo del Tramo Centro de la Red Federal de Concesiones: {numero(c.km, 2)} km de {rutas}, entre Córdoba y Santa Fe. Ganamos la licitación ofreciendo el peaje más bajo de los {c.tramosEtapa} tramos de la Etapa III.</p>
+      <p>Mantener la calzada en condiciones es solo una parte del trabajo. La otra es estar cerca de quienes viajan: que tengan auxilio cuando lo necesitan y que sepan a quién llamar.</p>
+      <p>Y queremos estar a la altura de los pueblos y las ciudades que crecieron al costado de estas rutas y viven de ellas.</p>
     </div>
     <div class="escalonar mt-12 grid gap-10 sm:grid-cols-2">
       <div style="--i: 0"><Mojon valor={c.plazoAnios} unidad="años" etiqueta={`de concesión desde el ${fechaLarga(c.inicioOperacion)}`} animar /></div>
@@ -36,13 +47,18 @@ const asumimos = [
     </div>
   </Seccion>
 
-  <Seccion eyebrow="Qué asumimos" titulo="Qué asume Covicen." intro="Obligaciones del contrato de concesión, exigibles y verificables por Vialidad Nacional." fondo="fondo-2">
+  {/* «Qué asume Covicen» y «Quién nos controla» se escondieron el 02/10/2026 (reunión con el gerente del 01/10). El
+      contenido queda acá: se vuelven a mostrar con su interruptor en src/lib/publicado.ts. */}
+  {publicado.queAsumimos && (
+  <Seccion eyebrow="Qué asumimos" titulo="Qué asume Covicen." intro="Obligaciones del contrato de concesión, exigibles y verificables por Vialidad Nacional." fondo={fAsumimos}>
     <ol class="escalonar grid gap-4 md:grid-cols-2">
       {asumimos.map(([t, d], i) => <li class="tarjeta p-6" style={`--i: ${i}`}><span class="eyebrow tabular-nums">0{i + 1}</span><h3 class="mt-3 text-xl">{t}</h3><p class="mt-2 text-texto-2">{d}</p></li>)}
     </ol>
   </Seccion>
+  )}
 
-  <Seccion eyebrow="Quién nos controla" titulo="Vialidad Nacional, con indicadores. Y vos, con este sitio.">
+  {publicado.quienNosControla && (
+  <Seccion eyebrow="Quién nos controla" titulo="Vialidad Nacional, con indicadores. Y vos, con este sitio." fondo={fControla}>
     <div class="revelar grid gap-8 md:grid-cols-2">
       <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 text-texto-2">
         <dt class="eyebrow">Régimen</dt><dd>Concesión de obra pública por peaje, inversión privada, sin subsidios del Estado.</dd>
@@ -58,16 +74,36 @@ const asumimos = [
       </div>
     </div>
   </Seccion>
+  )}
 
-  <Seccion eyebrow="El consorcio" titulo="Tres empresas de construcción vial." fondo="fondo-2">
+  <Seccion eyebrow="El consorcio" titulo="Tres empresas de construcción vial." fondo={fConsorcio}>
     <!-- Foto opcional (src/assets/atmosfera/consorcio.jpg). Sin archivo, el marco no se renderiza. -->
     <div class="revelar tarjeta mb-6 aspect-[21/9] w-full overflow-hidden p-0 empty:hidden"><div class="h-full w-full overflow-hidden rounded-[calc(var(--tarjeta-radio)-1.5px)]"><ImagenAtmosfera nombre="consorcio" alt="Tablero de un puente en construcción sobre la autopista, con una grúa torre al anochecer" sizes="(min-width: 80rem) 80rem, 100vw" /></div></div>
-    <ul class="escalonar grid gap-4 md:grid-cols-3">{e.consorcio.map((s, i) => <li class="tarjeta p-6" style={`--i: ${i}`}><h3 class="text-xl">{s.nombre}</h3><p class="mt-2 text-texto-2">{s.descripcion}</p></li>)}</ul>
+    {/* Cada tarjeta lleva a la web de su empresa (pedido del 01/10/2026). La tarjeta entera es el enlace: el nombre
+        accesible dice adónde va y que se abre en otra pestaña. */}
+    <ul class="escalonar grid gap-4 md:grid-cols-3">{e.consorcio.map((s, i) => (
+      <li class="tarjeta p-0" style={`--i: ${i}`}>
+        {s.url ? (
+          <a href={s.url} rel="noopener noreferrer" target="_blank" class="empresa flex h-full flex-col p-6 no-underline" aria-label={`${s.nombre}: su sitio web (se abre en otra pestaña)`}>
+            <div class="flex items-start justify-between gap-3"><h3 class="text-xl">{s.nombre}</h3><ArrowUpRight size={20} class="flecha mt-0.5 shrink-0 text-acento" aria-hidden="true" /></div>
+            <p class="mt-2 text-texto-2">{s.descripcion}</p>
+            <span class="mt-4 text-sm font-semibold text-acento">{new URL(s.url).hostname.replace(/^www\./, '')}</span>
+          </a>
+        ) : (
+          <div class="p-6"><h3 class="text-xl">{s.nombre}</h3><p class="mt-2 text-texto-2">{s.descripcion}</p></div>
+        )}
+      </li>
+    ))}</ul>
   </Seccion>
 
   {organigrama && (
-    <Seccion eyebrow="Organigrama" titulo="Cómo estamos organizados.">
+    <Seccion eyebrow="Organigrama" titulo="Cómo estamos organizados." fondo={fOrganigrama}>
       <figure class="revelar tarjeta overflow-hidden p-2"><Image src={organigrama} alt="Organigrama de Covicen" widths={[640, 1024, 1600]} sizes="(min-width: 80rem) 80rem, 100vw" class="h-auto w-full rounded-[calc(var(--tarjeta-radio)-1.5px)] bg-white" /></figure>
     </Seccion>
   )}
 </Base>
+<style>
+  .empresa .flecha { transition: transform var(--dur-ui) var(--ease-salida); }
+  .empresa:hover .flecha, .empresa:focus-visible .flecha { transform: translate(2px, -2px); }
+  .empresa:focus-visible { outline-offset: -2px; border-radius: inherit; }
+</style>

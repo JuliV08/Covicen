@@ -25,7 +25,8 @@ export const esquemaEmpresa = z.object({
   /** Póliza de responsabilidad civil (PETG 61.6). null hasta que Covicen la mande. */
   polizaRc: z.object({ aseguradora: z.string().min(1), numero: z.string().min(1), vigenciaHasta: fechaIso, url: url.nullable() }).nullable(),
   enFormacion: z.boolean(),
-  consorcio: z.array(z.object({ nombre: z.string().min(1), descripcion: z.string().min(1) })).min(1),
+  /** `url`: la web de cada empresa; la tarjeta de Quiénes somos lleva ahí (pedido del 01/10/2026). */
+  consorcio: z.array(z.object({ nombre: z.string().min(1), descripcion: z.string().min(1), url: url.nullable().optional() })).min(1),
   concesion: z.object({
     tramo: z.literal('Centro'),
     km: z.number().positive(),

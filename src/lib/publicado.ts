@@ -40,6 +40,26 @@ export const publicado = Object.freeze({
    *  no oficina virtual» y volvió el 25/09, cuando se definió (Autogestión de Telepeaje Plus). El PETG art. 61.5 b
    *  obliga a tenerlo desde la toma de posesión, haya o no oficina virtual: apagarlo de nuevo es incumplir el pliego. */
   formularioTelepase: true,
+
+  // Reunión con el gerente del 01/10/2026 (revisión de la web con el equipo). Los de esta tanda que dicen «a
+  // confirmar» o «falta solicitar» son datos sin confirmar y se esconden donde aparezcan; el resto son secciones
+  // que se pidió esconder. El pedido, en docs/pendientes-de-confirmacion.md.
+  /** Quiénes somos · «Qué asume Covicen»: las ocho obligaciones del contrato. Pedido de esconderla. */
+  queAsumimos: false,
+  /** Quiénes somos · «Quién nos controla»: régimen, plazo, adjudicación, control, misión y visión. Pedido de esconderla. */
+  quienNosControla: false,
+  /** Servicios · «Servicios que se cobran» (mecánica general, remolque más allá del punto gratuito). Pedido de esconderla. */
+  serviciosConCosto: false,
+  /** Servicios · la tabla «Canales y plazos de respuesta». Pedido de esconderla; la tabla sigue en Contacto y en
+   *  Emergencias. */
+  canalesEnServicios: false,
+  /** Que TelePASE no le cuesta nada al usuario (adhesión, dispositivo, colocación…): «a confirmar». Gobierna TODAS
+   *  las apariciones del dato: la tarjeta de Servicios, Medios de pago, la home y la pregunta frecuente. */
+  telepaseSinCosto: false,
+  /** Servicios · «Sanitarios públicos»: «a confirmar». */
+  sanitariosPublicos: false,
+  /** El canal de WhatsApp: «falta solicitar». La fila de la tabla de canales y las menciones que lo prometen. */
+  canalWhatsapp: false,
 });
 
 export type ClavePublicada = keyof typeof publicado;

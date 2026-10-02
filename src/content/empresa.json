@@ -8,9 +8,9 @@
   "polizaRc": null,
   "enFormacion": true,
   "consorcio": [
-    { "nombre": "AFEMA S.A.", "descripcion": "Constructora vial con base en Córdoba." },
-    { "nombre": "Pablo Federico e Hijos S.A.", "descripcion": "Construcción y obras de hormigón." },
-    { "nombre": "Guido Mogetta S.A.", "descripcion": "Construcción, obra pública, transporte y minería." }
+    { "nombre": "AFEMA S.A.", "descripcion": "Constructora vial con base en Córdoba.", "url": "https://www.afema.com.ar/" },
+    { "nombre": "Pablo Federico e Hijos S.A.", "descripcion": "Construcción y obras de hormigón.", "url": "https://pablofederico.com.ar/" },
+    { "nombre": "Guido Mogetta S.A.", "descripcion": "Construcción, obra pública, transporte y minería.", "url": "https://www.guidomogetta.com.ar/" }
   ],
   "concesion": {
     "tramo": "Centro",
