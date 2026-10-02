@@ -1,6 +1,6 @@
 # Guía de revisión — web de Covicen
 
-**Al día al 1 de octubre de 2026.** Empezá por «Lo que cambió el 1 de octubre», «Lo que cambió el 28 de septiembre», «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
+**Al día al 2 de octubre de 2026.** Empezá por «Lo que cambió el 2 de octubre», «Lo que cambió el 1 de octubre», «Lo que cambió el 28 de septiembre», «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
 
 Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/superpowers/plans/2026-09-13-actualizacion-web.md`, más la **revisión final del 14 y 15 de septiembre**) se hizo **sin pruebas visuales**: esta guía es la lista de lo que hay que mirar a mano, pantalla por pantalla, más lo que quedó oculto a propósito y cómo cargarlo.
 
@@ -15,7 +15,68 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 
 ---
 
-## Lo que cambió el 1 de octubre — mirá esto primero
+## Lo que cambió el 2 de octubre — mirá esto primero
+
+Los 14 puntos de la revisión con el gerente del 1 de octubre, en la rama `web-ajustes-2026-10-02`. Lo escondido se
+vuelve a mostrar con un `true` en `C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`. Antes de mirar, leé la primera
+sección de `C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`: dos de los pedidos chocan con el pliego.
+
+**Quiénes somos**
+- **Texto de arriba nuevo** (punto 1), con Corresur de ejemplo: arranca por para qué sirve una ruta («una ruta es mucho
+  más que asfalto…»), sigue con las tres empresas y cierra con el compromiso con quien viaja y con los pueblos del
+  camino. Sin la resolución ni «la sociedad está en formación». No comparte frases con Corresur ni con CVSA (lo controla
+  `pnpm originalidad`: ninguna secuencia de 6 palabras en común). Fijate si el tono le gusta al gerente: es más cálido que
+  el resto del sitio, a propósito, como el de Corresur.
+- **No están** «Qué asume Covicen» ni «Quién nos controla» (puntos 2 y 3). Ojo: la captura del punto 2 era la misma
+  que la del 1; por el orden de las capturas tomé la sección que está entre las dos, «Qué asume Covicen». Si era otra,
+  es un cambio de una línea.
+- **Las tres tarjetas del consorcio** (punto 4) llevan a la web de cada empresa, en otra pestaña. Al pasar el mouse, la
+  flechita de la esquina se corre; abajo dice la dirección (afema.com.ar, pablofederico.com.ar, guidomogetta.com.ar).
+
+**Servicios**
+- **Bajada nueva** (punto 7): «Estos son los servicios que tenés a disposición cuando viajás por nuestras rutas.»
+- **Sin** «Servicios que se cobran» (punto 5), sin las tarjetas «Sanitarios públicos» y «TelePASE sin costo» (punto
+  6) y sin la tabla de canales (punto 9). «Móviles de seguridad vial» ya no dice el alcance (punto 6).
+- **«TelePASE sin costo» quedó «a confirmar»**, así que el «gratis» se fue de todos lados, no solo de Servicios:
+  Medios de pago (la bajada, el título de la sección TelePASE, que ahora es «En todas las estaciones.», y «retirás el
+  dispositivo sin cargo»), la home (la tarjeta de Medios de pago) y la pregunta frecuente «¿Puedo pagar con TelePASE?
+  ¿Es obligatorio?», que no aparece hasta que se confirme, y la Guía de trámites (el alta de TelePASE ya no dice «no
+  tienen costo» ni «sin cargo», y la bajada pasó de «Todos son gratuitos.» a «Las exenciones son gratuitas.»). En la
+  home, la tarjeta de Seguridad vial tampoco dice ya
+  «en RN 9 y RN 19» (era el mismo dato del alcance de los móviles).
+
+**La tabla de canales** (puntos 8 y 9): en Servicios se escondió, pero la misma tabla está en **Contacto** y en
+**Emergencias**, y ahí se ven los cambios del punto 8.
+- Sin las columnas Acuse y Respuesta, ni la nota de la prórroga de los plazos.
+- **Correo de atención al usuario** con la dirección `atencionalusuario@covicen.com.ar`, que abre el correo.
+- **Sin la fila de WhatsApp** («falta solicitar»); también se sacó de la tarjeta Atención al usuario y del primer paso de
+  cómo hacer un reclamo en Contacto.
+- El 0800 sigue diciendo que se habilita con la toma de posesión (falta el número).
+- En Emergencias el título pasó a «Canales de atención» y la tabla ahora muestra también la disponibilidad.
+- **En tema oscuro la tabla ya no es transparente**: tiene fondo propio (pasaba en todas las tablas sobre la grilla).
+
+**Tarifas**
+- Sin la línea «Resolución 248/2026 de la Dirección Nacional de Vialidad. Ver en el Boletín Oficial.» debajo de las
+  etiquetas (punto 11). La resolución sigue a la derecha de cada tabla.
+- Sin el recuadro «Estaciones sin habilitar» (punto 12).
+- **Quiénes no pagan** (punto 13): sin la bajada, sin «según el reglamento de Vialidad Nacional», y las dos tarjetas
+  (Malvinas y discapacidad) abajo de la lista, una al lado de la otra. Miralo en celular: ahí van una abajo de la otra.
+
+**El tramo**: el título es «Nuestras rutas.» (punto 14). Los números de las rutas siguen en el texto de abajo. El
+enlace del final dice «Servicios al usuario» (decía «…: gratuitos y con costo», y los que se cobran se escondieron).
+
+**TelePASE y Autogestión arriba de todo** (punto 10). Miralos en los dos temas y pasá el mouse:
+- **TelePASE**: píldora verde con el verde de la marca TelePASE (el claro en tema oscuro, el oscuro en tema claro), el
+  nombre escrito como lo escribe TelePASE («Tele» liviano, «PASE» fuerte), un ícono en una ficha y una flechita que
+  avisa que sale del sitio. Al pasar el mouse sube un poquito, se ilumina con su verde y la flecha se corre.
+- **Autogestión**: misma forma, sobre fondo de tarjeta con un borde degradé del celeste del sitio.
+- **En el celular** aparecen igual, uno al lado del otro, arriba de todo en el menú.
+- Si te parece que piden más (un brillo que cruza, otro ícono, más grandes), decime: es un solo lugar,
+  `C:\Users\Villex\dev\Covicen\src\styles\global.css`, «Accesos destacados».
+
+---
+
+## Lo que cambió el 1 de octubre
 
 Tres pedidos del equipo, en la rama `web-ajustes-2026-10-01`. Todo se ve en el sitio de revisión
 (https://juliv08.github.io/Covicen/) **recién cuando se publique** (ver el punto 3). Ya verificado por la máquina:
@@ -633,7 +694,7 @@ Nada de esto dice "a confirmar" ni "próximamente" en el sitio: directamente no 
 | `enFormacion: false` | `src/content/empresa.json` | Saca "Sociedad en formación" del footer y el párrafo de Quiénes somos. |
 | `polizaRc { aseguradora, numero, vigenciaHasta, url? }` | `src/content/empresa.json` | Ficha de la póliza en Transparencia. |
 | `lineaGratuita` (0800) | `src/content/contacto.json` | Fila "Atención al usuario 0800…" en el footer. También `canales[].valor` del canal `linea-0800` para la tabla. |
-| `atencionUsuario` (correo) | `src/content/contacto.json` | Correo en el footer; los formularios pasan a "Enviar por correo" si no hay WhatsApp. También `canales[].valor` del canal `correo`. Solo cuando la casilla funcione. |
+| `atencionUsuario` (correo) | `src/content/contacto.json` | Correo en el footer; los formularios pasan a "Enviar por correo" si no hay WhatsApp. Solo cuando la casilla funcione. **Desde el 02/10/2026 la dirección ya está en `canales[].valor` del canal `correo`** (pedido del gerente: enlazarla en la tabla de canales), pero este slot sigue vacío: la pregunta está en pendientes. |
 | `whatsapp.numero` | `src/content/contacto.json` | WhatsApp en el footer, "También por WhatsApp" en Emergencias, formularios habilitados con "Enviar por WhatsApp". También `canales[].valor` del canal `whatsapp`. |
 | `email.rrhh`, `email.proveedores`, `email.etica`, `email.general` | `src/content/contacto.json` | Destinos alternativos de Trabajá, Proveedores, canal ético y formularios. |
 | `redes { instagram, facebook, linkedin, youtube, x }` | `src/content/contacto.json` | Fila de redes en el footer (por nombre; logos oficiales después). |

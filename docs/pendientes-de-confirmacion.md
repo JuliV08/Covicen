@@ -1,7 +1,8 @@
 # Qué falta confirmar, y a quién preguntárselo
 
 **Fecha:** 20 de septiembre de 2026, actualizado el 24/09, el 25/09, el 28/09 (el inicio de actividades pasó al 7 de
-octubre) y el 01/10 (lo que hay que pedirle a PREVI por el formulario de Bitrix24, primera sección) · **Sale de:** la call con el gerente del 20/09 y las correcciones del 24/09 (el 13 y la pregunta del precio
+octubre), el 01/10 (lo que hay que pedirle a PREVI por el formulario de Bitrix24) y el 02/10 (lo que se escondió en la
+reunión con el gerente del 01/10, primera sección) · **Sale de:** la call con el gerente del 20/09 y las correcciones del 24/09 (el 13 y la pregunta del precio
 del primer día). El formulario de TelePASE, que se
 agregó el 24/09, quedó resuelto el 25/09.
 
@@ -14,6 +15,80 @@ nada de la web para hacerla.
 Cuando llegue una respuesta, el que carga el dato abre
 `C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`, **cambia un `false` por un `true`**, y la sección vuelve
 entera. No hay que tocar nada más.
+
+---
+
+## Reunión con el gerente del 01/10 · lo que se escondió el 02/10
+
+Todo se vuelve a mostrar cambiando su `false` por `true` en
+`C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`. El contenido no se borró.
+
+**Antes que nada, dos choques con el pliego.** El PETG, art. 61.6, lista lo que el sitio **tiene** que publicar, y
+dos de los pedidos de esta reunión van contra eso:
+
+- **«Servicios que se cobran»** (`serviciosConCosto`): el 61.6 pide los servicios gratuitos **y los onerosos**. Con
+  la sección escondida, la web no informa ningún servicio con costo (mecánica general y remolque más allá del punto
+  gratuito, PETG 55).
+- **La tabla de canales sin acuse ni respuesta**: el 61.6 pide los canales **con sus características y plazos**. Los
+  plazos generales siguen en Contacto (en los pasos de cómo hacer un reclamo y al lado del formulario), pero ya no
+  canal por canal (el 0800 y el 140 tienen acuse inmediato; el resto, 24 horas). La tabla de Servicios, además, se
+  escondió entera (`canalesEnServicios`); sigue en Contacto y en Emergencias.
+
+> «En la reunión se pidió esconder los servicios con costo y los plazos de la tabla de canales. El contrato de
+> concesión (PETG 61.6) obliga a publicar las dos cosas. ¿Lo dejamos así igual, o los volvemos a mostrar antes del 7
+> de octubre?»
+
+- **A quién:** el gerente.
+
+**Datos que quedaron «a confirmar» o «falta solicitar»** (se esconden en todas sus apariciones, no solo donde se
+marcaron):
+
+**1 · TelePASE sin costo** (`telepaseSinCosto`). Estaba en la tarjeta de Servicios, en Medios de pago (la bajada, el
+título de la sección y «retirás el dispositivo sin cargo»), en la home y en la pregunta frecuente «¿Puedo pagar con
+TelePASE? ¿Es obligatorio?», que espera entera.
+
+> «¿Se confirma que para el usuario no tienen costo la adhesión a TelePASE, el primer dispositivo por vehículo, su
+> colocación, la renovación, la cancelación y la reposición, como dice el contrato (PETG 50.5)?»
+
+- **A quién:** el responsable comercial o de TelePASE.
+
+**2 · Sanitarios públicos** (`sanitariosPublicos`). La tarjeta de Servicios: «donde existan, el ingreso es libre y
+gratuito, con cambiador y sanitario para niños».
+
+> «¿Hay sanitarios públicos en las estaciones del tramo? ¿En cuáles, y tienen cambiador y sanitario para niños?»
+
+- **A quién:** Operaciones.
+
+**3 · WhatsApp** (`canalWhatsapp`): «falta solicitar». Se escondió la fila de la tabla de canales y se sacó de los
+dos textos que lo nombraban (la tarjeta de Atención al usuario y el primer paso de cómo hacer un reclamo). El contrato
+lo pide a los 90 días de la toma de posesión. Cuando exista el número, además de prender el interruptor hay que
+cargarlo en `C:\Users\Villex\dev\Covicen\src\content\contacto.json` (`whatsapp.numero` y el `valor` del canal) y
+volver a nombrarlo en esos dos textos.
+
+> «¿Quién tramita el número de WhatsApp de atención al usuario, y para cuándo?»
+
+- **A quién:** el gerente o PREVI, si lo atienden ellos.
+
+**4 · Línea 0800**: «falta confirmar número». No se escondió: la tabla sigue diciendo que se habilita con la toma de
+posesión. Se carga en `contacto.json` (`lineaGratuita` y el `valor` del canal).
+
+> «¿Cuál es el número del 0800 de atención al usuario?»
+
+- **A quién:** el gerente o PREVI.
+
+**5 · El correo de atención al usuario.** Se pidió enlazar `atencionalusuario@covicen.com.ar` en la tabla de
+canales, y ya está. Lo que no se hizo es cargarlo como el correo de los formularios: hoy los de TelePASE, trámites y
+asistencia están apagados con el aviso de que se habilitan con la toma de posesión, y con el correo cargado pasarían a
+mandarse por correo a esa casilla (también aparecería en el pie de página).
+
+> «¿La casilla atencionalusuario@covicen.com.ar ya recibe? ¿Los formularios de TelePASE, de trámites y de asistencia
+> pueden mandar ahí?»
+
+- **A quién:** el gerente o PREVI, si atienden esa casilla.
+- **Dónde se carga:** `atencionUsuario` en `C:\Users\Villex\dev\Covicen\src\content\contacto.json`.
+
+**Lo que se escondió sin que falte un dato** (lo pidió el gerente, no hay nada que preguntar):
+«Qué asume Covicen» y «Quién nos controla» en Quiénes somos (`queAsumimos`, `quienNosControla`).
 
 ---
 
