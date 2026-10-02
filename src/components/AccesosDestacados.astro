@@ -12,13 +12,13 @@ const oficina = contacto.enlaces.oficinaVirtual;
 ---
 <a href={contacto.enlaces.telepase} class:list={['acceso-destacado acceso-telepase', clase]} rel="noopener noreferrer" target="_blank" aria-label="TelePASE (se abre en otra pestaña)">
   <span class="ficha" aria-hidden="true"><Tag size={14} /></span>
-  <span><span class="marca-tele">Tele</span><span class="marca-pase">PASE</span></span>
+  <span class="etiqueta"><span class="marca-tele">Tele</span><span class="marca-pase">PASE</span></span>
   <ArrowUpRight size={14} class="flecha" aria-hidden="true" />
 </a>
 {oficina && (
   <a href={oficina} class:list={['acceso-destacado acceso-autogestion', clase]} rel="noopener noreferrer" target="_blank" aria-label="Autogestión de Telepeaje Plus (se abre en otra pestaña)">
     <span class="ficha" aria-hidden="true"><CircleUserRound size={14} /></span>
-    <span>Autogestión</span>
+    <span class="etiqueta">Autogestión</span>
     <ArrowUpRight size={14} class="flecha" aria-hidden="true" />
   </a>
 )}

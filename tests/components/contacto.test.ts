@@ -3,16 +3,17 @@ import { describe, expect, it } from 'vitest';
 import Contacto from '@/pages/contacto.astro';
 import { publicado } from '@/lib/publicado';
 
-// El PETG 58.1 dice que los plazos "podrán ampliarse por un plazo igual" y no pone tope a la cantidad de prórrogas:
-// publicar "una sola vez" le inventa al usuario una restricción que el contrato no tiene. El Anexo B de la spec fija
-// además la redacción con la que esa prórroga se publica.
-const PRORROGA = 'Los plazos de respuesta pueden ampliarse por un plazo igual cuando haga falta reunir elementos probatorios, con aviso previo al usuario.';
-
 describe('/contacto/', () => {
   const render = async () => (await AstroContainer.create()).renderToString(Contacto, { request: new Request('https://covicen.test/contacto/') });
-  it('el paso 3 publica la prórroga del art. 58.1 sin inventarle un límite de veces', async () => {
+  // 02/10/2026: sin plazos de respuesta publicados («bajarle el compromiso de los días de respuesta»; Juli eligió
+  // sacarlos de todos lados). Ni en los pasos, ni al lado de los formularios, ni en la descripción para Google, y
+  // tampoco la prórroga, que sin plazos no tiene a qué referirse. El choque con el PETG 58 y 61.6 está avisado en
+  // docs/pendientes-de-confirmacion.md.
+  it('no promete plazos de respuesta en ningún lado de la página', async () => {
     const html = await render();
-    expect(html).toContain(PRORROGA);
+    expect(html).not.toMatch(/d[ií]as h[aá]biles|24 horas te|Acuse en|acuse en/);
+    expect(html).not.toContain('Los plazos de respuesta pueden ampliarse');
+    expect(html).toContain('Te confirmamos que lo recibimos, con un número para seguirlo.');
     expect(html).not.toContain('una sola vez');
   });
 
@@ -29,7 +30,7 @@ describe('/contacto/', () => {
     expect(html).toContain('id="reclamos"');
     // Las secciones alternan: TelePASE lleva la grilla y «Cómo hacer un reclamo» vuelve a liso.
     expect(/<section id="telepase"[^>]*class="([^"]*)"/.exec(html)?.[1]).toContain('seccion-cinetica');
-    const reclamo = html.split('<section').find((s) => s.includes('Cuatro pasos, con plazos.')) ?? '';
+    const reclamo = html.split('<section').find((s) => s.includes('Cuatro pasos.')) ?? '';
     expect(/^[^>]*class="([^"]*)"/.exec(reclamo)?.[1]).not.toContain('seccion-cinetica');
   });
 

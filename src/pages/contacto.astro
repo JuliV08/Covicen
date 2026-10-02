@@ -13,17 +13,19 @@ const [contacto, tramo] = await Promise.all([datos.contacto(), datos.tramo()]);
 const tel = contacto.emergencias.telefono;
 const correo = contacto.atencionUsuario ?? contacto.email.general;
 const estaciones = tramo.cabinas.filter(cabinaOperativa).map((c) => c.nombre);
-const plazos = 'Acuse en 24 horas · Respuesta en 5 días hábiles';
+// Sin plazos de respuesta publicados (02/10/2026, reunión con el gerente: «bajarle el compromiso de los días de
+// respuesta»; Juli eligió sacarlos en todos lados). El contrato los fija igual (PETG 58) y pide publicarlos (61.6):
+// el choque está avisado en docs/pendientes-de-confirmacion.md. Los plazos siguen en el dato (contacto.json, canales).
 const [fTelepase, fReclamo] = alternarFondos([publicado.formularioTelepase, true]);
 const pasosReclamo = [
   ['Elegís el canal', 'Formulario, correo o la línea 0800 cuando esté habilitada. Para emergencias, el 140.'],
-  ['Recibís un número de gestión', 'Dentro de las 24 horas te confirmamos que lo recibimos, con un número para seguirlo.'],
-  ['Te respondemos', 'En 5 días hábiles, con fundamento. Los plazos de respuesta pueden ampliarse por un plazo igual cuando haga falta reunir elementos probatorios, con aviso previo al usuario.'],
+  ['Recibís un número de gestión', 'Te confirmamos que lo recibimos, con un número para seguirlo.'],
+  ['Te respondemos', 'Con fundamento, por el mismo medio por el que nos escribiste. Si hace falta reunir pruebas, te avisamos.'],
   ['Si no estás conforme', 'Podés escalarlo ante Vialidad Nacional, que supervisa la concesión y tiene su propio centro de atención al usuario.'],
 ] as const;
 ---
-<Base titulo="Contacto" descripcion={`Reclamos, consultas y sugerencias a Covicen con acuse en 24 horas y respuesta en 5 días hábiles.${publicado.formularioTelepase ? ' Consultas de TelePASE.' : ''} Emergencias en ruta: 140, las 24 horas.`} migas={[{ nombre: 'Contacto', href: '/contacto' }]}>
-  <Seccion nivel="h1" eyebrow="Contacto" titulo="Reclamos, consultas y sugerencias." intro="Con los plazos que fija el contrato de concesión. Para emergencias en la ruta, llamá al 140." class="pt-10">
+<Base titulo="Contacto" descripcion={`Reclamos, consultas y sugerencias a Covicen, con un número de gestión para seguir cada caso.${publicado.formularioTelepase ? ' Consultas de TelePASE.' : ''} Emergencias en ruta: 140, las 24 horas.`} migas={[{ nombre: 'Contacto', href: '/contacto' }]}>
+  <Seccion nivel="h1" eyebrow="Contacto" titulo="Reclamos, consultas y sugerencias." intro="Contanos qué pasó y te respondemos. Para emergencias en la ruta, llamá al 140." class="pt-10">
     <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.3fr]">
       <div class="flex flex-col gap-4">
         <div class="tarjeta tarjeta-vial p-5"><p class="eyebrow flex items-center gap-2"><Phone size={14} aria-hidden="true" /> Emergencias 24 h</p><a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="mt-2 block text-3xl font-extrabold tabular-nums text-vial-texto no-underline" aria-label={`Llamar a emergencias, ${tel}`}>{tel}</a></div>
@@ -31,7 +33,7 @@ const pasosReclamo = [
       </div>
       {/* Desde el 01/10/2026 el de reclamos es el formulario del CRM (Bitrix24, de PREVI): ver FormularioCrm.astro. El
           propio queda como respaldo, por si `contacto.formularioCrm` vuelve a null. */}
-      {contacto.formularioCrm ? <FormularioCrm id="reclamos" crm={contacto.formularioCrm} {plazos} /> : <Formulario id="reclamos" asunto="Reclamo, consulta o sugerencia" whatsapp={contacto.whatsapp.numero} email={correo} {plazos} campos={[
+      {contacto.formularioCrm ? <FormularioCrm id="reclamos" crm={contacto.formularioCrm} /> : <Formulario id="reclamos" asunto="Reclamo, consulta o sugerencia" whatsapp={contacto.whatsapp.numero} email={correo} campos={[
         { nombre: 'motivo', etiqueta: 'Motivo', tipo: 'select', opciones: ['Reclamo', 'Consulta', 'Sugerencia'], requerido: true },
         { nombre: 'tema', etiqueta: 'Tema', tipo: 'select', opciones: ['Tarifas y cobro', 'Estado de la ruta', 'Atención recibida', 'Seguridad vial', 'Otro'], requerido: true },
         { nombre: 'lugar', etiqueta: 'Ruta y kilómetro, o estación', placeholder: `RN 9, km 350 · ${estaciones.join(' / ')}` },
@@ -54,7 +56,7 @@ const pasosReclamo = [
   <Seccion id="telepase" eyebrow="TelePASE" titulo="Consultas sobre tu TelePASE." intro="Cobros, dispositivo, adhesión o factura. Las respuestas a TelePASE tienen prioridad." fondo={fTelepase}>
     <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.3fr]">
       <p class="text-texto-2">Si tu consulta es sobre la cuenta o la facturación del dispositivo, también podés resolverla en el <a href={contacto.enlaces.telepase} rel="noopener noreferrer" target="_blank">sitio de TelePASE</a>.</p>
-      <Formulario id="formulario-telepase" asunto="Consulta de TelePASE" whatsapp={contacto.whatsapp.numero} email={correo} {plazos} campos={[
+      <Formulario id="formulario-telepase" asunto="Consulta de TelePASE" whatsapp={contacto.whatsapp.numero} email={correo} campos={[
         { nombre: 'tipo', etiqueta: 'Tipo de consulta', tipo: 'select', opciones: ['Me cobraron mal', 'Problema con el dispositivo', 'Adhesión o alta', 'Factura o pasadas', 'Otra'], requerido: true },
         { nombre: 'patente', etiqueta: 'Patente', requerido: true },
         { nombre: 'tag', etiqueta: 'Número de TAG (opcional)' },
@@ -67,7 +69,7 @@ const pasosReclamo = [
   </Seccion>
   )}
 
-  <Seccion eyebrow="Cómo hacer un reclamo" titulo="Cuatro pasos, con plazos." fondo={fReclamo}>
+  <Seccion eyebrow="Cómo hacer un reclamo" titulo="Cuatro pasos." fondo={fReclamo}>
     <ol class="escalonar grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {pasosReclamo.map(([t, d], i) => <li class="tarjeta p-6" style={`--i: ${i}`}><span class="eyebrow tabular-nums">0{i + 1}</span><h3 class="mt-3 text-xl">{t}</h3><p class="mt-2 text-texto-2">{d}</p></li>)}
     </ol>

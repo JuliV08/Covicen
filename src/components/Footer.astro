@@ -5,6 +5,7 @@ import Isotipo from '@/components/marca/Isotipo.astro';
 import type { Contacto, Empresa } from '@/lib/datos/esquemas';
 import { fechaHoraLarga } from '@/lib/formato';
 import { enlacesInstitucionales, logoInstitucional, redFederal } from '@/lib/institucional';
+import { paginaPublicada } from '@/lib/paginas';
 import { ruta } from '@/lib/rutas';
 import { enlaceWhatsapp } from '@/lib/whatsapp';
 
@@ -13,7 +14,7 @@ const { empresa, contacto } = Astro.props;
 const columnas = [
   { titulo: 'Usuarios', links: [['Tarifas', '/tarifas'], ['Medios de pago', '/medios-de-pago'], ['Emergencias', '/emergencias'], ['Asistencia en ruta', '/asistencia'], ['Guía de trámites', '/tramites'], ['Seguridad vial', '/seguridad-vial'], ['Preguntas frecuentes', '/preguntas-frecuentes']] },
   { titulo: 'Empresa', links: [['Quiénes somos', '/quienes-somos'], ['Novedades', '/novedades'], ['Políticas', '/politicas'], ['Transparencia', '/transparencia']] },
-] as const;
+].map((c) => ({ ...c, links: c.links.filter(([, href]) => paginaPublicada(href)) }));
 const tel = contacto.emergencias.telefono;
 const soloDigitos = (t: string) => t.replace(/[^\d+]/g, '');
 // Criterio "esconder, no a confirmar": los datos registrales aparecen completos o no aparecen.
@@ -99,7 +100,9 @@ const actualizado = fechaHoraLarga(ahora);
   </div>
   <div class="border-t border-borde">
     <div class="contenedor flex flex-col gap-4 py-6 text-sm text-texto-2 md:flex-row md:items-center md:justify-between">
-      <p>{empresa.enFormacion && <span>Sociedad en formación · </span>}Adjudicación: {empresa.concesion.adjudicacion.resolucion}. <a href={ruta('/privacidad')}>Privacidad</a> · <a href="https://www.boletinoficial.gob.ar/" rel="noopener noreferrer" target="_blank">Boletín Oficial</a>{contacto.enlaces.atencionDnv && <> · <a href={contacto.enlaces.atencionDnv} rel="noopener noreferrer" target="_blank">Atención al usuario de Vialidad Nacional</a></>}</p>
+      {/* «COVICEN S.A.» en lugar de «Sociedad en formación» (02/10/2026): la sociedad ya está inscripta. El bloque
+          «Datos registrales» de arriba sigue esperando el CUIT y el domicilio legal para mostrarse completo. */}
+      <p>{empresa.razonSocial ? <span>{empresa.razonSocial} · </span> : empresa.enFormacion && <span>Sociedad en formación · </span>}Adjudicación: {empresa.concesion.adjudicacion.resolucion}. <a href={ruta('/privacidad')}>Privacidad</a> · <a href="https://www.boletinoficial.gob.ar/" rel="noopener noreferrer" target="_blank">Boletín Oficial</a>{contacto.enlaces.atencionDnv && <> · <a href={contacto.enlaces.atencionDnv} rel="noopener noreferrer" target="_blank">Atención al usuario de Vialidad Nacional</a></>}</p>
       <p><span class="text-texto-3">Última actualización:</span> <time datetime={ahora.toISOString()}>{actualizado}</time></p>
     </div>
   </div>

@@ -3,6 +3,7 @@ import Base from '@/layouts/Base.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
 import { ruta } from '@/lib/rutas';
+import { conPunto } from '@/lib/texto';
 const [e, contacto] = await Promise.all([datos.empresa(), datos.contacto()]);
 // Desde el 01/10/2026 el formulario de reclamos de /contacto/ es el del CRM (Bitrix24), y ese formulario anota cosas
 // en el navegador: la frase «no usa cookies ni seguimiento» dejó de ser cierta para esa página, y la política lo dice
@@ -24,25 +25,25 @@ const porCorreo = contacto.whatsapp.numero ? 'por WhatsApp o por correo' : 'por 
   <Seccion nivel="h1" eyebrow="Privacidad" titulo="Qué datos recibimos y qué hacemos con ellos." class="pt-10">
     <div class="revelar prose-covicen max-w-prose text-texto-2">
       <h2>Responsable</h2>
-      <p>{e.marca}{e.enFormacion ? ', sociedad en formación' : `, ${e.razonSocial}, CUIT ${e.cuit}`}. Los datos de contacto del responsable se publican en el pie de página cuando se complete la inscripción.</p>
+      <p>{conPunto(`${e.razonSocial ?? e.marca}${e.cuit ? `, CUIT ${e.cuit}` : ''}${!e.razonSocial && e.enFormacion ? ', sociedad en formación' : ''}`)} Los datos registrales del responsable se publican en el pie de página cuando estén completos.</p>
       <h2>Qué datos recibimos</h2>
       {crm ? (
-        <p>Este sitio no tiene cuentas de usuario y, fuera del formulario de Contacto (abajo), no usa cookies ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos: por el formulario de reclamos, consultas y sugerencias, o {porCorreo} desde los demás formularios. Nombre, contacto y el contenido de tu mensaje, y lo que el formulario de Contacto anota en tu navegador, que se detalla abajo.</p>
+        <p>Este sitio no tiene cuentas de usuario y, fuera de los formularios de Contacto y de Proveedores (abajo), no usa cookies ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos: por los formularios de Contacto y de Proveedores, o {porCorreo} desde los demás. Nombre, contacto y el contenido de tu mensaje, y lo que esos dos formularios anotan en tu navegador, que se detalla abajo.</p>
       ) : (
         <p>Este sitio no tiene cuentas de usuario, no usa cookies de terceros ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos {porCorreo} desde los formularios: nombre, contacto y el contenido de tu mensaje.</p>
       )}
       {crm && (
         <>
-          <h2>Formulario de Contacto</h2>
-          <p>El formulario de reclamos, consultas y sugerencias de <a href={ruta('/contacto')}>Contacto</a> funciona sobre Bitrix24, el sistema de atención al usuario con el que Covicen gestiona los reclamos. Lo que cargues ahí queda guardado en ese sistema. Además, al abrir esa página el formulario anota en tu navegador la página y, si llegaste desde otro sitio o desde un enlace de una campaña, esa dirección y sus etiquetas. Cuando lo enviás, eso viaja con tu consulta junto con si estás en un celular; te queda guardado un identificador que acompaña tus consultas siguientes, y el navegador recuerda tu nombre, apellido, e-mail y teléfono para completarlos la próxima vez. Todo eso queda guardado en tu navegador hasta que borres los datos de este sitio. El formulario también cuenta las visitas que recibe. Se carga solo en esa página: el resto del sitio no anota nada de esto.</p>
+          <h2>Formularios de Contacto y de Proveedores</h2>
+          <p>El formulario de reclamos, consultas y sugerencias de <a href={ruta('/contacto')}>Contacto</a> y el de registro de <a href={ruta('/proveedores')}>Proveedores</a> funcionan sobre Bitrix24, el sistema de gestión con el que Covicen atiende los reclamos y los contactos. Lo que cargues ahí queda guardado en ese sistema. Además, al abrir esas páginas el formulario anota en tu navegador la página y, si llegaste desde otro sitio o desde un enlace de una campaña, esa dirección y sus etiquetas. Cuando lo enviás, eso viaja con tu consulta junto con si estás en un celular; te queda guardado un identificador que acompaña tus consultas siguientes, y el navegador recuerda tu nombre, apellido, e-mail y teléfono para completarlos la próxima vez. Todo eso queda guardado en tu navegador hasta que borres los datos de este sitio. El formulario también cuenta las visitas que recibe. Se carga solo en esas dos páginas: el resto del sitio no anota nada de esto.</p>
         </>
       )}
       <h2>Ubicación</h2>
       <p>La página de <a href={ruta('/asistencia')}>asistencia en ruta</a> puede usar la ubicación de tu celular. Se pide solo ahí, solo si tocás el botón y le das permiso al navegador. No se guarda en ningún lado ni se envía sola: aparece en pantalla para que se la dictes al operador del 140 y viaja únicamente dentro del mensaje que vos decidas mandar. Si negás el permiso, el resto de la página funciona igual.</p>
       <h2>Para qué</h2>
-      <p>Para responder consultas y reclamos, gestionar postulaciones laborales y altas de proveedores. No los usamos con otros fines ni los cedemos a terceros, salvo obligación legal.</p>
+      <p>Para responder consultas y reclamos, y gestionar las altas de proveedores. No los usamos con otros fines ni los cedemos a terceros, salvo obligación legal.</p>
       <h2>Canales de terceros</h2>
-      <p>{contacto.whatsapp.numero && 'WhatsApp es un servicio de Meta Platforms, con sus propias condiciones y política de privacidad. '}{crm && 'Bitrix24, el sistema del formulario de Contacto, tiene sus propias condiciones y política de privacidad. '}El correo electrónico viaja por el proveedor que uses.</p>
+      <p>{contacto.whatsapp.numero && 'WhatsApp es un servicio de Meta Platforms, con sus propias condiciones y política de privacidad. '}{crm && 'Bitrix24, el sistema de los formularios de Contacto y de Proveedores, tiene sus propias condiciones y política de privacidad. '}El correo electrónico viaja por el proveedor que uses.</p>
       <h2>Tus derechos</h2>
       <p>Según la Ley 25.326 podés acceder, rectificar y suprimir tus datos. Escribinos por el canal de contacto{contacto.email.general ? ` o a ${contacto.email.general}` : ''}. La Agencia de Acceso a la Información Pública, órgano de control de la ley, atiende denuncias por incumplimiento.</p>
       <h2>Conservación</h2>

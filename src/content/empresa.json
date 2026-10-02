@@ -1,12 +1,12 @@
 {
   "marca": "Covicen",
-  "razonSocial": null,
+  "razonSocial": "COVICEN S.A.",
   "cuit": null,
   "domicilioLegal": null,
   "domicilioComercial": null,
   "constanciaUrl": null,
   "polizaRc": null,
-  "enFormacion": true,
+  "enFormacion": false,
   "consorcio": [
     { "nombre": "AFEMA S.A.", "descripcion": "Constructora vial con base en Córdoba.", "url": "https://www.afema.com.ar/" },
     { "nombre": "Pablo Federico e Hijos S.A.", "descripcion": "Construcción y obras de hormigón.", "url": "https://pablofederico.com.ar/" },

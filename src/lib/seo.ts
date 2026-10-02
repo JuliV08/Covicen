@@ -11,7 +11,7 @@ export const jsonLdOrganizacion = (e: Empresa, c: Contacto, sitio: string, logoU
     logo: logoUrl,
     description: `Concesionaria del Tramo Centro de la Red Federal de Concesiones: ${e.concesion.rutas.join(', ')} en ${e.concesion.provincias.join(' y ')}.`,
     areaServed: e.concesion.provincias.map((p) => ({ '@type': 'AdministrativeArea', name: p })),
-    // Sin foundingDate: la sociedad está en formación; la adjudicación no es una fecha de fundación.
+    // Sin foundingDate: no hay fecha de constitución cargada, y la adjudicación no es una fecha de fundación.
   };
   if (e.razonSocial) o.legalName = e.razonSocial;
   if (e.cuit) o.taxID = e.cuit;

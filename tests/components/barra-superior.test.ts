@@ -24,11 +24,11 @@ describe('BarraSuperior', () => {
     expect(telepase).toContain('target="_blank"');
     expect(telepase).toContain('acceso-telepase');
     expect(telepase).toContain('aria-label="TelePASE (se abre en otra pestaña)"');
-    expect(html).toContain('<span class="marca-tele">Tele</span><span class="marca-pase">PASE</span>');
+    expect(html).toContain('<span class="etiqueta"><span class="marca-tele">Tele</span><span class="marca-pase">PASE</span></span>');
     const autogestion = /<a href="https:\/\/www\.telepeajeplus\.com\/Login"[^>]*>/.exec(html)?.[0] ?? '';
     expect(autogestion).toContain('target="_blank"');
     expect(autogestion).toContain('acceso-autogestion');
-    expect(html).toContain('<span>Autogestión</span>');
+    expect(html).toContain('<span class="etiqueta">Autogestión</span>');
     expect(html).not.toContain('Mi cuenta');
     expect(html).toContain('data-tema-boton');
     // Se cae en el ingreso de otra empresa: el nombre accesible lo dice, y empieza con la palabra visible (WCAG 2.5.3).

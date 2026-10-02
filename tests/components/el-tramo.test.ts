@@ -2,6 +2,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { parseHTML } from 'linkedom';
 import { describe, expect, it } from 'vitest';
 import ElTramo from '@/pages/el-tramo.astro';
+import { publicado } from '@/lib/publicado';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
 
 // El mapa de esta página pinta los incidentes del estado de la traza, y hoy los datos son de muestra: incluyen un corte
@@ -9,16 +10,18 @@ import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
 // "datos de ejemplo" tiene que leerse ANTES del marcador rojo (spec §10.1), y los incidentes también van en texto.
 describe('/el-tramo/', () => {
   const render = async () => (await AstroContainer.create()).renderToString(ElTramo, { request: new Request('https://covicen.test/el-tramo/') });
-  it('con estado.ejemplo, el cartel va arriba del mapa y el estado de la traza queda en texto', async () => {
-    const estado = await fuenteLocalJson.estadoRutas();
-    expect(estado.ejemplo).toBe(true); // si el dato deja de ser de muestra, este test pierde sentido y hay que revisarlo
+  // 02/10/2026: el estado de la traza se esconde hasta tener información real (publicado.estadoDeLaTraza). Con los
+  // datos de ejemplo, ni el bloque, ni el cartel, ni los marcadores del mapa: un corte inventado que se lee como real
+  // es el peor error posible, y sin el cartel no queda nada que lo aclare. El orden cartel-antes-que-marcador lo sigue
+  // vigilando verificar.ts para el día que se prenda.
+  it('sin el estado de la traza: ni el bloque, ni el cartel de datos de ejemplo, ni los marcadores', async () => {
+    expect(publicado.estadoDeLaTraza, 'se prendió el interruptor: este test mide el otro estado').toBe(false);
     const html = await render();
-    expect(html).toContain('data-severidad="corte"');
-    expect(html).toContain('Datos de ejemplo: el módulo se activa con la operación');
-    expect(html.indexOf('Datos de ejemplo')).toBeLessThan(html.indexOf('data-severidad="'));
-    expect(html).toContain('aria-label="Estado de la traza"');
-    expect(html).toContain('Corte total por vuelco de un camión');
-    expect(html.match(/<h1/g)?.length).toBe(1); // EstadoTraza entra como h2, no agrega otro h1
+    expect(html).not.toContain('data-severidad=');
+    expect(html).not.toContain('Datos de ejemplo');
+    expect(html).not.toContain('aria-label="Estado de la traza"');
+    expect(html).not.toContain('Corte total por vuelco de un camión');
+    expect(html.match(/<h1/g)?.length).toBe(1);
   });
 
   // El header es fijo (--alto-header: 7rem = 112 px) y encima la nav de anclas es sticky en top: var(--alto-header) y

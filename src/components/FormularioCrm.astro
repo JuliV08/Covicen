@@ -1,11 +1,11 @@
 ---
-// Formulario de reclamos, consultas y sugerencias servido por el CRM de atención al usuario (Bitrix24, lo administra
-// el proveedor, PREVI). Desde el 01/10/2026 reemplaza al formulario propio de /contacto/ cuando
+// Formulario servido por el CRM de atención al usuario (Bitrix24, lo administra el proveedor, PREVI). Desde el
+// 01/10/2026 reemplaza al formulario propio de reclamos en /contacto/, y desde el 02/10 al de /proveedores/, cuando
 // `contacto.formularioCrm` está cargado; con null vuelve Formulario.astro.
 //
 // Los campos, la casilla de consentimiento y el mensaje de «enviado» se definen en el CRM, no acá: si PREVI cambia el
-// formulario, la web no se toca. Lo que sí pone la web: los colores (abajo), los plazos del contrato y el aviso de
-// privacidad, que el formulario de Bitrix no muestra.
+// formulario, la web no se toca. Lo que sí pone la web: los colores (abajo), los plazos si se le pasan (desde el
+// 02/10/2026 no se publican) y el aviso de privacidad, que el formulario de Bitrix no muestra.
 import { ruta } from '@/lib/rutas';
 import type { Contacto } from '@/lib/datos/esquemas';
 interface Props { crm: NonNullable<Contacto['formularioCrm']>; id: string; plazos?: string }
@@ -25,7 +25,7 @@ const cargador = `(function(w,d,u){var s=d.createElement('script');s.async=true;
     <script is:inline data-b24-form={crm.codigo} data-skip-moving="true" set:html={cargador} />
   </div>
   {plazos && <p class="text-sm text-texto-2">{plazos}</p>}
-  <p class="text-sm text-texto-2">Lo que cargues en este formulario llega al sistema de atención al usuario de Covicen, que funciona sobre Bitrix24. Ver <a href={ruta('/privacidad')}>política de privacidad</a>.</p>
+  <p class="text-sm text-texto-2">Lo que cargues en este formulario llega al sistema de gestión de Covicen, que funciona sobre Bitrix24. Ver <a href={ruta('/privacidad')}>política de privacidad</a>.</p>
 </div>
 <style>
   .crm-respaldo { animation: crm-respaldo 0s linear 4s both; }
@@ -42,7 +42,7 @@ const cargador = `(function(w,d,u){var s=d.createElement('script');s.async=true;
   .crm-montaje :global(.b24-form [id^="b24-"]),
   /* Las ventanas (el texto del consentimiento, por ejemplo) Bitrix las monta en el <body>, fuera de este componente,
      y les pone las mismas variables sobre el id de cada ventana, adentro de `.b24-window-mounts`. Solo existen en
-     /contacto/. (Los ids de Bitrix no se escriben acá con su numeral: la guarda de colores fijos los lee como hex.) */
+     /contacto/ y /proveedores/. (Los ids de Bitrix no se escriben acá con su numeral: la guarda de colores fijos los lee como hex.) */
   :global(.b24-window-mounts [id^="b24-window-mount-"]) {
     --b24-primary-color: var(--color-acento) !important;
     --b24-primary-text-color: var(--color-sobre-acento) !important;

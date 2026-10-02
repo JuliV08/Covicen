@@ -10,6 +10,7 @@ import { imagenInstitucional } from '@/lib/atmosfera';
 import { alternarFondos } from '@/lib/fondos';
 import { fechaLarga, numero } from '@/lib/formato';
 import { publicado } from '@/lib/publicado';
+import { conPunto } from '@/lib/texto';
 const [e, tramo] = await Promise.all([datos.empresa(), datos.tramo()]);
 const c = e.concesion;
 const organigrama = imagenInstitucional('organigrama');
@@ -21,7 +22,7 @@ const rutas = `las rutas nacionales ${enumerar(c.rutas.map((r) => r.replace(/^RN
 // compromiso con quien viaja y con los pueblos del camino—, no las frases: pasa `pnpm originalidad` contra su página
 // institucional. El de antes era el de la licitación (resolución, «sociedad en formación»); la razón social y el
 // CUIT se siguen publicando en el pie cuando existan.
-const descripcion = `Covicen cuida ${numero(c.km)} km de ${rutas} entre Córdoba y Santa Fe: el Tramo Centro de la Red Federal de Concesiones. Detrás están ${enumerar(e.consorcio.map((x) => x.nombre))}.`;
+const descripcion = `Covicen cuida ${numero(c.km)} km de ${rutas} entre Córdoba y Santa Fe: el Tramo Centro de la Red Federal de Concesiones. Detrás están ${conPunto(enumerar(e.consorcio.map((x) => x.nombre)))}`;
 // Obligaciones tomadas del contrato de concesión del Tramo Centro y del contrato general.
 const asumimos = [
   ['Conservar los 679 km', 'Calzada, banquinas, señalización, iluminación, desagües y forestación de las tres rutas, todos los días de los veinte años.'],
@@ -70,7 +71,7 @@ const asumimos = [
       <div class="prose-covicen text-texto-2">
         <p><strong>Misión.</strong> Que cruzar el centro del país sea seguro, previsible y justo en lo que cuesta: rutas en condiciones, auxilio a tiempo y un peaje que se explica solo.</p>
         <p><strong>Visión.</strong> Un corredor donde cada peaje tenga una obra que lo respalde y cada persona que viaja sepa a quién llamar y qué esperar.</p>
-        <p>Este sitio publica el cuadro tarifario con su resolución, el estado de las obras, los tiempos de auxilio comprometidos y los plazos de respuesta. Si algo de eso no se cumple, el reclamo tiene fundamento escrito.</p>
+        <p>Este sitio publica el cuadro tarifario con su resolución, el estado de las obras y los tiempos de auxilio comprometidos. Si algo de eso no se cumple, el reclamo tiene fundamento escrito.</p>
       </div>
     </div>
   </Seccion>

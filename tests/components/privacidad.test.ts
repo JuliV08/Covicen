@@ -17,7 +17,8 @@ describe('/privacidad/', () => {
   // y cuenta visitas. La política decía «no usa cookies de terceros ni herramientas de seguimiento» sin excepciones.
   it('dice que el formulario de Contacto es de Bitrix24 y qué guarda, en vez de negar todo seguimiento', async () => {
     const html = await (await AstroContainer.create()).renderToString(Privacidad, { request: new Request('https://covicen.test/privacidad/') });
-    expect(html).toMatch(/<h2[^>]*>Formulario de Contacto<\/h2>/);
+    expect(html).toMatch(/<h2[^>]*>Formularios de Contacto y de Proveedores<\/h2>/);
+    expect(html).toContain('href="/proveedores/"');
     expect(html).toContain('Bitrix24');
     expect(html).toContain('identificador');
     expect(html).toContain('href="/contacto/"');

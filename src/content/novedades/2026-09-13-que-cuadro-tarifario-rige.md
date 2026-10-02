@@ -17,4 +17,4 @@ Cuando el tramo alcance las **condiciones de transitabilidad óptima** que verif
 
 ## Dónde controlarlo
 
-La resolución está en el [Boletín Oficial](https://www.boletinoficial.gob.ar/detalleAviso/primera/338657/20260224) y la lista completa de normas, en [Transparencia](../../transparencia/).
+La resolución está en el [Boletín Oficial](https://www.boletinoficial.gob.ar/detalleAviso/primera/338657/20260224).

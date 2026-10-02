@@ -3,6 +3,12 @@ import Base from '@/layouts/Base.astro';
 import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
+import { publicado } from '@/lib/publicado';
+
+// Escondida el 02/10/2026 (reunión con el gerente del 01/10: «esta página no es para este momento; la comentamos»). Ruta rest con un solo destino, igual
+// que /obras/: con el interruptor apagado getStaticPaths devuelve [] y Astro no genera nada, ni el HTML ni la entrada
+// del sitemap. El menú y el pie la sacan solos (lib/paginas.ts) y scripts/verificar.ts (11b) controla el dist.
+export const getStaticPaths = () => (publicado.politicas ? [{ params: { resto: undefined } }] : []);
 const contacto = await datos.contacto();
 const politicas = [
   { id: 'calidad', titulo: 'Política de calidad', puntos: ['Cumplir los niveles de servicio del contrato y medirlos con los indicadores de Vialidad Nacional.', 'Mantener la calzada, la señalización y los sistemas de auxilio en condiciones verificables.', 'Publicar en este sitio los cambios de tarifa con su fecha de vigencia y el estado de la concesión.'] },

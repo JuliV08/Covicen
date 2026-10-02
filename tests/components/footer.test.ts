@@ -15,7 +15,17 @@ describe('Footer', () => {
     expect(html).not.toContain('Corredor Vial del Centro');
     expect(html).toContain('href="tel:140"');
     expect(html).toContain('Última actualización');
-    expect(html).toContain('Sociedad en formación');
+    // 02/10/2026: «COVICEN S.A.» en lugar de «Sociedad en formación». Sin CUIT ni domicilio, el bloque de datos
+    // registrales sigue sin mostrarse (arriba): la razón social sola va en la línea de abajo.
+    expect(html).toContain('COVICEN S.A. · ');
+    expect(html).not.toContain('Sociedad en formación');
+  });
+  // Pedido del gerente (01/10/2026): lo que se esconde sale también del pie.
+  it('no enlaza Políticas ni Transparencia mientras estén escondidas', async () => {
+    const html = await render(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto());
+    expect(html).not.toContain('href="/politicas/"');
+    expect(html).not.toContain('href="/transparencia/"');
+    expect(html).toContain('href="/quienes-somos/"');
   });
   it('con datos registrales y redes los muestra', async () => {
     const e = { ...(await fuenteLocalJson.empresa()), razonSocial: 'Covicen S.A.', cuit: '30-12345678-9', domicilioLegal: 'Calle 1, Córdoba', domicilioComercial: 'Ruta 9 km 340, Carcarañá', enFormacion: false };

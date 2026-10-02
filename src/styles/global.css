@@ -129,6 +129,12 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
     transition: transform var(--dur-ui) var(--ease-salida), box-shadow var(--dur-ui) var(--ease-salida);
   }
   .acceso-destacado .ficha { display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: var(--radius-full); }
+  /* El texto se centra por la altura de las mayúsculas, no por la caja de la letra (02/10/2026: «ambos textos se ven
+     muy arriba»). A 1x el navegador redondea la línea base y el texto quedaba 2 px alto: 9 px de aire arriba contra 13
+     abajo, medido en una captura. Con text-box el navegador recorta la caja a mayúscula-línea base y el centrado del
+     flex cae justo. Donde no hay text-box (Firefox, por ahora), lo mismo a mano: un píxel hacia abajo. */
+  .acceso-destacado .etiqueta { text-box: trim-both cap alphabetic; }
+  @supports not (text-box: trim-both cap alphabetic) { .acceso-destacado .etiqueta { position: relative; top: 0.08em; } }
   .acceso-destacado .flecha { margin-left: -0.15rem; transition: transform var(--dur-ui) var(--ease-salida); }
   .acceso-destacado:hover { transform: translateY(-1px); }
   .acceso-destacado:hover .flecha, .acceso-destacado:focus-visible .flecha { transform: translate(2px, -2px); }

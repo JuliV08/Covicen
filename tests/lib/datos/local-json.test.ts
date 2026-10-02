@@ -10,7 +10,9 @@ describe('contenido del repo', () => {
     // Era el 5/10; el 28/09/2026 avisaron que el inicio de actividades es el 7 de octubre.
     expect(e.concesion.inicioOperacion).toBe('2026-10-07');
     expect(e.concesion.tarifaOfertadaSinIva).toBe(1399);
-    expect(e.enFormacion).toBe(true);
+    // 02/10/2026: la sociedad ya está inscripta («COVICEN S.A.»). Falta que llegue el número de CUIT.
+    expect(e.enFormacion).toBe(false);
+    expect(e.razonSocial).toBe('COVICEN S.A.');
     expect(e.cuit).toBeNull();
     expect(e.domicilioComercial).toBeNull();
     expect(e).not.toHaveProperty('descriptor');
@@ -68,19 +70,16 @@ describe('contenido del repo', () => {
     expect(grua.tiempos).toEqual(['Vehículos livianos: 30 minutos en al menos el 90 % de los casos, y nunca más de 40.', 'Vehículos pesados: 60 minutos en al menos el 90 % de los casos, y nunca más de 72.']);
     expect(s.filter((x) => !x.gratuito).map((x) => x.id)).toEqual(['mecanica-general', 'remolque-extendido']);
   });
-  it('servicios: la tarjeta de atención al usuario no contradice el cuadro del art. 58.1 (el 0800 acusa en el momento)', async () => {
+  // Hasta el 01/10/2026 este test exigía que la tarjeta dijera que el 0800 acusa «en el momento» y el resto en 24
+  // horas, como el cuadro del PETG 58.1. El 02/10 el gerente pidió bajar el compromiso («el 0800 te confirma en el
+  // momento… no me quiero arriesgar») y Juli eligió sacar los plazos de todos lados. El dato sigue en contacto.json.
+  it('servicios: la tarjeta de atención al usuario no promete plazos, y el dato del contrato sigue en contacto.json', async () => {
     const [s, c] = await Promise.all([fuenteLocalJson.servicios(), fuenteLocalJson.contacto()]);
-    // El cuadro del PETG 58.1 da acuse INMEDIATO a la línea gratuita 0800 y 24 horas a formulario web / correo y
-    // ChatBot/WhatsApp. En /servicios/ esta tarjeta y la tabla de Canales conviven tres bloques aparte: si la tarjeta
-    // mete el 0800 en la bolsa de las 24 horas, la página se desmiente sola.
-    expect(c.canales.find((k) => k.id === 'linea-0800')?.acuse).toBe('Inmediato');
     const atencion = s.find((x) => x.id === 'atencion-al-usuario')!;
-    const clausulaDel0800 = atencion.descripcion.split(/[.;]/).find((frase) => frase.includes('0800'));
-    expect(clausulaDel0800, 'la tarjeta tiene que nombrar el 0800').toBeDefined();
-    expect(clausulaDel0800).toMatch(/en el momento|inmediat/i);
-    expect(clausulaDel0800).not.toMatch(/24 horas/);
-    expect(atencion.descripcion).toContain('24 horas');
-    expect(atencion.descripcion).toContain('5 días hábiles');
+    expect(atencion.descripcion).toContain('0800');
+    expect(atencion.descripcion).not.toMatch(/en el momento|inmediat|\d+ horas|d[ií]as h[aá]biles/i);
+    expect(c.canales.find((k) => k.id === 'linea-0800')?.acuse).toBe('Inmediato');
+    expect(c.canales.find((k) => k.id === 'formulario')?.respuesta).toBe('5 días hábiles');
   });
   it('faq del desperfecto en ruta: los tiempos de grúa se publican como los del pliego, no como promesa lisa', async () => {
     const p = (await fuenteLocalJson.faq()).find((x) => x.slug === 'desperfecto-en-ruta')!;

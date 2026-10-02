@@ -7,7 +7,8 @@
 // algo lo bloqueaba: falso. Lo encontró la revisión leyendo el código, no un test.
 //
 // Queda aunque `contacto.formularioCrm` vuelva a null: cargar Contacto entera con el formulario propio no rompe nada.
-const ENTERAS = ['contacto'];
+// /proveedores/ desde el 02/10/2026, por el mismo motivo: también lleva el formulario de Bitrix.
+const ENTERAS = ['contacto', 'proveedores'];
 
 const sinBarras = (p: string) => p.replace(/^\/+|\/+$/g, '');
 

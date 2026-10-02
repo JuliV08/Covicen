@@ -60,6 +60,20 @@ export const publicado = Object.freeze({
   sanitariosPublicos: false,
   /** El canal de WhatsApp: «falta solicitar». La fila de la tabla de canales y las menciones que lo prometen. */
   canalWhatsapp: false,
+
+  // Segunda tanda de la misma reunión (02/10/2026).
+  /** Página /politicas/ (calidad, seguridad vial, anticorrupción): «no es para este momento», hace falta una
+   *  consultoría para escribirlas. No se genera, y sale del menú y del pie. */
+  politicas: false,
+  /** Página /transparencia/ (normativa, póliza de responsabilidad civil). No se genera, y sale del menú y del pie.
+   *  OJO: el PETG 61.6 pide publicar la normativa aplicable y la póliza; ver docs/pendientes-de-confirmacion.md. */
+  transparencia: false,
+  /** El estado de la traza (cortes, obras, clima) en El tramo: hoy son datos de ejemplo. «Comentar hasta que tengamos
+   *  info.» Esconde el bloque, el cartel de «datos de ejemplo» y los marcadores del mapa. */
+  estadoDeLaTraza: false,
+  /** Guía de trámites · el formulario «Iniciá tu trámite»: no hay nadie del otro lado que lo atienda. Los trámites
+   *  se inician desde Contacto, por el CRM. */
+  formularioTramites: false,
 });
 
 export type ClavePublicada = keyof typeof publicado;

@@ -39,6 +39,6 @@ const estados = { planificada: 'Planificada', 'en-ejecucion': 'En ejecución', t
         </li>
       ))}
     </ol>
-    <div class="mt-12">{estado.disponible ? <EstadoTraza {estado} {rutas} nivel="h2" /> : <HuecoCapacidad capacidad="estadoRutasEnVivo" titulo="Estado de las rutas en tiempo real" descripcion="Cortes, desvíos por obra y clima, por ruta y kilómetro." alternativaHref="/novedades" alternativaTexto="Ver novedades de obras" />}</div>
+    <div class="mt-12">{estado.disponible && publicado.estadoDeLaTraza ? <EstadoTraza {estado} {rutas} nivel="h2" /> : <HuecoCapacidad capacidad="estadoRutasEnVivo" titulo="Estado de las rutas en tiempo real" descripcion="Cortes, desvíos por obra y clima, por ruta y kilómetro." alternativaHref="/novedades" alternativaTexto="Ver novedades de obras" />}</div>
   </Seccion>
 </Base>

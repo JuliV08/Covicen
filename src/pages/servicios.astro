@@ -14,7 +14,7 @@ const onerosos = serviciosPublicables(servicios).filter((s) => !s.gratuito);
 // Contacto y en Emergencias). Los fondos se alternan sobre lo que se ve (lib/fondos.ts).
 const [fGratuitos, fConCosto, fCanales] = alternarFondos([true, publicado.serviciosConCosto, publicado.canalesEnServicios]);
 // La descripción para buscadores ofrece solo lo que la página muestra.
-const descripcion = `Servicios de Covicen en el Tramo Centro: emergencias 140, grúa y remolque gratuitos con tiempos comprometidos, móviles de seguridad vial${publicado.telepaseSinCosto ? ', TelePASE sin costo' : ''} y atención al usuario con plazos${publicado.serviciosConCosto ? ', y qué servicios se cobran' : ''}.`;
+const descripcion = `Servicios de Covicen en el Tramo Centro: emergencias 140, grúa y remolque gratuitos con tiempos comprometidos, móviles de seguridad vial${publicado.telepaseSinCosto ? ', TelePASE sin costo' : ''} y atención al usuario${publicado.serviciosConCosto ? ', y qué servicios se cobran' : ''}.`;
 ---
 <Base titulo="Servicios al usuario" {descripcion} migas={[{ nombre: 'Servicios', href: '/servicios' }]}>
   {/* La bajada decía «El contrato de concesión obliga a prestarlos y a informar cuáles son gratuitos y cuáles tienen

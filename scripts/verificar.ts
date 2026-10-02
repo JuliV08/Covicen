@@ -26,6 +26,13 @@ const fallo = (m: string) => fallos.push(m);
 // `efectivo` (01/10/2026): en la vía se cobra solo con medios electrónicos, en las terminales POS. La palabra sola, no
 // «efectiva» ni «efectivamente»: en este sitio «efectivo» siempre quiso decir plata en mano.
 const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/, /\befectivo\b/i];
+// Plazos de respuesta (02/10/2026): el gerente pidió «bajarle el compromiso de los días de respuesta» y Juli eligió
+// sacarlos de todos lados. Se guardan las frases que PROMETEN un plazo, no «días hábiles» a secas: la disponibilidad de
+// los canales («se gestiona en días hábiles») se queda, y un trámite o una norma pueden tener su propio plazo («entra en
+// vigencia a los 10 días hábiles»). Se buscan en el HTML crudo y en el texto visible, como los datos sin certificar:
+// una frase partida por una etiqueta solo aparece entera en el segundo. Casos que tienen que caer y que no, en
+// tests/scripts/plazos.test.ts.
+const PLAZOS_DE_RESPUESTA = [/respuesta,? en \d+ d[ií]as/i, /\brespond\w*[^.]{0,40}\b\d+ d[ií]as/i, /acuse[^.]{0,40}\b\d+ horas/i, /dentro de las \d+ horas te confirm/i, /te confirma en el momento/i];
 // Citas del pliego en la cara del público. Pedido del gerente (call del 20/09/2026): «hace mención del pliego; esas
 // cosas que no aparezcan». Vale para las siglas Y para la palabra escrita con todas las letras: son la misma mención,
 // y había ocho lugares que la escribían larga («según el Pliego de Especificaciones Técnicas Particulares…»), que
@@ -93,6 +100,9 @@ const TEXTOS_SIN_CERTIFICAR: Array<[keyof typeof publicado, RegExp[]]> = [
   ['sanitariosPublicos', [/sanitarios p[uú]blicos/i, /cambiador/i]],
   // «falta solicitar». La fila de la tabla de canales y las dos frases que lo prometían.
   ['canalWhatsapp', [/Se habilita a los 90 d[ií]as/i, /Abrir WhatsApp/i, /correo y WhatsApp/i, /0800 o WhatsApp/i]],
+  // Segunda tanda (02/10/2026). El estado de la traza con datos de ejemplo y el formulario de trámites.
+  ['estadoDeLaTraza', [/Datos de ejemplo/i, /Estado de la traza/i]],
+  ['formularioTramites', [/Inici[aá] tu tr[aá]mite/i, /id="formulario-tramites"/]],
   // `formularioTelepase` no tiene fila acá desde el 25/09/2026: el formulario volvió y es obligatorio (PETG 61.5 b),
   // así que el candado que corresponde es el contrario, el de más abajo, que exige que esté en /contacto/.
   // `serviciosDeAreaDescanso` no tiene fila acá a propósito. Ese interruptor esconde la SECCIÓN de El tramo
@@ -159,6 +169,9 @@ for (const ruta of paginas) {
       if (p.test(html) || p.test(plano)) fallo(`${nombre}: publica ${p}, y publicado.${clave} está apagado`);
     }
   }
+  // Con el espacio duro pasado a espacio: «24&nbsp;horas» es la misma promesa.
+  const planoLlano = plano.replace(/&nbsp;|\u00a0/g, ' ');
+  for (const p of PLAZOS_DE_RESPUESTA) if (p.test(html) || p.test(plano) || p.test(planoLlano)) fallo(`${nombre}: promete un plazo de respuesta (${p})`);
   const visible = plano;
   if ((nombre === 'index.html' || nombre.startsWith('el-tramo')) && !/\b679\b/.test(visible)) fallo(`${nombre}: falta la longitud oficial (679 km)`);
   if (!visible.includes('Última actualización')) fallo(`${nombre}: falta "Última actualización" en el pie`);
@@ -202,7 +215,7 @@ for (const [tema, tokens] of Object.entries(temas)) {
 // usuario vive en esos archivos.
 for (const archivo of archivosDe(DIST).filter((a) => /\.(json|xml)$/.test(a))) {
   const contenido = readFileSync(archivo, 'utf8');
-  for (const p of PROHIBIDOS) if (p.test(contenido)) fallo(`${relative(DIST, archivo)}: contiene ${p}`);
+  for (const p of [...PROHIBIDOS, ...PLAZOS_DE_RESPUESTA]) if (p.test(contenido)) fallo(`${relative(DIST, archivo)}: contiene ${p}`);
 }
 
 // 11. páginas que tienen que existir (una por estación de peaje). Solo con el sitio entero: con la portada sola no
@@ -218,7 +231,8 @@ if (sitioCompleto) {
   // indexa igual. Esto mira el dist de verdad y el sitemap, no la intención del código: si mañana alguien vuelve a
   // poner src/pages/obras.astro como ruta fija, el interruptor deja de mandar y acá se cae.
   const sitemap = existsSync(join(DIST, 'sitemap-0.xml')) ? readFileSync(join(DIST, 'sitemap-0.xml'), 'utf8') : '';
-  for (const [ruta, prendida] of [['obras', publicado.obras]] as const) {
+  // Políticas y Transparencia, desde el 02/10/2026 (reunión con el gerente del 01/10).
+  for (const [ruta, prendida] of [['obras', publicado.obras], ['politicas', publicado.politicas], ['transparencia', publicado.transparencia]] as const) {
     if (prendida) continue;
     if (existsSync(join(DIST, ruta, 'index.html'))) fallo(`/${ruta}/ está apagada en src/lib/publicado.ts y el build la generó igual`);
     if (sitemap.includes(`/${ruta}/`)) fallo(`/${ruta}/ está apagada y el sitemap la lista`);

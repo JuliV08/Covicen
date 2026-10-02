@@ -14,7 +14,10 @@ import { ruta } from '@/lib/rutas';
 import { publicado } from '@/lib/publicado';
 import { estadoCabina, serviciosDeCabina } from '@/lib/tramo';
 const [tramo, estado] = await Promise.all([datos.tramo(), datos.estadoRutas()]);
-const incidentes = estado.disponible ? estado.incidentes ?? [] : [];
+// El estado de la traza se esconde hasta tener información real (02/10/2026: «comentar hasta que tengamos info»):
+// sin el bloque, sin el cartel de «datos de ejemplo» y sin los marcadores del mapa. publicado.estadoDeLaTraza.
+const conEstado = estado.disponible && publicado.estadoDeLaTraza;
+const incidentes = conEstado ? estado.incidentes ?? [] : [];
 // El mapa pinta los incidentes como marcadores. Mientras el estado sea de muestra (estado.ejemplo), el cartel va ARRIBA
 // del mapa: un corte inventado que se lee como real es el peor error posible. Y EstadoTraza repite los mismos incidentes
 // en texto, que es la única forma de leerlos con teclado o con lector de pantalla.
@@ -50,9 +53,9 @@ const anclaTapada = 'scroll-mt-[calc(var(--alto-header)+4.5rem)]';
        "mapa-titulo": ese ya lo usa MapaTramo para la descripción del SVG y quedarían dos iguales en la misma página. -->
   <section id="mapa" class="contenedor py-12" aria-labelledby="titulo-seccion-mapa">
     <h2 id="titulo-seccion-mapa" class="sr-only">Mapa del tramo y estaciones de peaje</h2>
-    {estado.disponible && estado.ejemplo && <p class="revelar mb-4"><Senal variante="frio">Datos de ejemplo: el módulo se activa con la operación</Senal></p>}
+    {conEstado && estado.ejemplo && <p class="revelar mb-4"><Senal variante="frio">Datos de ejemplo: el módulo se activa con la operación</Senal></p>}
     <div class="revelar tarjeta tarjeta-panel"><MapaInteractivo {tramo} {incidentes} modo="scroll" disposicion="lado" /></div>
-    {estado.disponible && <div class="revelar mt-8"><EstadoTraza {estado} {rutas} nivel="h2" /></div>}
+    {conEstado && <div class="revelar mt-8"><EstadoTraza {estado} {rutas} nivel="h2" /></div>}
   </section>
 
   {/* Pedido del 24/09/2026: el nombre de cada bloque es el título, sin bajada, y se pasa directo al contenido. Son
