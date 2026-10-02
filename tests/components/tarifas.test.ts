@@ -115,7 +115,7 @@ describe('TablaTarifas con textos del sistema', () => {
 });
 
 // La URL de la fuente del tarifario la va a mandar el backend (FUENTE_DATOS=api). Además del contrato, cada
-// componente que la mete en un href pasa por esHttp: la misma regla que cumple /tarifas/.
+// componente que la mete en un href pasa por esHttp: la misma regla que cumplen las páginas de estación.
 describe('TarifaDestacada', () => {
   const render = async (tarifario: unknown) => (await AstroContainer.create()).renderToString(TarifaDestacada, { props: { tarifario } });
 
@@ -194,18 +194,28 @@ describe('/tarifas/', () => {
     expect(visible).not.toContain('Corredores Viales S.A.');
   });
 
-  it('enlaza el Boletín Oficial de la resolución vigente, una sola vez', async () => {
+  // Reunión con el gerente del 01/10/2026: sale la línea «Resolución 248/2026 de la Dirección Nacional de Vialidad.
+  // Ver en el Boletín Oficial.» de debajo de las etiquetas, y el recuadro «Estaciones sin habilitar». La resolución
+  // sigue en la vigencia de cada estación. (El enlace al Boletín de las páginas de estación pasa por esHttp: lo
+  // prueba «con enlazarFuente, solo enlaza la fuente si es http(s)», más arriba, y el barrido de dist/ de
+  // verificar.ts es el otro candado.)
+  it('no lleva la línea de la resolución con el Boletín Oficial ni el recuadro de estaciones sin habilitar', async () => {
     const html = await render();
-    // Una vez, en el encabezado: las tablas no lo repiten (el enlace de TablaTarifas es solo para las estaciones).
-    expect(html.match(/>Ver en el Boletín Oficial</g)?.length).toBe(1);
-    expect(html).toMatch(/href="https:\/\/[^"]*boletinoficial[^"]*"/i);
+    expect(html).not.toContain('Ver en el Boletín Oficial');
+    expect(html).not.toContain('Estaciones sin habilitar');
+    expect(html).not.toContain('Hasta entonces, en esas estaciones no se paga');
+    expect(html).toContain('Resolución 248/2026');
   });
 
-  // No se puede inyectar un tarifario envenenado en la página (lee `datos`), así que se verifica que el href pase por
-  // la guarda. El barrido de dist/ de scripts/verificar.ts es el otro candado, sobre el sitio entero.
-  it('la URL de la fuente pasa por esHttp antes de ir a un href', () => {
-    const fuente = readFileSync('src/pages/tarifas.astro', 'utf8');
-    expect(fuente).toContain("import { esHttp, ruta } from '@/lib/rutas'");
-    expect(fuente).toMatch(/esHttp\(tarifario\.fuente\.url\)/);
+  // Mismo pedido: la bajada de Exenciones y el «según el reglamento de Vialidad Nacional» se van, y las dos tarjetas
+  // pasan abajo de la lista, una al lado de la otra.
+  it('Exenciones sin la bajada ni el reglamento, con las tarjetas abajo de la lista', async () => {
+    const html = await render();
+    expect(html).not.toContain('Solo los vehículos de esta lista');
+    expect(html).not.toContain('habilitado a ese efecto');
+    expect(html).not.toContain('según el reglamento de Vialidad Nacional');
+    const seccion = html.split('<section').find((s) => s.includes('Quiénes no pagan.')) ?? '';
+    expect(seccion).toMatch(/<div class="grid gap-4 md:grid-cols-2">\s*<div class="tarjeta p-6"><h3 class="text-xl">Ex combatientes de Malvinas/);
+    expect(seccion).not.toContain('lg:grid-cols-[1.2fr_1fr]');
   });
 });

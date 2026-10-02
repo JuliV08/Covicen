@@ -4,11 +4,11 @@
 // (avisos, vigencia, resolución) se pintan como texto, nunca set:html. Los dos precios al público salen resueltos de
 // `tarifasParaCabina`: acá no se recalcula nada, así las dos columnas nunca se parten en dos números con el mismo sin IVA.
 // Sin pie fijo (pedido del gerente, 24/09/2026): se fueron las tres notas del tarifario —se vaciaron en el dato— y el
-// renglón «Publicado el… Fuente…», que repetía el enlace al Boletín Oficial que ya está arriba en /tarifas/. Los avisos
+// renglón «Publicado el… Fuente…», que repetía el enlace al Boletín Oficial de arriba. Los avisos
 // siguen siendo del operador: si el día de mañana carga uno, aparece debajo de la tabla; si no hay, no queda nada.
 // `enlazarFuente` pone el enlace al Boletín Oficial en la línea de vigencia, ARRIBA de la tabla: lo usan las páginas de
-// estación, que no tienen otro. En /tarifas/ no va, porque el enlace ya está en el encabezado de la página y con tres
-// tablas quedaría cuatro veces. La URL pasa por esHttp (lib/rutas), la misma guarda que usa /tarifas/.
+// estación. En /tarifas/ no va: el 01/10/2026 el gerente pidió sacar de esa página la línea de la resolución con el
+// enlace, y con tres tablas quedaría tres veces. La URL pasa por esHttp (lib/rutas).
 import IconoVehiculo from '@/components/ilustraciones/IconoVehiculo.astro';
 import type { Cabina, Tarifario } from '@/lib/datos/esquemas';
 import { fechaLarga, kmTexto, moneda } from '@/lib/formato';

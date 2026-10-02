@@ -34,9 +34,10 @@ const bloques = ([['rutas', 'Rutas y longitudes'], ['estaciones', 'Estaciones de
 const anclaTapada = 'scroll-mt-[calc(var(--alto-header)+4.5rem)]';
 ---
 <Base titulo="El tramo" descripcion="El Tramo Centro de la Red Federal de Concesiones: 679,03 km sobre RN 9 (autopista Rosario–Córdoba), RN 19 y RN 34, en Córdoba y Santa Fe. Mapa interactivo, rutas, estaciones de peaje, tarifas y servicios." migas={[{ nombre: 'El tramo', href: '/el-tramo' }]}>
-  {/* Título y bajada elegidos por Juli el 24/09/2026 («este le cambiaría el principal y la descripción»). El título
-      dice lo que la gente busca («ruta 9», «ruta 34»); la bajada anterior no nombraba la RN 34. Los km, del dato. */}
-  <Seccion nivel="h1" eyebrow="El tramo" titulo="Rutas nacionales 9, 19 y 34." intro={`${numero(tramo.km)} km entre Santa Fe y Córdoba: la autopista Rosario–Córdoba, la RN 19 desde Santo Tomé y la RN 34 desde Rosario. Tocá una estación en el mapa para ver su ficha.`} class="pt-10 pb-0" />
+  {/* Bajada elegida por Juli el 24/09/2026; los km, del dato. El título era «Rutas nacionales 9, 19 y 34.» y pasó a
+      «Nuestras rutas.» en la reunión con el gerente del 01/10/2026, en línea con el «Viajá por nuestras rutas» de la
+      portada. Los números de las rutas, que es lo que la gente busca, siguen en la bajada y en la descripción. */}
+  <Seccion nivel="h1" eyebrow="El tramo" titulo="Nuestras rutas." intro={`${numero(tramo.km)} km entre Santa Fe y Córdoba: la autopista Rosario–Córdoba, la RN 19 desde Santo Tomé y la RN 34 desde Rosario. Tocá una estación en el mapa para ver su ficha.`} class="pt-10 pb-0" />
 
   <nav aria-label="Secciones de El tramo" class="sticky top-[var(--alto-header)] z-30 border-b border-borde bg-fondo/85 backdrop-blur">
     <ul class="contenedor flex gap-1 overflow-x-auto py-2 text-sm">
@@ -103,8 +104,9 @@ const anclaTapada = 'scroll-mt-[calc(var(--alto-header)+4.5rem)]';
   )}
 
   {/* La salida a /servicios/ NO depende de que haya datos por estación: esa página sí tiene contenido (grúa, 140,
-      TelePASE, sanitarios) y es adonde hay que mandar a quien pregunta qué cubre el peaje. */}
+      móviles, atención al usuario) y es adonde hay que mandar a quien pregunta qué cubre el peaje. «Y con costo», solo
+      si esa sección se muestra (publicado.serviciosConCosto, escondida el 01/10/2026). */}
   <section class="contenedor pb-24">
-    <p class="revelar"><a href={ruta('/servicios')} class="font-semibold">Servicios al usuario: gratuitos y con costo</a></p>
+    <p class="revelar"><a href={ruta('/servicios')} class="font-semibold">{publicado.serviciosConCosto ? 'Servicios al usuario: gratuitos y con costo' : 'Servicios al usuario'}</a></p>
   </section>
 </Base>

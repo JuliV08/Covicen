@@ -16,7 +16,7 @@ describe('/peajes/[slug]/', () => {
     expect(html).toContain('data-imprimir');
   });
   // 24/09/2026: debajo de las tablas de tarifas ya no va nada, y con eso se había ido el único enlace de la estación a
-  // la resolución. Vuelve arriba de la tabla, en la línea de vigencia; en /tarifas/ no, que ya lo tiene en el encabezado.
+  // la resolución. Vuelve arriba de la tabla, en la línea de vigencia; en /tarifas/ no (desde el 01/10/2026 esa página no lleva el enlace).
   it('la página de una estación operativa enlaza la resolución en el Boletín Oficial, arriba de la tabla', async () => {
     const rutas = await getStaticPaths();
     const c = await AstroContainer.create();

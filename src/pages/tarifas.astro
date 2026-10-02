@@ -6,9 +6,8 @@ import Boton from '@/components/ui/Boton.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import Senal from '@/components/ui/Senal.astro';
 import { datos } from '@/lib/datos';
-import { cabinaOperativa } from '@/lib/datos/esquemas';
 import { fechaLarga, moneda } from '@/lib/formato';
-import { esHttp, ruta } from '@/lib/rutas';
+import { ruta } from '@/lib/rutas';
 import { alternarFondos } from '@/lib/fondos';
 import { publicado } from '@/lib/publicado';
 import { cabinasDelCuadro, publico, tarifaDestacada } from '@/lib/tarifas';
@@ -16,7 +15,6 @@ const [tarifario, tramo] = await Promise.all([datos.tarifario(), datos.tramo()])
 const destacada = tarifaDestacada(tarifario);
 const precio = publico(destacada.montoSinIva, destacada.montoConIva, tarifario.alicuotaIva);
 const cabinas = cabinasDelCuadro(tarifario, tramo.cabinas);
-const proximas = tramo.cabinas.filter((c) => !cabinaOperativa(c));
 // La bajada es el texto que mandó el cliente el 24/09/2026. La primera oración es la descripción de la vigencia (la
 // carga el operador); la segunda, las estaciones, sale de las cabinas del cuadro: si mañana se suma una, la bajada se
 // entera sola. Con las tres de hoy da exactamente el texto pedido.
@@ -41,14 +39,16 @@ const descuentos = [['A partir de la pasada 36 en el mes', '15 %'], ['A partir d
 // Tarifa de peaje por exceso de carga, tal como está en el cuadro del contrato de concesión: el tramo de exceso y
 // por cuánto se multiplica la tarifa vigente de la categoría. No es una multa de tránsito: es la tarifa de esa pasada.
 const excesoDeCarga = [['Exceso del 10 % al 30 %', '50 veces'], ['Exceso de más del 30 %', '100 veces']] as const;
+// Reunión con el gerente del 01/10/2026: sale la bajada («Solo los vehículos de esta lista, según el contrato… con el
+// dispositivo TelePASE habilitado a ese efecto») y el «según el reglamento de Vialidad Nacional» de las dos últimas.
 // El listado de ocho viñetas era lo que pesaba de esta sección (pedido del gerente, 20/09/2026: más corta). Las
 // categorías de organismos se agrupan en una línea —nadie llega a esta página preguntándose si pasa gratis una
 // ambulancia— y las dos que tienen trámite del usuario se mantienen como ítem propio, porque son las que la gente
 // busca de verdad. No se saca ninguna categoría del contrato: se dicen en menos renglones.
 const exentos = [
   'Vehículos de emergencia y de organismos del Estado: ambulancias, bomberos, Fuerzas Armadas y de Seguridad de la Nación, Vialidad Nacional, Agencia Nacional de Seguridad Vial y Cruz Roja (Ley 27.547).',
-  'Vehículos afectados a personas con discapacidad, según el reglamento de Vialidad Nacional.',
-  'Vehículos afectados a ex combatientes de Malvinas, según el reglamento de Vialidad Nacional.',
+  'Vehículos afectados a personas con discapacidad.',
+  'Vehículos afectados a ex combatientes de Malvinas.',
 ];
 ---
 <Base titulo="Tarifas" descripcion={`Cuadro tarifario vigente en los peajes del Tramo Centro (Carcarañá, James Craik y Franck): ${precio !== null ? moneda(precio) : ''} por auto, Resolución 248/2026 de Vialidad Nacional. Cuadro tarifario por estación, TelePASE, pago en la vía y exenciones.`} migas={[{ nombre: 'Tarifas', href: '/tarifas' }]}>
@@ -56,11 +56,12 @@ const exentos = [
     {/* Pedido del gerente (24/09/2026): sale el recuadro grande con el precio del auto, porque el precio de cada
         categoría ya está en la tabla de cada estación, dos pasos más abajo. Lo que estaba a su derecha pasa a
         ocupar todo el ancho: vigencia y resolución a la izquierda, Imprimir a la derecha. La línea «rige el mismo
-        cuadro en…» no se repite acá: la bajada de la página ya lo dice con esas mismas palabras. */}
+        cuadro en…» no se repite acá: la bajada de la página ya lo dice con esas mismas palabras.
+        01/10/2026: sale también la línea «Resolución 248/2026 de la Dirección Nacional de Vialidad. Ver en el Boletín
+        Oficial.» debajo de las etiquetas. La resolución sigue en la vigencia de cada estación, a la derecha de su tabla. */}
     <div class="revelar mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div class="flex flex-col gap-3">
         <div class="flex flex-wrap gap-2"><Senal variante="ok">Cuadro vigente</Senal>{tarifario.vigencia.desde && <Senal variante="frio">Desde el {fechaLarga(tarifario.vigencia.desde)}</Senal>}</div>
-        {tarifario.resolucion && <p class="text-texto-2">{tarifario.resolucion}.{esHttp(tarifario.fuente.url) && <> <a href={tarifario.fuente.url} rel="noopener noreferrer" target="_blank">Ver en el Boletín Oficial</a>.</>}</p>}
       </div>
       <div class="shrink-0"><button type="button" class="inline-flex items-center gap-2 rounded-md border border-borde px-4 py-2 font-semibold text-texto hover:border-borde-fuerte hover:bg-superficie" data-imprimir><Printer size={18} aria-hidden="true" /> Imprimir el cuadro</button></div>
     </div>
@@ -72,12 +73,8 @@ const exentos = [
       {cabinas.map((c) => <TablaTarifas {tarifario} cabina={c} id={c.slug} />)}
     </div>
 
-    {proximas.length > 0 && (
-      <div class="revelar mt-12 rounded-md border border-dashed border-borde-fuerte p-6">
-        <h3 class="text-xl">Estaciones sin habilitar</h3>
-        <p class="mt-2 text-texto-2">{proximas.map((c) => c.nombre).join(', ')}: cobran cuando Vialidad Nacional las habilite, con el cuadro tarifario de Carcarañá. Hasta entonces, en esas estaciones no se paga.</p>
-      </div>
-    )}
+    {/* El recuadro «Estaciones sin habilitar» (Leones, San Francisco y Totoras cobran cuando Vialidad Nacional las
+        habilite…) se sacó el 01/10/2026, pedido del gerente. Esas estaciones siguen en el mapa de El tramo. */}
   </Seccion>
 
   {publicado.descuentosPorFrecuencia && (
@@ -88,10 +85,12 @@ const exentos = [
   </Seccion>
   )}
 
-  <Seccion eyebrow="Exenciones" titulo="Quiénes no pagan." intro="Solo los vehículos de esta lista, según el contrato de concesión. Todos tienen que contar con el dispositivo TelePASE habilitado a ese efecto." fondo={fExenciones}>
-    <div class="revelar grid gap-8 lg:grid-cols-[1.2fr_1fr]">
-      <ul class="flex flex-col gap-2 text-texto-2">{exentos.map((e) => <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-vial" aria-hidden="true"></span>{e}</li>)}</ul>
-      <div class="flex flex-col gap-4">
+  {/* La lista arriba y las dos tarjetas abajo, una al lado de la otra (01/10/2026): en dos columnas, la lista quedaba
+      a la izquierda con un hueco debajo y las tarjetas apiladas a la derecha, «de modo asimétrico». */}
+  <Seccion eyebrow="Exenciones" titulo="Quiénes no pagan." fondo={fExenciones}>
+    <div class="revelar flex flex-col gap-8">
+      <ul class="flex max-w-prose flex-col gap-2 text-texto-2">{exentos.map((e) => <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-vial" aria-hidden="true"></span>{e}</li>)}</ul>
+      <div class="grid gap-4 md:grid-cols-2">
         <div class="tarjeta p-6"><h3 class="text-xl">Ex combatientes de Malvinas</h3><p class="mt-2 text-texto-2">El trámite es nacional y gratuito.</p><a href="https://www.argentina.gob.ar/servicio/exencion-de-pago-de-peaje-ex-combatientes-de-malvinas" rel="noopener noreferrer" target="_blank" class="mt-3 inline-block font-semibold">Cómo pedir la exención (argentina.gob.ar)</a></div>
         <div class="tarjeta p-6"><h3 class="text-xl">Personas con discapacidad</h3><p class="mt-2 text-texto-2">Se tramita ante Vialidad Nacional con el certificado único de discapacidad.</p><a href={ruta('/tramites')} class="mt-3 inline-block font-semibold">Ver la guía de trámites</a></div>
       </div>
