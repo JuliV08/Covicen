@@ -84,6 +84,15 @@ const TEXTOS_SIN_CERTIFICAR: Array<[keyof typeof publicado, RegExp[]]> = [
   // `obras` tiene además dos candados propios —la ruta no se genera (11b) y no queda ningún enlace (chequeo 1)—,
   // así que acá va solo lo que esos no cubren: prometerle al usuario un plan o un avance de obra.
   ['obras', [/avance de (las )?obras/i, /plan de obras/i]],
+  // Reunión con el gerente del 01/10/2026. Que TelePASE es gratis estaba en Servicios, en Medios de pago (tres textos),
+  // en la home, en una pregunta frecuente y en Trámites (tres textos más; los encontró la revisión, no la búsqueda
+  // inicial). Se guardan las frases, no la palabra «gratis», que vale para el 140, la grúa y las exenciones.
+  // `/no tienen costo/` va sin más contexto a propósito: hoy solo lo decía TelePASE, y si mañana lo dice otra cosa,
+  // mejor que el build pregunte.
+  ['telepaseSinCosto', [/TelePASE sin costo/i, /TelePASE gratis/i, /dispositivo es gratis/i, /dispositivo,? sin cargo/i, /Gratis, y en todas las estaciones/i, /no tienen costo/i, /son gratuitos para el usuario/i, /es gratis: la adhesi/i, /Todos son gratuitos/i]],
+  ['sanitariosPublicos', [/sanitarios p[uú]blicos/i, /cambiador/i]],
+  // «falta solicitar». La fila de la tabla de canales y las dos frases que lo prometían.
+  ['canalWhatsapp', [/Se habilita a los 90 d[ií]as/i, /Abrir WhatsApp/i, /correo y WhatsApp/i, /0800 o WhatsApp/i]],
   // `formularioTelepase` no tiene fila acá desde el 25/09/2026: el formulario volvió y es obligatorio (PETG 61.5 b),
   // así que el candado que corresponde es el contrario, el de más abajo, que exige que esté en /contacto/.
   // `serviciosDeAreaDescanso` no tiene fila acá a propósito. Ese interruptor esconde la SECCIÓN de El tramo

@@ -49,14 +49,14 @@ describe('/preguntas-frecuentes/', () => {
     const declaradas = (readFileSync('src/lib/faq.ts', 'utf8').match(/^\s*'[a-z0-9-]+':/gm) ?? []).length;
     expect(declaradas, 'no pude leer la tabla del filtro').toBeGreaterThan(0);
     expect(todas.length - publicables.length).toBe(declaradas);
-    expect(publicado.descuentosPorFrecuencia || publicado.pasasteSinPagar || publicado.tarifaDiferencial,
+    expect(publicado.descuentosPorFrecuencia || publicado.pasasteSinPagar || publicado.tarifaDiferencial || publicado.telepaseSinCosto,
       'se prendió algún interruptor: este test mide el otro estado').toBe(false);
   });
 
   // Las preguntas escondidas NO se borran: son lo que vuelve cuando el área confirme.
   it('las preguntas escondidas siguen versionadas', async () => {
     const slugs = (await fuenteLocalJson.faq()).map((p) => p.slug);
-    for (const slug of ['descuentos-por-frecuencia', 'pase-sin-pagar', 'tarifa-vecinal']) {
+    for (const slug of ['descuentos-por-frecuencia', 'pase-sin-pagar', 'tarifa-vecinal', 'telepase']) {
       expect(slugs, `se borró la pregunta ${slug} en vez de esconderla`).toContain(slug);
     }
   });

@@ -20,6 +20,8 @@ const ESPERA_CONFIRMACION: Record<string, boolean> = {
   'descuentos-por-frecuencia': !publicado.descuentosPorFrecuencia,
   'pase-sin-pagar': !publicado.pasasteSinPagar,
   'tarifa-vecinal': !(publicado.tarifaDiferencial && publicado.tramiteVecinosFrentistas),
+  // «¿Puedo pagar con TelePASE?» responde «Sí, y es gratis: la adhesión, el primer dispositivo…» (01/10/2026).
+  'telepase': !publicado.telepaseSinCosto,
 };
 
 export const preguntasPublicables = (preguntas: Pregunta[]): Pregunta[] =>

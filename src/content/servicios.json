@@ -23,7 +23,6 @@
     "nombre": "Móviles de seguridad vial",
     "gratuito": true,
     "descripcion": "Vehículos identificados con el 140 que recorren el tramo, asisten en la ruta y aseguran el lugar de un incidente.",
-    "alcance": "Un móvil sobre la RN 9 y otro sobre la RN 19.",
     "fuente": "PETG art. 70; PETP art. 13"
   },
   {
@@ -37,7 +36,7 @@
     "id": "atencion-al-usuario",
     "nombre": "Atención al usuario",
     "gratuito": true,
-    "descripcion": "Reclamos, consultas y sugerencias: el 0800 te confirma en el momento; por formulario web, correo y WhatsApp el acuse llega en 24 horas. La respuesta, en 5 días hábiles.",
+    "descripcion": "Reclamos, consultas y sugerencias: el 0800 te confirma en el momento; por formulario web y correo, el acuse llega en 24 horas. La respuesta, en 5 días hábiles.",
     "fuente": "PETG art. 58 y 61"
   },
   {

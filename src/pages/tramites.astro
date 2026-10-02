@@ -5,6 +5,7 @@ import Formulario from '@/components/Formulario.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
 import { publicado } from '@/lib/publicado';
+import { sinCostoSinConfirmar } from '@/lib/tramites';
 const [todos, contacto] = await Promise.all([datos.tramites(), datos.contacto()]);
 
 // Solo se publican los trámites con fuente oficial verificable (call del 20/09/2026). Los dos de tarifa diferencial
@@ -15,10 +16,13 @@ const esperaConfirmacion: Record<string, boolean> = {
   'tarifa-diferencial-vecinal': !publicado.tramiteVecinosFrentistas,
   'tarifa-diferencial-docente': !publicado.tramiteVecinosFrentistas,
 };
-const tramites = todos.filter((t) => !esperaConfirmacion[t.id]);
+const tramites = todos.filter((t) => !esperaConfirmacion[t.id]).map(sinCostoSinConfirmar);
+// «Todos son gratuitos» incluía el alta de TelePASE, que quedó «a confirmar» el 01/10/2026 (lib/tramites.ts). Las
+// exenciones son gratuitas por la fuente oficial (argentina.gob.ar) y eso no cambia.
+const gratuitos = publicado.telepaseSinCosto ? 'Todos son gratuitos.' : 'Las exenciones son gratuitas.';
 ---
 <Base titulo="Guía de trámites" descripcion="Trámites del usuario del Tramo Centro: exención de peaje por discapacidad, exención para ex combatientes de Malvinas y alta de TelePASE. Qué es cada uno, qué documentación necesitás y cómo se hace." migas={[{ nombre: 'Guía de trámites', href: '/tramites' }]}>
-  <Seccion nivel="h1" eyebrow="Guía de trámites" titulo="Quién puede, qué necesita y cómo se hace." intro="Todos son gratuitos. De cada uno: qué es, qué documentación necesitás y cómo se hace, para que lo inicies completo y no tengas que volver." class="pt-10">
+  <Seccion nivel="h1" eyebrow="Guía de trámites" titulo="Quién puede, qué necesita y cómo se hace." intro={`${gratuitos} De cada uno: qué es, qué documentación necesitás y cómo se hace, para que lo inicies completo y no tengas que volver.`} class="pt-10">
     <nav aria-label="Trámites" class="revelar mb-10 flex flex-wrap gap-2">{tramites.map((t) => <a href={`#${t.id}`} class="rounded-md border border-borde px-3 py-1.5 text-sm text-texto-2 no-underline transition-colors hover:border-borde-fuerte hover:text-texto hover:underline">{t.nombre}</a>)}</nav>
     <div class="escalonar grid gap-6">
       {tramites.map((t, i) => (

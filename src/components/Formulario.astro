@@ -85,7 +85,9 @@ const textoEnviar = canal === 'whatsapp' ? textoBoton : canal === 'email' ? 'Env
       <div><button type="button" class="inline-flex min-h-11 items-center gap-2 rounded-md border border-borde px-4 py-2 font-semibold text-texto hover:border-borde-fuerte hover:bg-superficie" data-copiar-texto><Copy size={16} aria-hidden="true" /> Copiar el texto</button></div>
     </div>
   )}
-  <p class="text-sm text-texto-2">Los datos que envíes viajan por el canal que elijas (WhatsApp es un servicio de Meta). Ver <a href={ruta('/privacidad')}>política de privacidad</a>.</p>
+  {/* La aclaración de Meta, solo si el formulario manda por WhatsApp: el canal se escondió el 01/10/2026 («falta
+      solicitar») y no hay que nombrarlo donde no se usa. */}
+  <p class="text-sm text-texto-2">Los datos que envíes viajan por el canal que elijas{whatsapp && ' (WhatsApp es un servicio de Meta)'}. Ver <a href={ruta('/privacidad')}>política de privacidad</a>.</p>
 </form>
 <script src="../scripts/formulario.ts"></script>
 <style>

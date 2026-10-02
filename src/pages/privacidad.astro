@@ -17,6 +17,8 @@ const [e, contacto] = await Promise.all([datos.empresa(), datos.contacto()]);
 // Lo que su código llama «cookie» (b24_crm_guest_id) va en localStorage; una cookie de verdad la usa solo para las
 // etiquetas utm_*, y solo si el navegador no tiene localStorage. Por eso el texto dice «anota en tu navegador».
 const crm = contacto.formularioCrm !== null;
+// WhatsApp se nombra solo si hay número: el canal se escondió el 01/10/2026 («falta solicitar»).
+const porCorreo = contacto.whatsapp.numero ? 'por WhatsApp o por correo' : 'por correo';
 ---
 <Base titulo="Política de privacidad" descripcion="Cómo trata Covicen los datos personales que recibe por sus canales de contacto, según la Ley 25.326 de Protección de Datos Personales." migas={[{ nombre: 'Privacidad', href: '/privacidad' }]}>
   <Seccion nivel="h1" eyebrow="Privacidad" titulo="Qué datos recibimos y qué hacemos con ellos." class="pt-10">
@@ -25,9 +27,9 @@ const crm = contacto.formularioCrm !== null;
       <p>{e.marca}{e.enFormacion ? ', sociedad en formación' : `, ${e.razonSocial}, CUIT ${e.cuit}`}. Los datos de contacto del responsable se publican en el pie de página cuando se complete la inscripción.</p>
       <h2>Qué datos recibimos</h2>
       {crm ? (
-        <p>Este sitio no tiene cuentas de usuario y, fuera del formulario de Contacto (abajo), no usa cookies ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos: por el formulario de reclamos, consultas y sugerencias, o por WhatsApp o por correo desde los demás formularios. Nombre, contacto y el contenido de tu mensaje, y lo que el formulario de Contacto anota en tu navegador, que se detalla abajo.</p>
+        <p>Este sitio no tiene cuentas de usuario y, fuera del formulario de Contacto (abajo), no usa cookies ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos: por el formulario de reclamos, consultas y sugerencias, o {porCorreo} desde los demás formularios. Nombre, contacto y el contenido de tu mensaje, y lo que el formulario de Contacto anota en tu navegador, que se detalla abajo.</p>
       ) : (
-        <p>Este sitio no tiene cuentas de usuario, no usa cookies de terceros ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos por WhatsApp o por correo desde los formularios: nombre, contacto y el contenido de tu mensaje.</p>
+        <p>Este sitio no tiene cuentas de usuario, no usa cookies de terceros ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos {porCorreo} desde los formularios: nombre, contacto y el contenido de tu mensaje.</p>
       )}
       {crm && (
         <>
@@ -40,7 +42,7 @@ const crm = contacto.formularioCrm !== null;
       <h2>Para qué</h2>
       <p>Para responder consultas y reclamos, gestionar postulaciones laborales y altas de proveedores. No los usamos con otros fines ni los cedemos a terceros, salvo obligación legal.</p>
       <h2>Canales de terceros</h2>
-      <p>WhatsApp es un servicio de Meta Platforms, con sus propias condiciones y política de privacidad.{crm && ' Bitrix24, el sistema del formulario de Contacto, también tiene las suyas.'} El correo electrónico viaja por el proveedor que uses.</p>
+      <p>{contacto.whatsapp.numero && 'WhatsApp es un servicio de Meta Platforms, con sus propias condiciones y política de privacidad. '}{crm && 'Bitrix24, el sistema del formulario de Contacto, tiene sus propias condiciones y política de privacidad. '}El correo electrónico viaja por el proveedor que uses.</p>
       <h2>Tus derechos</h2>
       <p>Según la Ley 25.326 podés acceder, rectificar y suprimir tus datos. Escribinos por el canal de contacto{contacto.email.general ? ` o a ${contacto.email.general}` : ''}. La Agencia de Acceso a la Información Pública, órgano de control de la ley, atiende denuncias por incumplimiento.</p>
       <h2>Conservación</h2>

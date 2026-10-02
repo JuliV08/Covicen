@@ -22,6 +22,10 @@ const descripcion = `Cómo pagar el peaje en el Tramo Centro: TelePASE prepago o
 // así que lo gobierna el mismo interruptor, `publicado.pasasteSinPagar`. Un dato, un interruptor: si no, se esconde
 // en una página y se publica en la otra, que es peor que no esconderlo.
 
+// Que TelePASE no le cuesta nada al usuario quedó «a confirmar» en la reunión con el gerente del 01/10/2026: lo
+// gobierna `publicado.telepaseSinCosto`, el mismo interruptor que esconde la tarjeta de Servicios, la frase de la
+// home y la pregunta frecuente. Apagado, cada texto dice lo mismo sin la parte del costo.
+const gratis = publicado.telepaseSinCosto;
 // Modalidades de pago que fija el contrato de concesión.
 const modalidades = [
   { titulo: 'Prepago con TelePASE', texto: 'Cargás saldo por adelantado y cada pasada se descuenta a la tarifa vigente de tu categoría.' },
@@ -32,13 +36,13 @@ const modalidades = [
 ];
 ---
 <Base titulo="Medios de pago" descripcion={descripcion} migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Medios de pago', href: '/medios-de-pago' }]}>
-  <Seccion nivel="h1" eyebrow="Medios de pago" titulo="Cómo pagar el peaje." intro="Con TelePASE se paga lo mismo que en la vía. El dispositivo es gratis y sirve en toda la red nacional." class="pt-10">
+  <Seccion nivel="h1" eyebrow="Medios de pago" titulo="Cómo pagar el peaje." intro={gratis ? 'Con TelePASE se paga lo mismo que en la vía. El dispositivo es gratis y sirve en toda la red nacional.' : 'Con TelePASE se paga lo mismo que en la vía, y el dispositivo sirve en toda la red nacional.'} class="pt-10">
     <ul class="escalonar grid gap-4 md:grid-cols-3">{modalidades.map((m, i) => <li style={`--i: ${i}`}><Card><h2 class="text-xl">{m.titulo}</h2><p class="mt-2 text-texto-2">{m.texto}</p></Card></li>)}</ul>
   </Seccion>
 
-  <Seccion id="telepase" eyebrow="TelePASE" titulo="Gratis, y en todas las estaciones." intro="La adhesión, el primer dispositivo por vehículo, su colocación, la renovación, la cancelación y la reposición no tienen costo para el usuario. Las exenciones de peaje también se gestionan con TelePASE." fondo={fTelepase}>
+  <Seccion id="telepase" eyebrow="TelePASE" titulo={gratis ? 'Gratis, y en todas las estaciones.' : 'En todas las estaciones.'} intro={gratis ? 'La adhesión, el primer dispositivo por vehículo, su colocación, la renovación, la cancelación y la reposición no tienen costo para el usuario. Las exenciones de peaje también se gestionan con TelePASE.' : 'El dispositivo sirve en toda la red nacional, y con él también se gestionan las exenciones de peaje.'} fondo={fTelepase}>
     <div class="revelar grid gap-6 md:grid-cols-2">
-      <div class="tarjeta p-6"><h3 class="text-xl">Cómo adherirte</h3><p class="mt-2 text-texto-2">En el sitio oficial de TelePASE o en un punto de colocación. Elegís prepago o pospago y retirás el dispositivo sin cargo.</p><div class="mt-4"><Boton href={contacto.enlaces.telepase} variante="secundario" externo>Ir a TelePASE <ExternalLink size={16} aria-hidden="true" /></Boton></div></div>
+      <div class="tarjeta p-6"><h3 class="text-xl">Cómo adherirte</h3><p class="mt-2 text-texto-2">En el sitio oficial de TelePASE o en un punto de colocación. Elegís prepago o pospago y retirás el dispositivo{gratis && ' sin cargo'}.</p><div class="mt-4"><Boton href={contacto.enlaces.telepase} variante="secundario" externo>Ir a TelePASE <ExternalLink size={16} aria-hidden="true" /></Boton></div></div>
       {/* Sin el dato de en qué estaciones se coloca, la tarjeta entera no va. El texto que estaba acá de fallback
           —«en los sectores de detención segura de las estaciones… publicamos las ubicaciones cuando Covicen las
           defina»— era un dato sin confirmar más un «próximamente» en prosa: las dos cosas que la regla de la casa

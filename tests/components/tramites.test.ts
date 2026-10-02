@@ -58,4 +58,20 @@ describe('/tramites/', () => {
     const opciones = [...document.querySelectorAll('#formulario-tramites select option')].map((o) => o.textContent);
     expect(opciones.some((o) => o?.includes('diferencial')), 'el formulario ofrece un trámite que no está publicado').toBe(false);
   });
+
+  // 01/10/2026: que TelePASE no cuesta nada quedó «a confirmar» (publicado.telepaseSinCosto). El trámite de alta se
+  // sigue publicando, sin las frases del costo; la bajada ya no dice que todos los trámites son gratuitos. La
+  // revisión encontró esto en el sitio armado: la primera pasada lo había buscado solo en Servicios y Medios de pago.
+  it('el alta de TelePASE no dice que es gratis, y el JSON lo sigue teniendo para cuando se confirme', async () => {
+    expect(publicado.telepaseSinCosto, 'se prendió el interruptor: este test mide el otro estado').toBe(false);
+    const html = await render();
+    expect(html).not.toContain('no tienen costo');
+    expect(html).not.toMatch(/dispositivo,? sin cargo/);
+    expect(html).not.toContain('Todos son gratuitos');
+    expect(html).toContain('Las exenciones son gratuitas.');
+    expect(html).toContain('Retirás y colocás el dispositivo.');
+    expect(html).toContain('sirve en toda la red nacional.');
+    const alta = (await fuenteLocalJson.tramites()).find((t) => t.id === 'alta-telepase');
+    expect(alta?.queEs).toContain('no tienen costo');
+  });
 });

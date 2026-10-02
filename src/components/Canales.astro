@@ -1,10 +1,14 @@
 ---
-// Tabla de canales de atención con los plazos del pliego (PETG 58): acuse (TA) y respuesta (TR). Un canal sin valor
-// existe por contrato pero todavía no está habilitado: se dice cuándo, sin inventar un número.
+// Tabla de canales de atención. Reunión con el gerente del 01/10/2026: la tabla deja de mostrar el acuse y la
+// respuesta (siguen en el dato, contacto.json, y en Contacto, en los pasos de cómo hacer un reclamo y al lado del
+// formulario), el correo lleva su dirección y el WhatsApp se esconde hasta que se pida («falta solicitar»). Un canal
+// sin valor existe por contrato pero todavía no está habilitado: se dice cuándo, sin inventar un número.
 import type { Canal } from '@/lib/datos/esquemas';
+import { publicado } from '@/lib/publicado';
 import { ruta } from '@/lib/rutas';
 interface Props { canales: Canal[]; compacto?: boolean }
 const { canales, compacto = false } = Astro.props;
+const visibles = canales.filter((c) => c.tipo !== 'whatsapp' || publicado.canalWhatsapp);
 const enlace = (c: Canal) => {
   if (!c.valor) return null;
   if (c.tipo === 'telefono') return { href: `tel:${c.valor.replace(/[^\d+]/g, '')}`, texto: c.valor };
@@ -14,25 +18,17 @@ const enlace = (c: Canal) => {
   return null;
 };
 ---
-<div>
-  <section class="bloque-oscuro overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label="Canales de atención y plazos">
-    <table class="w-full border-collapse text-left text-sm">
-      <caption class="sr-only">Canales de atención al usuario con su disponibilidad, tiempo de acuse y tiempo de respuesta.</caption>
-      <thead class="bg-fondo-2 uppercase tracking-wider text-texto-2"><tr><th scope="col" class="px-4 py-3">Canal</th>{!compacto && <th scope="col" class="px-4 py-3">Disponibilidad</th>}<th scope="col" class="px-4 py-3">Acuse</th><th scope="col" class="px-4 py-3">Respuesta</th></tr></thead>
-      <tbody class="divide-y divide-borde">
-        {canales.map((c) => { const e = enlace(c); return (
-          <tr class="hover:bg-superficie">
-            <th scope="row" class="px-4 py-3 font-semibold text-texto">{c.nombre}<span class="block text-sm font-normal text-texto-2">{e ? <a href={e.href} rel={e.href.startsWith('http') ? 'noopener noreferrer' : undefined} target={e.href.startsWith('http') ? '_blank' : undefined}>{e.texto}</a> : 'Se habilita con la toma de posesión, el 7 de octubre de 2026.'}</span></th>
-            {!compacto && <td class="px-4 py-3 text-texto-2">{c.disponibilidad}</td>}
-            <td class="px-4 py-3 text-texto-2">{c.acuse}</td>
-            <td class="px-4 py-3 text-texto-2">{c.respuesta}</td>
-          </tr>
-        ); })}
-      </tbody>
-    </table>
-  </section>
-  {/* La prórroga que el contrato habilita se publica al lado de los plazos que amplía, con su redacción literal.
-      No hay tope de prórrogas: el contrato no lo pone.
-      Va en comentario de expresión: un comentario HTML de un template Astro viaja al navegador. */}
-  <p class="anotacion mt-3 text-xs text-texto-2">Los plazos de respuesta pueden ampliarse por un plazo igual cuando haga falta reunir elementos probatorios, con aviso previo al usuario.</p>
-</div>
+<section class="bloque-oscuro overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label="Canales de atención">
+  <table class="w-full border-collapse text-left text-sm">
+    <caption class="sr-only">Canales de atención al usuario{!compacto && ' con su disponibilidad'}.</caption>
+    <thead class="bg-fondo-2 uppercase tracking-wider text-texto-2"><tr><th scope="col" class="px-4 py-3">Canal</th>{!compacto && <th scope="col" class="px-4 py-3">Disponibilidad</th>}</tr></thead>
+    <tbody class="divide-y divide-borde">
+      {visibles.map((c) => { const e = enlace(c); return (
+        <tr class="hover:bg-superficie">
+          <th scope="row" class="px-4 py-3 font-semibold text-texto">{c.nombre}<span class="block text-sm font-normal text-texto-2">{e ? <a href={e.href} rel={e.href.startsWith('http') ? 'noopener noreferrer' : undefined} target={e.href.startsWith('http') ? '_blank' : undefined}>{e.texto}</a> : 'Se habilita con la toma de posesión, el 7 de octubre de 2026.'}</span></th>
+          {!compacto && <td class="px-4 py-3 text-texto-2">{c.disponibilidad}</td>}
+        </tr>
+      ); })}
+    </tbody>
+  </table>
+</section>

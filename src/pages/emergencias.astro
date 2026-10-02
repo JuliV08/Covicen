@@ -29,7 +29,7 @@ const pasos = consejos.filter((c) => c.categoria === 'emergencia');
         <ul class="mt-4 flex flex-col gap-1 text-texto-2">{grua.tiempos?.map((t) => <li class="flex gap-2"><span aria-hidden="true">—</span>{t}</li>)}</ul>
       </div>
     )}
-    <div class="revelar mt-12"><h2 class="mb-4 text-2xl">Canales y plazos</h2><Canales canales={contacto.canales} compacto /></div>
+    <div class="revelar mt-12"><h2 class="mb-4 text-2xl">Canales de atención</h2><Canales canales={contacto.canales} /></div>
     <div class="revelar mt-12"><Boton href="/seguridad-vial" variante="secundario">Consejos de seguridad vial</Boton></div>
   </Seccion>
 </Base>
