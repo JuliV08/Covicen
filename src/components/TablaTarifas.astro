@@ -1,6 +1,6 @@
 ---
 // Cuadro tarifario de UNA estación (o el general si no se pasa cabina): categoría, tipo de vehículo, TelePASE y pago
-// electrónico o manual, precio al público (con IVA, como en la cabina) y sin IVA en anotación. Los textos del operador
+// electrónico en la vía (con POS; sin efectivo desde el 01/10/2026), precio al público (con IVA, como en la cabina) y sin IVA en anotación. Los textos del operador
 // (avisos, vigencia, resolución) se pintan como texto, nunca set:html. Los dos precios al público salen resueltos de
 // `tarifasParaCabina`: acá no se recalcula nada, así las dos columnas nunca se parten en dos números con el mismo sin IVA.
 // Sin pie fijo (pedido del gerente, 24/09/2026): se fueron las tres notas del tarifario —se vaciaron en el dato— y el
@@ -31,7 +31,7 @@ const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km
     <table class="w-full border-collapse text-left">
       <caption class="sr-only">Tarifas de peaje, {titulo}, en pesos argentinos con IVA incluido. {vigencia} {t.vigencia.descripcion}</caption>
       <thead class="bg-fondo-2 text-sm uppercase tracking-wider text-texto-2">
-        <tr><th scope="col" class="px-4 py-3">Categoría</th><th scope="col" class="px-4 py-3">Tipo de vehículo</th><th scope="col" class="px-4 py-3 text-right">TelePASE</th><th scope="col" class="px-4 py-3 text-right">Pago electrónico o manual</th></tr>
+        <tr><th scope="col" class="px-4 py-3">Categoría</th><th scope="col" class="px-4 py-3">Tipo de vehículo</th><th scope="col" class="px-4 py-3 text-right">TelePASE</th><th scope="col" class="px-4 py-3 text-right">Pago electrónico en la vía</th></tr>
       </thead>
       <tbody class="divide-y divide-borde">
         {filas.map((f) => {

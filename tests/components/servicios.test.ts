@@ -55,4 +55,12 @@ describe('lo que no existe todavía no se promete', () => {
     expect(html.includes('Dónde se coloca'), 'se cargó la colocación: revisar este test').toBe(false);
     expect(descripcion).not.toContain('dónde se coloca');
   });
+  // 01/10/2026: en la vía se cobra solo con medios electrónicos, en las terminales POS. La tarjeta decía «Contado en la
+  // vía · Efectivo o medios electrónicos». `verificar.ts` rechaza además la palabra en todo el sitio emitido.
+  it('/medios-de-pago/ en la vía ofrece solo pago electrónico con POS, sin efectivo', async () => {
+    const html = await render(MediosDePago, '/medios-de-pago/');
+    expect(html).toContain('Pago electrónico en la vía');
+    expect(html).toContain('terminales POS');
+    expect(html).not.toMatch(/efectivo|contado en la v/i);
+  });
 });

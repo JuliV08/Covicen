@@ -21,7 +21,7 @@ describe('TablaTarifas', () => {
     expect(html).toContain('Estación Franck · RN 19 km 19,95');
     expect(html).toContain('<caption');
     expect(html).toContain('>TelePASE<');
-    expect(html).toContain('>Pago electrónico o manual<');
+    expect(html).toContain('>Pago electrónico en la vía<');
     expect(html.match(/<tr class="fila/g)?.length).toBe(5);
     expect(html.match(/\$ 1\.500</g)?.length).toBe(2);
     expect(html).toContain('$ 1.239,67 sin IVA');

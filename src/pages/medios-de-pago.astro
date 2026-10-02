@@ -26,7 +26,9 @@ const descripcion = `Cómo pagar el peaje en el Tramo Centro: TelePASE prepago o
 const modalidades = [
   { titulo: 'Prepago con TelePASE', texto: 'Cargás saldo por adelantado y cada pasada se descuenta a la tarifa vigente de tu categoría.' },
   { titulo: 'Pospago con TelePASE', texto: 'Asociás una tarjeta de crédito o débito y pagás a mes vencido. La factura detalla pasadas, estaciones e importes.' },
-  { titulo: 'Contado en la vía', texto: `Efectivo o medios electrónicos en las vías habilitadas de las estaciones con cabina (${conCabina.join(', ')}).` },
+  // En la vía se cobra solo con medios electrónicos, en las terminales POS (aviso del equipo del 01/10/2026: decía
+  // «Contado en la vía · Efectivo o medios electrónicos»). `verificar.ts` rechaza la palabra en todo el sitio.
+  { titulo: 'Pago electrónico en la vía', texto: `Solo con medios electrónicos, en las terminales POS de las vías habilitadas de las estaciones con cabina (${conCabina.join(', ')}).` },
 ];
 ---
 <Base titulo="Medios de pago" descripcion={descripcion} migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Medios de pago', href: '/medios-de-pago' }]}>
