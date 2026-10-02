@@ -61,8 +61,10 @@ describe('Hero', () => {
   // Se mira la home entera y no el Hero solo, porque la cinta entra por un slot desde Home.astro. (Las tarjetas de
   // novedades, que sí nombran el 7 de octubre en sus títulos, no aparecen acá: fuera de un build la colección está
   // vacía. Son noticias con fecha y quedan como están.)
+  // Se mira hasta el <footer>: el pie lleva «Última actualización» con la fecha del build, y un build de octubre
+  // («1 de octubre de 2026, 19:41») hacía fallar este test todo el mes (se vio el 01/10/2026).
   it('la portada no anuncia la fecha de inicio: ni el párrafo, ni la cuenta regresiva, ni la cinta', async () => {
-    const html = await renderHome();
+    const html = (await renderHome()).split('<footer')[0];
     expect(html, 'la home volvió a anunciar la fecha de inicio').not.toContain('de octubre');
     expect(html).not.toContain('data-cuenta-regresiva');
     expect(html).not.toContain('responsabilidad');

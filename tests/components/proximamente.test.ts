@@ -32,8 +32,11 @@ describe('portada de «Próximamente»', () => {
 
   // El 28/09/2026 avisaron que el inicio de actividades es el 7 de octubre, no el 5. La fecha sale del dato
   // (empresa.concesion.inicioOperacion): esta es la pantalla que está en producción, así que se fija acá.
+  // Se mira hasta «Última actualización», que lleva la fecha del build: «15 de octubre de 2026» contiene «5 de
+  // octubre», y este test fallaba los días 5, 15 y 25 de octubre, también en el build de producción (amplify.yml
+  // corre los tests). Lo encontró la revisión del 01/10/2026 simulando la fecha.
   it('anuncia el inicio de actividades el 7 de octubre', async () => {
-    const html = (await render()).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+    const html = (await render()).split('Última actualización')[0].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
     expect(html).toContain('Operación desde el 7 de octubre de 2026');
     expect(html).not.toContain('5 de octubre');
   });
