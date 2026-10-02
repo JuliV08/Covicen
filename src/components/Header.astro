@@ -1,5 +1,6 @@
 ---
 import { ChevronDown, Menu, Phone, X } from '@lucide/astro';
+import AccesosDestacados from '@/components/AccesosDestacados.astro';
 import BarraSuperior from '@/components/BarraSuperior.astro';
 import InterruptorTema from '@/components/InterruptorTema.astro';
 import Logotipo from '@/components/marca/Logotipo.astro';
@@ -28,8 +29,6 @@ const activo = (href: string) => rutaActual.startsWith(ruta(href));
 const nosotrosActivo = nosotros.some((n) => activo(n.href));
 const tel = contacto.emergencias.telefono;
 const telHref = `tel:${tel.replace(/[^\d+]/g, '')}`;
-// «Autogestión» solo con la oficina virtual cargada: el mismo criterio que la barra superior (ver BarraSuperior.astro).
-const oficina = contacto.enlaces.oficinaVirtual;
 ---
 <header class="cabecera fixed inset-x-0 top-0 z-50 border-b" transition:animate="none">
   <BarraSuperior {contacto} />
@@ -89,16 +88,16 @@ const oficina = contacto.enlaces.oficinaVirtual;
         <X size={22} aria-hidden="true" />
       </button>
     </div>
+    {/* TelePASE y Autogestión, destacados igual que en la barra de arriba (01/10/2026): primero, uno al lado del otro. */}
+    <div class="flex flex-wrap gap-3 border-b border-borde p-4">
+      <AccesosDestacados {contacto} clase="min-h-11" />
+    </div>
     <ul class="flex flex-col p-3">
       {[...items, ...nosotros, { nombre: 'Contacto', href: '/contacto' }, { nombre: 'Preguntas frecuentes', href: '/preguntas-frecuentes' }].map((i) => (
         <li>
           <a href={ruta(i.href)} class="block rounded-sm px-3 py-3 text-lg font-semibold text-texto no-underline hover:bg-superficie hover:text-acento-hover" aria-current={activo(i.href) ? 'page' : undefined}>{i.nombre}</a>
         </li>
       ))}
-    </ul>
-    <ul class="flex flex-col border-t border-borde p-3">
-      <li><a href={contacto.enlaces.telepase} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 no-underline hover:bg-superficie hover:text-texto" rel="noopener noreferrer" target="_blank">TelePASE</a></li>
-      {oficina && <li><a href={oficina} class="block rounded-sm px-3 py-3 font-semibold text-texto-2 no-underline hover:bg-superficie hover:text-texto" rel="noopener noreferrer" target="_blank" aria-label="Autogestión de Telepeaje Plus (se abre en otra pestaña)">Autogestión</a></li>}
     </ul>
   </nav>
 </header>

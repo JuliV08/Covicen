@@ -18,8 +18,17 @@ describe('BarraSuperior', () => {
   // el 24/09 fue «Mi cuenta»). Va directo a esa web, en otra pestaña.
   it('accesos: TelePASE externo, Autogestión a Telepeaje Plus y el interruptor', async () => {
     const html = await render();
-    expect(html).toMatch(/href="https:\/\/www\.telepase\.com\.ar\/"[^>]*target="_blank"/);
-    expect(html).toMatch(/href="https:\/\/www\.telepeajeplus\.com\/Login"[^>]*target="_blank"[^>]*>Autogestión</);
+    // Desde el 01/10/2026 van destacados (AccesosDestacados.astro): TelePASE lleno de verde y con el nombre escrito como
+    // lo escribe su marca, Autogestión con borde degradé.
+    const telepase = /<a href="https:\/\/www\.telepase\.com\.ar\/"[^>]*>/.exec(html)?.[0] ?? '';
+    expect(telepase).toContain('target="_blank"');
+    expect(telepase).toContain('acceso-telepase');
+    expect(telepase).toContain('aria-label="TelePASE (se abre en otra pestaña)"');
+    expect(html).toContain('<span class="marca-tele">Tele</span><span class="marca-pase">PASE</span>');
+    const autogestion = /<a href="https:\/\/www\.telepeajeplus\.com\/Login"[^>]*>/.exec(html)?.[0] ?? '';
+    expect(autogestion).toContain('target="_blank"');
+    expect(autogestion).toContain('acceso-autogestion');
+    expect(html).toContain('<span>Autogestión</span>');
     expect(html).not.toContain('Mi cuenta');
     expect(html).toContain('data-tema-boton');
     // Se cae en el ingreso de otra empresa: el nombre accesible lo dice, y empieza con la palabra visible (WCAG 2.5.3).

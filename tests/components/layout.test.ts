@@ -114,8 +114,8 @@ describe('Header', () => {
     const html = await c.renderToString(Header, { props: await props() });
     // Los avisos se fueron del header a la cinta (components/Marquesina.astro) el 15/09/2026.
     expect(html).not.toContain('data-anuncios');
-    expect(html.match(/>TelePASE</g)?.length).toBe(2);
-    expect(html.match(/href="https:\/\/www\.telepeajeplus\.com\/Login"[^>]*>Autogestión</g)?.length, 'Autogestión en escritorio y en celular').toBe(2);
+    expect(html.match(/aria-label="TelePASE \(se abre en otra pestaña\)"/g)?.length, 'TelePASE en escritorio y en celular').toBe(2);
+    expect(html.match(/href="https:\/\/www\.telepeajeplus\.com\/Login"[^>]*acceso-autogestion/g)?.length, 'Autogestión en escritorio y en celular').toBe(2);
     expect(html).not.toContain('Mi cuenta');
     expect(html).not.toContain('Corredor Vial del Centro');
     const base = await props();

@@ -116,6 +116,42 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
   .btn-vial:focus-visible { outline-color: var(--color-vial-texto); }
   @keyframes oscilar { 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
 
+  /* Accesos destacados: TelePASE y Autogestión, en la barra de arriba (escritorio) y en el menú (celular). Pedido del
+     01/10/2026: «destacarlos muy bien, de forma creativa, premium y estética, TelePASE en verde». Píldoras con el
+     ícono en una ficha, un guiño a cada marca y una flecha que avisa que salen del sitio:
+     - TelePASE va lleno con el verde de su marca (--color-telepase) y el nombre escrito como lo escribe ella, «Tele»
+       liviano y «PASE» fuerte. El par sobre-telepase/telepase lo mide verificar.ts en los dos temas.
+     - Autogestión va sobre superficie con un borde degradé del acento: el mismo peso visual sin competir en color.
+     Al pasar el mouse suben 1 px, se encienden con su propio color y la flecha se corre hacia afuera. */
+  .acceso-destacado {
+    display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2rem; padding: 0.15rem 0.85rem 0.15rem 0.2rem;
+    border-radius: var(--radius-full); font-size: 0.875rem; font-weight: 600; line-height: 1.2; text-decoration: none;
+    transition: transform var(--dur-ui) var(--ease-salida), box-shadow var(--dur-ui) var(--ease-salida);
+  }
+  .acceso-destacado .ficha { display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: var(--radius-full); }
+  .acceso-destacado .flecha { margin-left: -0.15rem; transition: transform var(--dur-ui) var(--ease-salida); }
+  .acceso-destacado:hover { transform: translateY(-1px); }
+  .acceso-destacado:hover .flecha, .acceso-destacado:focus-visible .flecha { transform: translate(2px, -2px); }
+  .acceso-telepase {
+    background: var(--color-telepase); color: var(--color-sobre-telepase);
+    box-shadow: 0 6px 18px -10px var(--color-telepase);
+  }
+  .acceso-telepase .ficha { background: color-mix(in oklab, var(--color-sobre-telepase) 14%, transparent); }
+  .acceso-telepase .marca-tele { font-weight: 500; }
+  .acceso-telepase .marca-pase { font-weight: 800; letter-spacing: 0.02em; }
+  .acceso-telepase:hover {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-telepase) 30%, transparent), 0 10px 26px -10px var(--color-telepase);
+  }
+  .acceso-telepase:focus-visible { outline-color: var(--color-telepase); }
+  .acceso-autogestion {
+    color: var(--color-texto); border: 1px solid transparent;
+    background:
+      linear-gradient(var(--color-superficie), var(--color-superficie)) padding-box,
+      linear-gradient(120deg, var(--color-acento), var(--color-borde-fuerte) 70%) border-box;
+  }
+  .acceso-autogestion .ficha { background: color-mix(in oklab, var(--color-acento) 16%, transparent); color: var(--color-acento); }
+  .acceso-autogestion:hover { box-shadow: 0 0 0 3px var(--color-glow), 0 10px 26px -12px var(--color-glow); }
+
   /* Velo del hero: es lo único que deja leer el texto encima de la foto, así que los porcentajes de acá son contrato
      con tests/styles/hero-foto.test.ts, que mide el contraste real del texto sobre cada foto en cada tamaño de
      pantalla. Si se tocan, el test vuelve a medir y avisa; no se ajustan a ojo.
@@ -173,7 +209,10 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
      tema oscuro se apoyan directo sobre el fondo de la página, y al volverse zona oscura dentro del tema claro se
      habrían quedado transparentes, con el texto claro sobre el gris de la página. Se pintan con el mismo fondo que
      tienen debajo en el tema oscuro. Un componente que ya tiene su propio fondo lo dice con --fondo-bloque, y así el
-     color le queda igual en los dos temas. */
+     color le queda igual en los dos temas.
+     En el tema oscuro también se pinta (01/10/2026): sobre una sección con la grilla cinética, la tabla de canales
+     dejaba ver las líneas de la grilla entre las filas y «se veía transparente». */
+  .bloque-oscuro,
   html[data-tema="claro"] .bloque-oscuro { background-color: var(--fondo-bloque, var(--color-fondo)); }
 
   /* El velo NO depende de que el JS lo baje. Va y vuelve en una sola animación de CSS: si el script se cuelga, si la

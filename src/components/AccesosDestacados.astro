@@ -1,0 +1,24 @@
+---
+// TelePASE y Autogestión: los dos accesos que salen del sitio, destacados (pedido del 01/10/2026; estilos en
+// global.css, «Accesos destacados»). Los usa la barra de arriba en escritorio y el menú en celular, así se ven igual.
+// «Autogestión» es la oficina virtual (la web de autogestión de Telepeaje Plus, definida el 25/09/2026) y aparece solo
+// si está cargado `contacto.enlaces.oficinaVirtual`. Los nombres accesibles empiezan con la palabra visible (WCAG
+// 2.5.3) y dicen que se abren en otra pestaña; el de Autogestión, además, a qué sitio lleva.
+import { ArrowUpRight, CircleUserRound, Tag } from '@lucide/astro';
+import type { Contacto } from '@/lib/datos/esquemas';
+interface Props { contacto: Contacto; /** Clases de más para cada enlace (en el menú, la altura táctil de 44 px). */ clase?: string }
+const { contacto, clase } = Astro.props;
+const oficina = contacto.enlaces.oficinaVirtual;
+---
+<a href={contacto.enlaces.telepase} class:list={['acceso-destacado acceso-telepase', clase]} rel="noopener noreferrer" target="_blank" aria-label="TelePASE (se abre en otra pestaña)">
+  <span class="ficha" aria-hidden="true"><Tag size={14} /></span>
+  <span><span class="marca-tele">Tele</span><span class="marca-pase">PASE</span></span>
+  <ArrowUpRight size={14} class="flecha" aria-hidden="true" />
+</a>
+{oficina && (
+  <a href={oficina} class:list={['acceso-destacado acceso-autogestion', clase]} rel="noopener noreferrer" target="_blank" aria-label="Autogestión de Telepeaje Plus (se abre en otra pestaña)">
+    <span class="ficha" aria-hidden="true"><CircleUserRound size={14} /></span>
+    <span>Autogestión</span>
+    <ArrowUpRight size={14} class="flecha" aria-hidden="true" />
+  </a>
+)}

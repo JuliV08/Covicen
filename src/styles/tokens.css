@@ -33,6 +33,10 @@
   --color-sobre-marca: #FFFFFF;  /* texto sobre el navy de marca (botón primario), igual en los dos temas */
   --color-ok: #7BD389;           /* estación operativa */
   --color-sobre-ok: #0B1526;
+  /* Botón de TelePASE de la barra de arriba (01/10/2026): el verde de la marca TelePASE, el de su sitio
+     (telepase.com.ar). En oscuro el verde claro con texto navy; en claro su verde oscuro con texto blanco. */
+  --color-telepase: #7CC35B;
+  --color-sobre-telepase: #0B1526;
   --color-error: #FF8A80;
   --color-cabecera: rgb(16 32 58 / 0.85);      /* fondo del header al scrollear */
   --color-tarjeta-interior-1: #17334F;         /* degradé interior de .tarjeta, de arriba a abajo */
@@ -112,6 +116,8 @@ html[data-tema="claro"] {
   --color-sobre-marca: #FFFFFF;
   --color-ok: #1B6B35;
   --color-sobre-ok: #FFFFFF;
+  --color-telepase: #185B2E;
+  --color-sobre-telepase: #FFFFFF;
   --color-error: #B3261E;
   --color-cabecera: rgb(238 241 244 / 0.85);
   --color-tarjeta-interior-1: #FFFFFF;
@@ -162,6 +168,8 @@ html[data-tema="claro"] {
     --color-sobre-marca: #FFFFFF;
     --color-ok: #7BD389;
     --color-sobre-ok: #0B1526;
+    --color-telepase: #7CC35B;
+    --color-sobre-telepase: #0B1526;
     --color-error: #FF8A80;
     --color-cabecera: rgb(16 32 58 / 0.85);
     --color-tarjeta-interior-1: #17334F;
@@ -213,6 +221,8 @@ html[data-tema="claro"] {
     --color-vial-texto: #F0C419;
     --color-sobre-acento: #070E18;
     --color-sobre-marca: #FFFFFF;
+    --color-telepase: #7CC35B;
+    --color-sobre-telepase: #070E18;
     --color-ok: #7BD389;
     --color-sobre-ok: #070E18;
     --color-error: #FF8A80;
