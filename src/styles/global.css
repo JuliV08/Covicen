@@ -86,6 +86,35 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
      ruta y el km de una estación—. Junto con .anotacion es la única excepción a los 14 px, y lo guarda
      tests/styles/legibilidad.test.ts: los 12 px escritos a mano fuera de .anotacion o .eyebrow hacen fallar. */
   .eyebrow { @apply font-medium uppercase text-texto-2; letter-spacing: var(--tracking-eyebrow); font-size: 0.75rem; }
+  /* Títulos con el degradé de Covicen (fase A, 05/10/2026). Del color del texto al azul de la marca y vuelta, recortado
+     a las letras. Sale solo de variables: cambia con el tema sin recargar y, adentro de una zona oscura del tema claro,
+     sigue al color de lo que tiene debajo. `texto` y `acento` ya están medidos en pares.ts, y los colores intermedios
+     caen entre los dos. Ancho del texto y no de la caja, para que un título corto muestre el degradé entero. */
+  .titulo {
+    --titulo-b: var(--color-acento);
+    width: fit-content;
+    background-image: linear-gradient(90deg, var(--color-texto) 0%, var(--titulo-b) 50%, var(--color-texto) 100%);
+    background-size: 200% 100%;
+    background-position: 0% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* Con el color transparente, lo seleccionado no se vería: se pinta como una selección común. */
+  .titulo::selection { color: var(--color-fondo); background-color: var(--color-acento); }
+  /* Sobre la foto (hero y portada) el azul no llega a 3:1 (medido el 05/10/2026: entre 1,65 y 2,7:1 en claro, 2,05:1 a
+     1023 px en oscuro). Ahí la franja va hacia MÁS contraste: blanco en oscuro, navy profundo en claro. */
+  .titulo-foto { --titulo-b: var(--color-titulo-brillo); }
+  /* Solo el título principal de la página se mueve (hay uno por página: lo controla verificar.ts). */
+  h1.titulo { animation: titulo-recorre 10s var(--ease-suave) infinite alternate; }
+  @keyframes titulo-recorre { to { background-position: 100% 50%; } }
+  /* Explícito: la regla global de «reducir movimiento» acorta la animación a 0,01 ms pero no la apaga. */
+  @media (prefers-reduced-motion: reduce) {
+    h1.titulo { animation: none; }
+  }
+  @media (forced-colors: active) {
+    .titulo { background: none; color: CanvasText; }
+  }
   /* texto largo (privacidad, novedades) */
   .prose-covicen h2 { margin-top: 2rem; font-size: 1.35rem; color: var(--color-texto); }
   .prose-covicen h3 { margin-top: 1.5rem; font-size: 1.15rem; color: var(--color-texto); }
