@@ -23,7 +23,7 @@ const conTono = fondo !== 'fondo';
     {(eyebrow || titulo) && (
       <header class="revelar mb-12 max-w-3xl">
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-        {titulo && <Titulo class:list={[eyebrow && 'mt-3']}>{titulo}</Titulo>}
+        {titulo && <Titulo class:list={['titulo', eyebrow && 'mt-3']}>{titulo}</Titulo>}
         {intro && <p class="mt-4 text-lg text-texto-2">{intro}</p>}
       </header>
     )}
