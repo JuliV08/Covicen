@@ -128,9 +128,12 @@ const copias = [false, true];
   .marquesina-item a { color: var(--color-texto); text-decoration: none; }
   .marquesina-item a:hover, .marquesina-item a:focus-visible { text-decoration: underline; }
 
-  /* Los tres frenos. El puntero y el foco son implícitos y se sueltan solos; la pestaña manda y dura lo que dure la página. */
+  /* Los tres frenos. El puntero y el foco son implícitos y se sueltan solos; la pestaña manda y dura lo que dure la página.
+     El foco frena solo si es de TECLADO (`:focus-visible`), para quien recorre los avisos con Tab. Con `:focus-within`
+     (hasta el 05/10/2026), el foco que deja un clic en la pestaña dejaba la cinta frenada para siempre al salir con el
+     mouse: «estoy obligado a dejar el mouse puesto en el botón de AVISOS o a refrescar la web» (Juli). */
   .marquesina:hover .marquesina-cinta,
-  .marquesina:focus-within .marquesina-cinta,
+  .marquesina:has(:focus-visible) .marquesina-cinta,
   .marquesina[data-pausado] .marquesina-cinta { animation-play-state: paused; }
   /* Y la pestaña le gana a los implícitos. Sin esto, «Reanudar» no reanudaba NADA: al tocarla el foco queda en el
      propio botón y el puntero encima, así que `:focus-within` y `:hover` seguían frenando la cinta para siempre.

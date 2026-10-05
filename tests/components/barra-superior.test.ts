@@ -84,7 +84,7 @@ describe('Marquesina', () => {
     expect(html).toContain('data-reanudar="Reanudar los avisos"');
     const fuente = await import('node:fs').then((fs) => fs.readFileSync('src/components/Marquesina.astro', 'utf8'));
     expect(fuente).toMatch(/\.marquesina:hover[^{]*animation-play-state:\s*paused|:hover[\s\S]{0,200}animation-play-state:\s*paused/);
-    expect(fuente).toMatch(/focus-within/);
+    expect(fuente).toMatch(/\.marquesina:has\(:focus-visible\) \.marquesina-cinta/); // foco de teclado (05/10/2026)
     expect(fuente, 'con "menos movimiento" no desfila').toMatch(/prefers-reduced-motion[\s\S]{0,200}animation:\s*none/);
   });
 

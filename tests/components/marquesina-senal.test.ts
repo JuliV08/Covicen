@@ -31,6 +31,13 @@ describe('la cinta «señal de ruta»', () => {
     expect(etiqueta).toContain('clip-path: polygon(');
     expect(etiqueta).not.toContain('--color-vial');
   });
+  // 05/10/2026, Juli: «a la hora de despausar, se despausa hasta que saco el mouse […] estoy obligado a dejar el mouse
+  // puesto en el botón de AVISOS o a refrescar». El clic deja el foco en la pestaña; con `:focus-within` la cinta
+  // quedaba frenada para siempre al salir con el mouse. El foco frena solo si es de teclado (`:focus-visible`).
+  it('un clic con el mouse no deja la cinta frenada: el foco frena solo si es de teclado', () => {
+    expect(fuente).toMatch(/\.marquesina:has\(:focus-visible\) \.marquesina-cinta/);
+    expect(fuente).not.toMatch(/\.marquesina:focus-within \.marquesina-cinta/);
+  });
   it('el texto se desvanece en los dos bordes y los avisos se separan con marcas de carril', () => {
     expect(/\.marquesina-pista \{([^}]*)\}/.exec(fuente)?.[1]).toMatch(/mask-image: linear-gradient\(90deg, transparent/);
     expect(fuente).toMatch(/\.marquesina-item::before \{[^}]*repeating-linear-gradient/);
