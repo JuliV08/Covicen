@@ -26,6 +26,17 @@ const montar = (raiz: HTMLElement) => {
 
   const svg = raiz.querySelector<SVGSVGElement>('svg[data-red]');
   const auto = raiz.querySelector<SVGGElement>('[data-auto]');
+  // Las rutas se dibujan una vez, cuando el mapa entra en pantalla (el CSS las esconde mientras data-dibujo sea
+  // «espera»). Con «reducir movimiento» no se toca nada: quedan dibujadas.
+  if (svg && !reducirMovimiento() && 'IntersectionObserver' in window) {
+    svg.dataset.dibujo = 'espera';
+    const observador = new IntersectionObserver((entradas) => {
+      if (!entradas.some((e) => e.isIntersecting)) return;
+      svg.dataset.dibujo = 'listo';
+      observador.disconnect();
+    }, { threshold: 0.25 });
+    observador.observe(svg);
+  }
   const red: Red | null = svg?.dataset.red ? JSON.parse(svg.dataset.red) : null;
   let estacion = auto?.dataset.estacionAuto ?? '';
   let posicion = auto ? leerPosicion(auto) : null;

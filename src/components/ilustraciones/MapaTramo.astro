@@ -22,7 +22,6 @@ const ciudad = (s: string) => {
   if (!c) throw new Error(`MapaTramo: la ciudad "${s}" no existe en tramo.json`);
   return c;
 };
-const claseDibujar = modo === 'scroll' ? 'dibujar al-scroll' : 'dibujar al-cargar';
 const claseBaliza = modo === 'scroll' ? 'baliza' : 'baliza al-cargar';
 // Dónde va cada rótulo, sin pisarse, y qué parte del lienzo se muestra (lib/tramo.ts).
 const rotulos = rotulosDelMapa(tramo);
@@ -83,9 +82,9 @@ const id = (nombre: string) => `${idTitulo}-${nombre}`;
       const d = trazoRedondeado(t.ciudades.map((s) => ciudad(s).mapa));
       return (
         <g class="ruta">
-          <path d={d} class:list={['ruta-halo', claseDibujar]} fill="none" stroke="var(--color-glow)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" filter={`url(#${id('halo')})`} pathLength="1000"></path>
-          <path d={d} class:list={['ruta-cuerpo', claseDibujar]} fill="none" stroke="var(--color-borde-fuerte)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" pathLength="1000"></path>
-          <path d={d} class:list={['ruta-filo', claseDibujar]} fill="none" stroke="var(--color-acento)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" pathLength="1000"></path>
+          <path d={d} class="ruta-halo" fill="none" stroke="var(--color-glow)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" filter={`url(#${id('halo')})`} pathLength="1000"></path>
+          <path d={d} class="ruta-cuerpo" fill="none" stroke="var(--color-borde-fuerte)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" pathLength="1000"></path>
+          <path d={d} class="ruta-filo" fill="none" stroke="var(--color-acento)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" pathLength="1000"></path>
           <text x={rotuloRuta.get(t.ruta)!.x} y={rotuloRuta.get(t.ruta)!.y} class="ruta-etiqueta" text-anchor="middle">{t.ruta}</text>
         </g>
       );
@@ -192,6 +191,13 @@ const id = (nombre: string) => `${idTitulo}-${nombre}`;
   .incidente[data-severidad="precaucion"] .incidente-forma { fill: var(--color-vial-texto); }
   .incidente[data-severidad="corte"] .incidente-forma { fill: var(--color-error); }
   .auto { pointer-events: none; }
+  /* Las rutas se dibujan una vez al entrar en pantalla: scripts/mapa.ts pone data-dibujo="espera" al montar y "listo"
+     cuando el mapa se ve. Sin JS o con «reducir movimiento» no pone nada y las rutas están dibujadas desde el principio.
+     (Hasta el 05/10/2026 el dibujo iba atado al scroll con `.dibujar.al-scroll`, pero el minificador de CSS borraba el
+     `animation` y el `animation-timeline` en el sitio armado y las rutas quedaban escondidas.) */
+  svg[data-dibujo] .ruta > path { stroke-dasharray: 1000; stroke-dashoffset: 1000; }
+  svg[data-dibujo="listo"] .ruta > path { animation: ruta-dibujar 1.6s var(--ease-suave) 150ms both; }
+  @keyframes ruta-dibujar { to { stroke-dashoffset: 0; } }
   @media (min-width: 48rem) { .cabina-rotulo { opacity: 1; } }
   @media (min-width: 64rem) {
     .ruta-etiqueta { font-size: 12px; }

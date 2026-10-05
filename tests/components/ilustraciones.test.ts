@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import MapaTramo from '@/components/ilustraciones/MapaTramo.astro';
@@ -24,6 +25,19 @@ describe('MapaTramo', () => {
     expect(html).toContain('>Rosario<');
     expect(html).toContain('>Córdoba<');
     expect(html).not.toContain('>Empalme RN 19<'); // los empalmes no llevan etiqueta
+  });
+  // 05/10/2026: el dibujo atado al scroll (`.dibujar.al-scroll`) no llega al sitio armado: el minificador de CSS borra
+  // el `animation` y el `animation-timeline` y las rutas quedaban escondidas (Juli: «no se ven las rutas de nada»).
+  // Ahora se dibujan una vez al entrar en pantalla, y solo si scripts/mapa.ts lo pide: sin JS se ven siempre.
+  it('las rutas no dependen del dibujo atado al scroll; lo dispara el script al entrar en pantalla', async () => {
+    const html = await render();
+    expect(html).not.toMatch(/class="ruta-[a-z]+ dibujar/);
+    const estilo = readFileSync('src/components/ilustraciones/MapaTramo.astro', 'utf8');
+    expect(estilo).toMatch(/svg\[data-dibujo\] \.ruta > path \{[^}]*stroke-dashoffset: 1000/);
+    expect(estilo).toMatch(/svg\[data-dibujo="listo"\] \.ruta > path \{[^}]*animation: ruta-dibujar/);
+    const script = readFileSync('src/scripts/mapa.ts', 'utf8');
+    expect(script).toContain('IntersectionObserver');
+    expect(script).toMatch(/dataset\.dibujo = 'listo'/);
   });
   it('encuadrado, con placas detrás de los rótulos de estación y el auto decorativo', async () => {
     const html = await render();
