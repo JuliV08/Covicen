@@ -1,20 +1,28 @@
 ---
 import Base from '@/layouts/Base.astro';
+import Boton from '@/components/ui/Boton.astro';
+import { destinoPortalProveedores } from '@/lib/datos/portal-proveedores';
 import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
 import Formulario from '@/components/Formulario.astro';
 import FormularioCrm from '@/components/FormularioCrm.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
 const contacto = await datos.contacto();
+const portal = destinoPortalProveedores();
 // Desde el 02/10/2026 el registro va por el formulario del CRM de PREVI (Bitrix24), el mismo de Contacto: «modificar
 // por el del CRM; ver con PREVI de agregar uno tipo "otros" o "proveedores", un tracker, para que caigan por ahí». El
 // CRM recibe además la dirección de la página desde la que se mandó, así que ya puede separarlos. Con
 // `contacto.formularioCrm` en null vuelve el formulario propio.
 ---
 <Base titulo="Proveedores" descripcion="Proveedores y licitaciones de Covicen para el Tramo Centro: registrate y recibí las convocatorias." migas={[{ nombre: 'Proveedores', href: '/proveedores' }]}>
-  <Seccion nivel="h1" eyebrow="Proveedores" titulo="Registro de proveedores." intro="Insumos viales, señalización, tecnología de cobro, servicios de auxilio y obra civil. El portal de proveedores se habilita junto con los sistemas; hasta entonces, el registro se hace por este formulario." class="pt-10">
+  <Seccion nivel="h1" eyebrow="Proveedores" titulo="Registro de proveedores." intro={portal ? "Ingresá para cotizar, completar los datos de tu empresa, presentar facturas y consultar pagos y retenciones. Si todavía no sos proveedor, registrá tu interés en el formulario." : "Insumos viales, señalización, tecnología de cobro, servicios de auxilio y obra civil. El portal de proveedores se habilita junto con los sistemas; hasta entonces, el registro se hace por este formulario."} class="pt-10">
     <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.2fr]">
-      <HuecoCapacidad capacidad="portalProveedores" nivel="h2" titulo="Portal de proveedores y licitaciones" descripcion="Alta de proveedor, carga de comprobantes, estado de pagos y convocatorias abiertas." />
+      {portal ? <div class="tarjeta p-6" data-capacidad="portalProveedores">
+        <h2>Portal de proveedores</h2>
+        <p class="mt-3 text-texto-2">Ingresá con el CUIT de tu empresa y tu contraseña. La invitación a cotizar te permite crear tu cuenta y confirmar tu correo.</p>
+        <p class="mt-3 text-texto-2">Al cotizar, revisá los datos que ya tenemos, completá lo pendiente y confirmalos en carácter de declaración jurada.</p>
+        <div class="mt-5"><Boton href={portal}>Ingresar al portal</Boton></div>
+      </div> : <HuecoCapacidad capacidad="portalProveedores" nivel="h2" titulo="Portal de proveedores y licitaciones" descripcion="Alta de proveedor, carga de comprobantes, estado de pagos y convocatorias abiertas." />}
       {contacto.formularioCrm ? <FormularioCrm id="registro" crm={contacto.formularioCrm} /> : <Formulario asunto="Alta de proveedor" whatsapp={contacto.whatsapp.numero} email={contacto.email.proveedores ?? contacto.email.general} textoBoton="Registrarme por WhatsApp" campos={[
         { nombre: 'empresa', etiqueta: 'Empresa', requerido: true },
         { nombre: 'nombre', etiqueta: 'Persona de contacto', requerido: true },

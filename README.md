@@ -93,3 +93,7 @@ Casilla `atencionalusuario@covicen.com.ar` (PETG 61.5): se publica en `src/conte
 - Spec y plan de la actualización de septiembre de 2026: `docs/superpowers/specs/2026-09-13-actualizacion-web-design.md` y `docs/superpowers/plans/2026-09-13-actualizacion-web.md`. Los de la landing original (agosto de 2026) están en las mismas carpetas.
 - Vault del proyecto (Obsidian, viaja con el repo): `obsidian/Home.md`.
 - Manual de marca: `docs/marca/`.
+
+## Acceso al portal de proveedores
+
+`PUBLIC_PORTAL_PROVEEDORES_URL` configura el destino HTTPS del botón de acceso en `/proveedores`. Se completa en el ambiente de build con la dirección verificada del acceso permanente del ERP; no versionar identificadores de infraestructura. Sin valor, la página conserva el registro previo y «Próximamente». El formulario comercial permanece para empresas nuevas. El sitio no recopila contraseñas, datos bancarios ni DDJJ: esas operaciones ocurren dentro del portal autenticado. Esta conexión no requiere migración de base en website; las migraciones administrativas y de DDJJ pertenecen al ERP. El destino debe habilitarse después de verificar acceso/Cognito y migraciones en DEV.
