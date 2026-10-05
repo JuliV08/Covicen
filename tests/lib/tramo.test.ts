@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
-import { estadoCabina, leyendaServicios, puntoEnRuta, serviciosDeCabina } from '@/lib/tramo';
+import { cajaCirculo, cajaTexto, chocan, estadoCabina, leyendaServicios, puntoEnRuta, rotulosDelMapa, serviciosDeCabina, TAM_ROTULO } from '@/lib/tramo';
 
 describe('estadoCabina', async () => {
   const t = await fuenteLocalJson.tramo();
@@ -42,5 +42,41 @@ describe('puntoEnRuta', async () => {
   it('devuelve null si la ruta no tiene progresivas', () => {
     const sinPk = { ...t, rutas: t.rutas.map((r) => ({ ...r, pkInicial: undefined, pkFinal: undefined })) };
     expect(puntoEnRuta(sinPk, 'RN 9', 340)).toBeNull();
+  });
+});
+
+// 05/10/2026: «en RN19 se tapa por Franck y parecido abajo con el punto, que dice Santa Fe». Las coordenadas de ciudades
+// y estaciones no se tocan (contrato con el backend): se mueven solo los rótulos.
+describe('rotulosDelMapa', async () => {
+  const t = await fuenteLocalJson.tramo();
+  const { rutas, ciudades } = rotulosDelMapa(t);
+  const cajasRutas = rutas.map((r) => cajaTexto(r, r.ruta, TAM_ROTULO.ruta.tam, TAM_ROTULO.ruta.factor));
+  const cajasCiudades = ciudades.map((c) => cajaTexto(c, c.nombre, TAM_ROTULO.ciudad.tam, TAM_ROTULO.ciudad.factor));
+  const halos = t.cabinas.map((c) => cajaCirculo(c.mapa.x, c.mapa.y, 19));
+  const rotulosCabina = t.cabinas.map((c) => cajaTexto({ x: c.mapa.x, y: c.mapa.y - 18, ancla: 'middle' }, c.nombre.toUpperCase(), TAM_ROTULO.cabina.tam, TAM_ROTULO.cabina.factor));
+
+  it('hay un rótulo por ruta y uno por ciudad principal', () => {
+    expect(rutas.map((r) => r.ruta).sort()).toEqual(t.trazados.map((x) => x.ruta).sort());
+    expect(ciudades.map((c) => c.slug).sort()).toEqual(t.ciudades.filter((c) => c.principal).map((c) => c.slug).sort());
+  });
+  it('ningún rótulo de ruta o de ciudad pisa una estación, el rótulo de una estación u otro rótulo', () => {
+    const propios = [...cajasRutas, ...cajasCiudades];
+    for (const [i, a] of propios.entries()) {
+      for (const b of [...halos, ...rotulosCabina]) expect(chocan(a, b), `rótulo ${i}`).toBe(false);
+      for (const [j, b] of propios.entries()) if (i !== j) expect(chocan(a, b), `rótulos ${i} y ${j}`).toBe(false);
+    }
+  });
+  it('todos quedan adentro del dibujo (820 × 520)', () => {
+    for (const c of [...cajasRutas, ...cajasCiudades]) {
+      expect(c.x0).toBeGreaterThanOrEqual(0); expect(c.y0).toBeGreaterThanOrEqual(0);
+      expect(c.x1).toBeLessThanOrEqual(820); expect(c.y1).toBeLessThanOrEqual(520);
+    }
+  });
+  it('los dos casos que marcó Juli', () => {
+    const franck = t.cabinas.find((c) => c.slug === 'franck')!.mapa;
+    const rn19 = rutas.find((r) => r.ruta === 'RN 19')!;
+    expect(Math.hypot(rn19.x - franck.x, rn19.y - franck.y)).toBeGreaterThan(80);
+    const santaFe = ciudades.find((c) => c.slug === 'santa-fe')!;
+    expect(santaFe.ancla).not.toBe('end');
   });
 });

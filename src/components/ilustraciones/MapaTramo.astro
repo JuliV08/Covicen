@@ -7,7 +7,7 @@ import { Bath, Coffee, ShieldCheck, Tag, Truck } from '@lucide/astro';
 import type { EstadoRuta, Incidente, Tramo } from '@/lib/datos/esquemas';
 import { kmTexto } from '@/lib/formato';
 import { ruta } from '@/lib/rutas';
-import { estadoCabina, leyendaServicios, puntoEnRuta, type ClaveServicio } from '@/lib/tramo';
+import { estadoCabina, leyendaServicios, puntoEnRuta, rotulosDelMapa, type ClaveServicio } from '@/lib/tramo';
 interface Props { tramo: Tramo; incidentes?: NonNullable<EstadoRuta['incidentes']>; modo?: 'scroll' | 'cargar'; class?: string; /** Distinto por mapa si hay más de uno en la página. */ idTitulo?: string }
 const { tramo, incidentes = [], modo = 'scroll', class: clase = '', idTitulo = 'mapa-titulo' } = Astro.props;
 const porSlug = new Map(tramo.ciudades.map((c) => [c.slug, c]));
@@ -17,14 +17,12 @@ const ciudad = (s: string) => {
   return c;
 };
 const d = (slugs: string[]) => slugs.map((s, i) => `${i === 0 ? 'M' : 'L'}${ciudad(s).mapa.x} ${ciudad(s).mapa.y}`).join(' ');
-const etiquetaRuta = (slugs: string[]) => {
-  const medio = Math.floor(slugs.length / 2);
-  const a = ciudad(slugs[medio - 1]!);
-  const b = ciudad(slugs[medio]!);
-  return { x: (a.mapa.x + b.mapa.x) / 2, y: (a.mapa.y + b.mapa.y) / 2 - 10 };
-};
 const claseDibujar = modo === 'scroll' ? 'dibujar al-scroll' : 'dibujar al-cargar';
 const claseBaliza = modo === 'scroll' ? 'baliza' : 'baliza al-cargar';
+// Dónde va cada rótulo, sin pisarse (lib/tramo.ts, 05/10/2026).
+const rotulos = rotulosDelMapa(tramo);
+const rotuloRuta = new Map(rotulos.rutas.map((r) => [r.ruta, r]));
+const rotuloCiudad = new Map(rotulos.ciudades.map((r) => [r.slug, r]));
 const titulo = `Mapa esquemático del Tramo Centro: ${tramo.rutas.map((r) => r.nombre).join(', ')} entre ${tramo.ciudades.filter((c) => c.principal).map((c) => c.nombre).join(', ')}, con ${tramo.cabinas.length} estaciones de peaje.`;
 const iconos: Record<ClaveServicio, typeof Coffee> = { areaDescanso: Coffee, detencionSegura: ShieldCheck, gruaGratuita: Truck, sanitarios: Bath, colocacionTelepase: Tag };
 const marcadores = incidentes.flatMap((inc) => { const p = inc.km === null ? null : puntoEnRuta(tramo, inc.ruta, inc.km); return p ? [{ ...inc, p }] : []; });
@@ -51,7 +49,7 @@ const severidades = (['corte', 'precaucion', 'info'] as const).filter((s) => mar
         <path d={d(t.ciudades)} fill="none" stroke="var(--color-vial)" stroke-width="1" stroke-dasharray="6 12" opacity="0.7" pathLength="1000" class="marcas-vivas aparece"></path>
         <!-- una luz que recorre la ruta -->
         <path d={d(t.ciudades)} fill="none" stroke="var(--color-texto)" stroke-width="3" stroke-linecap="round" pathLength="1000" filter="url(#mapa-glow)" class="luz-viaja aparece" style={`--i: ${i}`}></path>
-        <text x={etiquetaRuta(t.ciudades).x} y={etiquetaRuta(t.ciudades).y} class="ruta-etiqueta" text-anchor="middle">{t.ruta}</text>
+        <text x={rotuloRuta.get(t.ruta)!.x} y={rotuloRuta.get(t.ruta)!.y} class="ruta-etiqueta" text-anchor="middle">{t.ruta}</text>
       </g>
     ))}
     {tramo.ciudades.map((c) => (
@@ -62,7 +60,7 @@ const severidades = (['corte', 'precaucion', 'info'] as const).filter((s) => mar
           <circle cx={c.mapa.x} cy={c.mapa.y} r={c.principal ? 6 : 3.5} fill="var(--color-fondo)" stroke="var(--color-acento)" stroke-width={c.principal ? 2 : 1.5}></circle>
         )}
         {c.principal && (
-          <text x={c.mapa.x + (c.mapa.x > 410 ? -12 : 12)} y={c.mapa.y + 6} class="ciudad-etiqueta" text-anchor={c.mapa.x > 410 ? 'end' : 'start'}>{c.nombre}</text>
+          <text x={rotuloCiudad.get(c.slug)!.x} y={rotuloCiudad.get(c.slug)!.y} class="ciudad-etiqueta" text-anchor={rotuloCiudad.get(c.slug)!.ancla}>{c.nombre}</text>
         )}
       </g>
     ))}

@@ -53,3 +53,63 @@ export const puntoEnRuta = (t: Tramo, nombre: NombreRuta, km: number): { x: numb
   }
   return null;
 };
+
+// Rótulos del mapa sin pisarse (05/10/2026: «en RN19 se tapa por Franck y parecido abajo con el punto, que dice Santa
+// Fe»). Las coordenadas de ciudades y estaciones son contrato con el backend y no se tocan: se elige solo dónde va cada
+// rótulo. Los anchos son estimados por arriba (caracteres × tamaño × factor de Archivo, con el espaciado de cada
+// rótulo); las unidades son las del dibujo, 820 × 520.
+export type Rotulo = { x: number; y: number; ancla: 'start' | 'middle' | 'end' };
+export type Caja = { x0: number; y0: number; x1: number; y1: number };
+const ANCHO_MAPA = 820;
+const ALTO_MAPA = 520;
+export const TAM_ROTULO = { ruta: { tam: 15, factor: 0.78 }, ciudad: { tam: 17, factor: 0.6 }, cabina: { tam: 14, factor: 0.74 } } as const;
+export const cajaTexto = (r: Rotulo, texto: string, tam: number, factor: number): Caja => {
+  const ancho = texto.length * tam * factor;
+  const x0 = r.ancla === 'start' ? r.x : r.ancla === 'end' ? r.x - ancho : r.x - ancho / 2;
+  return { x0, y0: r.y - tam * 0.8, x1: x0 + ancho, y1: r.y + tam * 0.25 };
+};
+export const cajaCirculo = (x: number, y: number, radio: number): Caja => ({ x0: x - radio, y0: y - radio, x1: x + radio, y1: y + radio });
+export const chocan = (a: Caja, b: Caja): boolean => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+const adentro = (c: Caja) => c.x0 >= 0 && c.y0 >= 0 && c.x1 <= ANCHO_MAPA && c.y1 <= ALTO_MAPA;
+
+export const rotulosDelMapa = (t: Tramo) => {
+  const punto = new Map(t.ciudades.map((c) => [c.slug, c.mapa]));
+  // Lo que un rótulo no puede tapar: el halo de cada estación (radio 19, con margen), su nombre, y los puntos de ciudades
+  // y empalmes. Cada rótulo elegido se suma, para que el siguiente tampoco lo pise.
+  const ocupado: Caja[] = [
+    ...t.cabinas.map((c) => cajaCirculo(c.mapa.x, c.mapa.y, 22)),
+    ...t.cabinas.map((c) => cajaTexto({ x: c.mapa.x, y: c.mapa.y - 18, ancla: 'middle' }, c.nombre.toUpperCase(), TAM_ROTULO.cabina.tam, TAM_ROTULO.cabina.factor)),
+    ...t.ciudades.map((c) => cajaCirculo(c.mapa.x, c.mapa.y, 8)),
+  ];
+  const libre = (c: Caja) => adentro(c) && !ocupado.some((o) => chocan(c, o));
+
+  // Ruta: arriba del medio de su segmento más largo; si ahí choca, el siguiente más largo.
+  const rutas = t.trazados.map((tr) => {
+    const pts = tr.ciudades.map((s) => punto.get(s)!);
+    const candidatos: Rotulo[] = pts.slice(1)
+      .map((b, i) => ({ a: pts[i]!, b }))
+      .sort((p, q) => Math.hypot(q.b.x - q.a.x, q.b.y - q.a.y) - Math.hypot(p.b.x - p.a.x, p.b.y - p.a.y))
+      .map(({ a, b }) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 - 10, ancla: 'middle' }));
+    const elegido = candidatos.find((r) => libre(cajaTexto(r, tr.ruta, TAM_ROTULO.ruta.tam, TAM_ROTULO.ruta.factor))) ?? candidatos[0]!;
+    ocupado.push(cajaTexto(elegido, tr.ruta, TAM_ROTULO.ruta.tam, TAM_ROTULO.ruta.factor));
+    return { ruta: tr.ruta, ...elegido };
+  });
+
+  // Ciudad: del lado de siempre (hacia el centro del dibujo); si choca, el otro lado, abajo, arriba, y más lejos.
+  const ciudades = t.ciudades.filter((c) => c.principal).map((c) => {
+    const { x, y } = c.mapa;
+    const haciaElCentro: Rotulo = x > ANCHO_MAPA / 2 ? { x: x - 12, y: y + 6, ancla: 'end' } : { x: x + 12, y: y + 6, ancla: 'start' };
+    const candidatos: Rotulo[] = [
+      haciaElCentro,
+      x > ANCHO_MAPA / 2 ? { x: x + 12, y: y + 6, ancla: 'start' } : { x: x - 12, y: y + 6, ancla: 'end' },
+      { x, y: y + 26, ancla: 'middle' },
+      { x, y: y - 14, ancla: 'middle' },
+      { x, y: y + 40, ancla: 'middle' },
+      { x, y: y - 28, ancla: 'middle' },
+    ];
+    const elegido = candidatos.find((r) => libre(cajaTexto(r, c.nombre, TAM_ROTULO.ciudad.tam, TAM_ROTULO.ciudad.factor))) ?? haciaElCentro;
+    ocupado.push(cajaTexto(elegido, c.nombre, TAM_ROTULO.ciudad.tam, TAM_ROTULO.ciudad.factor));
+    return { slug: c.slug, nombre: c.nombre, ...elegido };
+  });
+  return { rutas, ciudades };
+};
