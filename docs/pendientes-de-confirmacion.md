@@ -2,7 +2,7 @@
 
 **Fecha:** 20 de septiembre de 2026, actualizado el 24/09, el 25/09, el 28/09 (el inicio de actividades pasó al 7 de
 octubre), el 01/10 (lo que hay que pedirle a PREVI por el formulario de Bitrix24) y el 02/10 (lo que se escondió en la
-reunión con el gerente del 01/10, en dos tandas: primera sección) · **Sale de:** la call con el gerente del 20/09 y las correcciones del 24/09 (el 13 y la pregunta del precio
+reunión con el gerente del 01/10, en dos tandas) y el 05/10 (la tercera tanda: primera sección) · **Sale de:** la call con el gerente del 20/09 y las correcciones del 24/09 (el 13 y la pregunta del precio
 del primer día). El formulario de TelePASE, que se
 agregó el 24/09, quedó resuelto el 25/09.
 
@@ -15,6 +15,39 @@ nada de la web para hacerla.
 Cuando llegue una respuesta, el que carga el dato abre
 `C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`, **cambia un `false` por un `true`**, y la sección vuelve
 entera. No hay que tocar nada más.
+
+---
+
+## Tercera tanda (05/10) · el 0800, la póliza y el formulario de TelePASE
+
+**Un choque más con el pliego, el séptimo.** Se escondió el formulario de consultas de TelePASE de Contacto
+(`formularioTelepase`): «el único que vamos a usar es el del CRM». El PETG, art. 61.5 b, pide ese formulario desde la
+toma de posesión. Hay una salida que cumple las dos cosas: que el formulario de Bitrix24 tome también las consultas de
+TelePASE.
+
+> «¿El formulario del CRM puede tener un tipo de consulta "TelePASE", con la patente y, si quieren, el número de TAG?
+> El contrato de concesión pide un formulario para las consultas de TelePASE, y la web ya no tiene el suyo.»
+
+- **A quién:** PREVI.
+- Si PREVI lo agrega, en la web no hay que tocar nada: el formulario de Bitrix24 se arma en el CRM.
+
+**Lo que se resolvió:**
+- **La línea 0800**: 0800 444 7777, cargada en `contacto.json` (`lineaGratuita` y el `valor` del canal). Sale en
+  la barra de arriba, en el menú del celular, en el pie, en Contacto, en el mapa, en la tabla de canales y en la
+  portada de «Próximamente».
+- **La póliza de responsabilidad civil**, publicada: Transparencia volvió solo con la póliza (`transparencia` en
+  `true`, la normativa sigue escondida con su propio interruptor, `normativa`), y el pie la enlaza. El PDF va tal
+  cual llegó, en `C:\Users\Villex\dev\Covicen\public\documentos\poliza-responsabilidad-civil.pdf`. Cuando se
+  renueve (vence el 05/10/2027), se reemplaza ese archivo y se cambian las fechas en `empresa.json` (`polizaRc`).
+- **El CUIT de COVICEN S.A.** (30-71959948-2), que figura en la póliza. Va en el pie. Falta el domicilio legal para el
+  bloque «Datos registrales» (punto 6, más abajo).
+
+**Para revisar del PDF de la póliza**, que se publica entero: trae el premio y los importes que paga Covicen, y dice
+«Longitud total del corredor: 681,92 km», cuando la web usa en todos lados los 679,03 km oficiales. Si alguna de las
+dos cosas molesta, hay que pedirle a la aseguradora o al broker una versión para publicar.
+
+**Lo que se escondió sin que falte un dato:** la tarjeta de la grúa en Emergencias (`gruaEnEmergencias`). El
+servicio, con sus tiempos, sigue en Servicios, en la home y en la pregunta frecuente del desperfecto.
 
 ---
 
@@ -42,9 +75,8 @@ dos de los pedidos de esta reunión van contra eso:
   hábiles) y el 61.6 pide publicarlos. Los valores siguen en `contacto.json`, y el build falla si vuelven a aparecer
   escritos.
 - **Transparencia escondida entera** (`transparencia`): ahí estaban la normativa aplicable para descargar y la póliza
-  de responsabilidad civil, que el 61.6 pide publicar. En la reunión el propio gerente dudó con la póliza («si vas a
-  comentar toda la página, esto igual para mí tendría que estar»). **Conviene confirmar con él la póliza en
-  particular**: si la quiere publicada, se puede mostrar sola, sin el resto de Transparencia.
+  de responsabilidad civil, que el 61.6 pide publicar. **La póliza volvió el 05/10** (Transparencia muestra solo eso);
+  la normativa sigue escondida (`normativa`).
 - **El estado de la traza, escondido** (`estadoDeLaTraza`): el 61.6 pide un mapa interactivo con el estado de la
   ruta (tránsito, obras, incidentes). Hoy solo había datos de ejemplo, así que en la práctica no cambia nada hasta que
   Operaciones cargue información real.
@@ -87,16 +119,11 @@ volver a nombrarlo en esos dos textos.
 
 - **A quién:** el gerente o PREVI, si lo atienden ellos.
 
-**4 · Línea 0800**: «falta confirmar número». No se escondió: la tabla sigue diciendo que se habilita con la toma de
-posesión. Se carga en `contacto.json` (`lineaGratuita` y el `valor` del canal).
-
-> «¿Cuál es el número del 0800 de atención al usuario?»
-
-- **A quién:** el gerente o PREVI.
+**4 · Línea 0800**: resuelto el 05/10, es el 0800 444 7777 (ver la tercera tanda, arriba).
 
 **5 · El correo de atención al usuario.** Se pidió enlazar `atencionalusuario@covicen.com.ar` en la tabla de
-canales, y ya está. Lo que no se hizo es cargarlo como el correo de los formularios: hoy los de TelePASE, trámites y
-asistencia están apagados con el aviso de que se habilitan con la toma de posesión, y con el correo cargado pasarían a
+canales, y ya está. Lo que no se hizo es cargarlo como el correo de los formularios: hoy el de asistencia está apagado
+con el aviso de que se habilita con la toma de posesión (los de TelePASE y trámites, además, están escondidos), y con el correo cargado pasarían a
 mandarse por correo a esa casilla (también aparecería en el pie de página).
 
 > «¿La casilla atencionalusuario@covicen.com.ar ya recibe? ¿Los formularios de TelePASE, de trámites y de asistencia
@@ -105,12 +132,14 @@ mandarse por correo a esa casilla (también aparecería en el pie de página).
 - **A quién:** el gerente o PREVI, si atienden esa casilla.
 - **Dónde se carga:** `atencionUsuario` en `C:\Users\Villex\dev\Covicen\src\content\contacto.json`.
 
-**6 · El CUIT y los domicilios de COVICEN S.A.** Desde el 02/10 el pie dice «COVICEN S.A.» en lugar de «Sociedad en
-formación». El bloque «Datos registrales» del pie aparece solo cuando están la razón social, el CUIT y el domicilio
-legal; con el CUIT, además, se puede cargar el QR de Data Fiscal de ARCA.
+**6 · Los domicilios de COVICEN S.A.** Desde el 02/10 el pie dice «COVICEN S.A.» en lugar de «Sociedad en
+formación», y desde el 05/10 su CUIT (30-71959948-2, sale de la póliza). El bloque «Datos registrales» del pie aparece
+solo cuando están la razón social, el CUIT y el domicilio legal; con el CUIT, además, se puede cargar el QR de Data
+Fiscal de ARCA. La póliza trae una dirección de COVICEN S.A. (La Voz del Interior 8851, Córdoba), pero no dice si es el
+domicilio legal: no se cargó.
 
-> «¿Cuál es el CUIT de COVICEN S.A. y sus domicilios legal y comercial? ¿Nos pasan la constancia de inscripción de ARCA
-> (para el QR de Data Fiscal)?»
+> «¿Cuáles son los domicilios legal y comercial de COVICEN S.A.? ¿La Voz del Interior 8851, en Córdoba, es alguno de los
+> dos? ¿Nos pasan la constancia de inscripción de ARCA (para el QR de Data Fiscal)?»
 
 - **A quién:** administración.
 - **Dónde se carga:** `cuit`, `domicilioLegal`, `domicilioComercial` y `constanciaUrl` en

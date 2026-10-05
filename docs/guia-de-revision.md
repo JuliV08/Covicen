@@ -1,6 +1,6 @@
 # Guía de revisión — web de Covicen
 
-**Al día al 2 de octubre de 2026.** Empezá por «Lo que cambió el 2 de octubre, segunda tanda», «Lo que cambió el 2 de octubre», «Lo que cambió el 1 de octubre», «Lo que cambió el 28 de septiembre», «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
+**Al día al 5 de octubre de 2026.** Empezá por «Lo que cambió el 5 de octubre», «Lo que cambió el 2 de octubre, segunda tanda», «Lo que cambió el 2 de octubre», «Lo que cambió el 1 de octubre», «Lo que cambió el 28 de septiembre», «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
 
 Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/superpowers/plans/2026-09-13-actualizacion-web.md`, más la **revisión final del 14 y 15 de septiembre**) se hizo **sin pruebas visuales**: esta guía es la lista de lo que hay que mirar a mano, pantalla por pantalla, más lo que quedó oculto a propósito y cómo cargarlo.
 
@@ -12,6 +12,58 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 **Navegadores:** lo atado a scroll-driven animations (dibujo del mapa al scrollear, parallax del hero, fondo del header) anda en Chrome, Edge y Safari; en Firefox estable aparece ya dibujado o fijo.
 
 **Si tenés "reducir movimiento" activado en Windows** (Configuración › Accesibilidad › Efectos visuales): todo queda estático, **la cinta de avisos no desfila** (se recorre a mano, de costado) y el botón de pausa ni aparece, porque no hay nada que frenar. El cambio de tema también es instantáneo, sin la disolvencia. Si no usás esa opción, ignorá este punto.
+
+---
+
+## Lo que cambió el 5 de octubre — mirá esto primero
+
+Los 5 puntos de la tanda del 05/10, en la rama `web-ajustes-2026-10-05`. Leé antes la primera sección de
+`C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`: sacar el formulario de TelePASE choca con el
+contrato.
+
+**El 0800 444 7777** (puntos 1 y 4). Dónde mirarlo:
+- **Arriba de todo, en la compu**: la barra fina de arriba lleva el 0800 a la izquierda, en una píldora azul, y
+  TelePASE y Autogestión a la derecha, como estaban. En la fila del logo y el menú no entraba: a 1024 px de ancho ya
+  quedaban 21 px libres. Mirá que la píldora del 0800 tenga la misma altura que las de la derecha y el texto centrado,
+  en los dos temas.
+- **En el celular**: abrí el menú (las tres rayitas). Primero va el 0800, a lo ancho, y abajo TelePASE y Autogestión.
+  Tocalo: tiene que ofrecer llamar al 08004447777.
+- **El mapa interactivo** (home y El tramo): tocá una estación. Abajo de la tarjeta, al lado del 140, está el 0800.
+  También en la página de cada estación.
+- **El pie**: en la columna Contacto, «Atención al usuario 0800 444 7777» en negrita, debajo de «Emergencias 140»
+  (solo el número es enlace: entero no entraba en la columna y la página se corría de costado entre 1024 y 1200 px de
+  ancho, lo encontró la revisión); y en la fila de logos, la píldora azul del 0800 al lado del botón rojo del 140.
+- **La home**: el bloque «¿Consultas, reclamos, propuestas?» suma «o llamanos gratis al 0800 444 7777» y un botón con el
+  número al lado de «Ir al formulario».
+- **Contacto**: en la columna izquierda, debajo de la tarjeta del 140, una tarjeta «Atención al usuario» con el
+  número grande. El paso 1 de «Cuatro pasos.» dice «Formulario, correo o la línea 0800 444 7777».
+- **La tabla de canales** (Contacto y Emergencias, lo que marcaste): la fila «Línea gratuita 0800» ya trae el número
+  para tocar, en vez de «Se habilita con la toma de posesión».
+- **Textos**: la pregunta frecuente «¿Cómo hago un reclamo o una consulta?», la tarjeta Atención al usuario de
+  Servicios, Privacidad (en «Tus derechos»), el final de la Guía de trámites («¿Tenés una consulta sobre un trámite?»),
+  el aviso que aparece si el formulario del CRM no carga, y la novedad «Qué cambia el 7 de octubre», que suma una
+  sección «Atención al usuario».
+- **La portada de «Próximamente»** (lo que hoy está en producción): debajo del 140 aparece «Atención al usuario: 0800
+  444 7777».
+- El número nunca se parte en dos renglones: va con espacios que no se cortan.
+
+**La póliza de responsabilidad civil** (punto 2). El PDF que mandaste se publica tal cual, en
+`/documentos/poliza-responsabilidad-civil.pdf`.
+- **Transparencia volvió**, solo con la póliza: el título de la página es «Póliza de responsabilidad civil.», con la
+  aseguradora (Seguros Galicia S.A.), el número (000277475), la vigencia (del 5 de octubre de 2026 al 5 de octubre de
+  2027) y el botón «Ver la póliza (PDF)», que la abre en otra pestaña. La normativa sigue escondida. Vuelve a estar en
+  el menú «Nosotros» y en la columna Empresa del pie.
+- **En producción, mientras siga la portada de «Próximamente»**, la póliza no se ve enlazada en ningún lado, pero su
+  dirección (`/documentos/poliza-responsabilidad-civil.pdf`) anda.
+- **En el pie**, en la línea de abajo de todo: «COVICEN S.A. · CUIT 30-71959948-2 · Adjudicación… Privacidad · Póliza
+  de responsabilidad civil · Boletín Oficial». El CUIT sale de la póliza.
+
+**Emergencias** (punto 3): ya no está la tarjeta «Grúa y remolque para despejar la calzada: gratis y con tiempos
+comprometidos». El servicio sigue en Servicios, en la home y en la pregunta frecuente del desperfecto, con los mismos
+tiempos: si querías sacarlo de todos lados, avisá.
+
+**Contacto sin el formulario de TelePASE** (punto 5): la sección «Consultas sobre tu TelePASE.» ya no está; el único
+formulario es el del CRM. Con ella se fue también «Las respuestas a TelePASE tienen prioridad».
 
 ---
 
