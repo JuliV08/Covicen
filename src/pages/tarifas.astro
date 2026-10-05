@@ -1,5 +1,5 @@
 ---
-import { Printer } from '@lucide/astro';
+import { ArrowRight, CircleHelp, CreditCard, Map as Mapa, Printer } from '@lucide/astro';
 import Base from '@/layouts/Base.astro';
 import TablaTarifas from '@/components/TablaTarifas.astro';
 import Boton from '@/components/ui/Boton.astro';
@@ -35,6 +35,12 @@ const futuras = [
   ['3', '3 ejes, más de 2,30 m, con rueda doble', '3'], ['4', '4 ejes', '4'], ['5', '5 ejes', '5'], ['6', '6 ejes', '6'],
   ['7', 'Más de 6 ejes', '7'], ['8', 'Más de 8 ejes', '9'], ['Especial', 'Con permiso de circulación especial', 'cantidad de ejes'],
 ] as const;
+// Las salidas de la página, al pie (tarjetas-enlace con ícono desde el 05/10/2026).
+const salidas = [
+  { Icono: CreditCard, titulo: 'Cómo pagar', href: '/medios-de-pago' },
+  { Icono: Mapa, titulo: 'Dónde están los peajes', href: '/el-tramo' },
+  { Icono: CircleHelp, titulo: 'Preguntas frecuentes', href: '/preguntas-frecuentes' },
+];
 const descuentos = [['A partir de la pasada 36 en el mes', '15 %'], ['A partir de la pasada 45 en el mes', '25 %'], ['A partir de la pasada 61 en el mes', '35 %']] as const;
 // Tarifa de peaje por exceso de carga, tal como está en el cuadro del contrato de concesión: el tramo de exceso y
 // por cuánto se multiplica la tarifa vigente de la categoría. No es una multa de tránsito: es la tarifa de esa pasada.
@@ -135,12 +141,19 @@ const exentos = [
   )}
 
   {/* Las salidas de la página vivían adentro de la sección 06. Al esconderse, Tarifas quedaba sin un solo puente a
-      ningún lado: van afuera, que es donde tendrían que haber estado siempre. */}
-  <section class="contenedor pb-24">
-    <div class="revelar flex flex-wrap justify-center gap-3">
-      <Boton href="/medios-de-pago" variante="secundario">Cómo pagar</Boton>
-      <Boton href="/el-tramo" variante="secundario">Dónde están los peajes</Boton>
-      <Boton href="/preguntas-frecuentes" variante="secundario">Preguntas frecuentes</Boton>
-    </div>
-  </section>
+      ningún lado: van afuera, que es donde tendrían que haber estado siempre. Desde el 05/10/2026 son tarjetas-enlace
+      con ícono, como los accesos rápidos de la home: tres botones sueltos en un bloque vacío «no tiene sentido» (Juli). */}
+  <nav aria-label="Más sobre peajes" class="contenedor pb-8">
+    <ul class="escalonar grid gap-4 sm:grid-cols-3">
+      {salidas.map(({ Icono, titulo, href }, i) => (
+        <li style={`--i: ${i}`}>
+          <a href={ruta(href)} class="tarjeta flex h-full items-center gap-4 p-5 text-texto no-underline">
+            <span class="tarjeta-icono shrink-0"><Icono size={22} aria-hidden="true" /></span>
+            <span class="flex-1 font-extrabold">{titulo}</span>
+            <ArrowRight size={18} aria-hidden="true" class="shrink-0 text-acento" />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
 </Base>

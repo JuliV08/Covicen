@@ -112,7 +112,11 @@ const CENTRADOS: Array<[string, RegExp]> = [
   ['src/pages/emergencias.astro', /<h2 class="titulo mx-auto mb-4 text-center text-2xl">Canales de atención<\/h2>/],
   ['src/pages/emergencias.astro', /<div class="revelar mt-12 flex justify-center"><Boton href="\/seguridad-vial"/],
   ['src/pages/tarifas.astro', /<div class="revelar flex justify-center"><Boton href="\/tramites"/],
-  ['src/pages/tarifas.astro', /<div class="revelar flex flex-wrap justify-center gap-3">\s*<Boton href="\/medios-de-pago"/],
+  // Las salidas del pie de Tarifas son tarjetas-enlace con ícono desde el 05/10/2026 (eran tres botones sueltos).
+  ['src/pages/tarifas.astro', /<nav aria-label="Más sobre peajes" class="contenedor pb-8">\s*<ul class="escalonar grid gap-4 sm:grid-cols-3">/],
+  // El cuerpo de Quiénes somos y sus números, centrados bajo el encabezado (05/10/2026: «sigue flotando a la izquierda»).
+  ['src/pages/quienes-somos.astro', /<div class="revelar prose-covicen mx-auto max-w-prose text-center text-lg text-texto-2">/],
+  ['src/pages/quienes-somos.astro', /<div class="escalonar mx-auto mt-12 grid max-w-3xl gap-10 sm:grid-cols-2">/],
   ['src/pages/medios-de-pago.astro', /<div class="revelar flex flex-wrap items-center justify-center gap-4">\s*<Boton href=\{oficina\}/],
   ['src/pages/seguridad-vial.astro', /<div class="revelar mt-8 flex flex-wrap justify-center gap-3"><Boton href="tel:140"/],
   ['src/pages/tramites.astro', /<div class="revelar mt-16 flex flex-col items-center gap-4 text-center">/],
