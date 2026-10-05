@@ -5,7 +5,7 @@ import { readdirSync } from 'node:fs';
 import Header from '@/components/Header.astro';
 import Privacidad from '@/pages/privacidad.astro';
 import QuienesSomos from '@/pages/quienes-somos.astro';
-import Proveedores from '@/pages/proveedores.astro';
+import Proveedores from '@/pages/proveedores/[...resto].astro';
 import SeguridadVial from '@/pages/seguridad-vial.astro';
 import Tramites from '@/pages/tramites.astro';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
@@ -41,7 +41,7 @@ describe('Políticas escondida; Transparencia de vuelta, solo con la póliza', (
     const html = await (await AstroContainer.create()).renderToString(Header as never, { props });
     expect(html).not.toContain('href="/politicas/"');
     expect(html).toContain('href="/transparencia/"');
-    expect(html).toContain('href="/proveedores/"');
+    expect(html, 'Proveedores está escondida desde el 05/10/2026').not.toContain('href="/proveedores/"');
   });
 });
 

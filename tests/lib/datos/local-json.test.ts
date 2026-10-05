@@ -71,7 +71,7 @@ describe('contenido del repo', () => {
     const s = await fuenteLocalJson.servicios();
     const grua = s.find((x) => x.id === 'grua-y-remolque')!;
     expect(grua.gratuito).toBe(true);
-    expect(grua.tiempos).toEqual(['Vehículos livianos: 30 minutos en al menos el 90 % de los casos, y nunca más de 40.', 'Vehículos pesados: 60 minutos en al menos el 90 % de los casos, y nunca más de 72.']);
+    expect(grua.tiempos, 'los tiempos se sacaron de la tarjeta el 05/10/2026').toBeUndefined();
     expect(s.filter((x) => !x.gratuito).map((x) => x.id)).toEqual(['mecanica-general', 'remolque-extendido']);
   });
   // Hasta el 01/10/2026 este test exigía que la tarjeta dijera que el 0800 acusa «en el momento» y el resto en 24
@@ -89,10 +89,8 @@ describe('contenido del repo', () => {
     const p = (await fuenteLocalJson.faq()).find((x) => x.slug === 'desperfecto-en-ruta')!;
     // PETG 54.5: 30 minutos en al menos el 90 % de las ocurrencias y nunca más de 40 (livianos), 60 y 72 (pesados).
     // Publicar "30 para livianos y 60 para pesados" a secas promete algo que el contrato no compromete.
-    const grua = (await fuenteLocalJson.servicios()).find((x) => x.id === 'grua-y-remolque')!;
-    // La redacción sale de servicios.json: si allá cambia, acá tiene que cambiar igual.
-    for (const t of grua.tiempos ?? []) expect(p.respuesta).toContain(t.replace(/^Vehículos \w+: /, '').replace(/\.$/, ''));
-    expect(grua.tiempos).toHaveLength(2);
+    // La tarjeta de Servicios dejó de mostrar los tiempos el 05/10/2026; la pregunta frecuente los conserva tal cual.
+    expect(p.respuesta, 'los tiempos se sacaron de la pregunta el 05/10/2026').not.toMatch(/minutos/);
     expect(p.respuesta).not.toMatch(/30 minutos para livianos/);
   });
   it('normativa: cada norma enlaza el aviso del Boletín Oficial que le corresponde', async () => {

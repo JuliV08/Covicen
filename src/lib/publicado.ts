@@ -69,6 +69,9 @@ export const publicado = Object.freeze({
   /** Página /transparencia/. Escondida el 02/10/2026 y de vuelta el 05/10, cuando llegó la póliza de responsabilidad
    *  civil («agregarla donde estaba originalmente la de ejemplo»). */
   transparencia: true,
+  /** Página /proveedores/ (registro de proveedores). Escondida el 05/10/2026 por pedido de Juli. No se genera, y sale
+   *  del menú, del pie y de la política de privacidad. */
+  proveedores: false,
   /** Transparencia · la normativa aplicable para descargar. Sigue escondida desde el 02/10/2026: el 05/10 volvió la
    *  página por la póliza, no la normativa. OJO: el PETG 61.6 pide publicarla; ver docs/pendientes-de-confirmacion.md. */
   normativa: false,

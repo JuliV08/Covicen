@@ -19,7 +19,7 @@ Dejar lista y publicable la **landing fundacional de Covicen** —la nueva conce
 
 **Referencia:** https://cvsa.com.ar/ — se usa para la **estructura de la información**, nunca para el diseño. CVSA es estatal, con años de sistemas viejos atrás; su web es el techo funcional, no el piso estético. El diseño hay que revolucionarlo.
 
-**Quién es Covicen (confirmado por el cliente):** la sociedad nueva adjudicataria del **Tramo Centro** de la Red Federal de Concesiones. **681 km** sobre **RN 9, RN 19 y RN 34** — de Pilar (Córdoba) a Rosario, y hacia San Francisco, Rafaela y Santa Fe capital. Provincias: **Córdoba y Santa Fe**. Consorcio: **AFEMA S.A. – Pablo Federico e Hijos S.A. – Guido Mogetta S.A.** Ganó ofertando **$1.399 + IVA, la tarifa más baja de los ocho tramos** — y como en este régimen se adjudica al que ofrece menos, eso es un diferencial de marca legítimo y verificable, no un número suelto.
+**Quién es Covicen (confirmado por el cliente):** la sociedad nueva adjudicataria del **Tramo Centro** de la Red Federal de Concesiones. **681 km** sobre **RN 9, RN 19 y RN 34** — de Pilar (Córdoba) a Rosario, y hacia San Francisco, Rafaela y Santa Fe capital. Provincias: **Córdoba y Santa Fe**. Consorcio: **AFEMA S.A. – Pablo Federico e Hijos S.A. – Guido Mogetta S.A.** Ganó la licitación del tramo (**Resolución 1379/2026**). Desde el 05/10/2026 el sitio NO dice que la tarifa sea «la más baja»: se sacó de todo el texto público a pedido de Juli.
 
 **⚠️ La sociedad todavía NO está inscripta** (la adjudicación salió el 2026-08-24). Está en formación, así que:
 

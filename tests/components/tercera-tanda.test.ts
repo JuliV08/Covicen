@@ -76,8 +76,12 @@ describe('la póliza de responsabilidad civil', () => {
     expect(html).not.toContain('Normativa aplicable');
     expect(html).not.toContain('PETG');
     expect(/<meta name="description" content="([^"]*)"/.exec(html)?.[1]).not.toContain('Vialidad Nacional');
-    // «responsabilidad» a 45 px no entra a 320 px: el h1 se corta con guion (revisión del 05/10/2026).
-    expect(readFileSync('src/pages/transparencia/[...resto].astro', 'utf8')).toMatch(/:global\(#poliza h1\) \{ hyphens: auto; overflow-wrap: break-word; \}/);
+    // Sin «Transparencia» en el título y sin cortar «responsabilidad» con guion: la letra baja hasta que entra entera.
+    expect(html).not.toMatch(/eyebrow[^>]*>\s*Transparencia/i);
+    expect(/<title>([^<]*)<\/title>/.exec(html)?.[1]).not.toMatch(/Transparencia/);
+    const css = readFileSync('src/pages/transparencia/[...resto].astro', 'utf8');
+    expect(css).not.toContain('hyphens: auto');
+    expect(css).toMatch(/:global\(#poliza h1\) \{ font-size: min\(clamp\(2\.5rem, 2rem \+ 4vw, 6rem\), 8\.6vw\); overflow-wrap: break-word; \}/);
   });
 
   it('el PDF está en public/documentos/', () => {
