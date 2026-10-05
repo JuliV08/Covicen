@@ -30,7 +30,8 @@ describe('legibilidad (pliego 61.7)', () => {
   // se encuadra sobre lo dibujado (encuadreDelMapa) y ocupa todo el panel, así que se mira a la escala más chica de cada
   // tramo de pantalla. Fuera de @media, desde 768 px (más angosto, los rótulos de estación se esconden salvo el elegido):
   // el mapa mide 768 − 40 (contenedor) − 2 × 23 (relleno del panel) ≈ 682 px. En @media (min-width: 64rem), desde 1024:
-  // 1024 − 40 − 2 × 30,7 ≈ 922 px.
+  // 1024 − 40 − 2 × 30,7 ≈ 922 px. En @media (min-width: 80rem), desde 1280, el mapa comparte el panel (casi de borde a
+  // borde) con la columna de 22rem: 1280 − 48 − 2 × 38,4 − 352 − 40 ≈ 763 px.
   it('el texto del mapa, ya escalado, no baja de 12 px en ningún tramo de pantalla', async () => {
     const { encuadreDelMapa } = await import('@/lib/tramo');
     const { fuenteLocalJson } = await import('@/lib/datos/fuentes/local-json');
@@ -38,11 +39,13 @@ describe('legibilidad (pliego 61.7)', () => {
     const fuente = readFileSync('src/components/ilustraciones/MapaTramo.astro', 'utf8');
     const estilo = /<style>([\s\S]*)<\/style>/.exec(fuente)?.[1] ?? '';
     const grande = /@media \(min-width: 64rem\) \{([\s\S]*?)\n {2}\}/.exec(estilo)?.[1] ?? '';
+    const columna = /@media \(min-width: 80rem\) \{([\s\S]*?)\n {2}\}/.exec(estilo)?.[1] ?? '';
     expect(grande, 'falta el bloque de pantalla grande').not.toBe('');
+    expect(columna, 'falta el bloque de columna y mapa').not.toBe('');
     const medir = (css: string, escala: number) => [...css.matchAll(/(\S+)\s*\{[^}]*font-size:\s*(\d+(?:\.\d+)?)px/g)]
       .filter(([, , px]) => Number(px) * escala < 12)
       .map(([, sel, px]) => `${sel}: ${px} unidades = ${(Number(px) * escala).toFixed(1)} px`);
-    const culpables = [...medir(estilo.replace(grande, ''), 682 / ancho), ...medir(grande, 922 / ancho)];
+    const culpables = [...medir(estilo.replace(grande, '').replace(columna, ''), 682 / ancho), ...medir(grande, 922 / ancho), ...medir(columna, 763 / ancho)];
     expect(culpables, culpables.join('\n')).toEqual([]);
   });
   it('sin texto justificado', () => {

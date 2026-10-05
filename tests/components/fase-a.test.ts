@@ -106,7 +106,8 @@ describe('encabezados centrados', () => {
 // Lo que quedaba suelto a la izquierda al final de una sección pasa al centro (fase A). Es una lista cerrada, sacada
 // recorriendo los 46 usos de Seccion y los encabezados armados a mano el 05/10/2026.
 const CENTRADOS: Array<[string, RegExp]> = [
-  ['src/components/home/ElTramo.astro', /<div class="revelar mt-8 flex justify-center"><Boton href="\/el-tramo"/],
+  // Desde la fase C el botón va en la columna del mapa: centrado en una columna, a la izquierda desde 1280.
+  ['src/components/home/ElTramo.astro', /<div slot="abajo" class="flex justify-center xl:justify-start"><Boton href="\/el-tramo"/],
   ['src/pages/el-tramo.astro', /<div class="revelar mt-8 flex justify-center"><Boton href="\/tarifas">/],
   ['src/pages/emergencias.astro', /<div class="revelar mt-6 flex justify-center"><Boton href="\/asistencia"/],
   ['src/pages/emergencias.astro', /<h2 class="titulo mx-auto mb-4 text-center text-2xl">Canales de atención<\/h2>/],

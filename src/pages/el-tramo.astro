@@ -54,7 +54,7 @@ const anclaTapada = 'scroll-mt-[calc(var(--alto-header)+4.5rem)]';
   <section id="mapa" class="contenedor py-12" aria-labelledby="titulo-seccion-mapa">
     <h2 id="titulo-seccion-mapa" class="sr-only">Mapa del tramo y estaciones de peaje</h2>
     {conEstado && estado.ejemplo && <p class="revelar mb-4"><Senal variante="frio">Datos de ejemplo: el módulo se activa con la operación</Senal></p>}
-    <div class="revelar tarjeta tarjeta-panel"><MapaInteractivo {tramo} {incidentes} modo="scroll" /></div>
+    <div class="revelar tarjeta tarjeta-panel xl:mx-[calc(50%-min(50vw-1.5rem,55rem))]"><MapaInteractivo {tramo} {incidentes} modo="scroll" /></div>
     {conEstado && <div class="revelar mt-8"><EstadoTraza {estado} {rutas} nivel="h2" /></div>}
   </section>
 

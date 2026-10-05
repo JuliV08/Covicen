@@ -2,25 +2,22 @@
 // El mapa más las tarjetas de estación. Sin JS: todas las tarjetas listadas y cada estación enlaza a su página.
 // Con JS (scripts/mapa.ts): se ve solo la tarjeta de la estación elegida (arranca la primera operativa) y el auto viaja.
 //
-// Fase C (05/10/2026): el mapa ocupa todo el ancho del panel. Desde 1280 px la ficha flota en el hueco entre Córdoba y
-// San Francisco, por encima de la RN 9 (lugarDeLaFicha en lib/tramo.ts; a 1024 no alcanza el hueco y va abajo, como en
-// el celular). La posición va en `cqw` del propio mapa: el SVG escala con el ancho, así que una coordenada del dibujo
-// se pasa a pantalla con el mismo factor en x y en y.
+// Fase C (05/10/2026), segunda vuelta: «para ver el título tengo que subir, para ver los detalles tengo que bajar».
+// Desde 1280 px, columna y mapa: a la izquierda lo que se lee (lo que venga en el slot «arriba», la ficha compacta y el
+// slot «abajo») y a la derecha el mapa, con el alto limitado al de la pantalla (MapaTramo). Más angosto, una sola
+// columna en este orden: arriba, mapa, ficha, abajo.
 import MapaTramo from '@/components/ilustraciones/MapaTramo.astro';
 import TarjetaEstacion from '@/components/TarjetaEstacion.astro';
 import type { EstadoRuta, Tramo } from '@/lib/datos/esquemas';
-import { encuadreDelMapa, lugarDeLaFicha } from '@/lib/tramo';
 interface Props { tramo: Tramo; incidentes?: NonNullable<EstadoRuta['incidentes']>; modo?: 'scroll' | 'cargar' }
 const { tramo, incidentes = [], modo = 'scroll' } = Astro.props;
-const encuadre = encuadreDelMapa(tramo);
-const lugar = lugarDeLaFicha(tramo);
-const fichaX = (((lugar.x - encuadre.x) / encuadre.ancho) * 100).toFixed(2);
-const fichaY = (((lugar.y - encuadre.y) / encuadre.ancho) * 100).toFixed(2);
 ---
-<div class="mapa-interactivo @container relative grid grid-cols-1 gap-8 *:min-w-0" data-mapa-interactivo style={`--ficha-x: ${fichaX}cqw; --ficha-y: ${fichaY}cqw`}>
-  <MapaTramo {tramo} {incidentes} {modo} />
-  <section class="grid gap-4 xl:absolute xl:top-[var(--ficha-y)] xl:left-[var(--ficha-x)] xl:w-[21rem]" aria-live="polite" aria-label="Estación seleccionada">
+<div class="mapa-interactivo grid grid-cols-1 gap-8 *:min-w-0 xl:grid-cols-[22rem_minmax(0,1fr)] xl:items-start xl:gap-x-10 xl:gap-y-6" data-mapa-interactivo>
+  {Astro.slots.has('arriba') && <div class="order-1 xl:col-start-1 xl:row-start-1"><slot name="arriba" /></div>}
+  <div class="order-2 xl:col-start-2 xl:row-span-3 xl:row-start-1 xl:self-center"><MapaTramo {tramo} {incidentes} {modo} /></div>
+  <section class="order-3 grid gap-4 xl:col-start-1 xl:row-start-2" aria-live="polite" aria-label="Estación seleccionada">
     {tramo.cabinas.map((c) => <div data-tarjeta-estacion={c.slug}><TarjetaEstacion cabina={c} enMapa /></div>)}
   </section>
+  {Astro.slots.has('abajo') && <div class="order-4 xl:col-start-1 xl:row-start-3"><slot name="abajo" /></div>}
 </div>
 <script src="../scripts/mapa.ts"></script>
