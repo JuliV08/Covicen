@@ -56,8 +56,8 @@ const gratuitos = publicado.telepaseSinCosto ? 'Todos son gratuitos.' : 'Las exe
     {/* «Iniciá tu trámite» se escondió el 02/10/2026 (publicado.formularioTramites): nadie lo atiende del otro lado, y
         el gerente prefiere juntar todo en Contacto, que va al CRM. En su lugar, el camino a Contacto. */}
     {!publicado.formularioTramites && (
-      <div class="revelar mt-16 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div><h2 class="titulo text-2xl">¿Tenés una consulta sobre un trámite?</h2><p class="mt-2 text-texto-2">Escribinos desde el formulario de Contacto{contacto.lineaGratuita ? `, o llamanos gratis al ${sinCortes(contacto.lineaGratuita)}` : ''}.</p></div>
+      <div class="revelar mt-16 flex flex-col items-center gap-4 text-center">
+        <div><h2 class="titulo mx-auto text-2xl">¿Tenés una consulta sobre un trámite?</h2><p class="mt-2 text-texto-2">Escribinos desde el formulario de Contacto{contacto.lineaGratuita ? `, o llamanos gratis al ${sinCortes(contacto.lineaGratuita)}` : ''}.</p></div>
         <Boton href="/contacto" variante="secundario">Ir a Contacto</Boton>
       </div>
     )}

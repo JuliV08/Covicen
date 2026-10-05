@@ -96,3 +96,41 @@ describe('encabezados centrados', () => {
     expect(html.match(/<ol[^>]*>/)?.[0]).toContain('justify-center');
   });
 });
+
+// Lo que quedaba suelto a la izquierda al final de una sección pasa al centro (fase A). Es una lista cerrada, sacada
+// recorriendo los 46 usos de Seccion y los encabezados armados a mano el 05/10/2026.
+const CENTRADOS: Array<[string, RegExp]> = [
+  ['src/components/home/ElTramo.astro', /<div class="revelar mt-8 flex justify-center"><Boton href="\/el-tramo"/],
+  ['src/pages/el-tramo.astro', /<div class="revelar mt-8 flex justify-center"><Boton href="\/tarifas">/],
+  ['src/pages/emergencias.astro', /<div class="revelar mt-6 flex justify-center"><Boton href="\/asistencia"/],
+  ['src/pages/emergencias.astro', /<h2 class="titulo mx-auto mb-4 text-center text-2xl">Canales de atención<\/h2>/],
+  ['src/pages/emergencias.astro', /<div class="revelar mt-12 flex justify-center"><Boton href="\/seguridad-vial"/],
+  ['src/pages/tarifas.astro', /<div class="revelar flex justify-center"><Boton href="\/tramites"/],
+  ['src/pages/tarifas.astro', /<div class="revelar flex flex-wrap justify-center gap-3">\s*<Boton href="\/medios-de-pago"/],
+  ['src/pages/medios-de-pago.astro', /<div class="revelar flex flex-wrap items-center justify-center gap-4">\s*<Boton href=\{oficina\}/],
+  ['src/pages/seguridad-vial.astro', /<div class="revelar mt-8 flex flex-wrap justify-center gap-3"><Boton href="tel:140"/],
+  ['src/pages/tramites.astro', /<div class="revelar mt-16 flex flex-col items-center gap-4 text-center">/],
+  ['src/pages/tramites.astro', /<h2 class="titulo mx-auto text-2xl">¿Tenés una consulta sobre un trámite\?<\/h2>/],
+  ['src/pages/novedades/[slug].astro', /<header class="revelar mx-auto max-w-3xl text-center">/],
+  ['src/pages/novedades/[slug].astro', /<h1 class="titulo mx-auto mt-4">/],
+  ['src/pages/novedades/[slug].astro', /<div class="prose-covicen revelar mx-auto mt-12 max-w-prose text-lg text-texto-2">/],
+  ['src/pages/novedades/[slug].astro', /<div class="revelar mt-12 flex justify-center"><Boton href="\/novedades"/],
+  ['src/pages/404.astro', /<section class="contenedor py-24 text-center">/],
+  ['src/pages/404.astro', /<h1 class="titulo mx-auto mt-3">/],
+  ['src/pages/404.astro', /<p class="mx-auto mt-4 max-w-prose text-texto-2">/],
+  ['src/pages/preguntas-frecuentes.astro', /<h2 class="titulo revelar mx-auto mb-4 text-center text-2xl">/],
+  ['src/pages/transparencia/[...resto].astro', /<h2 class="titulo revelar mx-auto mb-6 text-center text-2xl">Normativa aplicable<\/h2>/],
+];
+
+describe('lo suelto, al centro', () => {
+  it.each(CENTRADOS)('%s: %s', (archivo, patron) => {
+    expect(readFileSync(archivo, 'utf8')).toMatch(patron);
+  });
+  it('el bloque de Contacto de la home es una columna centrada', async () => {
+    const html = await render(ContactoCta, { contacto: await fuenteLocalJson.contacto() });
+    expect(html).toMatch(/class="contenedor revelar relative z-10 flex flex-col items-center gap-6 text-center"/);
+    expect(html.match(/class="inline-block h-px w-6 bg-acento"/g)?.length).toBe(2);
+    expect(html).toMatch(/<div class="flex flex-wrap justify-center gap-3">/);
+    expect(html.match(/<h2[^>]*>/)?.[0]).toMatch(/\btitulo mx-auto\b/);
+  });
+});

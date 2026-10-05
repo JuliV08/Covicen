@@ -93,7 +93,7 @@ const anclaTapada = 'scroll-mt-[calc(var(--alto-header)+4.5rem)]';
     {tramo.avisos.length > 0 && <ul class="revelar mt-8 flex flex-col gap-2 text-sm text-texto-2">{tramo.avisos.map((a) => <li class="flex gap-2"><span aria-hidden="true">—</span>{a}</li>)}</ul>}
     {/* El puente a Tarifas vivía en la sección de cuadros tarifarios que se sacó. Sin esto, El tramo se quedaba sin
         salida hacia el precio, que es lo que viene a buscar el que llega desde una cabina. */}
-    <div class="revelar mt-8"><Boton href="/tarifas">Ver el cuadro tarifario <ArrowRight size={18} aria-hidden="true" /></Boton></div>
+    <div class="revelar mt-8 flex justify-center"><Boton href="/tarifas">Ver el cuadro tarifario <ArrowRight size={18} aria-hidden="true" /></Boton></div>
   </Seccion>
 
   {hayServicios && (

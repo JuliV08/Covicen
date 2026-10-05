@@ -99,7 +99,7 @@ const exentos = [
 
   {publicado.tarifaDiferencial && (
   <Seccion eyebrow="Tarifa diferencial" titulo="Vecinos, frentistas y docentes." intro="Existe una tarifa diferencial para vecinos y frentistas de una estación y para docentes, solo para la categoría 1, que se renueva cada año. El monto se informa al hacer el trámite." fondo={fDiferencial}>
-    <div class="revelar"><Boton href="/tramites" variante="secundario">Requisitos y cómo tramitarla</Boton></div>
+    <div class="revelar flex justify-center"><Boton href="/tramites" variante="secundario">Requisitos y cómo tramitarla</Boton></div>
   </Seccion>
   )}
 
@@ -137,7 +137,7 @@ const exentos = [
   {/* Las salidas de la página vivían adentro de la sección 06. Al esconderse, Tarifas quedaba sin un solo puente a
       ningún lado: van afuera, que es donde tendrían que haber estado siempre. */}
   <section class="contenedor pb-24">
-    <div class="revelar flex flex-wrap gap-3">
+    <div class="revelar flex flex-wrap justify-center gap-3">
       <Boton href="/medios-de-pago" variante="secundario">Cómo pagar</Boton>
       <Boton href="/el-tramo" variante="secundario">Dónde están los peajes</Boton>
       <Boton href="/preguntas-frecuentes" variante="secundario">Preguntas frecuentes</Boton>
