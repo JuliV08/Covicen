@@ -93,6 +93,9 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
   .titulo {
     --titulo-b: var(--color-acento);
     width: fit-content;
+    /* Sin el diccionario de guiones, `fit-content` toma el ancho de la palabra más larga y el título corría la página de
+       costado a 320 px (revisión del 05/10/2026, «responsabilidad» en Transparencia). */
+    max-width: 100%;
     background-image: linear-gradient(90deg, var(--color-texto) 0%, var(--titulo-b) 50%, var(--color-texto) 100%);
     background-size: 200% 100%;
     background-position: 0% 50%;

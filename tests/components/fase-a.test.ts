@@ -56,6 +56,12 @@ describe('el degradé llega a todos los títulos', () => {
     expect((await render(Seccion, { titulo: 'Prueba.' })).match(/<h2[^>]*>/)?.[0]).toMatch(/\btitulo\b/);
     expect((await render(Seccion, { titulo: 'Prueba.', nivel: 'h1' })).match(/<h1[^>]*>/)?.[0]).toMatch(/\btitulo\b/);
   });
+  // Revisión del 05/10/2026: `.entrada > *` (movimiento.css, sin capa) le ganaba la animación al h1 del hero y el brillo
+  // no se veía nunca. El h1 va envuelto, como la etiqueta: la entrada la hace el envoltorio y el barrido, el h1.
+  it('el h1 del hero no es hijo directo de .entrada', async () => {
+    const html = await render(Hero, { empresa: await fuenteLocalJson.empresa() });
+    expect(html).toMatch(/<div style="--i: 1"[^>]*><h1 class="titulo titulo-foto/);
+  });
   it('el h1 del hero y el de la portada van con el brillo de foto', async () => {
     expect((await render(Hero, { empresa: await fuenteLocalJson.empresa() })).match(/<h1[^>]*>/)?.[0]).toMatch(/\btitulo titulo-foto\b/);
     expect((await render(Proximamente)).match(/<h1[^>]*>/)?.[0]).toMatch(/\btitulo titulo-foto\b/);
@@ -120,6 +126,11 @@ const CENTRADOS: Array<[string, RegExp]> = [
   ['src/pages/404.astro', /<p class="mx-auto mt-4 max-w-prose text-texto-2">/],
   ['src/pages/preguntas-frecuentes.astro', /<h2 class="titulo revelar mx-auto mb-4 text-center text-2xl">/],
   ['src/pages/transparencia/[...resto].astro', /<h2 class="titulo revelar mx-auto mb-6 text-center text-2xl">Normativa aplicable<\/h2>/],
+  // Los que encontró la revisión del 05/10/2026: el enlace final de El tramo y las filas de anclas debajo de un
+  // encabezado centrado.
+  ['src/pages/el-tramo.astro', /<p class="revelar text-center"><a href=\{ruta\('\/servicios'\)\}/],
+  ['src/pages/preguntas-frecuentes.astro', /<nav aria-label="Temas" class="revelar mb-10 flex flex-wrap justify-center gap-2">/],
+  ['src/pages/tarifas.astro', /<nav aria-label="Estaciones" class="revelar mb-8 flex flex-wrap justify-center gap-2">/],
 ];
 
 describe('lo suelto, al centro', () => {

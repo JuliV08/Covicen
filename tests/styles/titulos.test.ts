@@ -20,6 +20,11 @@ describe('títulos con degradé', () => {
     expect(r).toContain('width: fit-content');
     expect(r).not.toMatch(/#[0-9a-f]{3,6}\b/i);
   });
+  // Revisión del 05/10/2026: sin el diccionario de guiones, `fit-content` toma el ancho de la palabra más larga
+  // («responsabilidad» en Transparencia) y el título corría la página de costado a 320 y 360 px.
+  it('el título nunca es más ancho que su columna', () => {
+    expect(regla(global, '.titulo')).toContain('max-width: 100%');
+  });
   it('sobre la foto, la franja va hacia más contraste, no hacia el azul', () => {
     expect(regla(global, '.titulo-foto')).toContain('--titulo-b: var(--color-titulo-brillo)');
   });
