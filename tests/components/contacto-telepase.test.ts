@@ -2,11 +2,10 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it, vi } from 'vitest';
 import Contacto from '@/pages/contacto.astro';
 
-// El formulario de consultas de TelePASE está prendido desde el 25/09/2026 y es obligatorio (PETG 61.5 b). El
-// interruptor `publicado.formularioTelepase` sigue existiendo, así que este archivo prueba que apagarlo todavía
-// esconde la sección entera y deja las demás bien alternadas. Apaga el interruptor con un mock (el módulo real está
-// congelado a propósito); vi.mock se eleva por encima de los imports, así que la página de arriba ya se carga apagada.
-// (Apagarlo de verdad hace fallar el build: `verificar.ts` exige el formulario en /contacto/.)
+// El formulario de consultas de TelePASE estuvo prendido del 25/09 al 04/10/2026; desde el 05/10 está apagado de
+// verdad (el único formulario es el del CRM). El mock queda para que este archivo pruebe el estado apagado aunque
+// alguien vuelva a prender el interruptor: esconde la sección entera y deja las demás bien alternadas. vi.mock se
+// eleva por encima de los imports, así que la página de arriba ya se carga apagada.
 vi.mock('@/lib/publicado', async (original) => {
   const real = await original<typeof import('@/lib/publicado')>();
   return { publicado: Object.freeze({ ...real.publicado, formularioTelepase: false }) };

@@ -1,11 +1,11 @@
 {
   "marca": "Covicen",
   "razonSocial": "COVICEN S.A.",
-  "cuit": null,
+  "cuit": "30-71959948-2",
   "domicilioLegal": null,
   "domicilioComercial": null,
   "constanciaUrl": null,
-  "polizaRc": null,
+  "polizaRc": { "aseguradora": "Seguros Galicia S.A.", "numero": "000277475", "vigenciaDesde": "2026-10-05", "vigenciaHasta": "2027-10-05", "url": "/documentos/poliza-responsabilidad-civil.pdf" },
   "enFormacion": false,
   "consorcio": [
     { "nombre": "AFEMA S.A.", "descripcion": "Constructora vial con base en Córdoba.", "url": "https://www.afema.com.ar/" },

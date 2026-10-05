@@ -6,12 +6,13 @@
 import type { Canal } from '@/lib/datos/esquemas';
 import { publicado } from '@/lib/publicado';
 import { ruta } from '@/lib/rutas';
+import { sinCortes } from '@/lib/texto';
 interface Props { canales: Canal[]; compacto?: boolean }
 const { canales, compacto = false } = Astro.props;
 const visibles = canales.filter((c) => c.tipo !== 'whatsapp' || publicado.canalWhatsapp);
 const enlace = (c: Canal) => {
   if (!c.valor) return null;
-  if (c.tipo === 'telefono') return { href: `tel:${c.valor.replace(/[^\d+]/g, '')}`, texto: c.valor };
+  if (c.tipo === 'telefono') return { href: `tel:${c.valor.replace(/[^\d+]/g, '')}`, texto: sinCortes(c.valor) };
   if (c.tipo === 'correo') return { href: `mailto:${c.valor}`, texto: c.valor };
   if (c.tipo === 'whatsapp') return { href: `https://wa.me/${c.valor}`, texto: 'Abrir WhatsApp' };
   if (c.tipo === 'web') return { href: c.valor.startsWith('/') ? ruta(c.valor) : c.valor, texto: 'Abrir' };

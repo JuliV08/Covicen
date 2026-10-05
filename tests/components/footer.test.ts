@@ -21,10 +21,11 @@ describe('Footer', () => {
     expect(html).not.toContain('Sociedad en formación');
   });
   // Pedido del gerente (01/10/2026): lo que se esconde sale también del pie.
-  it('no enlaza Políticas ni Transparencia mientras estén escondidas', async () => {
+  // Transparencia volvió el 05/10/2026 con la póliza: el pie la enlaza otra vez; Políticas sigue escondida.
+  it('no enlaza Políticas mientras esté escondida, y Transparencia sí', async () => {
     const html = await render(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto());
     expect(html).not.toContain('href="/politicas/"');
-    expect(html).not.toContain('href="/transparencia/"');
+    expect(html).toContain('href="/transparencia/"');
     expect(html).toContain('href="/quienes-somos/"');
   });
   it('con datos registrales y redes los muestra', async () => {
@@ -66,10 +67,19 @@ describe('Footer', () => {
   });
   // Data Fiscal pasó a la fila de logos, pero sigue atado al CUIT: sin CUIT no hay QR (lo genera ARCA con ese número).
   // Hoy tampoco existe public/qr-afip.png; el caso con los dos está en footer-data-fiscal.test.ts, que simula el archivo.
-  it('sin CUIT no hay QR de Data Fiscal', async () => {
+  // Desde el 05/10/2026 el CUIT está cargado (sale de la póliza); el QR sigue esperando el archivo de ARCA.
+  it('con el CUIT pero sin el archivo del QR, no hay QR de Data Fiscal', async () => {
     const html = await render(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto());
-    expect((await fuenteLocalJson.empresa()).cuit, 'se cargó el CUIT: revisar este test').toBeNull();
+    expect((await fuenteLocalJson.empresa()).cuit).toBe('30-71959948-2');
     expect(html).not.toContain('qr-afip.png');
+  });
+  // 05/10/2026: el 0800 en negrita en Contacto, y en la línea de abajo el CUIT y la póliza de responsabilidad civil.
+  it('lleva el 0800, el CUIT y la póliza', async () => {
+    const html = await render(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto());
+    expect(html).toContain('href="tel:08004447777"');
+    expect(html).toContain('0800 444 7777');
+    expect(html).toMatch(/CUIT <span class="tabular-nums"[^>]*>30-71959948-2<\/span>/);
+    expect(html).toMatch(/href="\/documentos\/poliza-responsabilidad-civil\.pdf" target="_blank"/);
   });
   // Los estilos de la máscara. Van dentro de @supports: sin máscara, un navegador pintaría un rectángulo macizo del
   // color del texto, y ahí tiene que verse el nombre. Y los logos no cambian de color al pasar el mouse: el manual de

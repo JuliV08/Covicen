@@ -18,7 +18,9 @@ describe('Canales', () => {
     expect(html).not.toMatch(/>Acuse<|>Respuesta</);
     expect(html).not.toContain('5 días hábiles');
     expect(html).not.toContain('Los plazos de respuesta pueden ampliarse');
-    expect(html.match(/Se habilita con la toma de posesión/g)?.length, 'solo el 0800').toBe(1);
+    // Desde el 05/10/2026 el 0800 tiene número: no queda ningún canal visible sin habilitar.
+    expect(html).not.toContain('Se habilita con la toma de posesión');
+    expect(html).toContain('href="tel:08004447777"');
     expect(html).not.toMatch(/a confirmar/i);
     expect(html).toContain('<caption');
   });

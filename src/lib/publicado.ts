@@ -37,9 +37,10 @@ export const publicado = Object.freeze({
    *  Acá el dato directamente no existe: nadie lo cargó todavía en src/content/tramo.json. */
   serviciosDeAreaDescanso: false,
   /** Contacto · formulario de consultas de TelePASE. Se escondió el 24/09/2026 «hasta que definamos si va a haber o
-   *  no oficina virtual» y volvió el 25/09, cuando se definió (Autogestión de Telepeaje Plus). El PETG art. 61.5 b
-   *  obliga a tenerlo desde la toma de posesión, haya o no oficina virtual: apagarlo de nuevo es incumplir el pliego. */
-  formularioTelepase: true,
+   *  no oficina virtual», volvió el 25/09 y se escondió otra vez el 05/10: «el único que vamos a usar es el del CRM».
+   *  OJO: el PETG art. 61.5 b lo pide desde la toma de posesión; ver docs/pendientes-de-confirmacion.md (la salida es
+   *  que el formulario del CRM de PREVI tome también las consultas de TelePASE). */
+  formularioTelepase: false,
 
   // Reunión con el gerente del 01/10/2026 (revisión de la web con el equipo). Los de esta tanda que dicen «a
   // confirmar» o «falta solicitar» son datos sin confirmar y se esconden donde aparezcan; el resto son secciones
@@ -65,15 +66,23 @@ export const publicado = Object.freeze({
   /** Página /politicas/ (calidad, seguridad vial, anticorrupción): «no es para este momento», hace falta una
    *  consultoría para escribirlas. No se genera, y sale del menú y del pie. */
   politicas: false,
-  /** Página /transparencia/ (normativa, póliza de responsabilidad civil). No se genera, y sale del menú y del pie.
-   *  OJO: el PETG 61.6 pide publicar la normativa aplicable y la póliza; ver docs/pendientes-de-confirmacion.md. */
-  transparencia: false,
+  /** Página /transparencia/. Escondida el 02/10/2026 y de vuelta el 05/10, cuando llegó la póliza de responsabilidad
+   *  civil («agregarla donde estaba originalmente la de ejemplo»). */
+  transparencia: true,
+  /** Transparencia · la normativa aplicable para descargar. Sigue escondida desde el 02/10/2026: el 05/10 volvió la
+   *  página por la póliza, no la normativa. OJO: el PETG 61.6 pide publicarla; ver docs/pendientes-de-confirmacion.md. */
+  normativa: false,
   /** El estado de la traza (cortes, obras, clima) en El tramo: hoy son datos de ejemplo. «Comentar hasta que tengamos
    *  info.» Esconde el bloque, el cartel de «datos de ejemplo» y los marcadores del mapa. */
   estadoDeLaTraza: false,
   /** Guía de trámites · el formulario «Iniciá tu trámite»: no hay nadie del otro lado que lo atienda. Los trámites
    *  se inician desde Contacto, por el CRM. */
   formularioTramites: false,
+
+  // Tercera tanda (05/10/2026).
+  /** Emergencias · la tarjeta «Grúa y remolque para despejar la calzada: gratis y con tiempos comprometidos».
+   *  Pedido: «Comentar». El mismo servicio, con los mismos tiempos, sigue en Servicios y en una pregunta frecuente. */
+  gruaEnEmergencias: false,
 });
 
 export type ClavePublicada = keyof typeof publicado;

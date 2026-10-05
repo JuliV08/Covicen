@@ -18,6 +18,7 @@ export const jsonLdOrganizacion = (e: Empresa, c: Contacto, sitio: string, logoU
   // El 140 es obligatorio por pliego (PETG 59), así que siempre hay un punto de contacto de emergencia.
   o.contactPoint = [
     { '@type': 'ContactPoint', telephone: c.emergencias.telefono, contactType: 'emergency', areaServed: 'AR', availableLanguage: 'es' },
+    ...(c.lineaGratuita ? [{ '@type': 'ContactPoint', telephone: c.lineaGratuita, contactType: 'customer service', contactOption: 'TollFree', areaServed: 'AR', availableLanguage: 'es' }] : []),
   ];
   const sameAs = Object.values(c.redes).filter(Boolean);
   if (sameAs.length) o.sameAs = sameAs;

@@ -4,14 +4,18 @@
 // Solo existe en escritorio: en celular esos tres accesos viven en el menú, así que la barra quedaría vacía y solo
 // estaría comiendo 40 px de pantalla. Por eso --alto-header vale menos abajo de 1024 px (tokens.css).
 // Desde el 01/10/2026 TelePASE y Autogestión van destacados (components/AccesosDestacados.astro).
+// Desde el 05/10 la línea 0800 va a la izquierda, espejando a los accesos de la derecha («que quede simétrico»). En la
+// fila principal no entra: a 1024 px logo, menú y 140 ya dejan 21 px libres entre bloques.
 import AccesosDestacados from '@/components/AccesosDestacados.astro';
+import Atencion0800 from '@/components/Atencion0800.astro';
 import InterruptorTema from '@/components/InterruptorTema.astro';
 import type { Contacto } from '@/lib/datos/esquemas';
 interface Props { contacto: Contacto }
 const { contacto } = Astro.props;
 ---
 <div class="barra-superior hidden h-10 border-b border-borde bg-fondo-2 text-sm lg:block">
-  <div class="contenedor flex h-full items-center justify-end gap-4">
+  <div class="contenedor flex h-full items-center justify-between gap-4">
+    <div class="flex items-center"><Atencion0800 {contacto} /></div>
     <nav aria-label="Accesos" class="flex shrink-0 items-center gap-2">
       <AccesosDestacados {contacto} />
       <InterruptorTema class="ml-1 inline-flex h-8 w-8" />

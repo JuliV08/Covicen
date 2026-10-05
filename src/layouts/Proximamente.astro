@@ -20,6 +20,7 @@ import { config } from '@/lib/config';
 import { datos } from '@/lib/datos';
 import { fechaHoraLarga, fechaLarga, numero } from '@/lib/formato';
 import { CLAVE_TEMA, COLOR_TEMA, TEMA_POR_DEFECTO, temaInicial } from '@/lib/tema';
+import { sinCortes } from '@/lib/texto';
 
 const [empresa, contacto] = await Promise.all([datos.empresa(), datos.contacto()]);
 const c = empresa.concesion;
@@ -96,7 +97,7 @@ const descripcion = `Covicen, concesionaria del Tramo Centro de la Red Federal d
 
         {/* El 140 es el número corto de emergencias del pliego (PETG art. 58 y 59) y es el único dato de contacto que
             entra acá: si alguien tiene un problema en la ruta y llega al sitio, no se puede encontrar con una pantalla
-            muerta. El 0800 del art. 61.1 todavía no existe (contacto.json lo tiene en null): no se anuncia. */}
+            muerta. Desde el 05/10/2026 suma la línea 0800 de atención al usuario, que ya tiene número. */}
         {/* Fondo OPACO, no `bg-fondo-2/80` con desenfoque: translúcido sobre la foto, el contraste de lo que va adentro
             depende de la foto y deja de estar cubierto por los pares de scripts/lib/pares.ts. Se ve algo menos lindo y
             se lee siempre. */}
@@ -104,6 +105,7 @@ const descripcion = `Covicen, concesionaria del Tramo Centro de la Red Federal d
           <p class="eyebrow">{contacto.emergencias.etiqueta} en ruta</p>
           <a href={`tel:${soloDigitos(tel)}`} class="btn-vial mt-3 inline-flex items-center gap-2 px-4 py-2 text-2xl font-extrabold tabular-nums" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={20} aria-hidden="true" class="telefono" /> {tel}</a>
           <p class="mt-3 text-sm text-texto-2">Las 24 horas, los 365 días del año.</p>
+          {contacto.lineaGratuita && <p class="mt-4 border-t border-borde pt-4 text-texto">Atención al usuario: <a href={`tel:${soloDigitos(contacto.lineaGratuita)}`} class="font-bold tabular-nums" aria-label={`Llamar a atención al usuario, ${contacto.lineaGratuita}`}>{sinCortes(contacto.lineaGratuita)}</a></p>}
         </div>
       </div>
 

@@ -22,8 +22,15 @@ export const esquemaEmpresa = z.object({
   domicilioComercial: z.string().min(1).nullable(),
   /** Adónde lleva el QR de Data Fiscal (constancia de inscripción). */
   constanciaUrl: url.nullable(),
-  /** Póliza de responsabilidad civil (PETG 61.6). null hasta que Covicen la mande. */
-  polizaRc: z.object({ aseguradora: z.string().min(1), numero: z.string().min(1), vigenciaHasta: fechaIso, url: url.nullable() }).nullable(),
+  /** Póliza de responsabilidad civil (PETG 61.6). null hasta que Covicen la mande. `url`: una dirección http(s) o un
+   *  documento del propio sitio en /documentos/ (desde el 05/10/2026 la póliza se publica como PDF acá mismo). */
+  polizaRc: z.object({
+    aseguradora: z.string().min(1),
+    numero: z.string().min(1),
+    vigenciaDesde: fechaIso.optional(),
+    vigenciaHasta: fechaIso,
+    url: z.union([url, z.string().regex(/^\/documentos\/[a-z0-9-]+\.pdf$/)]).nullable(),
+  }).nullable(),
   enFormacion: z.boolean(),
   /** `url`: la web de cada empresa; la tarjeta de Quiénes somos lleva ahí (pedido del 01/10/2026). */
   consorcio: z.array(z.object({ nombre: z.string().min(1), descripcion: z.string().min(1), url: url.nullable().optional() })).min(1),

@@ -8,8 +8,11 @@
 // 02/10/2026 no se publican) y el aviso de privacidad, que el formulario de Bitrix no muestra.
 import { ruta } from '@/lib/rutas';
 import type { Contacto } from '@/lib/datos/esquemas';
-interface Props { crm: NonNullable<Contacto['formularioCrm']>; id: string; plazos?: string }
-const { crm, id, plazos } = Astro.props;
+import { sinCortes } from '@/lib/texto';
+/** `linea`: la línea 0800, que el respaldo ofrece si el formulario no carga (05/10/2026). Solo en Contacto: en
+ *  Proveedores no va, es la línea de atención al usuario. */
+interface Props { crm: NonNullable<Contacto['formularioCrm']>; id: string; plazos?: string; linea?: string | null }
+const { crm, id, plazos, linea } = Astro.props;
 // El código que entrega Bitrix, tal cual, con la dirección del cargador sacada del dato. Bitrix monta el formulario
 // en un <div> que inserta justo ANTES de este <script>, así que el script va donde tiene que aparecer el formulario.
 // La dirección entra como literal de JS con JSON.stringify, y el esquema ya la limitó a un cargador del CDN de Bitrix24.
@@ -20,7 +23,7 @@ const cargador = `(function(w,d,u){var s=d.createElement('script');s.async=true;
     {/* Respaldo para cuando el formulario no llega: sin JavaScript, o con un bloqueador que frena a bitrix24. Aparece
         recién a los 4 segundos, para no asustar mientras carga, y se va apenas el formulario se monta. */}
     <p class="crm-respaldo rounded-md border border-dashed border-borde-fuerte p-4 text-sm text-texto-2">
-      ¿No ves el formulario? Necesita JavaScript, y algunos bloqueadores de anuncios lo frenan: probá desactivarlo en esta página. Para emergencias, llamá al <a href="tel:140">140</a>, las 24 horas.
+      ¿No ves el formulario? Necesita JavaScript, y algunos bloqueadores de anuncios lo frenan: probá desactivarlo en esta página.{linea && <> También podés llamar gratis al <a href={`tel:${linea.replace(/[^\d+]/g, '')}`}>{sinCortes(linea)}</a>.</>} Para emergencias, llamá al <a href="tel:140">140</a>, las 24 horas.
     </p>
     <script is:inline data-b24-form={crm.codigo} data-skip-moving="true" set:html={cargador} />
   </div>

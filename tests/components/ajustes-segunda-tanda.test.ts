@@ -16,7 +16,8 @@ import { recargaCompleta } from '@/lib/recarga';
 const render = async (Pagina: unknown, url: string) =>
   (await AstroContainer.create()).renderToString(Pagina as never, { request: new Request(`https://covicen.test${url}`) });
 
-describe('Políticas y Transparencia escondidas', () => {
+// Transparencia volvió el 05/10/2026 para publicar la póliza de responsabilidad civil; su normativa sigue escondida.
+describe('Políticas escondida; Transparencia de vuelta, solo con la póliza', () => {
   // Como /obras/: ruta rest que se vacía con el interruptor. Que no se genere lo controla verificar.ts (11b) sobre el
   // dist; acá se fija el cableado y que el contenido siga versionado para cuando se prenda.
   it('son rutas rest que se apagan con su interruptor, y el contenido sigue en el repo', () => {
@@ -24,8 +25,10 @@ describe('Políticas y Transparencia escondidas', () => {
       expect(existsSync(`src/pages/${pagina}.astro`), `/${pagina}/ volvió a ser una ruta fija: se genera sí o sí`).toBe(false);
       const fuente = readFileSync(`src/pages/${pagina}/[...resto].astro`, 'utf8');
       expect(fuente).toContain(`export const getStaticPaths = () => (publicado.${clave} ?`);
-      expect(publicado[clave], `se prendió ${clave}: revisar este test`).toBe(false);
     }
+    expect(publicado.politicas, 'se prendió politicas: revisar este test').toBe(false);
+    expect(publicado.transparencia, 'se apagó transparencia: revisar este test').toBe(true);
+    expect(publicado.normativa, 'se prendió normativa: revisar este test').toBe(false);
     expect(readFileSync('src/pages/politicas/[...resto].astro', 'utf8')).toContain('Política anticorrupción');
     expect(readFileSync('src/pages/transparencia/[...resto].astro', 'utf8')).toContain('Póliza de responsabilidad civil');
   });
@@ -33,11 +36,11 @@ describe('Políticas y Transparencia escondidas', () => {
   it('Transparencia ya no tiene la sección de datos registrales', () => {
     expect(readFileSync('src/pages/transparencia/[...resto].astro', 'utf8')).not.toContain('titulo="Datos registrales."');
   });
-  it('el menú «Nosotros» no las ofrece', async () => {
+  it('el menú «Nosotros» no ofrece Políticas, y Transparencia sí', async () => {
     const props = { contacto: await fuenteLocalJson.contacto(), rutaActual: '/' };
     const html = await (await AstroContainer.create()).renderToString(Header as never, { props });
     expect(html).not.toContain('href="/politicas/"');
-    expect(html).not.toContain('href="/transparencia/"');
+    expect(html).toContain('href="/transparencia/"');
     expect(html).toContain('href="/proveedores/"');
   });
 });
@@ -80,7 +83,7 @@ describe('Seguridad vial sin números de velocidad', () => {
 describe('COVICEN S.A.', () => {
   it('Privacidad nombra la sociedad sin doble punto ni «CUIT null»', async () => {
     const html = await render(Privacidad, '/privacidad/');
-    expect(html).toContain('COVICEN S.A. Los datos registrales');
+    expect(html).toContain('COVICEN S.A., CUIT 30-71959948-2. Los datos registrales');
     expect(html).not.toMatch(/S\.A\.\./);
     expect(html).not.toContain('CUIT null');
     expect(html).not.toContain('postulaciones laborales');

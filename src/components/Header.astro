@@ -1,6 +1,7 @@
 ---
 import { ChevronDown, Menu, Phone, X } from '@lucide/astro';
 import AccesosDestacados from '@/components/AccesosDestacados.astro';
+import Atencion0800 from '@/components/Atencion0800.astro';
 import BarraSuperior from '@/components/BarraSuperior.astro';
 import InterruptorTema from '@/components/InterruptorTema.astro';
 import Logotipo from '@/components/marca/Logotipo.astro';
@@ -89,8 +90,10 @@ const telHref = `tel:${tel.replace(/[^\d+]/g, '')}`;
         <X size={22} aria-hidden="true" />
       </button>
     </div>
-    {/* TelePASE y Autogestión, destacados igual que en la barra de arriba (01/10/2026): primero, uno al lado del otro. */}
+    {/* La línea 0800, TelePASE y Autogestión, destacados igual que en la barra de arriba (01/10 y 05/10/2026): primero
+        el 0800 a lo ancho, debajo los otros dos, uno al lado del otro. */}
     <div class="flex flex-wrap gap-3 border-b border-borde p-4">
+      <Atencion0800 {contacto} clase="min-h-11 w-full justify-center" />
       <AccesosDestacados {contacto} clase="min-h-11" />
     </div>
     <ul class="flex flex-col p-3">

@@ -9,8 +9,10 @@ import { datos } from '@/lib/datos';
 import { cabinaOperativa } from '@/lib/datos/esquemas';
 import { alternarFondos } from '@/lib/fondos';
 import { publicado } from '@/lib/publicado';
+import { sinCortes } from '@/lib/texto';
 const [contacto, tramo] = await Promise.all([datos.contacto(), datos.tramo()]);
 const tel = contacto.emergencias.telefono;
+const linea = contacto.lineaGratuita;
 const correo = contacto.atencionUsuario ?? contacto.email.general;
 const estaciones = tramo.cabinas.filter(cabinaOperativa).map((c) => c.nombre);
 // Sin plazos de respuesta publicados (02/10/2026, reunión con el gerente: «bajarle el compromiso de los días de
@@ -18,7 +20,7 @@ const estaciones = tramo.cabinas.filter(cabinaOperativa).map((c) => c.nombre);
 // el choque está avisado en docs/pendientes-de-confirmacion.md. Los plazos siguen en el dato (contacto.json, canales).
 const [fTelepase, fReclamo] = alternarFondos([publicado.formularioTelepase, true]);
 const pasosReclamo = [
-  ['Elegís el canal', 'Formulario, correo o la línea 0800 cuando esté habilitada. Para emergencias, el 140.'],
+  ['Elegís el canal', `Formulario, correo${linea ? ` o la línea gratuita ${sinCortes(linea)}` : ''}. Para emergencias, el 140.`],
   ['Recibís un número de gestión', 'Te confirmamos que lo recibimos, con un número para seguirlo.'],
   ['Te respondemos', 'Con fundamento, por el mismo medio por el que nos escribiste. Si hace falta reunir pruebas, te avisamos.'],
   ['Si no estás conforme', 'Podés escalarlo ante Vialidad Nacional, que supervisa la concesión y tiene su propio centro de atención al usuario.'],
@@ -29,11 +31,13 @@ const pasosReclamo = [
     <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.3fr]">
       <div class="flex flex-col gap-4">
         <div class="tarjeta tarjeta-vial p-5"><p class="eyebrow flex items-center gap-2"><Phone size={14} aria-hidden="true" /> Emergencias 24 h</p><a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="mt-2 block text-3xl font-extrabold tabular-nums text-vial-texto no-underline" aria-label={`Llamar a emergencias, ${tel}`}>{tel}</a></div>
+        {/* La línea 0800 (05/10/2026), en la misma columna que el 140: es el teléfono de las consultas y los reclamos. */}
+        {linea && <div class="tarjeta p-5"><p class="eyebrow flex items-center gap-2"><Phone size={14} aria-hidden="true" /> Atención al usuario</p><a href={`tel:${linea.replace(/[^\d+]/g, '')}`} class="mt-2 block text-3xl font-extrabold tabular-nums text-acento no-underline" aria-label={`Llamar a atención al usuario, ${linea}`}>{sinCortes(linea)}</a><p class="mt-1 text-sm text-texto-2">Línea gratuita para consultas y reclamos.</p></div>}
         <Canales canales={contacto.canales} compacto />
       </div>
       {/* Desde el 01/10/2026 el de reclamos es el formulario del CRM (Bitrix24, de PREVI): ver FormularioCrm.astro. El
           propio queda como respaldo, por si `contacto.formularioCrm` vuelve a null. */}
-      {contacto.formularioCrm ? <FormularioCrm id="reclamos" crm={contacto.formularioCrm} /> : <Formulario id="reclamos" asunto="Reclamo, consulta o sugerencia" whatsapp={contacto.whatsapp.numero} email={correo} campos={[
+      {contacto.formularioCrm ? <FormularioCrm id="reclamos" crm={contacto.formularioCrm} linea={linea} /> : <Formulario id="reclamos" asunto="Reclamo, consulta o sugerencia" whatsapp={contacto.whatsapp.numero} email={correo} campos={[
         { nombre: 'motivo', etiqueta: 'Motivo', tipo: 'select', opciones: ['Reclamo', 'Consulta', 'Sugerencia'], requerido: true },
         { nombre: 'tema', etiqueta: 'Tema', tipo: 'select', opciones: ['Tarifas y cobro', 'Estado de la ruta', 'Atención recibida', 'Seguridad vial', 'Otro'], requerido: true },
         { nombre: 'lugar', etiqueta: 'Ruta y kilómetro, o estación', placeholder: `RN 9, km 350 · ${estaciones.join(' / ')}` },
@@ -49,9 +53,9 @@ const pasosReclamo = [
     </div>
   </Seccion>
 
-  {/* Se escondió el 24/09/2026 «hasta que se defina si va a haber oficina virtual» y volvió el 25/09, cuando se
-      definió (Autogestión). El PETG art. 61.5 b lo exige desde la toma de posesión, haya o no oficina virtual: el
-      interruptor `publicado.formularioTelepase` queda, pero apagarlo es incumplir el pliego. */}
+  {/* Se escondió el 24/09/2026 «hasta que se defina si va a haber oficina virtual», volvió el 25/09 y se escondió
+      otra vez el 05/10/2026: el único formulario es el del CRM. El PETG art. 61.5 b lo pide desde la toma de posesión;
+      el choque está en docs/pendientes-de-confirmacion.md. */}
   {publicado.formularioTelepase && (
   <Seccion id="telepase" eyebrow="TelePASE" titulo="Consultas sobre tu TelePASE." intro="Cobros, dispositivo, adhesión o factura. Las respuestas a TelePASE tienen prioridad." fondo={fTelepase}>
     <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.3fr]">

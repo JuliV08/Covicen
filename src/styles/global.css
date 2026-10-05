@@ -157,6 +157,12 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
   }
   .acceso-autogestion .ficha { background: color-mix(in oklab, var(--color-acento) 16%, transparent); color: var(--color-acento); }
   .acceso-autogestion:hover { box-shadow: 0 0 0 3px var(--color-glow), 0 10px 26px -12px var(--color-glow); }
+  /* La línea 0800 (05/10/2026): llena con el azul de la marca, el del botón primario; el par sobre-marca/marca-700 lo
+     mide verificar.ts. Es de Covicen, no de un tercero: por eso el color propio y no el de TelePASE. */
+  .acceso-0800 { background: var(--color-marca-700); color: var(--color-sobre-marca); box-shadow: 0 6px 18px -10px var(--color-marca-700); }
+  .acceso-0800 .ficha { background: color-mix(in oklab, var(--color-sobre-marca) 16%, transparent); }
+  .acceso-0800 .numero { font-weight: 800; letter-spacing: 0.01em; }
+  .acceso-0800:hover { box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-marca-700) 30%, transparent), 0 10px 26px -10px var(--color-marca-700); }
 
   /* Velo del hero: es lo único que deja leer el texto encima de la foto, así que los porcentajes de acá son contrato
      con tests/styles/hero-foto.test.ts, que mide el contraste real del texto sobre cada foto en cada tamaño de

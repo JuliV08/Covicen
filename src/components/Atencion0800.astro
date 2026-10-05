@@ -1,0 +1,17 @@
+---
+// La línea gratuita 0800 de atención al usuario (cargada el 05/10/2026: 0800 444 7777), como píldora para el header:
+// a la izquierda de la barra de arriba en escritorio, espejando a TelePASE y Autogestión, y primera en el menú del
+// celular. Estilos en global.css, «Accesos destacados». Sin número cargado no se muestra nada.
+import { Phone } from '@lucide/astro';
+import type { Contacto } from '@/lib/datos/esquemas';
+import { sinCortes } from '@/lib/texto';
+interface Props { contacto: Contacto; /** Clases de más (en el menú, la altura táctil de 44 px). */ clase?: string }
+const { contacto, clase } = Astro.props;
+const numero = contacto.lineaGratuita;
+---
+{numero && (
+  <a href={`tel:${numero.replace(/[^\d+]/g, '')}`} class:list={['acceso-destacado acceso-0800', clase]} aria-label={`Atención al usuario, llamar al ${numero}`}>
+    <span class="ficha" aria-hidden="true"><Phone size={14} /></span>
+    <span class="etiqueta"><span class="font-medium">{sinCortes('Atención al usuario')}</span>{'\u00a0'}<span class="numero tabular-nums">{sinCortes(numero)}</span></span>
+  </a>
+)}

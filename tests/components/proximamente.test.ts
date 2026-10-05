@@ -19,9 +19,11 @@ describe('portada de «Próximamente»', () => {
     expect(html).toContain('Las 24 horas, los 365 días del año');
   });
 
-  it('no anuncia el 0800, que todavía no existe', async () => {
+  // Hasta el 04/10/2026 el 0800 no existía y la portada no lo anunciaba. Desde el 05/10 tiene número.
+  it('anuncia la línea 0800 de atención al usuario', async () => {
     const html = await render();
-    expect(html).not.toContain('0800');
+    expect(html).toContain('href="tel:08004447777"');
+    expect(html).toContain('0800 444 7777');
   });
 
   it('dice quién es Covicen y el largo oficial del tramo', async () => {

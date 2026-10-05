@@ -1,12 +1,14 @@
 ---
 import { existsSync } from 'node:fs';
 import { Phone } from '@lucide/astro';
+import Atencion0800 from '@/components/Atencion0800.astro';
 import Isotipo from '@/components/marca/Isotipo.astro';
 import type { Contacto, Empresa } from '@/lib/datos/esquemas';
 import { fechaHoraLarga } from '@/lib/formato';
 import { enlacesInstitucionales, logoInstitucional, redFederal } from '@/lib/institucional';
 import { paginaPublicada } from '@/lib/paginas';
 import { ruta } from '@/lib/rutas';
+import { sinCortes } from '@/lib/texto';
 import { enlaceWhatsapp } from '@/lib/whatsapp';
 
 interface Props { empresa: Empresa; contacto: Contacto }
@@ -22,6 +24,10 @@ const registrales = empresa.razonSocial && empresa.cuit && empresa.domicilioLega
 // El QR de Data Fiscal lo carga Juli en public/qr-afip.png cuando exista el CUIT (lo genera ARCA con ese CUIT). Desde el
 // 25/09/2026 va en la fila de logos institucionales, como en el ejemplo que pasó el equipo.
 const hayQr = Boolean(empresa.cuit) && existsSync('public/qr-afip.png');
+// La póliza de responsabilidad civil: un PDF del propio sitio o una dirección externa.
+const urlPoliza = empresa.polizaRc?.url ?? null;
+// Se abre en otra pestaña: con el ClientRouter, un enlace sin target bajaría el PDF por fetch para recargar después.
+const poliza = urlPoliza ? (urlPoliza.startsWith('/') ? ruta(urlPoliza) : urlPoliza) : null;
 const sitios = enlacesInstitucionales.map((e) => ({ ...e, logo: logoInstitucional(e.id) }));
 // Lucide retiró los íconos de marcas: las redes van por nombre. Cuando haya cuentas, se suman los logos oficiales como SVG.
 const redes = [['instagram', 'Instagram'], ['facebook', 'Facebook'], ['linkedin', 'LinkedIn'], ['youtube', 'YouTube'], ['x', 'X']] as const;
@@ -53,7 +59,10 @@ const actualizado = fechaHoraLarga(ahora);
       <h2 class="eyebrow mb-4 text-texto">Contacto</h2>
       <ul class="flex flex-col gap-2 text-texto-2">
         <li><a href={`tel:${soloDigitos(tel)}`} class="inline-flex items-center gap-2 py-1 font-semibold text-texto no-underline hover:underline" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={16} aria-hidden="true" /> {contacto.emergencias.etiqueta}&nbsp;{tel}</a></li>
-        {contacto.lineaGratuita && <li><a href={`tel:${soloDigitos(contacto.lineaGratuita)}`} class="inline-block py-1 no-underline hover:underline">Atención al usuario {contacto.lineaGratuita}</a></li>}
+        {/* Solo el número es enlace: html-validate exige espacio duro en todo espacio de un <a href="tel:">, y con el
+            rótulo adentro el enlace medía 277 px sin poder cortarse, en una columna de 216 (scroll de costado entre
+            1024 y 1200 px, lo midió la revisión del 05/10/2026). Así el rótulo baja de renglón si no entra. */}
+        {contacto.lineaGratuita && <li class="flex flex-wrap items-center gap-x-2 py-1 font-semibold text-texto"><Phone size={16} aria-hidden="true" /> Atención al usuario <a href={`tel:${soloDigitos(contacto.lineaGratuita)}`} class="tabular-nums text-texto no-underline hover:underline" aria-label={`Llamar a atención al usuario, ${contacto.lineaGratuita}`}>{sinCortes(contacto.lineaGratuita)}</a></li>}
         {contacto.atencionUsuario && <li><a href={`mailto:${contacto.atencionUsuario}`} class="inline-block py-1 no-underline hover:underline">{contacto.atencionUsuario}</a></li>}
         {contacto.whatsapp.numero && <li><a href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen')} class="inline-block py-1 no-underline hover:underline" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>}
         <li><a href={ruta('/contacto')} class="inline-block py-1 no-underline hover:underline">Formulario de contacto</a></li>
@@ -95,14 +104,17 @@ const actualizado = fechaHoraLarga(ahora);
           </a>
         </li>
       )}
+      {/* El 0800 al lado del 140 (05/10/2026), con la misma píldora que en la barra de arriba. */}
+      {contacto.lineaGratuita && <li class="flex items-center self-stretch"><Atencion0800 {contacto} /></li>}
       <li class="flex items-center self-stretch"><a href={`tel:${soloDigitos(tel)}`} class="btn-vial inline-flex items-center gap-2 px-3 py-1 text-base font-extrabold" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={16} aria-hidden="true" /> {tel}</a></li>
     </ul>
   </div>
   <div class="border-t border-borde">
     <div class="contenedor flex flex-col gap-4 py-6 text-sm text-texto-2 md:flex-row md:items-center md:justify-between">
-      {/* «COVICEN S.A.» en lugar de «Sociedad en formación» (02/10/2026): la sociedad ya está inscripta. El bloque
-          «Datos registrales» de arriba sigue esperando el CUIT y el domicilio legal para mostrarse completo. */}
-      <p>{empresa.razonSocial ? <span>{empresa.razonSocial} · </span> : empresa.enFormacion && <span>Sociedad en formación · </span>}Adjudicación: {empresa.concesion.adjudicacion.resolucion}. <a href={ruta('/privacidad')}>Privacidad</a> · <a href="https://www.boletinoficial.gob.ar/" rel="noopener noreferrer" target="_blank">Boletín Oficial</a>{contacto.enlaces.atencionDnv && <> · <a href={contacto.enlaces.atencionDnv} rel="noopener noreferrer" target="_blank">Atención al usuario de Vialidad Nacional</a></>}</p>
+      {/* «COVICEN S.A.» en lugar de «Sociedad en formación» (02/10/2026), y su CUIT desde el 05/10 (sale de la póliza).
+          El bloque «Datos registrales» de arriba sigue esperando el domicilio legal para mostrarse completo. La póliza
+          de responsabilidad civil (05/10: «agregarla también en el footer») va directo al PDF. */}
+      <p>{empresa.razonSocial ? <span>{empresa.razonSocial}{empresa.cuit && <> · CUIT <span class="tabular-nums">{empresa.cuit}</span></>} · </span> : empresa.enFormacion && <span>Sociedad en formación · </span>}Adjudicación: {empresa.concesion.adjudicacion.resolucion}. <a href={ruta('/privacidad')}>Privacidad</a>{poliza && <> · <a href={poliza} target="_blank" rel="noopener noreferrer" aria-label="Póliza de responsabilidad civil (PDF, se abre en otra pestaña)">Póliza de responsabilidad civil</a></>} · <a href="https://www.boletinoficial.gob.ar/" rel="noopener noreferrer" target="_blank">Boletín Oficial</a>{contacto.enlaces.atencionDnv && <> · <a href={contacto.enlaces.atencionDnv} rel="noopener noreferrer" target="_blank">Atención al usuario de Vialidad Nacional</a></>}</p>
       <p><span class="text-texto-3">Última actualización:</span> <time datetime={ahora.toISOString()}>{actualizado}</time></p>
     </div>
   </div>

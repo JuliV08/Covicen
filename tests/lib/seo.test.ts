@@ -3,7 +3,8 @@ import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
 import { jsonLdArticulo, jsonLdFaq, jsonLdMigas, jsonLdOrganizacion, jsonLdSitioWeb } from '@/lib/seo';
 
 describe('JSON-LD', () => {
-  it('Organization sin CUIT ni alternateName, con área servida y con el 140 como contacto de emergencia', async () => {
+  // Desde el 05/10/2026 hay CUIT (taxID) y la línea 0800 se suma como contacto de atención al usuario.
+  it('Organization con CUIT, área servida, el 140 de emergencia y el 0800 de atención al usuario', async () => {
     const o = jsonLdOrganizacion(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto(), 'https://covicen.test', 'https://covicen.test/isotipo.svg');
     expect(o['@type']).toBe('Organization');
     expect(o.name).toBe('Covicen');
@@ -11,9 +12,13 @@ describe('JSON-LD', () => {
       { '@type': 'AdministrativeArea', name: 'Córdoba' },
       { '@type': 'AdministrativeArea', name: 'Santa Fe' },
     ]);
-    expect(o).not.toHaveProperty('taxID');
+    expect(o.taxID).toBe('30-71959948-2');
+    expect(o.legalName).toBe('COVICEN S.A.');
     expect(o).not.toHaveProperty('alternateName');
-    expect(o.contactPoint).toEqual([{ '@type': 'ContactPoint', telephone: '140', contactType: 'emergency', areaServed: 'AR', availableLanguage: 'es' }]);
+    expect(o.contactPoint).toEqual([
+      { '@type': 'ContactPoint', telephone: '140', contactType: 'emergency', areaServed: 'AR', availableLanguage: 'es' },
+      { '@type': 'ContactPoint', telephone: '0800 444 7777', contactType: 'customer service', contactOption: 'TollFree', areaServed: 'AR', availableLanguage: 'es' },
+    ]);
   });
   it('WebSite', () => expect(jsonLdSitioWeb('https://covicen.test')['@type']).toBe('WebSite'));
   it('FAQPage con mainEntity', async () => {

@@ -17,32 +17,28 @@ describe('/contacto/', () => {
     expect(html).not.toContain('una sola vez');
   });
 
-  // PETG 61.5 b: el formulario de consultas de TelePASE es obligatorio desde la toma de posesión, haya o no oficina
-  // virtual. Se escondió el 24/09/2026 «hasta que se defina si va a haber oficina virtual» y volvió el 25/09, cuando se
-  // definió (Autogestión). Apagarlo es incumplir el pliego: este test y `verificar.ts` lo frenan. El estado apagado del
-  // interruptor se prueba aparte, en contacto-telepase.test.ts. El formulario de reclamos (el 61.5 a) va siempre.
-  it('el formulario de TelePASE está (PETG 61.5 b), con su sección, al lado del de reclamos', async () => {
-    expect(publicado.formularioTelepase, 'se apagó el formulario de TelePASE: el PETG 61.5 b lo exige').toBe(true);
+  // PETG 61.5 b: el formulario de consultas de TelePASE. Se escondió el 24/09/2026, volvió el 25/09 y se escondió otra
+  // vez el 05/10: «el único que vamos a usar es el del CRM». El choque con el pliego está en los pendientes. Que con el
+  // interruptor apagado no quede nada y los fondos sigan alternando lo prueba contacto-telepase.test.ts.
+  it('sin el formulario de TelePASE: el único es el del CRM', async () => {
+    expect(publicado.formularioTelepase, 'se prendió el formulario de TelePASE: revisar este test').toBe(false);
     const html = await render();
     for (const marca of ['id="formulario-telepase"', 'id="telepase"', 'Consultas sobre tu TelePASE', 'Consultas de TelePASE']) {
-      expect(html, `falta ${marca}`).toContain(marca);
+      expect(html, `quedó ${marca}`).not.toContain(marca);
     }
     expect(html).toContain('id="reclamos"');
-    // Las secciones alternan: TelePASE lleva la grilla y «Cómo hacer un reclamo» vuelve a liso.
-    expect(/<section id="telepase"[^>]*class="([^"]*)"/.exec(html)?.[1]).toContain('seccion-cinetica');
-    const reclamo = html.split('<section').find((s) => s.includes('Cuatro pasos.')) ?? '';
-    expect(/^[^>]*class="([^"]*)"/.exec(reclamo)?.[1]).not.toContain('seccion-cinetica');
+    expect(html).toContain('data-b24-form=');
   });
 
-  // 01/10/2026: el de reclamos (61.5 a) es el formulario del CRM de PREVI (Bitrix24). El de TelePASE sigue siendo el
-  // propio: Bitrix no tiene todavía uno para eso.
-  it('el formulario de reclamos es el del CRM, y el de TelePASE sigue siendo el propio', async () => {
+  // 01/10/2026: el de reclamos (61.5 a) es el formulario del CRM de PREVI (Bitrix24). Desde el 05/10 es el único: el
+  // propio de TelePASE se escondió («el único que vamos a usar es el del CRM»).
+  it('el formulario de reclamos es el del CRM, y es el único', async () => {
     const html = await render();
     expect(html).toMatch(/<div class="formulario-crm[^"]*"[^>]*id="reclamos"/);
     expect(html).toContain('data-b24-form="inline/1/t2c138"');
     expect(html.match(/data-b24-form=/g)?.length, 'el formulario de Bitrix se monta una sola vez').toBe(1);
     expect(html).not.toMatch(/<form[^>]*id="reclamos"/);
-    expect(html).toMatch(/<form[^>]*id="formulario-telepase"/);
+    expect(html).not.toMatch(/<form[^>]*id="formulario-telepase"/);
   });
 
   // La tarjeta «Seguimiento de reclamos · Próximamente» es la misma que el gerente pidió sacar de Servicios.

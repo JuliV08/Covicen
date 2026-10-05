@@ -13,15 +13,19 @@ describe('contenido del repo', () => {
     // 02/10/2026: la sociedad ya está inscripta («COVICEN S.A.»). Falta que llegue el número de CUIT.
     expect(e.enFormacion).toBe(false);
     expect(e.razonSocial).toBe('COVICEN S.A.');
-    expect(e.cuit).toBeNull();
+    // El CUIT y la póliza llegaron el 05/10/2026, con la póliza de responsabilidad civil.
+    expect(e.cuit).toBe('30-71959948-2');
+    expect(e.polizaRc).toMatchObject({ aseguradora: 'Seguros Galicia S.A.', numero: '000277475', vigenciaHasta: '2027-10-05' });
     expect(e.domicilioComercial).toBeNull();
     expect(e).not.toHaveProperty('descriptor');
     expect(e.consorcio.map((c) => c.nombre)).toEqual(['AFEMA S.A.', 'Pablo Federico e Hijos S.A.', 'Guido Mogetta S.A.']);
   });
-  it('contacto: el 140 está, los canales comerciales todavía no, y la tabla de canales trae los plazos del pliego', async () => {
+  it('contacto: el 140 y el 0800 están, y la tabla de canales trae los plazos del pliego', async () => {
     const c = await fuenteLocalJson.contacto();
     expect(c.emergencias.telefono).toBe('140');
-    expect(c.lineaGratuita).toBeNull();
+    // El 0800 llegó el 05/10/2026.
+    expect(c.lineaGratuita).toBe('0800 444 7777');
+    expect(c.canales.find((k) => k.id === 'linea-0800')?.valor).toBe('0800 444 7777');
     expect(c.atencionUsuario).toBeNull();
     expect(c.enlaces.telepase).toMatch(/^https:\/\/www\.telepase\.com\.ar/);
     // La oficina virtual se definió el 25/09/2026: Autogestión, la web de Telepeaje Plus.

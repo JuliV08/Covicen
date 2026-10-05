@@ -103,8 +103,11 @@ const TEXTOS_SIN_CERTIFICAR: Array<[keyof typeof publicado, RegExp[]]> = [
   // Segunda tanda (02/10/2026). El estado de la traza con datos de ejemplo y el formulario de trámites.
   ['estadoDeLaTraza', [/Datos de ejemplo/i, /Estado de la traza/i]],
   ['formularioTramites', [/Inici[aá] tu tr[aá]mite/i, /id="formulario-tramites"/]],
-  // `formularioTelepase` no tiene fila acá desde el 25/09/2026: el formulario volvió y es obligatorio (PETG 61.5 b),
-  // así que el candado que corresponde es el contrario, el de más abajo, que exige que esté en /contacto/.
+  // Tercera tanda (05/10/2026). El formulario de TelePASE, escondido otra vez: el único es el del CRM. Hasta el 04/10
+  // el candado era el contrario (exigía el formulario en /contacto/, PETG 61.5 b); el choque está en los pendientes.
+  ['formularioTelepase', [/id="formulario-telepase"/, /Consultas sobre tu TelePASE/i]],
+  // La tarjeta de la grúa en Emergencias. El servicio sigue en Servicios: el patrón es el título de la tarjeta.
+  ['gruaEnEmergencias', [/gratis y con tiempos comprometidos/i]],
   // `serviciosDeAreaDescanso` no tiene fila acá a propósito. Ese interruptor esconde la SECCIÓN de El tramo
   // que prometía decir qué hay adentro de cada área (agua, sanitarios), no la existencia del área: que una
   // estación TIENE un área de descanso es un dato cargado y confirmado, y el chip del mapa lo dice bien.
@@ -148,10 +151,9 @@ for (const ruta of paginas) {
   if (!/href="tel:140"/.test(html)) fallo(`${nombre}: falta el tel:140 de emergencias`);
   // 5. vigencia en tarifas
   if (nombre.startsWith('tarifas') && !html.includes('Vigencia')) fallo(`${nombre}: la tabla de tarifas debe mostrar la vigencia`);
-  // PETG 61.5 b: el formulario de consultas de TelePASE es obligatorio desde la toma de posesión, haya o no oficina
-  // virtual. Se escondió el 24/09/2026 y volvió el 25/09: si alguien apaga `publicado.formularioTelepase`, que el build
-  // lo diga, en vez de enterarse Vialidad Nacional.
-  if (nombre.startsWith('contacto') && !html.includes('id="formulario-telepase"')) fallo(`${nombre}: falta el formulario de consultas de TelePASE (PETG 61.5 b)`);
+  // PETG 61.5 b (el formulario de consultas de TelePASE): el build lo exigía en /contacto/ desde el 25/09/2026. Se
+  // sacó el 05/10, cuando se escondió a pedido («el único que vamos a usar es el del CRM»); ahora lo cuida la fila
+  // de TEXTOS_SIN_CERTIFICAR, y el choque con el pliego está en docs/pendientes-de-confirmacion.md.
   // PETG 61.5 a: el de reclamos, consultas y sugerencias. Desde el 01/10/2026 es el del CRM (Bitrix24) y, si el dato
   // vuelve a null, el propio; las dos versiones llevan el mismo id, que es lo que el build exige.
   if (nombre.startsWith('contacto') && !html.includes('id="reclamos"')) fallo(`${nombre}: falta el formulario de reclamos, consultas y sugerencias (PETG 61.5 a)`);
@@ -212,7 +214,8 @@ for (const [tema, tokens] of Object.entries(temas)) {
 
 // 10b. textos prohibidos también en los json y xml emitidos (sitemap, datos): "ausentes en todo dist/".
 // No se miran js/css/svg: ahí \b681\b haría match en hashes de assets o valores numéricos (`.681;`), y ningún texto de
-// usuario vive en esos archivos.
+// usuario vive en esos archivos. Tampoco los PDF de documentos/ (05/10/2026): la póliza de responsabilidad civil es un
+// documento firmado de la aseguradora y va tal cual llegó, aunque diga «681,92 km» (anotado en los pendientes).
 for (const archivo of archivosDe(DIST).filter((a) => /\.(json|xml)$/.test(a))) {
   const contenido = readFileSync(archivo, 'utf8');
   for (const p of [...PROHIBIDOS, ...PLAZOS_DE_RESPUESTA]) if (p.test(contenido)) fallo(`${relative(DIST, archivo)}: contiene ${p}`);

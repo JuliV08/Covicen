@@ -5,6 +5,7 @@ import Canales from '@/components/Canales.astro';
 import Boton from '@/components/ui/Boton.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
+import { publicado } from '@/lib/publicado';
 import { enlaceWhatsapp } from '@/lib/whatsapp';
 const [contacto, servicios, consejos] = await Promise.all([datos.contacto(), datos.servicios(), datos.consejos()]);
 const tel = contacto.emergencias.telefono;
@@ -22,7 +23,9 @@ const pasos = consejos.filter((c) => c.categoria === 'emergencia');
     <ol class="escalonar mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
       {pasos.map((p, i) => <li class="rounded-md border border-borde bg-superficie/40 p-6" style={`--i: ${i}`}><span class="eyebrow tabular-nums">0{i + 1}</span><h2 class="mt-3 text-xl">{p.titulo}</h2><p class="mt-2 text-texto-2">{p.texto}</p></li>)}
     </ol>
-    {grua && (
+    {/* La tarjeta «Grúa y remolque para despejar la calzada: gratis y con tiempos comprometidos» se escondió el
+        05/10/2026 («Comentar»): publicado.gruaEnEmergencias. */}
+    {grua && publicado.gruaEnEmergencias && (
       <div class="revelar tarjeta mt-12 p-8">
         <h2 class="text-2xl">{grua.nombre}: gratis y con tiempos comprometidos</h2>
         <p class="mt-2 text-texto-2">{grua.descripcion} {grua.alcance}</p>
