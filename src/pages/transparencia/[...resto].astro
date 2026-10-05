@@ -1,6 +1,7 @@
 ---
 import { Download, ExternalLink, FileText } from '@lucide/astro';
 import Base from '@/layouts/Base.astro';
+import Boton from '@/components/ui/Boton.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
 import { fechaLarga } from '@/lib/formato';
@@ -16,9 +17,8 @@ const [e, normativa] = await Promise.all([datos.empresa(), datos.normativa()]);
 // La sección «Datos registrales» se eliminó el 02/10/2026 (punto 5 de la reunión): razón social, CUIT y domicilios van
 // en el pie de página, que es donde los busca la gente.
 const poliza = e.polizaRc;
-// La póliza puede ser un PDF del propio sitio (/documentos/…) o una dirección externa. El PDF se abre en otra pestaña:
-// sin target, el ClientRouter lo bajaría entero por fetch para después recargar igual.
-const enlacePoliza = poliza?.url ? (poliza.url.startsWith('/') ? ruta(poliza.url) : poliza.url) : null;
+// La póliza puede ser un PDF del propio sitio (/documentos/…) o una dirección externa; las dos se abren en otra pestaña
+// (sin target, el ClientRouter bajaría el PDF entero por fetch para después recargar igual). Boton le aplica ruta().
 // Con la normativa escondida, la póliza es toda la página: una sola sección, la del h1. Con la normativa, dos.
 const seccionPoliza = publicado.normativa
   ? { eyebrow: 'Seguro', fondo: 'fondo-2' as const }
@@ -49,18 +49,20 @@ const descripcion = publicado.normativa
   {/* Sin «(PETG art. 61.6)» desde el 05/10/2026: la excepción a las citas del pliego en Transparencia era por la
       normativa, que está escondida. */}
   <Seccion id="poliza" {...seccionPoliza} titulo="Póliza de responsabilidad civil." intro="El contrato de concesión exige publicar la aseguradora y los datos de la póliza que cubre a los usuarios.">
+    {/* 05/10/2026: «acá el contenido quedó descentrado». Desde la fase A el encabezado va al medio, y los datos quedaban
+        pegados a la izquierda: van en una ficha centrada, con el PDF como botón. */}
     {poliza ? (
-      <div class="revelar flex flex-col gap-6">
-        <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-texto-2">
-          <dt class="eyebrow">Aseguradora</dt><dd>{poliza.aseguradora}</dd>
-          <dt class="eyebrow">Póliza</dt><dd class="tabular-nums">N.º {poliza.numero}</dd>
-          <dt class="eyebrow">Vigencia</dt><dd>{poliza.vigenciaDesde ? `Del ${fechaLarga(poliza.vigenciaDesde)} al ${fechaLarga(poliza.vigenciaHasta)}` : `Hasta el ${fechaLarga(poliza.vigenciaHasta)}`}</dd>
+      <div class="revelar tarjeta mx-auto max-w-4xl p-6 text-center sm:p-10">
+        <dl class="grid gap-6 sm:grid-cols-2 lg:grid-cols-[auto_auto_1fr] lg:gap-0">
+          <div class="lg:px-8"><dt class="eyebrow">Aseguradora</dt><dd class="mt-2 text-lg font-semibold text-texto lg:whitespace-nowrap">{poliza.aseguradora}</dd></div>
+          <div class="lg:border-l lg:border-borde lg:px-8"><dt class="eyebrow">Póliza</dt><dd class="mt-2 text-lg font-semibold tabular-nums text-texto lg:whitespace-nowrap">N.º {poliza.numero}</dd></div>
+          <div class="sm:col-span-2 lg:col-span-1 lg:border-l lg:border-borde lg:px-8"><dt class="eyebrow">Vigencia</dt><dd class="mt-2 text-balance text-lg font-semibold text-texto">{poliza.vigenciaDesde ? `Del ${fechaLarga(poliza.vigenciaDesde)} al ${fechaLarga(poliza.vigenciaHasta)}` : `Hasta el ${fechaLarga(poliza.vigenciaHasta)}`}</dd></div>
         </dl>
-        {enlacePoliza && (
-          <div>
-            {enlacePoliza.startsWith('http')
-              ? <a href={enlacePoliza} rel="noopener noreferrer" target="_blank" class="inline-flex items-center gap-1 font-semibold">Ver la póliza <ExternalLink size={14} aria-hidden="true" /></a>
-              : <a href={enlacePoliza} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 font-semibold" aria-label="Ver la póliza de responsabilidad civil (PDF, se abre en otra pestaña)"><FileText size={18} aria-hidden="true" /> Ver la póliza (PDF)</a>}
+        {poliza.url && (
+          <div class="mt-8 flex justify-center border-t border-borde pt-8">
+            {poliza.url.startsWith('/')
+              ? <Boton href={poliza.url} externo ariaLabel="Ver la póliza de responsabilidad civil (PDF, se abre en otra pestaña)"><FileText size={18} aria-hidden="true" /> Ver la póliza (PDF)</Boton>
+              : <Boton href={poliza.url} externo ariaLabel="Ver la póliza de responsabilidad civil (se abre en otra pestaña)">Ver la póliza <ExternalLink size={16} aria-hidden="true" /></Boton>}
           </div>
         )}
       </div>

@@ -72,7 +72,11 @@ describe('la póliza de responsabilidad civil', () => {
     expect(html.match(/<h1/g)?.length).toBe(1);
     expect(/<h1[^>]*>([\s\S]*?)<\/h1>/.exec(html)?.[1]).toContain('Póliza de responsabilidad civil.');
     for (const dato of ['Seguros Galicia S.A.', `N.º 000277475`, 'Del 5 de octubre de 2026 al 5 de octubre de 2027']) expect(html).toContain(dato);
-    expect(html).toMatch(/href="\/documentos\/poliza-responsabilidad-civil\.pdf" target="_blank" rel="noopener noreferrer"/);
+    const enlace = /<a href="\/documentos\/poliza-responsabilidad-civil\.pdf"[^>]*>/.exec(html)?.[0] ?? '';
+    expect(enlace).toContain('target="_blank"');
+    expect(enlace).toContain('rel="noopener noreferrer"');
+    // 05/10/2026: los datos en una ficha centrada, como el encabezado (antes quedaban pegados a la izquierda).
+    expect(html).toMatch(/<div class="revelar tarjeta mx-auto max-w-4xl[^"]*text-center/);
     expect(html).not.toContain('Normativa aplicable');
     expect(html).not.toContain('PETG');
     expect(/<meta name="description" content="([^"]*)"/.exec(html)?.[1]).not.toContain('Vialidad Nacional');
