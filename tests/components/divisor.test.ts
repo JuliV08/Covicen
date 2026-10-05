@@ -20,17 +20,21 @@ describe('el separador con el isotipo', () => {
   it('en la home va entre el hero (con su cinta) y los accesos rápidos, separado de la cinta', async () => {
     const html = await render(Home);
     const cinta = html.indexOf('data-marquesina');
-    const divisor = html.search(/class="divisor\b/);
+    const divisor = html.search(/class="divisor[\s"]/);
     const accesos = html.indexOf('aria-label="Accesos rápidos"');
     expect(cinta).toBeGreaterThan(-1);
     expect(divisor).toBeGreaterThan(cinta);
     expect(accesos).toBeGreaterThan(divisor);
     // El separador no tiene alto: su margen empuja también a las tarjetas, así que el aire de abajo es siempre el
-    // relleno de Accesos rápidos (py-14 md:py-16) menos medio medallón. Con el mismo margen arriba, el medallón queda
-    // justo en el medio: 34 px de cada lado en el celular y 42 en la compu (medido el 05/10/2026).
-    const clases = html.match(/<div[^>]*class="divisor[^"]*"/)?.[0] ?? '';
-    expect(clases).toMatch(/\bmt-14\b/);
-    expect(clases).toMatch(/\bmd:mt-16\b/);
+    // relleno de Accesos rápidos menos medio medallón. Con el MISMO valor de margen arriba, el medallón queda justo en
+    // el medio (34 px de cada lado en el celular y 42 en la compu, medido el 05/10/2026). Se compara contra el relleno
+    // real de la sección y no contra números fijos: si alguien cambia uno solo, el medallón se corre y esto falla.
+    const margen = html.match(/<div[^>]*class="divisor[\s"][^>]*>/)?.[0] ?? '';
+    const relleno = html.match(/<section class="([^"]*)" aria-label="Accesos rápidos"/)?.[1] ?? '';
+    const valor = (clases: string, prefijo: string) => new RegExp(`(?:^|\\s|")${prefijo}-(\\d+)(?=[\\s"]|$)`).exec(clases)?.[1];
+    expect(valor(relleno, 'py'), 'Accesos rápidos perdió su relleno').toBeDefined();
+    expect(valor(margen, 'mt')).toBe(valor(relleno, 'py'));
+    expect(valor(margen, 'md:mt')).toBe(valor(relleno, 'md:py'));
   });
   it('quieto: sin animación propia', () => {
     expect(readFileSync('src/components/ui/Divisor.astro', 'utf8')).not.toMatch(/animation|@keyframes/);
