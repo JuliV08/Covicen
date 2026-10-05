@@ -12,10 +12,6 @@
     "gratuito": true,
     "descripcion": "Si tu vehículo queda detenido en la calzada por un accidente o un desperfecto, lo retiramos sin cargo.",
     "alcance": "Traslado hasta la localidad más próxima, o hasta cualquier punto anterior a esa localidad o estación de servicio más cercana, para que puedas conseguir asistencia mecánica.",
-    "tiempos": [
-      "Vehículos livianos: 30 minutos en al menos el 90 % de los casos, y nunca más de 40.",
-      "Vehículos pesados: 60 minutos en al menos el 90 % de los casos, y nunca más de 72."
-    ],
     "fuente": "PETG art. 54.1, 54.2 y 54.5"
   },
   {

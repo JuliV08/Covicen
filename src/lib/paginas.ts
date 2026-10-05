@@ -8,6 +8,7 @@ const APAGADAS: Record<string, boolean> = {
   '/obras': !publicado.obras,
   '/politicas': !publicado.politicas,
   '/transparencia': !publicado.transparencia,
+  '/proveedores': !publicado.proveedores,
 };
 
 export const paginaPublicada = (href: string): boolean => !APAGADAS[href];

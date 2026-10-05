@@ -22,12 +22,12 @@ const enlacePoliza = poliza?.url ? (poliza.url.startsWith('/') ? ruta(poliza.url
 // Con la normativa escondida, la póliza es toda la página: una sola sección, la del h1. Con la normativa, dos.
 const seccionPoliza = publicado.normativa
   ? { eyebrow: 'Seguro', fondo: 'fondo-2' as const }
-  : { nivel: 'h1' as const, eyebrow: 'Transparencia', class: 'pt-10' };
+  : { nivel: 'h1' as const, class: 'pt-10' };
 const descripcion = publicado.normativa
   ? 'Normativa de la concesión del Tramo Centro para descargar, póliza de responsabilidad civil de Covicen y control de Vialidad Nacional. Covicen publica lo que se puede verificar, con la fuente al lado.'
   : 'Póliza de responsabilidad civil de Covicen, la concesionaria del Tramo Centro: aseguradora, número, vigencia y el documento para descargar.';
 ---
-<Base titulo="Transparencia" {descripcion} migas={[{ nombre: 'Transparencia', href: '/transparencia' }]}>
+<Base titulo={publicado.normativa ? 'Transparencia' : 'Póliza de responsabilidad civil'} {descripcion} migas={[{ nombre: publicado.normativa ? 'Transparencia' : 'Póliza de responsabilidad civil', href: '/transparencia' }]}>
   {publicado.normativa && (
     <Seccion nivel="h1" eyebrow="Transparencia" titulo="Lo que se puede verificar, con la fuente al lado." intro="Vialidad Nacional supervisa la concesión con indicadores objetivos. Acá están la normativa aplicable y la póliza de responsabilidad civil." class="pt-10">
       <h2 class="titulo revelar mx-auto mb-6 text-center text-2xl">Normativa aplicable</h2>
@@ -70,8 +70,7 @@ const descripcion = publicado.normativa
   </Seccion>
 </Base>
 <style>
-  /* Con la normativa apagada, el h1 es «Póliza de responsabilidad civil.»: a 45 px de letra, «responsabilidad» no entra
-     en un renglón de 288 px (320 de pantalla) y corría la página 48 px de costado (revisión del 05/10/2026). Se corta
-     con guion, y si el navegador no tiene el diccionario, igual se parte antes de salirse. */
-  :global(#poliza h1) { hyphens: auto; overflow-wrap: break-word; }
+  /* Con la normativa apagada, el h1 es «Póliza de responsabilidad civil.» y no se corta con guion (pedido del 05/10/2026):
+     la letra baja en pantallas angostas hasta que «responsabilidad» entra entera en el renglón. */
+  :global(#poliza h1) { font-size: min(clamp(2.5rem, 2rem + 4vw, 6rem), 8.6vw); overflow-wrap: break-word; }
 </style>

@@ -1,6 +1,13 @@
 # Guía de revisión — web de Covicen
 
-**Al día al 5 de octubre de 2026 (fase A estética).** Empezá por «Fase A estética (5 de octubre)», «Lo que cambió el 5 de octubre», «Lo que cambió el 2 de octubre, segunda tanda», «Lo que cambió el 2 de octubre», «Lo que cambió el 1 de octubre», «Lo que cambió el 28 de septiembre», «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
+**Correcciones de contenido del 5 de octubre (rama `contenido-correcciones-2026-10-05`).** Qué mirar:
+- **Póliza:** la página ya no dice «Transparencia» (ni arriba del título, ni en la pestaña, ni en el menú y el pie, que ahora dicen «Póliza de responsabilidad civil»). El título no se corta con guion: en celulares angostos la letra baja de tamaño.
+- **Proveedores** está escondida (no se genera, no está en el menú, el pie ni el sitemap; la privacidad ya no la nombra). Se vuelve a prender con `proveedores` en `src/lib/publicado.ts`. La pregunta «¿Cómo puedo ser proveedor?» ya no habla de un portal.
+- **«La tarifa más baja»** no aparece en ningún texto público: salió de Quiénes somos, de la nota de adjudicación (también sus secciones «La tarifa más baja…» y «Qué sigue») y de las preguntas frecuentes (se borró «¿Por qué la tarifa de Covicen es la más baja?»). La nota «Cómo se fija la tarifa» está despublicada.
+- **Novedad «Qué cambia el 7 de octubre»:** «continúan operando»; sin «Se suman» (ni en el resumen ni en la lista), sin la oración de la tarifa ofertada y sin «No es obligatorio» en TelePASE. En «Qué cuadro rige» ya no está «Cuándo cambia». La pregunta «¿Qué tarifa se cobra desde el 7 de octubre?» perdió la misma oración, y «¿Cuánto cuesta el peaje?» perdió «Se actualiza por índices oficiales cada tres meses».
+- **Grúa** (Servicios): sin los dos renglones de tiempos. **Quiénes somos:** «las localidades».
+
+**Al día al 5 de octubre de 2026 (correcciones de contenido y fase A estética).** Empezá por las correcciones de arriba, «Fase A estética (5 de octubre)», «Lo que cambió el 5 de octubre», «Lo que cambió el 2 de octubre, segunda tanda», «Lo que cambió el 2 de octubre», «Lo que cambió el 1 de octubre», «Lo que cambió el 28 de septiembre», «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
 
 Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/superpowers/plans/2026-09-13-actualizacion-web.md`, más la **revisión final del 14 y 15 de septiembre**) se hizo **sin pruebas visuales**: esta guía es la lista de lo que hay que mirar a mano, pantalla por pantalla, más lo que quedó oculto a propósito y cómo cargarlo.
 
@@ -746,7 +753,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 > **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió quiénes somos: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
 
-- Texto **original** (se chequeó con `pnpm originalidad` contra otras concesionarias): "Nacimos de tres empresas… ganaron ofreciendo el peaje más bajo de los 8 tramos…"; párrafo "La sociedad está en formación. Cuando se complete la inscripción, publicamos acá y en el pie de página la razón social, el CUIT y los domicilios." **Ya no dice "+10 prorrogables"**: era un dato de prensa sin artículo del pliego que lo respalde. Decisión: ver al final.
+- Texto **original** (se chequeó con `pnpm originalidad` contra otras concesionarias): "Nacimos de tres empresas…" (la frase del peaje más bajo se sacó el 05/10/2026); párrafo "La sociedad está en formación. Cuando se complete la inscripción, publicamos acá y en el pie de página la razón social, el CUIT y los domicilios." **Ya no dice "+10 prorrogables"**: era un dato de prensa sin artículo del pliego que lo respalde. Decisión: ver al final.
 - Mojones 20 años · 6 peajes. **Ocho compromisos** exigibles (conservar los 679 km, losas de hormigón, banquinas Rosario–Carcarañá, puente sobre el Carcarañá, rehabilitación asfáltica, auxilio gratis 30/60 min, 140 con personas, cobrar solo lo habilitado), todos con base en el pliego.
 - Quién nos controla: ficha (régimen, tramo, plazo, adjudicación con link al BO, control) y misión/visión.
 - El consorcio: foto 21:9 (`consorcio.jpg`) y tres tarjetas. **Organigrama**: la sección aparece solo si existe `src/assets/institucional/organigrama.png`.

@@ -5,6 +5,10 @@ import Formulario from '@/components/Formulario.astro';
 import FormularioCrm from '@/components/FormularioCrm.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
+import { publicado } from '@/lib/publicado';
+// Escondida el 05/10/2026 (pedido de Juli). Ruta rest con un solo destino, igual que /politicas/: con el interruptor
+// apagado getStaticPaths devuelve [] y Astro no genera nada. El menú y el pie la sacan solos (lib/paginas.ts).
+export const getStaticPaths = () => (publicado.proveedores ? [{ params: { resto: undefined } }] : []);
 const contacto = await datos.contacto();
 // Desde el 02/10/2026 el registro va por el formulario del CRM de PREVI (Bitrix24), el mismo de Contacto: «modificar
 // por el del CRM; ver con PREVI de agregar uno tipo "otros" o "proveedores", un tracker, para que caigan por ahí». El

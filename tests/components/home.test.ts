@@ -67,7 +67,8 @@ describe('Hero', () => {
     const html = (await renderHome()).split('<footer')[0];
     expect(html, 'la home volvió a anunciar la fecha de inicio').not.toContain('de octubre');
     expect(html).not.toContain('data-cuenta-regresiva');
-    expect(html).not.toContain('responsabilidad');
+    // Salvo el nombre de la página de la póliza en el menú (05/10/2026): es un enlace, no un anuncio en la portada.
+    expect(html.replaceAll('Póliza de responsabilidad civil', '')).not.toContain('responsabilidad');
     expect(html, 'la cinta de avisos desapareció de la home').toContain('Emergencias en la ruta');
   });
   // Decisión de Juli (15/09/2026): la primera pantalla del sitio dice UNA cosa y la dice quieta. El hero tenía un

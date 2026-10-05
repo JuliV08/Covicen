@@ -24,8 +24,9 @@ const fallos: string[] = [];
 const fallo = (m: string) => fallos.push(m);
 
 // `efectivo` (01/10/2026): en la vía se cobra solo con medios electrónicos, en las terminales POS. La palabra sola, no
-// «efectiva» ni «efectivamente»: en este sitio «efectivo» siempre quiso decir plata en mano.
-const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/, /\befectivo\b/i];
+// «efectiva» ni «efectivamente»: en este sitio «efectivo» siempre quiso decir plata en mano. Desde el 05/10/2026 se
+// permite SOLO negada («sin efectivo»): la pregunta frecuente de cómo se paga tiene que decir que ya no hay.
+const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/, /(?<!\bsin )\befectivo\b/i];
 // Plazos de respuesta (02/10/2026): el gerente pidió «bajarle el compromiso de los días de respuesta» y Juli eligió
 // sacarlos de todos lados. Se guardan las frases que PROMETEN un plazo, no «días hábiles» a secas: la disponibilidad de
 // los canales («se gestiona en días hábiles») se queda, y un trámite o una norma pueden tener su propio plazo («entra en
@@ -235,7 +236,7 @@ if (sitioCompleto) {
   // poner src/pages/obras.astro como ruta fija, el interruptor deja de mandar y acá se cae.
   const sitemap = existsSync(join(DIST, 'sitemap-0.xml')) ? readFileSync(join(DIST, 'sitemap-0.xml'), 'utf8') : '';
   // Políticas y Transparencia, desde el 02/10/2026 (reunión con el gerente del 01/10).
-  for (const [ruta, prendida] of [['obras', publicado.obras], ['politicas', publicado.politicas], ['transparencia', publicado.transparencia]] as const) {
+  for (const [ruta, prendida] of [['obras', publicado.obras], ['politicas', publicado.politicas], ['transparencia', publicado.transparencia], ['proveedores', publicado.proveedores]] as const) {
     if (prendida) continue;
     if (existsSync(join(DIST, ruta, 'index.html'))) fallo(`/${ruta}/ está apagada en src/lib/publicado.ts y el build la generó igual`);
     if (sitemap.includes(`/${ruta}/`)) fallo(`/${ruta}/ está apagada y el sitemap la lista`);
