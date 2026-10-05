@@ -21,11 +21,11 @@ const [empresa, contacto, avisos, tramo, novedades] = await Promise.all([
   {/* En la home la cinta se apoya en el borde de abajo del hero; en el resto de las páginas la monta Base, arriba
       del contenido. Por eso Base recibe `marquesinaEnHero` y acá va por el slot. */}
   <Hero {empresa}><Marquesina slot="marquesina" {avisos} enHero /></Hero>
-  {/* El separador con el isotipo (de vuelta el 05/10/2026), debajo de la cinta y con aire para no tocarla. No tiene alto,
-      así que su margen empuja también a las tarjetas: con el mismo valor que el relleno de Accesos rápidos (py-14
-      md:py-16), el medallón queda justo en el medio entre la cinta y las tarjetas. */}
-  <Divisor class="mt-14 md:mt-16" />
   <AccesosRapidos {contacto} />
+  {/* El separador con el isotipo (de vuelta el 05/10/2026). Primero fue debajo de la cinta, pero ahí no tenía una línea
+      a la vista y quedaba «el logo suelto»; Juli lo pidió en «el div que está justo debajo de las 4 cards». Sin alto y
+      sin margen, su línea cae sobre la costura de arriba de «El tramo» y el medallón tapa la marquita del medio. */}
+  <Divisor />
   <ElTramo {tramo} />
   <NovedadesRecientes {novedades} />
   <ContactoCta {contacto} />

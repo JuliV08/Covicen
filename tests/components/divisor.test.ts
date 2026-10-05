@@ -4,9 +4,10 @@ import { describe, expect, it } from 'vitest';
 import Home from '@/components/home/Home.astro';
 import Divisor from '@/components/ui/Divisor.astro';
 
-// El separador con el isotipo entre el hero y lo que sigue (pedido de Juli del 05/10/2026: «desapareció, tendríamos
-// que recuperarlo»). Se había sacado el 15/09, cuando la cinta de avisos pasó a cerrar el hero y el medallón le caía
-// encima: vuelve debajo de la cinta, con aire.
+// El separador con el isotipo (pedido de Juli del 05/10/2026: «desapareció, tendríamos que recuperarlo»). Se había
+// sacado el 15/09, cuando la cinta de avisos pasó a cerrar el hero y el medallón le caía encima. Volvió debajo de la
+// cinta, pero ahí no tenía una línea a la vista y quedaba «el logo suelto» (Juli, 05/10): va sobre la costura que separa
+// los accesos rápidos de «El tramo», «el div que está justo debajo de las 4 cards».
 const render = async (C: unknown) => (await AstroContainer.create()).renderToString(C as never, { request: new Request('https://covicen.test/') });
 
 describe('el separador con el isotipo', () => {
@@ -17,24 +18,25 @@ describe('el separador con el isotipo', () => {
     expect(html).toMatch(/<svg[^>]*>[\s\S]*fill="currentColor"/);
     expect(html).not.toContain('linearGradient');
   });
-  it('en la home va entre el hero (con su cinta) y los accesos rápidos, separado de la cinta', async () => {
+  it('en la home va justo debajo de las cuatro tarjetas, sobre la costura de arriba de «El tramo»', async () => {
     const html = await render(Home);
-    const cinta = html.indexOf('data-marquesina');
-    const divisor = html.search(/class="divisor[\s"]/);
     const accesos = html.indexOf('aria-label="Accesos rápidos"');
-    expect(cinta).toBeGreaterThan(-1);
-    expect(divisor).toBeGreaterThan(cinta);
-    expect(accesos).toBeGreaterThan(divisor);
-    // El separador no tiene alto: su margen empuja también a las tarjetas, así que el aire de abajo es siempre el
-    // relleno de Accesos rápidos menos medio medallón. Con el MISMO valor de margen arriba, el medallón queda justo en
-    // el medio (34 px de cada lado en el celular y 42 en la compu, medido el 05/10/2026). Se compara contra el relleno
-    // real de la sección y no contra números fijos: si alguien cambia uno solo, el medallón se corre y esto falla.
-    const margen = html.match(/<div[^>]*class="divisor[\s"][^>]*>/)?.[0] ?? '';
-    const relleno = html.match(/<section class="([^"]*)" aria-label="Accesos rápidos"/)?.[1] ?? '';
-    const valor = (clases: string, prefijo: string) => new RegExp(`(?:^|\\s|")${prefijo}-(\\d+)(?=[\\s"]|$)`).exec(clases)?.[1];
-    expect(valor(relleno, 'py'), 'Accesos rápidos perdió su relleno').toBeDefined();
-    expect(valor(margen, 'mt')).toBe(valor(relleno, 'py'));
-    expect(valor(margen, 'md:mt')).toBe(valor(relleno, 'md:py'));
+    const finAccesos = html.indexOf('</section>', accesos);
+    const divisor = html.search(/class="divisor[\s"]/);
+    const tramo = html.search(/<section id="tramo"/);
+    expect(accesos).toBeGreaterThan(-1);
+    expect(divisor).toBeGreaterThan(finAccesos);
+    expect(tramo).toBeGreaterThan(divisor);
+    // Entre el cierre de los accesos y «El tramo» no hay nada más que el separador: así su línea cae justo sobre la
+    // costura de arriba de «El tramo», que es una sección con tono (lleva costura).
+    expect(html.slice(finAccesos, tramo).replace(/<!--[\s\S]*?-->/g, '')).toMatch(/^<\/section>\s*<div[^>]*class="divisor[\s\S]*<\/div>\s*$/);
+    expect(html.slice(tramo, html.indexOf('>', tramo))).toContain('seccion-tono');
+    // Ya no está debajo de la cinta.
+    expect(html.search(/class="divisor[\s"]/)).toBeGreaterThan(html.indexOf('data-marquesina'));
+    expect(html.slice(html.indexOf('data-marquesina'), accesos)).not.toMatch(/class="divisor[\s"]/);
+  });
+  it('queda por encima de la sección siguiente, para que no le tape la mitad de abajo del medallón', () => {
+    expect(readFileSync('src/components/ui/Divisor.astro', 'utf8')).toMatch(/\.divisor \{[^}]*z-index: 10/);
   });
   it('quieto: sin animación propia', () => {
     expect(readFileSync('src/components/ui/Divisor.astro', 'utf8')).not.toMatch(/animation|@keyframes/);
