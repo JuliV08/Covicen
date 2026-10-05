@@ -23,6 +23,11 @@ Este es el vault del proyecto (vive en el repo, viaja con el código). El punter
 - Manual de marca: `docs/marca/Logo Covicen 2.pdf` · Prompts de imágenes: `docs/marca/prompts-imagenes.md`
 
 ## Estado
+- **2026-10-05, fase C: el mapa nuevo (rama `web-detalles-2026-10-05`)**
+  - **`src/lib/red.ts` sin dependencias**: red de rutas, camino más corto (Dijkstra), `trazoRedondeado`, recorrido del auto con **vuelta en U** (al arrancar y en cualquier vértice donde el camino vuelve), `continuarDesde` para cambiar de destino en pleno viaje. Lo usa el navegador: **`lib/tramo.ts` no puede llegar al cliente** porque importa el esquema (zod).
+  - **Encuadre** (`encuadreDelMapa`): el viewBox es la caja de lo dibujado + 24; las coordenadas del contrato no cambian. **La ficha flota desde 1280** (`lugarDeLaFicha`, `fichaLibre` con test de geometría: a 1024 no entra), compacta: 21rem, servicios como íconos (`xl:sr-only`), posición en `cqw` del mapa (el SVG escala por el ancho).
+  - **El auto frena `ESTACIONADO = 34` antes de la estación**: encima tapaba el punto de estado. Cinta = halo (`glow`), cuerpo (`borde-fuerte`, 7) y filo (`acento`); con `superficie-2` el cuerpo no se veía. Tamaños de letra por tramo de pantalla (la guarda general rechaza «11px» escrito: 11,5).
+  - **Capturas con Chrome sin ventana**: Git Bash convierte `/el-tramo/` en ruta de Windows (`MSYS_NO_PATHCONV=1`); el dibujo atado al scroll no avanza (forzar `.dibujar` o «reducir movimiento»); el `requestAnimationFrame` sí corre, así que el viaje del auto se puede capturar a mitad de camino.
 - **2026-10-05, fase A estética (rama `web-detalles-2026-10-05`, en el worktree `C:\Users\Villex\dev\Covicen-detalles` porque otra sesión trabajaba en la carpeta principal)**
   - Tanda estética en tres fases: **A** encabezados y títulos, **B** la cinta de avisos y el separador con el isotipo (que se sacó el 15/09 porque le caía encima a la cinta), **C** el mapa nuevo con un vehículo que recorre la ruta. Spec y plan de A en `docs/superpowers/`.
   - **Fuera la grilla animada que seguía al mouse** (`GrillaCinetica`, `grilla-cinetica.ts` y su `lib/color.ts`): en tema claro pasaba por detrás de las bajadas. Las secciones con fondo alternado son `.seccion-tono`. El fondo de reemplazo lo trae Juli de 21st; entra solo si nada se mueve detrás del texto.

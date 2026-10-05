@@ -22,6 +22,26 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 
 ---
 
+## El mapa nuevo (fase C, 5 de octubre) — mirá esto primero
+
+En la home y en El tramo. El diseño está en
+`C:\Users\Villex\dev\Covicen-detalles\docs\superpowers\specs\2026-10-05-fase-c-mapa-design.md`.
+
+- **El dibujo**: el mapa ocupa todo el panel y se encuadra sobre las rutas. Cada ruta es una cinta (halo suave, banda y
+  línea azul) que dobla con curva en los pueblos; ya no hay grilla de fondo, marcas que fluyen ni luces dando vueltas.
+  Las estaciones son anillos: operativa con punto verde lleno, próxima con anillo amarillo y centro hueco. Los nombres
+  van sobre una placa.
+- **La ficha**: en una pantalla de 1280 px o más, flota arriba a la izquierda, entre Córdoba y San Francisco, sin tapar
+  ninguna ruta; es compacta (los servicios con su ícono, como en la leyenda; «Vías» y «Sentido» están en «Ficha
+  completa»). Entre 1024 y 1279 px, y en el celular, va completa debajo del mapa.
+- **El auto**: arranca estacionado antes de Carcarañá. Tocá Leones, después Franck y después James Craik: viaja por la
+  ruta (pasando por Rosario y el empalme cuando hace falta), dobla con las curvas, frena antes del peaje sin taparlo y el
+  halo de la estación late una vez. Para ir a Franck desde Leones tiene que volver: hace una U chica al costado y sale de
+  frente. Probá tocar otra estación en pleno viaje: termina el tramo y cambia de rumbo sin saltar.
+- **Con «reducir movimiento»**: el auto aparece directo en la estación, sin viajar ni latir.
+- **En el celular** el mapa queda chico (unos 300 px de ancho) y los nombres de ciudades y rutas se ven muy pequeños; ya
+  pasaba antes. La información está en la ficha de abajo. Si querés, lo vemos aparte.
+
 ## Fase A estética (5 de octubre) — mirá esto primero
 
 Primera fase de la tanda estética, en la rama `web-detalles-2026-10-05` (el diseño está en
