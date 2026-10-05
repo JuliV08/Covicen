@@ -12,19 +12,23 @@ interface Props {
   fondo?: 'fondo' | 'fondo-2' | 'plano';
   class?: string;
   nivel?: 'h1' | 'h2';
+  /** Encabezado centrado por defecto (fase A, 05/10/2026: «quedaría mejor si estuviera centrado»). 'izquierda' es el
+   *  escape para la sección que no funcione centrada; hoy no la usa ninguna. */
+  alinear?: 'centro' | 'izquierda';
 }
-const { id, eyebrow, titulo, intro, fondo = 'fondo', class: clase = '', nivel = 'h2' } = Astro.props;
+const { id, eyebrow, titulo, intro, fondo = 'fondo', class: clase = '', nivel = 'h2', alinear = 'centro' } = Astro.props;
 const Titulo = nivel;
+const centrado = alinear === 'centro';
 const conTono = fondo !== 'fondo';
 ---
 <section id={id} class:list={['relative py-20 md:py-28', conTono ? 'seccion-tono' : 'bg-fondo', clase]}>
   {conTono && <span class="costura costura-arriba" aria-hidden="true"></span>}
   <div class="contenedor relative z-10">
     {(eyebrow || titulo) && (
-      <header class="revelar mb-12 max-w-3xl">
-        {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-        {titulo && <Titulo class:list={['titulo', eyebrow && 'mt-3']}>{titulo}</Titulo>}
-        {intro && <p class="mt-4 text-lg text-texto-2">{intro}</p>}
+      <header class:list={['revelar mb-12 max-w-3xl', centrado && 'mx-auto text-center']}>
+        {eyebrow && <Eyebrow {centrado}>{eyebrow}</Eyebrow>}
+        {titulo && <Titulo class:list={['titulo', eyebrow && 'mt-3', centrado && 'mx-auto']}>{titulo}</Titulo>}
+        {intro && <p class:list={['mt-4 max-w-2xl text-lg text-texto-2 md:text-xl', centrado && 'mx-auto']}>{intro}</p>}
       </header>
     )}
     <slot />

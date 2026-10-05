@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import ContactoCta from '@/components/home/ContactoCta.astro';
 import Hero from '@/components/home/Hero.astro';
 import Seccion from '@/components/ui/Seccion.astro';
@@ -72,5 +73,26 @@ describe('el degradé llega a todos los títulos', () => {
   it('los títulos de tarjeta no llevan degradé', async () => {
     expect((await pagina(MediosDePago, '/medios-de-pago/')).match(/<h2 class="text-xl">/g)?.length).toBeGreaterThan(0);
     expect((await pagina(Tramites, '/tramites/')).match(/<h2 class="text-2xl">/g)?.length).toBeGreaterThan(0);
+  });
+});
+
+describe('encabezados centrados', () => {
+  const encabezado = (html: string) => /<header[^>]*>[\s\S]*?<\/header>/.exec(html)?.[0] ?? '';
+  it('por defecto: columna centrada, etiqueta con una línea a cada lado, título y bajada al medio', async () => {
+    const h = encabezado(await render(Seccion, { eyebrow: 'El tramo', titulo: 'Prueba.', intro: 'Bajada.' }));
+    expect(h.match(/<header[^>]*>/)?.[0]).toMatch(/\bmx-auto\b.*\btext-center\b|\btext-center\b.*\bmx-auto\b/);
+    expect(h.match(/<p class="eyebrow[^"]*"/)?.[0]).toContain('justify-center');
+    expect(h.match(/class="inline-block h-px w-6 bg-acento"/g)?.length).toBe(2);
+    expect(h.match(/<h2[^>]*>/)?.[0]).toMatch(/\bmx-auto\b/);
+    expect(h.match(/<p class="[^"]*\bmax-w-2xl\b[^"]*">Bajada\.<\/p>/)?.[0]).toMatch(/\bmx-auto\b/);
+  });
+  it('alinear="izquierda" deja el encabezado como antes', async () => {
+    const h = encabezado(await render(Seccion, { eyebrow: 'X', titulo: 'Prueba.', intro: 'Bajada.', alinear: 'izquierda' }));
+    expect(h).not.toContain('text-center');
+    expect(h.match(/class="inline-block h-px w-6 bg-acento"/g)?.length).toBe(1);
+  });
+  it('las migas de pan van centradas', async () => {
+    const html = await render(Breadcrumbs, { migas: [{ nombre: 'Tarifas', href: '/tarifas' }] });
+    expect(html.match(/<ol[^>]*>/)?.[0]).toContain('justify-center');
   });
 });
