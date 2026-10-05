@@ -62,6 +62,14 @@ const id = (nombre: string) => `${idTitulo}-${nombre}`;
         <stop offset="0" stop-color="var(--color-superficie)" stop-opacity="0.35"></stop>
         <stop offset="1" stop-color="var(--color-superficie)" stop-opacity="0"></stop>
       </radialGradient>
+      {/* El fondo de puntos (05/10/2026, Juli: «el anterior tenía un grid sutil»): una retícula de puntitos, más
+          marcada en el centro y que se pierde hacia los bordes. Textura de plano, sin líneas que compitan con las rutas. */}
+      <pattern id={id('puntos')} width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="8" cy="8" r="0.9" fill="var(--color-texto)"></circle></pattern>
+      <radialGradient id={id('desvanecer')} cx="50%" cy="50%" r="62%">
+        <stop offset="0" stop-color="white" stop-opacity="1"></stop>
+        <stop offset="1" stop-color="white" stop-opacity="0"></stop>
+      </radialGradient>
+      <mask id={id('mascara')}><rect x={encuadre.x} y={encuadre.y} width={encuadre.ancho} height={encuadre.alto} fill={`url(#${id('desvanecer')})`}></rect></mask>
       <filter id={id('halo')} x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3"></feGaussianBlur></filter>
       <filter id={id('sombra')} x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.4"></feGaussianBlur></filter>
       <linearGradient id={id('carroceria')} x1="0" y1="0" x2="0" y2="1">
@@ -78,6 +86,7 @@ const id = (nombre: string) => `${idTitulo}-${nombre}`;
       </linearGradient>
     </defs>
     <rect x={encuadre.x} y={encuadre.y} width={encuadre.ancho} height={encuadre.alto} fill={`url(#${id('fondo')})`}></rect>
+    <rect x={encuadre.x} y={encuadre.y} width={encuadre.ancho} height={encuadre.alto} fill={`url(#${id('puntos')})`} mask={`url(#${id('mascara')})`} opacity="0.16"></rect>
     {tramo.trazados.map((t) => {
       const d = trazoRedondeado(t.ciudades.map((s) => ciudad(s).mapa));
       return (
