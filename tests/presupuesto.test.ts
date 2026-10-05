@@ -8,11 +8,11 @@ import { describe, expect, it } from 'vitest';
 const sinComentarios = (fuente: string) =>
   fuente.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '').replace(/^\s*[\r\n]/gm, '');
 const gz = (p: string) => (existsSync(p) ? gzipSync(sinComentarios(readFileSync(p, 'utf8'))).length : 0);
-const animacion = ['src/scripts/revelar.ts', 'src/scripts/spotlight.ts', 'src/scripts/contador.ts', 'src/scripts/parallax-2d.ts', 'src/scripts/grilla-cinetica.ts', 'src/scripts/flip.ts'];
-const todos = [...animacion, 'src/scripts/menu.ts', 'src/scripts/formulario.ts', 'src/scripts/tema.ts', 'src/scripts/lib/color.ts', 'src/scripts/marquesina.ts', 'src/scripts/mapa.ts', 'src/scripts/imprimir.ts', 'src/scripts/asistencia.ts', 'src/lib/asistencia.ts', 'src/lib/formulario.ts', 'src/lib/disolvencia.ts', 'src/lib/puntero.ts', 'src/scripts/recarga.ts', 'src/lib/recarga.ts'];
+const animacion = ['src/scripts/revelar.ts', 'src/scripts/spotlight.ts', 'src/scripts/contador.ts', 'src/scripts/parallax-2d.ts', 'src/scripts/flip.ts'];
+const todos = [...animacion, 'src/scripts/menu.ts', 'src/scripts/formulario.ts', 'src/scripts/tema.ts', 'src/scripts/marquesina.ts', 'src/scripts/mapa.ts', 'src/scripts/imprimir.ts', 'src/scripts/asistencia.ts', 'src/lib/asistencia.ts', 'src/lib/formulario.ts', 'src/lib/disolvencia.ts', 'src/lib/puntero.ts', 'src/scripts/recarga.ts', 'src/lib/recarga.ts'];
 
 describe('presupuesto', () => {
-  // 6 → 9 KB al sumar la grilla cinética y el flip (pedidos de Juli, 2026-08-27). Sigue muy por debajo de los 30 KB del spec.
+  // 6 → 9 KB al sumar la grilla cinética y el flip (pedidos de Juli, 2026-08-27). Sigue muy por debajo de los 30 KB del spec. La grilla se fue el 05/10/2026.
   it('los scripts de animación pesan menos de 9 KB gz en total', () => {
     expect(animacion.reduce((s, p) => s + gz(p), 0)).toBeLessThan(9216);
   });

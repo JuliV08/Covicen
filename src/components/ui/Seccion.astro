@@ -1,6 +1,5 @@
 ---
 import Eyebrow from './Eyebrow.astro';
-import GrillaCinetica from '@/components/ilustraciones/GrillaCinetica.astro';
 // Sin número de sección (el «01», «02» que iba a la izquierda del título): se sacó de todo el sitio el 24/09/2026,
 // después de que el cliente lo marcara dos veces. Sin la columna del número, el encabezado queda alineado con el
 // contenido de abajo en vez de entrar sangrado.
@@ -9,18 +8,17 @@ interface Props {
   eyebrow?: string;
   titulo?: string;
   intro?: string;
-  /** 'fondo' = liso; 'fondo-2' y 'plano' = sección con la grilla cinética, fundida con las secciones vecinas. */
+  /** 'fondo' = liso; 'fondo-2' y 'plano' = sección con tono de fondo, fundida con las vecinas y con costuras. */
   fondo?: 'fondo' | 'fondo-2' | 'plano';
   class?: string;
   nivel?: 'h1' | 'h2';
 }
 const { id, eyebrow, titulo, intro, fondo = 'fondo', class: clase = '', nivel = 'h2' } = Astro.props;
 const Titulo = nivel;
-const cinetica = fondo !== 'fondo';
+const conTono = fondo !== 'fondo';
 ---
-<section id={id} class:list={['relative py-20 md:py-28', cinetica ? 'seccion-cinetica' : 'bg-fondo', clase]}>
-  {cinetica && <GrillaCinetica />}
-  {cinetica && <span class="costura costura-arriba" aria-hidden="true"></span>}
+<section id={id} class:list={['relative py-20 md:py-28', conTono ? 'seccion-tono' : 'bg-fondo', clase]}>
+  {conTono && <span class="costura costura-arriba" aria-hidden="true"></span>}
   <div class="contenedor relative z-10">
     {(eyebrow || titulo) && (
       <header class="revelar mb-12 max-w-3xl">
@@ -31,5 +29,5 @@ const cinetica = fondo !== 'fondo';
     )}
     <slot />
   </div>
-  {cinetica && <span class="costura costura-abajo" aria-hidden="true"></span>}
+  {conTono && <span class="costura costura-abajo" aria-hidden="true"></span>}
 </section>

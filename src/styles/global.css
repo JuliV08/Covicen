@@ -64,15 +64,13 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
       linear-gradient(to bottom, var(--color-plano) 1px, transparent 1px);
     background-size: 4rem 4rem;
   }
-  /* Sección con grilla cinética, fundida con las vecinas: el fondo va de `fondo` a `fondo-2` y vuelve, la grilla se
-     desvanece en los bordes, y una "costura" (hairline + marca vial centrada, como el divisor del hero) une los bloques. */
-  .seccion-cinetica {
+  /* Sección con tono, fundida con las vecinas: el fondo va de `fondo` a `fondo-2` y vuelve, y una "costura" (hairline
+     + marca vial centrada) une los bloques. Hasta el 05/10/2026 llevaba además la grilla animada que seguía al
+     puntero; se sacó a pedido («saquen el background grid animado que sigue al mouse») y en tema claro las líneas
+     pasaban por detrás de las bajadas. */
+  .seccion-tono {
     overflow: hidden;
     background: linear-gradient(180deg, var(--color-fondo) 0%, var(--color-fondo-2) 16%, var(--color-fondo-2) 84%, var(--color-fondo) 100%);
-  }
-  .seccion-cinetica > canvas {
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
-    mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
   }
   .costura { position: absolute; left: 0; right: 0; height: 1px; z-index: 5; pointer-events: none;
     background: linear-gradient(90deg, transparent, var(--color-borde-fuerte) 25%, color-mix(in srgb, var(--color-acento) 55%, transparent) 50%, var(--color-borde-fuerte) 75%, transparent); }
@@ -80,7 +78,7 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
   .costura-abajo { bottom: 0; }
   .costura::before { content: ""; position: absolute; left: 50%; top: 50%; width: 2.5rem; height: 3px; border-radius: 2px; transform: translate(-50%, -50%);
     background: var(--color-acento); box-shadow: 0 0 14px var(--color-glow), 0 0 2px var(--color-acento); }
-  /* resplandor que "derrama" la grilla hacia la sección vecina */
+  /* resplandor que "derrama" el tono hacia la sección vecina */
   .costura::after { content: ""; position: absolute; left: 20%; right: 20%; top: 50%; height: 120px; transform: translateY(-50%); pointer-events: none;
     background: radial-gradient(60% 100% at 50% 50%, var(--color-luz), transparent 70%); }
   /* Volanta. 12 px a propósito y declarada acá como anotación del pliego (61.7, spec §11): una volanta nunca es cuerpo

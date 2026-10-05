@@ -42,13 +42,13 @@
   /* Cromo de pantalla: el header del sitio (con barra superior y anuncios; `body > header` porque las secciones también
      usan <header> para su título), la navegación del footer, las navegaciones internas de anclas (las migas quedan),
      todo lo fijo o pegado (barra del 140, hilo de progreso), el salto al contenido, los fondos animados y los controles. */
-  body > header, footer nav, .fixed, .sticky, .salto, .hilo-mobile, canvas, [data-grilla], .costura, .scrollea, .parallax, .hero-luz, .divisor,
+  body > header, footer nav, .fixed, .sticky, .salto, .hilo-mobile, canvas, .costura, .scrollea, .parallax, .hero-luz, .divisor,
   main nav:not([aria-label="Migas de pan"]), button, .control, .punto, [data-anuncios] {
     display: none !important;
   }
   main { padding-top: 0 !important; }
   .hero, .hero > .contenedor { min-height: 0 !important; }
-  .seccion-cinetica, .plano { background: none !important; }
+  .seccion-tono, .plano { background: none !important; }
   section { padding-block: 1.5rem !important; }
   h1 { font-size: 2rem; } h2 { font-size: 1.5rem; } h3 { font-size: 1.2rem; }
   h1, h2, h3 { break-after: avoid; }

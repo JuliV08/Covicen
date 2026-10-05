@@ -4,8 +4,9 @@ import { describe, expect, it } from 'vitest';
 
 const listar = (dir: string): string[] => readdirSync(dir).flatMap((n) => { const p = join(dir, n); return statSync(p).isDirectory() ? listar(p) : [p]; });
 const raices = ['src/components', 'src/pages', 'src/layouts', 'src/styles', 'src/scripts'];
-// Únicas excepciones: los tokens, el isotipo (es el logo) y el único módulo que arma cadenas rgb para canvas.
-const permitidos = new Set(['src/styles/tokens.css', 'src/components/marca/Isotipo.astro', 'src/scripts/lib/color.ts']);
+// Únicas excepciones: los tokens y el isotipo (es el logo). El módulo que armaba cadenas rgb para el canvas de la grilla
+// se fue con ella el 05/10/2026.
+const permitidos = new Set(['src/styles/tokens.css', 'src/components/marca/Isotipo.astro']);
 const archivos = raices.flatMap(listar).map((p) => p.replace(/\\/g, '/')).filter((p) => /\.(astro|css|ts)$/.test(p) && !permitidos.has(p));
 const fijo = /#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(/;
 

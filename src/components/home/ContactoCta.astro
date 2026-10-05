@@ -1,6 +1,5 @@
 ---
 import { ArrowRight, MessageCircle, Phone } from '@lucide/astro';
-import GrillaCinetica from '@/components/ilustraciones/GrillaCinetica.astro';
 import Boton from '@/components/ui/Boton.astro';
 import type { Contacto } from '@/lib/datos/esquemas';
 import { sinCortes } from '@/lib/texto';
@@ -9,8 +8,7 @@ interface Props { contacto: Contacto }
 const { contacto } = Astro.props;
 const linea = contacto.lineaGratuita;
 ---
-<section class="seccion-cinetica relative py-24">
-  <GrillaCinetica />
+<section class="seccion-tono relative py-24">
   <span class="costura costura-arriba" aria-hidden="true"></span>
   <div class="contenedor revelar relative z-10 flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
     <div>
