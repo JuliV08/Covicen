@@ -28,7 +28,9 @@
     border-radius: var(--radius-sm);
   }
   h1, h2, h3 { @apply font-extrabold text-texto; letter-spacing: var(--tracking-titulo); line-height: 1.05; text-wrap: balance; }
-  h1 { font-size: clamp(2.5rem, 2rem + 4vw, 6rem); }
+  /* `12vw` (05/10/2026): solo pesa por debajo de unos 380 px. A 320 px el título iba a 44,8 px y «concesionaria»
+     (Quiénes somos) medía 309 px en una columna de 280: corría la página de costado. Con 12vw va a 38,4 px y entra. */
+  h1 { font-size: min(clamp(2.5rem, 2rem + 4vw, 6rem), 12vw); }
   h2 { font-size: clamp(1.9rem, 1.4rem + 2.2vw, 3.25rem); }
   h3 { font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.75rem); }
   p { text-wrap: pretty; }

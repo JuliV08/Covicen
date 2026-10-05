@@ -7,7 +7,7 @@ import type { EstadoRuta, Tramo } from '@/lib/datos/esquemas';
 interface Props { tramo: Tramo; incidentes?: NonNullable<EstadoRuta['incidentes']>; modo?: 'scroll' | 'cargar'; disposicion?: 'lado' | 'abajo' }
 const { tramo, incidentes = [], modo = 'scroll', disposicion = 'lado' } = Astro.props;
 ---
-<div class:list={['mapa-interactivo grid gap-8', disposicion === 'lado' && 'lg:grid-cols-[1.6fr_1fr] lg:items-start']} data-mapa-interactivo>
+<div class:list={['mapa-interactivo grid grid-cols-1 gap-8 *:min-w-0', disposicion === 'lado' && 'lg:grid-cols-[1.6fr_1fr] lg:items-start']} data-mapa-interactivo>
   <MapaTramo {tramo} {incidentes} {modo} />
   <section class="grid gap-4" aria-live="polite" aria-label="Estación seleccionada">
     {tramo.cabinas.map((c) => <div data-tarjeta-estacion={c.slug}><TarjetaEstacion cabina={c} /></div>)}

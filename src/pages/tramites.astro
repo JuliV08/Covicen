@@ -26,9 +26,11 @@ const gratuitos = publicado.telepaseSinCosto ? 'Todos son gratuitos.' : 'Las exe
 <Base titulo="Guía de trámites" descripcion="Trámites del usuario del Tramo Centro: exención de peaje por discapacidad, exención para ex combatientes de Malvinas y alta de TelePASE. Qué es cada uno, qué documentación necesitás y cómo se hace." migas={[{ nombre: 'Guía de trámites', href: '/tramites' }]}>
   <Seccion nivel="h1" eyebrow="Guía de trámites" titulo="Quién puede, qué necesita y cómo se hace." intro={`${gratuitos} De cada uno: qué es, qué documentación necesitás y cómo se hace, para que lo inicies completo y no tengas que volver.`} class="pt-10">
     <nav aria-label="Trámites" class="revelar mb-10 flex flex-wrap gap-2">{tramites.map((t) => <a href={`#${t.id}`} class="rounded-md border border-borde px-3 py-1.5 text-sm text-texto-2 no-underline transition-colors hover:border-borde-fuerte hover:text-texto hover:underline">{t.nombre}</a>)}</nav>
+    {/* Las tarjetas parten palabras largas donde haga falta (05/10/2026): «atencionalusuario@vialidad.gob.ar», sin
+        espacios, no entraba a 320 px y corría la página de costado. */}
     <div class="escalonar grid gap-6">
       {tramites.map((t, i) => (
-        <article id={t.id} class="tarjeta scroll-mt-32 p-8" style={`--i: ${i}`}>
+        <article id={t.id} class="tarjeta scroll-mt-32 p-8 [overflow-wrap:anywhere]" style={`--i: ${i}`}>
           <h2 class="text-2xl">{t.nombre}</h2>
           {/* Los tres campos que pidió el gerente, en el orden en que los necesita quien va a hacer el trámite:
               qué es, qué tenés que llevar y recién después cómo se hace. La documentación va ARRIBA de los pasos a

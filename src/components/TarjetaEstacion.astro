@@ -20,7 +20,9 @@ const iconos: Record<ClaveServicio, typeof Coffee> = { areaDescanso: Coffee, det
 const sentidos = { ambos: 'Cobra en ambos sentidos', ascendente: 'Cobra en sentido ascendente', descendente: 'Cobra en sentido descendente' } as const;
 ---
 <article class="tarjeta p-6" data-estacion-tarjeta={c.slug}>
-  <div class="flex items-start justify-between gap-3">
+  {/* flex-wrap (05/10/2026): sin él, el nombre y la señal de estado no podían bajar de renglón y ensanchaban el panel
+      del mapa en el celular de 320 px. */}
+  <div class="flex flex-wrap items-start justify-between gap-3">
     <div>
       <p class="eyebrow">{c.ruta}{c.km !== null && ` · km ${kmTexto(c.km)}`}</p>
       <Titulo class="mt-2 text-2xl">{c.nombre}</Titulo>
