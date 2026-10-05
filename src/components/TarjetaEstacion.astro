@@ -9,8 +9,14 @@ import { kmTexto } from '@/lib/formato';
 import { ruta } from '@/lib/rutas';
 import { sinCortes } from '@/lib/texto';
 import { estadoCabina, serviciosDeCabina, type ClaveServicio } from '@/lib/tramo';
-interface Props { cabina: Cabina; completa?: boolean; nivel?: 'h2' | 'h3' }
-const { cabina: c, completa = false, nivel = 'h3' } = Astro.props;
+/** `enMapa` (fase C, 05/10/2026): la ficha del mapa interactivo. Desde 1280 px flota sobre el dibujo y es compacta:
+ *  sin «Vías» ni «Sentido», que quedan en la página de la estación. */
+interface Props { cabina: Cabina; completa?: boolean; nivel?: 'h2' | 'h3'; enMapa?: boolean }
+const { cabina: c, completa = false, nivel = 'h3', enMapa = false } = Astro.props;
+// Lo que la ficha flotante no muestra.
+const detalle = enMapa && 'ficha-detalle xl:hidden';
+// Si «Vías» y «Sentido» son todo lo que hay en la lista, en la flotante se va la lista entera (y su margen).
+const soloDetalle = !c.horarioAtencion && !c.telefono;
 const Titulo = nivel;
 // La línea 0800 al lado del 140 (05/10/2026): el mapa interactivo es por donde mucha gente llega a una estación.
 const linea = (await datos.contacto()).lineaGratuita;
@@ -19,7 +25,7 @@ const servicios = serviciosDeCabina(c);
 const iconos: Record<ClaveServicio, typeof Coffee> = { areaDescanso: Coffee, detencionSegura: ShieldCheck, gruaGratuita: Truck, sanitarios: Bath, colocacionTelepase: Tag };
 const sentidos = { ambos: 'Cobra en ambos sentidos', ascendente: 'Cobra en sentido ascendente', descendente: 'Cobra en sentido descendente' } as const;
 ---
-<article class="tarjeta p-6" data-estacion-tarjeta={c.slug}>
+<article class:list={['tarjeta p-6', enMapa && 'xl:p-5 xl:shadow-2xl']} data-estacion-tarjeta={c.slug}>
   {/* flex-wrap (05/10/2026): sin él, el nombre y la señal de estado no podían bajar de renglón y ensanchaban el panel
       del mapa en el celular de 320 px. */}
   <div class="flex flex-wrap items-start justify-between gap-3">
@@ -30,15 +36,17 @@ const sentidos = { ambos: 'Cobra en ambos sentidos', ascendente: 'Cobra en senti
     </div>
     <Senal variante={estado.clave === 'operativa' ? 'ok' : 'vial'}>{estado.etiqueta}</Senal>
   </div>
-  <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm text-texto-2">
-    {c.vias !== undefined && <><dt class="text-texto-3">Vías</dt><dd>{c.vias}</dd></>}
-    {c.sentido && <><dt class="text-texto-3">Sentido</dt><dd>{sentidos[c.sentido]}</dd></>}
+  <dl class:list={['mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm text-texto-2', soloDetalle && detalle]}>
+    {c.vias !== undefined && <><dt class:list={['text-texto-3', detalle]}>Vías</dt><dd class:list={[detalle]}>{c.vias}</dd></>}
+    {c.sentido && <><dt class:list={['text-texto-3', detalle]}>Sentido</dt><dd class:list={[detalle]}>{sentidos[c.sentido]}</dd></>}
     {c.horarioAtencion && <><dt class="text-texto-3">Atención</dt><dd>{c.horarioAtencion}</dd></>}
     {c.telefono && <><dt class="text-texto-3">Teléfono</dt><dd><a href={`tel:${c.telefono.replace(/[^\d+]/g, '')}`}>{c.telefono}</a></dd></>}
   </dl>
   {servicios.length > 0 && (
     <ul class="mt-4 flex flex-wrap gap-2" aria-label="Servicios">
-      {servicios.map((s) => { const Icono = iconos[s.clave]; return <li class="inline-flex items-center gap-1.5 rounded-sm border border-borde px-2 py-1 text-sm text-texto-2"><Icono size={14} aria-hidden="true" /> {s.etiqueta}</li>; })}
+      {/* En la ficha flotante (desde 1280) el servicio se muestra con su ícono solo, el mismo que explica la leyenda
+          del mapa; el nombre sigue ahí para el lector de pantalla y como globo al pasar el puntero. */}
+      {servicios.map((s) => { const Icono = iconos[s.clave]; return <li class:list={['inline-flex items-center gap-1.5 rounded-sm border border-borde px-2 py-1 text-sm text-texto-2', enMapa && 'xl:p-1.5']} title={enMapa ? s.etiqueta : undefined}><Icono size={14} aria-hidden="true" /> <span class:list={[enMapa && 'xl:sr-only']}>{s.etiqueta}</span></li>; })}
     </ul>
   )}
   {estado.clave === 'proxima' && <p class="mt-4 text-sm text-texto-2">Cobra cuando Vialidad Nacional la habilite. Hasta entonces, en esta estación no se paga.</p>}

@@ -140,8 +140,9 @@ export const encuadreDelMapa = (t: Tramo): { x: number; y: number; ancho: number
   return { x: x0, y: y0, ancho: x1 - x0, alto: y1 - y0 };
 };
 
-/** Tamaño de la ficha compacta en pantalla (19rem de ancho; el alto, el de la más larga: Carcarañá). */
-export const TAM_FICHA_PX = { ancho: 304, alto: 260 } as const;
+/** Tamaño de la ficha compacta en pantalla (21rem de ancho, con los servicios como íconos; el alto, el de la más larga:
+ *  Carcarañá, medido el 05/10/2026). */
+export const TAM_FICHA_PX = { ancho: 336, alto: 260 } as const;
 /** Dónde flota: en el hueco entre Córdoba y San Francisco, por encima de la RN 9, a 12 unidades del borde de arriba. */
 export const lugarDeLaFicha = (t: Tramo): { x: number; y: number } => ({ x: 205, y: encuadreDelMapa(t).y + 12 });
 
