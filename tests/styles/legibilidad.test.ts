@@ -26,19 +26,23 @@ describe('legibilidad (pliego 61.7)', () => {
       .filter((l) => !/\b(anotacion|eyebrow)\b/.test(l));
     expect(culpables, culpables.join('\n')).toEqual([]);
   });
-  // El mapa es un SVG con viewBox de 820 unidades de ancho que el CSS escala: sus font-size NO son píxeles.
-  // Ancho real más grande en el que se dibuja: El tramo, contenedor 80rem = 1280 px − 2 × 40 px del panel = 1200;
-  // la grilla lg:[1.6fr_1fr] con gap de 2rem le deja 1168 × 1,6 / 2,6 ≈ 719 px. Escala 719/820 ≈ 0,877, así que
-  // 12 unidades se ven a 10,5 px. Para no bajar de 12 px hacen falta 12 / 0,877 ≈ 13,7 ⇒ 14 unidades.
-  const ANCHO_RENDER = 719;
-  it('el texto del mapa, ya escalado por el viewBox, no baja de 12 px', () => {
+  // El mapa es un SVG que el CSS escala: sus font-size son unidades del dibujo, NO píxeles. Desde la fase C (05/10/2026)
+  // se encuadra sobre lo dibujado (encuadreDelMapa) y ocupa todo el panel, así que se mira a la escala más chica de cada
+  // tramo de pantalla. Fuera de @media, desde 768 px (más angosto, los rótulos de estación se esconden salvo el elegido):
+  // el mapa mide 768 − 40 (contenedor) − 2 × 23 (relleno del panel) ≈ 682 px. En @media (min-width: 64rem), desde 1024:
+  // 1024 − 40 − 2 × 30,7 ≈ 922 px.
+  it('el texto del mapa, ya escalado, no baja de 12 px en ningún tramo de pantalla', async () => {
+    const { encuadreDelMapa } = await import('@/lib/tramo');
+    const { fuenteLocalJson } = await import('@/lib/datos/fuentes/local-json');
+    const ancho = encuadreDelMapa(await fuenteLocalJson.tramo()).ancho;
     const fuente = readFileSync('src/components/ilustraciones/MapaTramo.astro', 'utf8');
-    const ancho = Number(/viewBox="0 0 (\d+)/.exec(fuente)?.[1]);
-    expect(ancho).toBeGreaterThan(0);
-    const escala = ANCHO_RENDER / ancho;
-    const tamanos = [...fuente.matchAll(/(\S+)\s*\{[^}]*font-size:\s*(\d+(?:\.\d+)?)px/g)];
-    expect(tamanos.length).toBeGreaterThan(0);
-    const culpables = tamanos.filter(([, , px]) => Number(px) * escala < 12).map(([, sel, px]) => `${sel}: ${px} unidades = ${(Number(px) * escala).toFixed(1)} px`);
+    const estilo = /<style>([\s\S]*)<\/style>/.exec(fuente)?.[1] ?? '';
+    const grande = /@media \(min-width: 64rem\) \{([\s\S]*?)\n {2}\}/.exec(estilo)?.[1] ?? '';
+    expect(grande, 'falta el bloque de pantalla grande').not.toBe('');
+    const medir = (css: string, escala: number) => [...css.matchAll(/(\S+)\s*\{[^}]*font-size:\s*(\d+(?:\.\d+)?)px/g)]
+      .filter(([, , px]) => Number(px) * escala < 12)
+      .map(([, sel, px]) => `${sel}: ${px} unidades = ${(Number(px) * escala).toFixed(1)} px`);
+    const culpables = [...medir(estilo.replace(grande, ''), 682 / ancho), ...medir(grande, 922 / ancho)];
     expect(culpables, culpables.join('\n')).toEqual([]);
   });
   it('sin texto justificado', () => {

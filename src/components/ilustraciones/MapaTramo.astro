@@ -1,13 +1,19 @@
 ---
-// Mapa esquemático del Tramo Centro. viewBox 820×520: son las coordenadas del contrato (el panel del backend las usa para
-// la vista previa), NO se cambia; el tamaño lo da el contenedor. Cada estación es un enlace con foco a su página; con JS
-// (scripts/mapa.ts, desde MapaInteractivo) el toque muestra su tarjeta. Verde = operativa; amarillo + anillo discontinuo =
-// próxima (nada se comunica solo por color). Los incidentes del estado de la traza se ubican por km (lib/tramo.ts).
+// Mapa esquemático del Tramo Centro. Las coordenadas (`mapa` de tramo.json, lienzo de 820 × 520) son contrato con el
+// panel del backend y NO se cambian. Cada estación es un enlace con foco a su página; con JS (scripts/mapa.ts, desde
+// MapaInteractivo) el toque muestra su ficha y el auto viaja hasta ella. Verde y punto lleno = operativa; amarillo y
+// centro hueco = próxima (nada se comunica solo por color). Los incidentes del estado de la traza se ubican por km.
+//
+// Fase C (05/10/2026), «premium y caro, nada de líneas cortadas o dibujos SVG "así nomás"»: el viewBox se encuadra sobre
+// lo dibujado; cada ruta es una cinta continua en tres capas (halo, cuerpo, filo) con curvas en los pueblos; se fueron
+// la grilla, las marcas viales que fluían y la luz que recorría las rutas en loop; las estaciones son anillos nítidos y
+// sus nombres van sobre una placa. Lo único que se mueve es el auto.
 import { Bath, Coffee, ShieldCheck, Tag, Truck } from '@lucide/astro';
-import type { EstadoRuta, Incidente, Tramo } from '@/lib/datos/esquemas';
+import { cabinaOperativa, type EstadoRuta, type Incidente, type Tramo } from '@/lib/datos/esquemas';
 import { kmTexto } from '@/lib/formato';
+import { estacionadoAntes, trazoRedondeado, type Red } from '@/lib/red';
 import { ruta } from '@/lib/rutas';
-import { estadoCabina, leyendaServicios, puntoEnRuta, rotulosDelMapa, type ClaveServicio } from '@/lib/tramo';
+import { cajaTexto, encuadreDelMapa, estadoCabina, leyendaServicios, puntoEnRuta, rotulosDelMapa, TAM_ROTULO, type ClaveServicio } from '@/lib/tramo';
 interface Props { tramo: Tramo; incidentes?: NonNullable<EstadoRuta['incidentes']>; modo?: 'scroll' | 'cargar'; class?: string; /** Distinto por mapa si hay más de uno en la página. */ idTitulo?: string }
 const { tramo, incidentes = [], modo = 'scroll', class: clase = '', idTitulo = 'mapa-titulo' } = Astro.props;
 const porSlug = new Map(tramo.ciudades.map((c) => [c.slug, c]));
@@ -16,13 +22,29 @@ const ciudad = (s: string) => {
   if (!c) throw new Error(`MapaTramo: la ciudad "${s}" no existe en tramo.json`);
   return c;
 };
-const d = (slugs: string[]) => slugs.map((s, i) => `${i === 0 ? 'M' : 'L'}${ciudad(s).mapa.x} ${ciudad(s).mapa.y}`).join(' ');
 const claseDibujar = modo === 'scroll' ? 'dibujar al-scroll' : 'dibujar al-cargar';
 const claseBaliza = modo === 'scroll' ? 'baliza' : 'baliza al-cargar';
-// Dónde va cada rótulo, sin pisarse (lib/tramo.ts, 05/10/2026).
+// Dónde va cada rótulo, sin pisarse, y qué parte del lienzo se muestra (lib/tramo.ts).
 const rotulos = rotulosDelMapa(tramo);
 const rotuloRuta = new Map(rotulos.rutas.map((r) => [r.ruta, r]));
 const rotuloCiudad = new Map(rotulos.ciudades.map((r) => [r.slug, r]));
+const encuadre = encuadreDelMapa(tramo);
+// La placa de cada rótulo de estación: una para el tamaño de pantallas chicas y otra para el de pantalla grande (las
+// letras cambian de tamaño, el ancla no). 4 de aire a los costados, 3 arriba y abajo.
+const placa = (x: number, y: number, nombre: string, tam: number) => {
+  const c = cajaTexto({ x, y, ancla: 'middle' }, nombre.toUpperCase(), tam, TAM_ROTULO.cabina.factor);
+  return { x: c.x0 - 4, y: c.y0 - 3, width: c.x1 - c.x0 + 8, height: c.y1 - c.y0 + 6 };
+};
+// La red, para que scripts/mapa.ts calcule el viaje del auto en el navegador sin traer el esquema de datos.
+const red: Red = { ciudades: tramo.ciudades.map((c) => ({ slug: c.slug, mapa: c.mapa })), trazados: tramo.trazados.map((t) => ({ ciudades: t.ciudades })) };
+// El auto arranca estacionado en la primera operativa, mirando hacia el nodo que sigue en su trazado.
+const inicial = tramo.cabinas.find(cabinaOperativa) ?? tramo.cabinas[0]!;
+const trazadoInicial = tramo.trazados.find((t) => t.ciudades.includes(inicial.slug))!;
+const enTrazado = trazadoInicial.ciudades.indexOf(inicial.slug);
+const vecino = ciudad(trazadoInicial.ciudades[enTrazado + 1] ?? trazadoInicial.ciudades[enTrazado - 1]!).mapa;
+const rumboInicial = Math.round((Math.atan2(vecino.y - inicial.mapa.y, vecino.x - inicial.mapa.x) * 180) / Math.PI);
+// Estacionado sobre la ruta, unas unidades antes de la estación, para no tapar su punto de estado.
+const autoEn = estacionadoAntes(inicial.mapa, rumboInicial);
 const titulo = `Mapa esquemático del Tramo Centro: ${tramo.rutas.map((r) => r.nombre).join(', ')} entre ${tramo.ciudades.filter((c) => c.principal).map((c) => c.nombre).join(', ')}, con ${tramo.cabinas.length} estaciones de peaje.`;
 const iconos: Record<ClaveServicio, typeof Coffee> = { areaDescanso: Coffee, detencionSegura: ShieldCheck, gruaGratuita: Truck, sanitarios: Bath, colocacionTelepase: Tag };
 const marcadores = incidentes.flatMap((inc) => { const p = inc.km === null ? null : puntoEnRuta(tramo, inc.ruta, inc.km); return p ? [{ ...inc, p }] : []; });
@@ -31,33 +53,49 @@ const marcadores = incidentes.flatMap((inc) => { const p = inc.km === null ? nul
 const SEVERIDAD: Record<Incidente['severidad'], string> = { corte: 'Corte', precaucion: 'Precaución', info: 'Información' };
 const FORMA: Record<Incidente['severidad'], string> = { corte: 'M0 -10 L9 6 L-9 6 Z', precaucion: 'M0 -9 L9 0 L0 9 L-9 0 Z', info: 'M-8 0 A8 8 0 1 0 8 0 A8 8 0 1 0 -8 0 Z' };
 const severidades = (['corte', 'precaucion', 'info'] as const).filter((s) => marcadores.some((m) => m.severidad === s));
+const id = (nombre: string) => `${idTitulo}-${nombre}`;
 ---
 <figure class:list={['mapa', clase]}>
   <p id={idTitulo} class="sr-only">{titulo}</p>
-  <svg viewBox="0 0 820 520" role="group" aria-labelledby={idTitulo} class="h-auto w-full">
+  <svg viewBox={`${encuadre.x} ${encuadre.y} ${encuadre.ancho} ${encuadre.alto}`} role="group" aria-labelledby={idTitulo} class="block h-auto w-full" data-red={JSON.stringify(red)}>
     <defs>
-      <pattern id="mapa-plano" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="var(--color-plano)"></path></pattern>
-      <filter id="mapa-glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"></feGaussianBlur></filter>
+      <radialGradient id={id('fondo')} cx="50%" cy="45%" r="70%">
+        <stop offset="0" stop-color="var(--color-superficie)" stop-opacity="0.35"></stop>
+        <stop offset="1" stop-color="var(--color-superficie)" stop-opacity="0"></stop>
+      </radialGradient>
+      <filter id={id('halo')} x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3"></feGaussianBlur></filter>
+      <filter id={id('sombra')} x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.4"></feGaussianBlur></filter>
+      <linearGradient id={id('carroceria')} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="var(--color-sobre-marca)"></stop>
+        <stop offset="1" stop-color="var(--color-texto-2)"></stop>
+      </linearGradient>
+      <linearGradient id={id('techo')} x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="var(--color-texto-2)"></stop>
+        <stop offset="1" stop-color="var(--color-sobre-marca)"></stop>
+      </linearGradient>
+      <linearGradient id={id('faro')} x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="var(--color-acento)" stop-opacity="0.5"></stop>
+        <stop offset="1" stop-color="var(--color-acento)" stop-opacity="0"></stop>
+      </linearGradient>
     </defs>
-    <rect width="820" height="520" fill="url(#mapa-plano)"></rect>
-    {tramo.trazados.map((t, i) => (
-      <g>
-        <path d={d(t.ciudades)} fill="none" stroke="var(--color-borde-fuerte)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"></path>
-        <path d={d(t.ciudades)} fill="none" stroke="var(--color-glow)" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" filter="url(#mapa-glow)" pathLength="1000" class={claseDibujar}></path>
-        <path d={d(t.ciudades)} fill="none" stroke="var(--color-acento)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" pathLength="1000" class={claseDibujar}></path>
-        <!-- marcas viales: discontinuas y fluyendo (sin .dibujar, que pisaría el dasharray) -->
-        <path d={d(t.ciudades)} fill="none" stroke="var(--color-vial)" stroke-width="1" stroke-dasharray="6 12" opacity="0.7" pathLength="1000" class="marcas-vivas aparece"></path>
-        <!-- una luz que recorre la ruta -->
-        <path d={d(t.ciudades)} fill="none" stroke="var(--color-texto)" stroke-width="3" stroke-linecap="round" pathLength="1000" filter="url(#mapa-glow)" class="luz-viaja aparece" style={`--i: ${i}`}></path>
-        <text x={rotuloRuta.get(t.ruta)!.x} y={rotuloRuta.get(t.ruta)!.y} class="ruta-etiqueta" text-anchor="middle">{t.ruta}</text>
-      </g>
-    ))}
+    <rect x={encuadre.x} y={encuadre.y} width={encuadre.ancho} height={encuadre.alto} fill={`url(#${id('fondo')})`}></rect>
+    {tramo.trazados.map((t) => {
+      const d = trazoRedondeado(t.ciudades.map((s) => ciudad(s).mapa));
+      return (
+        <g class="ruta">
+          <path d={d} class:list={['ruta-halo', claseDibujar]} fill="none" stroke="var(--color-glow)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" filter={`url(#${id('halo')})`} pathLength="1000"></path>
+          <path d={d} class:list={['ruta-cuerpo', claseDibujar]} fill="none" stroke="var(--color-borde-fuerte)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" pathLength="1000"></path>
+          <path d={d} class:list={['ruta-filo', claseDibujar]} fill="none" stroke="var(--color-acento)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" pathLength="1000"></path>
+          <text x={rotuloRuta.get(t.ruta)!.x} y={rotuloRuta.get(t.ruta)!.y} class="ruta-etiqueta" text-anchor="middle">{t.ruta}</text>
+        </g>
+      );
+    })}
     {tramo.ciudades.map((c) => (
       <g>
         {c.tipo === 'empalme' ? (
-          <rect x={c.mapa.x - 3} y={c.mapa.y - 3} width="6" height="6" fill="var(--color-fondo)" stroke="var(--color-acento)" stroke-width="1.5"></rect>
+          <rect x={c.mapa.x - 2.5} y={c.mapa.y - 2.5} width="5" height="5" rx="1" fill="var(--color-fondo)" stroke="var(--color-acento)" stroke-width="1.25"></rect>
         ) : (
-          <circle cx={c.mapa.x} cy={c.mapa.y} r={c.principal ? 6 : 3.5} fill="var(--color-fondo)" stroke="var(--color-acento)" stroke-width={c.principal ? 2 : 1.5}></circle>
+          <circle cx={c.mapa.x} cy={c.mapa.y} r={c.principal ? 4.5 : 3} fill="var(--color-fondo)" stroke="var(--color-acento)" stroke-width="1.25"></circle>
         )}
         {c.principal && (
           <text x={rotuloCiudad.get(c.slug)!.x} y={rotuloCiudad.get(c.slug)!.y} class="ciudad-etiqueta" text-anchor={rotuloCiudad.get(c.slug)!.ancla}>{c.nombre}</text>
@@ -73,22 +111,42 @@ const severidades = (['corte', 'precaucion', 'info'] as const).filter((s) => mar
     ))}
     {tramo.cabinas.map((cab, i) => {
       const e = estadoCabina(cab);
+      const { x, y } = cab.mapa;
       return (
         <a href={ruta(`/peajes/${cab.slug}`)} class={claseBaliza} style={`--i: ${i}`} data-estacion={cab.slug} data-estado-operativo={e.clave} aria-label={`Estación ${cab.nombre}, ${cab.ruta}${cab.km !== null ? ` km ${kmTexto(cab.km)}` : ''}, ${e.etiqueta.toLowerCase()}`}>
-          <circle cx={cab.mapa.x} cy={cab.mapa.y} r="14" class="baliza-halo" opacity="0.18"></circle>
-          <circle cx={cab.mapa.x} cy={cab.mapa.y} r="19" class="baliza-foco" fill="none" stroke-width="2"></circle>
-          {e.clave === 'proxima' && <circle cx={cab.mapa.x} cy={cab.mapa.y} r="11" class="baliza-anillo" fill="none" stroke-width="1.5" stroke-dasharray="4 3"></circle>}
-          <circle cx={cab.mapa.x} cy={cab.mapa.y} r="6" class="baliza-punto" stroke="var(--color-fondo)" stroke-width="2"></circle>
-          <text x={cab.mapa.x} y={cab.mapa.y - 18} class="cabina-etiqueta" text-anchor="middle">{cab.nombre}</text>
+          <circle cx={x} cy={y} r="14" class="baliza-halo" opacity="0.16"></circle>
+          <circle cx={x} cy={y} r="19" class="baliza-foco" fill="none" stroke-width="2"></circle>
+          <circle cx={x} cy={y} r="10" class="baliza-anillo" fill="var(--color-fondo)" stroke-width="1.5"></circle>
+          <circle cx={x} cy={y} r="5" class:list={['baliza-punto', e.clave === 'proxima' && 'baliza-hueca']}></circle>
+          <g class="cabina-rotulo">
+            <rect {...placa(x, y - 18, cab.nombre, 14)} rx="4" class="cabina-placa"></rect>
+            <rect {...placa(x, y - 18, cab.nombre, 11.5)} rx="4" class="cabina-placa-lg"></rect>
+            <text x={x} y={y - 18} class="cabina-etiqueta" text-anchor="middle">{cab.nombre}</text>
+          </g>
         </a>
       );
     })}
+    {/* El auto (fase C): visto desde arriba, dibujado mirando hacia la derecha y centrado en 0,0, unas 22 × 11 unidades.
+        Decorativo: lo mueve scripts/mapa.ts y todo lo que comunica el mapa sigue en las estaciones y la ficha. */}
+    <g class="auto" aria-hidden="true" data-auto data-estacion-auto={inicial.slug} data-rumbo={rumboInicial} transform={`translate(${autoEn.x} ${autoEn.y}) rotate(${rumboInicial})`}>
+      <ellipse cx="0.8" cy="1.8" rx="12.5" ry="6.6" fill="var(--color-sombra)" opacity="0.6" filter={`url(#${id('sombra')})`}></ellipse>
+      <path d="M10.5 -4 L26 -8.5 L26 -0.8 Z M10.5 4 L26 0.8 L26 8.5 Z" fill={`url(#${id('faro')})`}></path>
+      <rect x="-11" y="-5.5" width="22" height="11" rx="4" fill={`url(#${id('carroceria')})`} stroke="var(--color-marca-900)" stroke-opacity="0.55" stroke-width="0.5"></rect>
+      <rect x="-5.4" y="-4.3" width="7.6" height="8.6" rx="1.8" fill={`url(#${id('techo')})`}></rect>
+      <rect x="2.6" y="-4.3" width="4.4" height="8.6" rx="1.6" fill="var(--color-marca-900)"></rect>
+      <rect x="-8.8" y="-3.9" width="3.1" height="7.8" rx="1.3" fill="var(--color-marca-900)" opacity="0.9"></rect>
+      <rect x="-4.6" y="-3.5" width="5.8" height="1.1" rx="0.55" fill="var(--color-sobre-marca)" opacity="0.75"></rect>
+      <rect x="9.6" y="-4.6" width="1.5" height="2.2" rx="0.6" fill="var(--color-sobre-marca)"></rect>
+      <rect x="9.6" y="2.4" width="1.5" height="2.2" rx="0.6" fill="var(--color-sobre-marca)"></rect>
+      <rect x="-11.3" y="-4.4" width="1.1" height="2" rx="0.5" fill="var(--color-error)"></rect>
+      <rect x="-11.3" y="2.4" width="1.1" height="2" rx="0.5" fill="var(--color-error)"></rect>
+    </g>
   </svg>
   <figcaption class="mt-4 text-sm text-texto-2">
     <ul class="flex flex-wrap gap-x-6 gap-y-2" aria-label="Leyenda">
       <li class="inline-flex items-center gap-2"><span class="inline-block h-0.5 w-6 bg-acento" aria-hidden="true"></span> Rutas del tramo</li>
       <li class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full bg-ok" aria-hidden="true"></span> Estación operativa</li>
-      <li class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full border-2 border-dashed border-vial-texto" aria-hidden="true"></span> Estación próxima</li>
+      <li class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full border-2 border-vial-texto" aria-hidden="true"></span> Estación próxima</li>
       <li class="inline-flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full border-2 border-acento" aria-hidden="true"></span> Ciudad</li>
       {leyendaServicios(tramo).map((s) => { const Icono = iconos[s.clave]; return <li class="inline-flex items-center gap-2"><Icono size={14} aria-hidden="true" /> {s.etiqueta}</li>; })}
       {severidades.map((s) => (
@@ -101,35 +159,45 @@ const severidades = (['corte', 'precaucion', 'info'] as const).filter((s) => mar
 </figure>
 <style>
   .mapa text { font-family: var(--font-sans); fill: var(--color-texto-2); }
-  /* Estos font-size son unidades del viewBox (820 de ancho), no píxeles: el CSS escala el SVG. En El tramo, el ancho
-     más grande en que se dibuja es ~719 px (contenedor 80rem = 1280 − 2 × 40 del panel = 1200; la grilla 1,6fr/1fr con
-     gap 2rem le deja 1168 × 1,6/2,6 ≈ 719), o sea escala ≈ 0,877. Por eso los tamaños van por arriba del piso del
-     pliego (61.7): 14 → 12,3 px, 15 → 13,2 px, 17 → 14,9 px (el nombre de ciudad es contenido: pasa los 14 px).
-     Lo guarda tests/styles/legibilidad.test.ts. */
+  /* Estos font-size son unidades del dibujo, no píxeles: el CSS escala el SVG al ancho del panel. Los de acá son para
+     pantallas de 768 a 1023 px (el mapa, unos 682 px de ancho); los de abajo, para 1024 en adelante (desde unos 922 px).
+     Lo guarda tests/styles/legibilidad.test.ts: ninguno baja de 12 px en pantalla. */
   .ruta-etiqueta { font-size: 15px; font-weight: 800; letter-spacing: 0.12em; fill: var(--color-acento); }
-  .ciudad-etiqueta { font-size: 17px; font-weight: 600; fill: var(--color-texto); }
-  .cabina-etiqueta { font-size: 14px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0; transition: opacity var(--dur-ui) var(--ease-salida); }
-  /* Los <a> del SVG son botones del mapa: sin el subrayado de la regla global de enlaces (llegaría a la etiqueta de texto). */
+  .ciudad-etiqueta { font-size: 17px; font-weight: 500; fill: var(--color-texto); }
+  .cabina-etiqueta { font-size: 14px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  /* El nombre de cada estación va sobre una placa: se lee siempre igual, pase lo que pase por detrás. En pantallas
+     angostas se ve solo el de la elegida (o el que tiene el puntero o el foco). */
+  .cabina-rotulo { opacity: 0; transition: opacity var(--dur-ui) var(--ease-salida); }
+  .cabina-placa, .cabina-placa-lg { fill: var(--color-fondo-2); stroke: var(--color-borde); stroke-width: 1; }
+  .cabina-placa-lg { display: none; }
+  /* Los <a> del SVG son botones del mapa: sin el subrayado de la regla global de enlaces. */
   .baliza { cursor: pointer; outline: none; text-decoration: none; }
-  /* Los selectores por estado (0,3,0) le ganan a `.mapa text` (0,1,1): antes `.cabina-etiqueta` perdía y nunca se coloreaba. */
+  /* Los selectores por estado (0,3,0) le ganan a `.mapa text` (0,1,1). */
   .baliza[data-estado-operativo="operativa"] .baliza-halo, .baliza[data-estado-operativo="operativa"] .baliza-punto { fill: var(--color-ok); }
+  .baliza[data-estado-operativo="operativa"] .baliza-anillo { stroke: var(--color-ok); }
   .baliza[data-estado-operativo="operativa"] .cabina-etiqueta { fill: var(--color-ok); }
-  /* Punto, halo y anillo van con vial-texto, no con vial: acá el amarillo es primer plano sobre el panel (en claro,
-     casi blanco), y --color-vial no cambia entre temas (1,47:1, por debajo del 3:1 de WCAG 1.4.11 para un objeto
-     gráfico). Con vial-texto el mapa coincide con la muestra de la leyenda, que ya usa border-vial-texto. En oscuro
-     los dos tokens son el mismo amarillo: no se mueve nada. Las marcas viales del trazado (arriba) siguen con
-     --color-vial a propósito: van sobre la línea del acento, o sea sobre asfalto, no sobre el fondo. */
-  .baliza[data-estado-operativo="proxima"] .baliza-halo, .baliza[data-estado-operativo="proxima"] .baliza-punto { fill: var(--color-vial-texto); }
+  /* Próxima: anillo y centro hueco con vial-texto (no con vial: acá el amarillo es primer plano sobre el panel y
+     --color-vial no llega al 3:1 de WCAG 1.4.11). Se distingue de la operativa por la forma, no solo por el color. */
+  .baliza[data-estado-operativo="proxima"] .baliza-halo { fill: var(--color-vial-texto); }
   .baliza[data-estado-operativo="proxima"] .baliza-anillo { stroke: var(--color-vial-texto); }
   .baliza[data-estado-operativo="proxima"] .cabina-etiqueta { fill: var(--color-vial-texto); }
+  .baliza-hueca { fill: var(--color-fondo); stroke: var(--color-vial-texto); stroke-width: 2; }
   /* Foco de teclado y estación elegida: anillo con el acento (el outline no se dibuja en <a> de SVG). */
   .baliza-foco { stroke: var(--color-acento); opacity: 0; transition: opacity var(--dur-micro); }
   .baliza:focus-visible .baliza-foco, .baliza[aria-current="true"] .baliza-foco { opacity: 1; }
-  .baliza:hover .cabina-etiqueta, .baliza:focus-visible .cabina-etiqueta, .baliza[aria-current="true"] .cabina-etiqueta { opacity: 1; }
-  /* El halo late solo (movimiento.css); en hover se detiene y crece. */
-  .baliza:hover .baliza-halo, .baliza:focus-visible .baliza-halo { animation-play-state: paused; transform: scale(1.5); opacity: 0.4; }
+  .baliza:hover .cabina-rotulo, .baliza:focus-visible .cabina-rotulo, .baliza[aria-current="true"] .cabina-rotulo { opacity: 1; }
+  .baliza-halo { transform-box: fill-box; transform-origin: center; transition: transform var(--dur-ui) var(--ease-salida), opacity var(--dur-ui); }
+  .baliza:hover .baliza-halo, .baliza:focus-visible .baliza-halo { transform: scale(1.5); opacity: 0.4; }
   .incidente-forma { fill: var(--color-acento); }
   .incidente[data-severidad="precaucion"] .incidente-forma { fill: var(--color-vial-texto); }
   .incidente[data-severidad="corte"] .incidente-forma { fill: var(--color-error); }
-  @media (min-width: 48rem) { .cabina-etiqueta { opacity: 0.9; } }
+  .auto { pointer-events: none; }
+  @media (min-width: 48rem) { .cabina-rotulo { opacity: 1; } }
+  @media (min-width: 64rem) {
+    .ruta-etiqueta { font-size: 12px; }
+    .ciudad-etiqueta { font-size: 13px; }
+    .cabina-etiqueta { font-size: 11.5px; }
+    .cabina-placa { display: none; }
+    .cabina-placa-lg { display: inline; }
+  }
 </style>

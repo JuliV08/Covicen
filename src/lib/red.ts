@@ -131,21 +131,31 @@ const vueltaEnU = (inicio: Punto, rumbo: number, siguiente: Punto): Punto[] => {
 export const recorrido = (pts: Punto[], { radio = 14, rumbo }: { radio?: number; rumbo?: number }): Muestra[] => {
   if (!pts.length) return [];
   const camino: Punto[] = [pts[0]!];
-  let base = pts;
+  const ultimo = () => camino[camino.length - 1]!;
+  // `desde`: de dónde viene el tramo que sigue (el vértice anterior, o el final de una U).
+  let desde = pts[0]!;
   if (rumbo !== undefined && pts.length > 1 && necesitaVuelta(rumbo, pts[0]!, pts[1]!)) {
-    const u = vueltaEnU(pts[0]!, rumbo, pts[1]!);
-    camino.push(...u);
-    base = [u[u.length - 1]!, ...pts.slice(1)];
+    camino.push(...vueltaEnU(pts[0]!, rumbo, pts[1]!));
+    desde = ultimo();
   }
-  for (let i = 1; i < base.length; i++) {
-    const a = base[i - 1]!, b = base[i]!, c = base[i + 1];
+  for (let i = 1; i < pts.length; i++) {
+    const b = pts[i]!, c = pts[i + 1];
     if (!c) {
-      camino.push(...linea(camino[camino.length - 1]!, b, 2));
+      camino.push(...linea(ultimo(), b, 2));
       break;
     }
-    const r = radioEn(a, b, c, radio);
-    const p1 = hacia(b, a, r), p2 = hacia(b, c, r);
-    camino.push(...linea(camino[camino.length - 1]!, p1, 2), ...cuadratica(p1, b, p2, 8));
+    // Volver por donde vino (el auto pasó el peaje y la estación pedida quedó atrás): U en el vértice, nunca un giro
+    // en seco de 180°.
+    const entrada = grados(desde, b);
+    if (necesitaVuelta(entrada, b, c)) {
+      camino.push(...linea(ultimo(), b, 2), ...vueltaEnU(b, entrada, c));
+      desde = ultimo();
+      continue;
+    }
+    const r = radioEn(desde, b, c, radio);
+    const p1 = hacia(b, desde, r), p2 = hacia(b, c, r);
+    camino.push(...linea(ultimo(), p1, 2), ...cuadratica(p1, b, p2, 8));
+    desde = b;
   }
   let d = 0;
   return camino.map((p, i) => {
@@ -176,6 +186,15 @@ export const continuarDesde = (red: Red, viaje: string[], muestras: Muestra[], d
   let i = enNodos.findIndex((m) => m.d >= d);
   if (i === -1) i = viaje.length - 1;
   return { camino: caminoEntre(red, viaje[i]!, destino), desde: enNodos[i]! };
+};
+
+/** El auto frena unas unidades antes de la estación, sobre la ruta, como antes de un peaje: si se detuviera encima,
+ *  taparía el punto que dice si la estación está operativa. 34 = el anillo de la elegida (19) + medio auto (11) + aire. */
+export const ESTACIONADO = 34;
+/** Dónde queda estacionado el auto que llega a `estacion` con `rumbo`. */
+export const estacionadoAntes = (estacion: Punto, rumbo: number): Punto => {
+  const th = (rumbo * Math.PI) / 180;
+  return { x: r2(estacion.x - Math.cos(th) * ESTACIONADO), y: r2(estacion.y - Math.sin(th) * ESTACIONADO) };
 };
 
 /** Cuánto dura un viaje, en milisegundos: rápido pero que se vea (entre 0,5 y 2 segundos según el largo). */

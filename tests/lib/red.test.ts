@@ -60,6 +60,13 @@ describe('curvas y recorrido', () => {
     expect(giro(m.at(-1)!.angulo, 180)).toBeLessThan(5);
     for (let i = 1; i < m.length; i++) expect(giro(m[i - 1]!.angulo, m[i]!.angulo)).toBeLessThan(25);
   });
+  // El auto frena antes del peaje: el próximo viaje pasa por la estación, y si tiene que volver, dobla ahí en U.
+  it('una vuelta atrás en el medio del camino también es una U, sin girar en seco', () => {
+    const m = recorrido([{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 40, y: 0 }], { radio: 10, rumbo: 0 });
+    expect(Math.min(...m.map((p) => p.y))).toBeLessThan(-8);
+    expect(m.at(-1)).toMatchObject({ x: 40, y: 0 });
+    for (let i = 1; i < m.length; i++) expect(giro(m[i - 1]!.angulo, m[i]!.angulo)).toBeLessThan(25);
+  });
   it('posicionEn interpola entre muestras y se queda en los extremos', () => {
     const m = recorrido([{ x: 0, y: 0 }, { x: 100, y: 0 }], {});
     expect(posicionEn(m, 50)).toMatchObject({ x: 50, y: 0 });
