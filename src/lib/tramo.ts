@@ -1,6 +1,7 @@
 // Lo que el mapa y las tarjetas derivan del contrato: estado operativo, servicios y la posición de un km sobre el trazo.
 import type { Cabina, NombreRuta, Tramo } from '@/lib/datos/esquemas';
 import { cabinaOperativa } from '@/lib/datos/esquemas';
+import type { Punto } from '@/lib/red';
 
 export type EstadoOperativo = { clave: 'operativa' | 'proxima'; etiqueta: string };
 
@@ -112,4 +113,60 @@ export const rotulosDelMapa = (t: Tramo) => {
     return { slug: c.slug, nombre: c.nombre, ...elegido };
   });
   return { rutas, ciudades };
+};
+
+// --- Fase C (05/10/2026): encuadre del mapa y lugar de la ficha flotante ---
+
+// Lo que ocupa el dibujo: halos de estación, puntos de ciudad, y los rótulos de rutas, ciudades y estaciones.
+const ocupacion = (t: Tramo): Caja[] => {
+  const { rutas, ciudades } = rotulosDelMapa(t);
+  return [
+    ...t.cabinas.map((c) => cajaCirculo(c.mapa.x, c.mapa.y, 22)),
+    ...t.cabinas.map((c) => cajaTexto({ x: c.mapa.x, y: c.mapa.y - 18, ancla: 'middle' }, c.nombre.toUpperCase(), TAM_ROTULO.cabina.tam, TAM_ROTULO.cabina.factor)),
+    ...t.ciudades.map((c) => cajaCirculo(c.mapa.x, c.mapa.y, 8)),
+    ...rutas.map((r) => cajaTexto(r, r.ruta, TAM_ROTULO.ruta.tam, TAM_ROTULO.ruta.factor)),
+    ...ciudades.map((c) => cajaTexto(c, c.nombre, TAM_ROTULO.ciudad.tam, TAM_ROTULO.ciudad.factor)),
+  ];
+};
+
+/** El encuadre del mapa: la caja de todo lo dibujado con 24 unidades de margen, dentro del lienzo de 820 × 520. Las
+ *  coordenadas no cambian (son contrato con el backend): cambia qué parte del lienzo se muestra. */
+export const encuadreDelMapa = (t: Tramo): { x: number; y: number; ancho: number; alto: number } => {
+  const cajas = ocupacion(t);
+  const x0 = Math.max(0, Math.floor(Math.min(...cajas.map((c) => c.x0)) - 24));
+  const y0 = Math.max(0, Math.floor(Math.min(...cajas.map((c) => c.y0)) - 24));
+  const x1 = Math.min(ANCHO_MAPA, Math.ceil(Math.max(...cajas.map((c) => c.x1)) + 24));
+  const y1 = Math.min(ALTO_MAPA, Math.ceil(Math.max(...cajas.map((c) => c.y1)) + 24));
+  return { x: x0, y: y0, ancho: x1 - x0, alto: y1 - y0 };
+};
+
+/** Tamaño de la ficha compacta en pantalla (19rem de ancho; el alto, el de la más larga: Carcarañá). */
+export const TAM_FICHA_PX = { ancho: 304, alto: 260 } as const;
+/** Dónde flota: en el hueco entre Córdoba y San Francisco, por encima de la RN 9, a 12 unidades del borde de arriba. */
+export const lugarDeLaFicha = (t: Tramo): { x: number; y: number } => ({ x: 205, y: encuadreDelMapa(t).y + 12 });
+
+const cruzaSegmento = (a: Punto, b: Punto, c: Caja): boolean => {
+  const adentro = (p: Punto) => p.x >= c.x0 && p.x <= c.x1 && p.y >= c.y0 && p.y <= c.y1;
+  if (adentro(a) || adentro(b)) return true;
+  const corta = (p: Punto, q: Punto, r: Punto, s: Punto) => {
+    const d = (q.x - p.x) * (s.y - r.y) - (q.y - p.y) * (s.x - r.x);
+    if (d === 0) return false;
+    const u = ((r.x - p.x) * (s.y - r.y) - (r.y - p.y) * (s.x - r.x)) / d;
+    const v = ((r.x - p.x) * (q.y - p.y) - (r.y - p.y) * (q.x - p.x)) / d;
+    return u >= 0 && u <= 1 && v >= 0 && v <= 1;
+  };
+  const esq = [{ x: c.x0, y: c.y0 }, { x: c.x1, y: c.y0 }, { x: c.x1, y: c.y1 }, { x: c.x0, y: c.y1 }];
+  return esq.some((p, i) => corta(a, b, p, esq[(i + 1) % 4]!));
+};
+
+/** ¿La ficha flotante entra sin tapar nada, con el mapa dibujado a `anchoPx` de ancho en pantalla? */
+export const fichaLibre = (t: Tramo, anchoPx: number): boolean => {
+  const encuadre = encuadreDelMapa(t);
+  const escala = anchoPx / encuadre.ancho;
+  const lugar = lugarDeLaFicha(t);
+  const ficha: Caja = { x0: lugar.x, y0: lugar.y, x1: lugar.x + TAM_FICHA_PX.ancho / escala, y1: lugar.y + TAM_FICHA_PX.alto / escala };
+  if (ficha.x1 > encuadre.x + encuadre.ancho || ficha.y1 > encuadre.y + encuadre.alto) return false;
+  if (ocupacion(t).some((o) => chocan(ficha, o))) return false;
+  const punto = new Map(t.ciudades.map((c) => [c.slug, c.mapa]));
+  return !t.trazados.some((tr) => tr.ciudades.slice(1).some((s, i) => cruzaSegmento(punto.get(tr.ciudades[i]!)!, punto.get(s)!, ficha)));
 };

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
-import { caminoEntre, duracionViaje, necesitaVuelta, posicionEn, puntosDe, recorrido, suave, trazoRedondeado } from '@/lib/red';
+import { caminoEntre, continuarDesde, duracionViaje, necesitaVuelta, posicionEn, puntosDe, recorrido, suave, trazoRedondeado } from '@/lib/red';
 
 // Fase C (05/10/2026): el auto del mapa viaja por el camino más corto de la red. La RN 9 y la RN 34 se juntan en
 // Rosario; la RN 34 y la RN 19, en el empalme.
@@ -72,5 +72,22 @@ describe('curvas y recorrido', () => {
     expect(suave(0)).toBe(0);
     expect(suave(1)).toBe(1);
     expect(suave(0.5)).toBe(0.5);
+  });
+});
+
+// Tocar otra estación en pleno viaje: el auto termina el tramo en curso y de ahí toma el camino nuevo, sin saltar.
+describe('continuarDesde', async () => {
+  const red = await fuenteLocalJson.tramo();
+  it('a mitad de Carcarañá → Rosario, pedir Leones: termina en Rosario y vuelve por la RN 9', () => {
+    const viaje = ['carcarana', 'rosario'];
+    const m = recorrido(puntosDe(red, viaje), {});
+    const r = continuarDesde(red, viaje, m, m.at(-1)!.d / 2, 'leones');
+    expect(r.camino).toEqual(['rosario', 'carcarana', 'leones']);
+    expect(r.desde).toMatchObject({ x: 771, y: 465 });
+  });
+  it('pedir la estación a la que ya iba: sigue el mismo viaje', () => {
+    const viaje = ['carcarana', 'rosario', 'totoras'];
+    const m = recorrido(puntosDe(red, viaje), {});
+    expect(continuarDesde(red, viaje, m, 10, 'totoras').camino).toEqual(['rosario', 'totoras']);
   });
 });

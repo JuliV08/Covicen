@@ -168,6 +168,16 @@ export const posicionEn = (m: Muestra[], d: number): Muestra => {
   return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, angulo: a.angulo + giro * t, d };
 };
 
+/** Tocar otra estación en pleno viaje: el auto termina el tramo en curso (sigue hasta el próximo nodo del viaje) y de
+ *  ahí toma el camino más corto a la nueva. Así nunca salta ni queda fuera de la ruta. */
+export const continuarDesde = (red: Red, viaje: string[], muestras: Muestra[], d: number, destino: string): { camino: string[]; desde: Muestra } => {
+  const cercana = (p: Punto) => muestras.reduce((mejor, m) => (Math.hypot(m.x - p.x, m.y - p.y) < Math.hypot(mejor.x - p.x, mejor.y - p.y) ? m : mejor));
+  const enNodos = puntosDe(red, viaje).map(cercana);
+  let i = enNodos.findIndex((m) => m.d >= d);
+  if (i === -1) i = viaje.length - 1;
+  return { camino: caminoEntre(red, viaje[i]!, destino), desde: enNodos[i]! };
+};
+
 /** Cuánto dura un viaje, en milisegundos: rápido pero que se vea (entre 0,5 y 2 segundos según el largo). */
 export const duracionViaje = (largo: number) => Math.max(500, Math.min(2000, 450 + largo * 1.6));
 /** Arranque y frenada suaves (ease-in-out cúbica). */

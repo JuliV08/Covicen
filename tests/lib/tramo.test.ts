@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
-import { cajaCirculo, cajaTexto, chocan, estadoCabina, leyendaServicios, puntoEnRuta, rotulosDelMapa, serviciosDeCabina, TAM_ROTULO } from '@/lib/tramo';
+import { cajaCirculo, cajaTexto, chocan, encuadreDelMapa, estadoCabina, fichaLibre, leyendaServicios, puntoEnRuta, rotulosDelMapa, serviciosDeCabina, TAM_ROTULO } from '@/lib/tramo';
 
 describe('estadoCabina', async () => {
   const t = await fuenteLocalJson.tramo();
@@ -78,5 +78,31 @@ describe('rotulosDelMapa', async () => {
     expect(Math.hypot(rn19.x - franck.x, rn19.y - franck.y)).toBeGreaterThan(80);
     const santaFe = ciudades.find((c) => c.slug === 'santa-fe')!;
     expect(santaFe.ancla).not.toBe('end');
+  });
+});
+
+// Fase C (05/10/2026): el mapa se encuadra sobre lo dibujado, y la ficha compacta flota en el hueco entre Córdoba y
+// San Francisco, por encima de la RN 9.
+describe('encuadre y lugar de la ficha', async () => {
+  const t = await fuenteLocalJson.tramo();
+  it('el encuadre contiene todos los puntos con margen y no se sale del lienzo de 820 × 520', () => {
+    const c = encuadreDelMapa(t);
+    for (const p of [...t.ciudades.map((x) => x.mapa), ...t.cabinas.map((x) => x.mapa)]) {
+      expect(p.x).toBeGreaterThan(c.x + 20);
+      expect(p.x).toBeLessThan(c.x + c.ancho - 20);
+      expect(p.y).toBeGreaterThan(c.y + 20);
+      expect(p.y).toBeLessThan(c.y + c.alto - 20);
+    }
+    expect(c.x).toBeGreaterThanOrEqual(0);
+    expect(c.y).toBeGreaterThanOrEqual(0);
+    expect(c.x + c.ancho).toBeLessThanOrEqual(820);
+    expect(c.y + c.alto).toBeLessThanOrEqual(520);
+  });
+  // A 1280 de pantalla el mapa mide 1280 − 40 (contenedor) − 2 × 38,4 (relleno del panel) ≈ 1163 px de ancho; a 1440,
+  // 1200 (el contenedor llega a su máximo); a 1024, 984 − 2 × 30,7 ≈ 922.
+  it('a 1280 y 1440 px la ficha flotante no tapa rutas, estaciones ni rótulos; a 1024 no entra (va abajo)', () => {
+    expect(fichaLibre(t, 1163)).toBe(true);
+    expect(fichaLibre(t, 1200)).toBe(true);
+    expect(fichaLibre(t, 922)).toBe(false);
   });
 });
