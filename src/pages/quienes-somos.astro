@@ -38,7 +38,7 @@ const asumimos = [
 <Base titulo="Quiénes somos" {descripcion} migas={[{ nombre: 'Quiénes somos', href: '/quienes-somos' }]}>
   <Seccion nivel="h1" eyebrow="Quiénes somos" titulo="La concesionaria del Tramo Centro." intro={`En Covicen sabemos que una ruta es mucho más que asfalto: es el camino de todos los días para ir a trabajar, llevar lo que se produce y volver a casa. Por eso, desde el ${fechaLarga(c.inicioOperacion)} y durante ${c.plazoAnios} años, cuidar nuestras rutas en el centro del país es nuestro trabajo.`} class="pt-10">
     <div class="revelar prose-covicen max-w-prose text-lg text-texto-2">
-      <p>Detrás de Covicen hay tres empresas constructoras de la región —{enumerar(e.consorcio.map((x) => x.nombre))}— que se unieron para hacerse cargo del Tramo Centro de la Red Federal de Concesiones: {numero(c.km, 2)} km de {rutas}, entre Córdoba y Santa Fe. Ganamos la licitación ofreciendo el peaje más bajo de los {c.tramosEtapa} tramos de la Etapa III.</p>
+      <p>Detrás de Covicen hay tres empresas constructoras de la región —{enumerar(e.consorcio.map((x) => x.nombre))}— que se unieron para hacerse cargo del Tramo Centro de la Red Federal de Concesiones: {numero(c.km, 2)} km de {rutas}, entre Córdoba y Santa Fe.</p>
       <p>Mantener la calzada en condiciones es solo una parte del trabajo. La otra es estar cerca de quienes viajan: que tengan auxilio cuando lo necesitan y que sepan a quién llamar.</p>
       <p>Y queremos estar a la altura de los pueblos y las ciudades que crecieron al costado de estas rutas y viven de ellas.</p>
     </div>

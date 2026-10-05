@@ -51,7 +51,7 @@ describe('el 0800 444 7777', () => {
     expect(columna).toContain('Atención al usuario');
   });
 
-  it('en la home («¿Consultas, reclamos, propuestas?»), en el respaldo del formulario del CRM y en la Guía de trámites', async () => {
+  it('en la home («¿Consultas, reclamos?»), en el respaldo del formulario del CRM y en la Guía de trámites', async () => {
     const cta = await (await contenedor()).renderToString(ContactoCta, { props: { contacto: await fuenteLocalJson.contacto() } });
     expect(cta).toContain('href="tel:08004447777"');
     expect(cta).toContain(`llamanos gratis al ${NUMERO}`);
