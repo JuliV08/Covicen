@@ -3,6 +3,12 @@
 // con la cinta de Corresur como referencia): ahora desfilan en una sola línea continua, con una etiqueta fija a la
 // izquierda. El contenido sale de avisos.json y mañana del backoffice, sin tocar este componente: la costura de
 // datos ya es la misma (FuenteDatos.avisos()).
+//
+// Rediseño «señal de ruta» (05/10/2026, fase B): «mucho más premium, quiero diferenciarme de Corresur». La etiqueta es
+// una pestaña azul con punta de chevrón, como las señales informativas de las rutas argentinas (Corresur usa un bloque
+// amarillo); líneas finas con el degradé de Covicen arriba y abajo, el texto que se desvanece en los bordes, y marcas
+// de carril entre aviso y aviso. El botón de pausa de la derecha se fue («se buguea y no tiene mucho sentido»): el
+// freno es la pestaña misma, que sigue cumpliendo WCAG 2.2.2 en el celular, donde no hay mouse para frenarla.
 import { Pause, Play } from '@lucide/astro';
 import type { Aviso } from '@/lib/datos/esquemas';
 import { ruta } from '@/lib/rutas';
@@ -18,14 +24,25 @@ const copias = [false, true];
 ---
 {avisos.length > 0 && (
   <section class:list={['marquesina bloque-oscuro', enHero && 'marquesina-hero']} aria-label={etiqueta} data-marquesina style={`--avisos: ${avisos.length}`}>
-    <p class="marquesina-etiqueta eyebrow"><span>{etiqueta}</span></p>
+    {/* La pestaña. El botón la cubre entera (es el freno: WCAG 2.2.2 pide poder detener lo que se mueve solo más de 5
+        segundos, y el único freno que sirve sin mouse es uno que se toca). Con «menos movimiento» marquesina.ts lo
+        esconde y queda solo el rótulo. Lleva la clase vieja `marquesina-pausa` a propósito: la hoja de impresión la
+        esconde por ese nombre. */}
+    <div class="marquesina-etiqueta">
+      <button type="button" class="marquesina-pausa" data-pausa data-pausar="Pausar los avisos" data-reanudar="Reanudar los avisos" aria-label="Pausar los avisos">
+        <span data-icono-pausa><Pause size={12} aria-hidden="true" /></span>
+        <span data-icono-reanudar><Play size={12} aria-hidden="true" /></span>
+      </button>
+      <span class="marquesina-rotulo eyebrow">{etiqueta}</span>
+    </div>
     <div class="marquesina-pista">
       <div class="marquesina-cinta">
         {copias.map((copia) => (
           <ul class="marquesina-grupo" aria-hidden={copia ? 'true' : undefined}>
             {avisos.map((a) => (
               <li class="marquesina-item">
-                <span class:list={['marquesina-punto', a.tono === 'vial' ? 'bg-vial' : 'bg-acento']} aria-hidden="true"></span>
+                {/* El punto amarillo solo en los de emergencia: así el urgente resalta entre los demás. */}
+                {a.tono === 'vial' && <span class="marquesina-punto bg-vial" aria-hidden="true"></span>}
                 {a.url
                   ? <a href={enlace(a.url)} tabindex={copia ? -1 : undefined}>{a.texto}</a>
                   : <span>{a.texto}</span>}
@@ -35,70 +52,94 @@ const copias = [false, true];
         ))}
       </div>
     </div>
-    {/* WCAG 2.2.2: lo que se mueve solo y dura más de 5 s tiene que poder frenarse. El puntero encima y el foco
-        adentro también frenan, por CSS; este botón es el freno explícito, el único que sirve sin mouse. */}
-    <button type="button" class="marquesina-pausa" data-pausa data-pausar="Pausar los avisos" data-reanudar="Reanudar los avisos" aria-label="Pausar los avisos">
-      <span data-icono-pausa><Pause size={16} aria-hidden="true" /></span>
-      <span data-icono-reanudar><Play size={16} aria-hidden="true" /></span>
-    </button>
   </section>
 )}
 <script src="../scripts/marquesina.ts"></script>
 <style>
   .marquesina {
     /* La cinta ya trae su fondo, así que le avisa a .bloque-oscuro cuál es en vez de dejar que le ponga el de la
-       página: de este modo se ve del mismo color en los dos temas. */
+       página: de este modo se ve del mismo color en los dos temas. Opaco a propósito: sobre la foto del hero, el
+       contraste del texto no puede depender de la foto. */
     --fondo-bloque: var(--color-fondo-2);
+    position: relative;
     display: flex;
     align-items: stretch;
     min-height: 2.75rem;
     background: var(--fondo-bloque);
-    border-block: 1px solid var(--color-borde);
     overflow: hidden;
   }
-  /* Señalética: el amarillo va de fondo y el texto encima es sobre-vial (el par que verifica pares.ts). */
+  /* Las líneas finas de arriba y de abajo, con el degradé de las costuras entre secciones. */
+  .marquesina::before, .marquesina::after {
+    content: ""; position: absolute; left: 0; right: 0; height: 1px; z-index: 2; pointer-events: none;
+    background: linear-gradient(90deg, transparent, var(--color-borde-fuerte) 20%, color-mix(in srgb, var(--color-acento) 60%, transparent) 50%, var(--color-borde-fuerte) 80%, transparent);
+  }
+  .marquesina::before { top: 0; }
+  .marquesina::after { bottom: 0; }
+
+  /* La pestaña: azul de marca con texto blanco (el par sobre-marca / marca-700 lo mide pares.ts) y punta de chevrón,
+     como una señal informativa de ruta. */
   .marquesina-etiqueta {
+    position: relative;
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    padding-inline: 1rem;
-    background: var(--color-vial);
-    color: var(--color-sobre-vial);
-    font-weight: 700;
+    padding-inline: 1rem 1.75rem;
+    background: var(--color-marca-700);
+    color: var(--color-sobre-marca);
+    clip-path: polygon(0 0, calc(100% - 0.875rem) 0, 100% 50%, calc(100% - 0.875rem) 100%, 0 100%);
   }
-  /* En la home se apoya en el borde de abajo del hero, encima de la foto: el fondo es opaco, así que el texto no
-     depende del velo. Queda por debajo del velo de la disolvencia (z 40), que tapa el hero entero. */
-  .marquesina-hero { position: absolute; inset-inline: 0; bottom: 0; z-index: 10; border-block-end: 0; }
-  .marquesina-pista { flex: 1; min-width: 0; display: flex; align-items: center; overflow: hidden; }
+  .marquesina-rotulo { color: inherit; font-weight: 700; }
+  /* Con el freno a la vista, el rótulo deja lugar para el ícono. */
+  .marquesina-etiqueta:has(> [data-pausa]:not([hidden])) .marquesina-rotulo { padding-left: 1.25rem; }
+  /* El freno cubre la pestaña entera; el ícono va a la izquierda del rótulo. El foco se dibuja hacia adentro: la punta
+     de chevrón recorta todo lo que sale de la pestaña. */
+  .marquesina-pausa {
+    position: absolute; inset: 0; display: flex; align-items: center; padding-left: 1rem;
+    color: inherit; cursor: pointer;
+  }
+  .marquesina-pausa:hover { background: color-mix(in oklab, var(--color-sobre-marca) 10%, transparent); }
+  .marquesina-pausa:focus-visible { outline: 2px solid var(--color-sobre-marca); outline-offset: -4px; border-radius: 0; }
+  /* Un solo botón para las dos caras del pausado: se ve el ícono que corresponde al estado. */
+  [data-icono-reanudar], [data-pausado] [data-icono-pausa] { display: none; }
+  [data-pausado] [data-icono-reanudar] { display: inline-flex; }
+
+  /* En la home se apoya en el borde de abajo del hero, encima de la foto. Queda por debajo del velo de la
+     disolvencia (z 40), que tapa el hero entero. */
+  .marquesina-hero { position: absolute; inset-inline: 0; bottom: 0; z-index: 10; }
+  /* El texto se desvanece en los dos bordes en vez de cortarse en seco. */
+  .marquesina-pista {
+    flex: 1; min-width: 0; display: flex; align-items: center; overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 2rem, black calc(100% - 3rem), transparent);
+    mask-image: linear-gradient(90deg, transparent, black 2rem, black calc(100% - 3rem), transparent);
+  }
   .marquesina-cinta { display: flex; width: max-content; animation: desfilar calc(var(--avisos, 3) * 9s) linear infinite; }
   .marquesina-grupo { display: flex; align-items: center; }
   /* Media pista = exactamente una copia de los avisos: al llegar ahí, la imagen es idéntica a la del arranque. */
   @keyframes desfilar { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-  .marquesina-item { display: flex; align-items: center; gap: 0.5rem; padding-inline: 1.25rem; font-size: 0.875rem; white-space: nowrap; color: var(--color-texto-2); }
-  .marquesina-item + .marquesina-item { border-inline-start: 1px solid var(--color-borde); }
+  .marquesina-item { display: flex; align-items: center; gap: 0.5rem; padding-inline-end: 1.5rem; font-size: 0.875rem; white-space: nowrap; color: var(--color-texto-2); }
+  /* Marcas de carril entre aviso y aviso: dos trazos cortos. Van en TODOS los avisos, también en el primero, para que
+     las dos copias de la pista sean idénticas y el empalme no salte. */
+  .marquesina-item::before {
+    content: ""; flex-shrink: 0; width: 1.25rem; height: 2px; margin-inline-end: 1rem; border-radius: 1px;
+    background: repeating-linear-gradient(90deg, var(--color-borde-fuerte) 0 0.5rem, transparent 0.5rem 0.75rem);
+  }
   .marquesina-punto { width: 0.5rem; height: 0.5rem; flex-shrink: 0; border-radius: var(--radius-full); }
   .marquesina-item a { color: var(--color-texto); text-decoration: none; }
   .marquesina-item a:hover, .marquesina-item a:focus-visible { text-decoration: underline; }
 
-  .marquesina-pausa { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 2.75rem; color: var(--color-texto-2); }
-  .marquesina-pausa:hover, .marquesina-pausa:focus-visible { color: var(--color-texto); background: var(--color-superficie); }
-  /* Un solo botón para las dos caras del pausado: se ve el ícono que corresponde al estado. */
-  [data-icono-reanudar], [data-pausado] [data-icono-pausa] { display: none; }
-  [data-pausado] [data-icono-reanudar] { display: inline-flex; }
-
-  /* Los tres frenos. El puntero y el foco son implícitos y se sueltan solos; el botón manda y dura lo que dure la página. */
+  /* Los tres frenos. El puntero y el foco son implícitos y se sueltan solos; la pestaña manda y dura lo que dure la página. */
   .marquesina:hover .marquesina-cinta,
   .marquesina:focus-within .marquesina-cinta,
   .marquesina[data-pausado] .marquesina-cinta { animation-play-state: paused; }
-  /* Y el botón le gana a los implícitos. Sin esto, «Reanudar» no reanudaba NADA: al hacer clic el foco queda en el
+  /* Y la pestaña le gana a los implícitos. Sin esto, «Reanudar» no reanudaba NADA: al tocarla el foco queda en el
      propio botón y el puntero encima, así que `:focus-within` y `:hover` seguían frenando la cinta para siempre.
      `data-corriendo` lo pone marquesina.ts al reanudar y lo saca cuando el usuario se va de la cinta, que es cuando
      los frenos implícitos vuelven a tener sentido. Va última y con más especificidad para ganarle a las tres de arriba. */
   .marquesina[data-corriendo]:not([data-pausado]) .marquesina-cinta { animation-play-state: running; }
 
   /* Con "menos movimiento" no desfila nada: la cinta queda quieta y se puede recorrer a mano. La copia sobra y el
-     botón de pausa también (marquesina.ts lo esconde): no hay movimiento que frenar. */
+     freno también (marquesina.ts lo esconde): la pestaña queda como rótulo. */
   @media (prefers-reduced-motion: reduce) {
     .marquesina-cinta { animation: none; }
     .marquesina-grupo[aria-hidden] { display: none; }
