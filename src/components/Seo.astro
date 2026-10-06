@@ -31,6 +31,9 @@ const bloques = [jsonLdOrganizacion(empresa, contacto, inicio, absoluta('/favico
 <meta name="description" content={descripcion} />
 <link rel="canonical" href={canonical} />
 {!config.indexable && <meta name="robots" content="noindex, nofollow" />}
+{/* Verificación de Google Search Console, propiedad «https://www.covicen.com.ar/» (06/10/2026). Google la busca en
+    la home cada tanto: si se saca, la propiedad deja de estar verificada. No es un dato secreto. */}
+<meta name="google-site-verification" content="Owc6oPDUvOU5deDKUUflAAT-OyxtQZJW9xMt2mlmxfw" />
 <meta name="theme-color" content={COLOR_TEMA[temaInicial()]} />
 <link rel="preload" href={archivoWoff2} as="font" type="font/woff2" crossorigin />
 <link rel="icon" href={ruta('/favicon.svg')} type="image/svg+xml" />
