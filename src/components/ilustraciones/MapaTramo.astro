@@ -58,15 +58,19 @@ const id = (nombre: string) => `${idTitulo}-${nombre}`;
   <p id={idTitulo} class="sr-only">{titulo}</p>
   <svg viewBox={`${encuadre.x} ${encuadre.y} ${encuadre.ancho} ${encuadre.alto}`} role="group" aria-labelledby={idTitulo} class="block h-auto w-full xl:max-h-[calc(100svh-13rem)]" data-red={JSON.stringify(red)}>
     <defs>
-      <radialGradient id={id('fondo')} cx="50%" cy="45%" r="70%">
+      {/* Los dos degradés del fondo llegan a cero justo en el borde del dibujo (r 50 %, centrados): con r 62–70 % todavía
+          quedaba un 10–20 % de opacidad ahí y se veía el corte del rectángulo (Juli, 05/10/2026). */}
+      <radialGradient id={id('fondo')} cx="50%" cy="50%" r="50%">
         <stop offset="0" stop-color="var(--color-superficie)" stop-opacity="0.35"></stop>
+        <stop offset="0.6" stop-color="var(--color-superficie)" stop-opacity="0.16"></stop>
         <stop offset="1" stop-color="var(--color-superficie)" stop-opacity="0"></stop>
       </radialGradient>
       {/* El fondo de puntos (05/10/2026, Juli: «el anterior tenía un grid sutil»): una retícula de puntitos, más
           marcada en el centro y que se pierde hacia los bordes. Textura de plano, sin líneas que compitan con las rutas. */}
       <pattern id={id('puntos')} width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="8" cy="8" r="0.9" fill="var(--color-texto)"></circle></pattern>
-      <radialGradient id={id('desvanecer')} cx="50%" cy="50%" r="62%">
+      <radialGradient id={id('desvanecer')} cx="50%" cy="50%" r="50%">
         <stop offset="0" stop-color="white" stop-opacity="1"></stop>
+        <stop offset="0.55" stop-color="white" stop-opacity="0.75"></stop>
         <stop offset="1" stop-color="white" stop-opacity="0"></stop>
       </radialGradient>
       <mask id={id('mascara')}><rect x={encuadre.x} y={encuadre.y} width={encuadre.ancho} height={encuadre.alto} fill={`url(#${id('desvanecer')})`}></rect></mask>
