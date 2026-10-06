@@ -7,7 +7,7 @@ Sitio estático (Astro 7 + Tailwind 4) de Covicen, concesionaria del Tramo Centr
 - `pnpm check` — tipos y plantillas (`astro check`).
 - `pnpm test` — tests (Vitest, con la Container API de Astro y los datos reales del repo).
 - `pnpm build` — genera `dist/` (antes regenera `public/og.png`).
-- `pnpm verificar:portada` — lo mismo que `pnpm verificar` pero en modo portada: build con `PUBLIC_SITIO_COMPLETO=false` y chequeos sobre lo que queda. **Es el modo que hoy se publica en producción**, así que corre en CI antes que el otro.
+- `pnpm verificar:portada` — lo mismo que `pnpm verificar` pero en modo portada: build con `PUBLIC_SITIO_COMPLETO=false` y chequeos sobre lo que queda. Desde el lanzamiento (06/10/2026) producción publica el sitio entero; la portada queda como modo de reserva y se sigue controlando en CI.
 - `pnpm verificar` — build y chequeos sobre `dist/`: links internos, metadatos, JSON-LD, `tel:140` en toda página, textos prohibidos ("a confirmar", "Corredor Vial del Centro", "681"), 679 km, "Última actualización", `noindex` según entorno, `alt` en imágenes, HTML válido (html-validate), `target=_blank` con `noopener`, contraste 4,5:1 de todos los pares en los dos temas, hoja de impresión emitida, presupuesto de JS (30 KB gz) y de la OG.
 - `pnpm contrato` — exporta `docs/contrato/{tramo,tarifario}.schema.json` desde los esquemas Zod (el backend valida sus respuestas contra estos archivos).
 - `pnpm originalidad <urls>` — compara Quiénes somos contra otros sitios (secuencias de 6 palabras). A mano, no en CI.
@@ -18,20 +18,22 @@ Verificación completa antes de cualquier commit: `pnpm check && pnpm test && pn
 Vive en `src/content/` (JSON y Markdown) y los componentes lo consumen solo a través de `src/lib/datos`. Criterio: **esconder, no "a confirmar"**: un dato en `null` no se renderiza; el slot aparece solo cuando se carga. Qué está oculto hoy y qué archivo tocar para que aparezca: `docs/guia-de-revision.md` ("Cómo cargar lo que falta"). Contrato y costura con el backend: `obsidian/Costura de datos.md`.
 
 ## Entorno
-Copiá `.env.example` a `.env`. Sin `.env` también anda, con base `/` y sin indexar. **Descomentá `PUBLIC_SITIO_COMPLETO=true` en tu `.env`** para ver el sitio entero en local: viene comentada para que copiar el ejemplo en una máquina que publica no saque las 30 páginas al aire sin querer.
+Copiá `.env.example` a `.env`. Sin `.env` también anda, con base `/` y sin indexar. Desde el 06/10/2026 sin `PUBLIC_SITIO_COMPLETO` se arma el sitio entero; para ver la portada de «Próximamente», `PUBLIC_SITIO_COMPLETO=false`.
 
 | Variable | Qué es | Local | Pages hoy | Con dominio propio |
 |---|---|---|---|---|
 | `PUBLIC_SITE_URL` | Origen del sitio, sin base ni barra final. Va en `canonical`, OG, sitemap, JSON-LD y en el encabezado de la hoja de impresión. | `http://localhost:4321` | `https://juliv08.github.io` | `https://www.covicen.com.ar` |
 | `PUBLIC_BASE_PATH` | Ruta base con barras. En Pages de un repo es `/<repo>/`. | `/` | `/Covicen/` | `/` |
 | `PUBLIC_INDEXABLE` | `false` = demo: `noindex` y `robots.txt` cerrado. `true` = indexable (solo con dominio). | `false` | `false` | `true` |
-| `PUBLIC_SITIO_COMPLETO` | **Qué se publica.** Sin la variable: solo la portada de «Próximamente». `true`: el sitio entero (30 páginas generadas). Ver «El interruptor de lo que se publica». | `true` (en tu `.env`) | `true` | `true` cuando salga al público |
+| `PUBLIC_SITIO_COMPLETO` | **Qué se publica.** Sin la variable o con `true`: el sitio entero. `false`: solo la portada de «Próximamente» (default hasta el lanzamiento del 06/10/2026). Ver «El interruptor de lo que se publica». | `true` (en tu `.env`) | `true` | `true` cuando salga al público |
 | `FUENTE_DATOS` | `local` (todo del repo) o `api` (tramo y tarifario del sistema; el resto sigue en el repo). | `local` | `local`; pasa a `api` solo cuando existe la variable de repositorio `API_URL` | según el sistema |
 | `API_URL` | Origen de la API del sistema, sin barra final. Obligatoria con `FUENTE_DATOS=api`. | — | variable de repositorio | `https://api.covicen.com.ar` (cuando exista) |
 
 `src/lib/tema.ts` → `TEMA_POR_DEFECTO` (`'oscuro' | 'claro' | 'sistema'`) es el tema con el que arranca quien nunca eligió; lo decide Covicen. El interruptor guarda la elección en `localStorage['covicen:tema']`.
 
 ## El interruptor de lo que se publica (`PUBLIC_SITIO_COMPLETO`)
+
+> **Desde el 06/10/2026 (lanzamiento) el default se dio vuelta:** sin la variable se publica el sitio entero, y la portada de «Próximamente» hay que pedirla con `PUBLIC_SITIO_COMPLETO=false`. Con la web ya al aire, el olvido que hay que evitar es el contrario: que vuelva el cartel. La misma regla vive en `src/lib/config.ts`, `astro.config.mjs` y `scripts/verificar.ts`, y `tests/lib/config.test.ts` controla que coincidan. Lo de abajo describe cómo era antes del lanzamiento.
 
 Mientras no haya una primera versión para mostrar al público, **producción muestra solo una portada de «Próximamente»**: marca, qué es Covicen y el **140** de emergencias, con la foto y los colores del sitio. Es `src/layouts/Proximamente.astro`.
 

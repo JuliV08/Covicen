@@ -14,7 +14,7 @@ if (fuente === 'api' && !apiUrl) {
 }
 
 // Se calcula antes del objeto porque `indexable` lo usa: una portada de «Próximamente» no se indexa nunca.
-const sitioCompleto = oDefecto(import.meta.env.PUBLIC_SITIO_COMPLETO, 'false') === 'true';
+const sitioCompleto = oDefecto(import.meta.env.PUBLIC_SITIO_COMPLETO, 'true') === 'true';
 
 export const config = {
   /** Origen del sitio, sin base ni barra final. */
@@ -26,10 +26,11 @@ export const config = {
    *  portada de «Próximamente» saldría sin `noindex`, y Google indexaría el cartel en vez del sitio. */
   indexable: oDefecto(import.meta.env.PUBLIC_INDEXABLE, 'false') === 'true' && sitioCompleto,
   /** true = se publica el sitio entero. false = solo la portada de «Próximamente».
-   *  El default es `false` A PROPÓSITO, al revés que las otras variables. Hoy el sitio lo sube una persona que
-   *  clona el repo y corre `pnpm build` sin configurar nada (no hay ninguna cañería entre git y el hosting, ver
-   *  README «Cómo se publica hoy»): con el default al revés, ese build a ciegas publica la portada y no las 30
-   *  páginas. Olvidarse de la variable falla hacia el lado seguro. Para publicar el sitio real hay que pedirlo. */
+   *  Hasta el lanzamiento (06/10/2026) el default era `false`: olvidarse de la variable publicaba de menos, que antes
+   *  de salir era el lado seguro. Con el sitio ya publicado, el lado seguro se dio vuelta: un olvido no puede volver a
+   *  poner el cartel en lugar de la web. Ahora sin la variable sale el sitio entero, y la portada hay que pedirla con
+   *  PUBLIC_SITIO_COMPLETO=false. La misma regla está en astro.config.mjs y en scripts/verificar.ts (lo mira
+   *  tests/lib/config.test.ts). */
   sitioCompleto,
   fuenteDatos: fuente as 'local' | 'api',
   /** Origen de la API del sistema, sin barra final. Solo se usa con FUENTE_DATOS=api. */

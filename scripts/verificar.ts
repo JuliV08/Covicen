@@ -12,8 +12,9 @@ import { publicado } from '../src/lib/publicado.ts';
 
 const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
 const base = `/${(env.PUBLIC_BASE_PATH || '/').replace(/^\/+|\/+$/g, '')}/`.replace('//', '/');
-// Default invertido, igual que en src/lib/config.ts: sin la variable lo que se publica es la portada sola.
-const sitioCompleto = env.PUBLIC_SITIO_COMPLETO === 'true';
+// La misma regla que src/lib/config.ts y astro.config.mjs: sin la variable, el sitio entero (desde el 06/10/2026). Si
+// este control leyera distinto que el build, Amplify armaría una cosa, verificaría otra, fallaría y no publicaría nada.
+const sitioCompleto = (env.PUBLIC_SITIO_COMPLETO ?? '') === '' || env.PUBLIC_SITIO_COMPLETO === 'true';
 // Misma definición que src/lib/config.ts: una portada de «Próximamente» no es indexable aunque haya dominio.
 const indexable = env.PUBLIC_INDEXABLE === 'true' && sitioCompleto;
 // ¿Este build va a parar a un hosting, o es alguien compilando en su máquina? `CI` lo pone GitHub Actions;

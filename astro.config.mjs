@@ -10,9 +10,10 @@ import { soloPortada } from './scripts/lib/solo-portada.ts';
 const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), 'PUBLIC_');
 const site = env.PUBLIC_SITE_URL || 'http://localhost:4321';
 const base = env.PUBLIC_BASE_PATH || '/';
-// El mismo default invertido que src/lib/config.ts: sin la variable se publica solo la portada de «Próximamente».
-// Acá se lee otra vez (y no se importa config) porque la config de Astro corre fuera del grafo del sitio.
-const sitioCompleto = env.PUBLIC_SITIO_COMPLETO === 'true';
+// La misma regla que src/lib/config.ts: sin la variable se publica el sitio entero (desde el lanzamiento, 06/10/2026);
+// la portada de «Próximamente», solo con PUBLIC_SITIO_COMPLETO=false. Acá se lee otra vez (y no se importa config)
+// porque la config de Astro corre fuera del grafo del sitio.
+const sitioCompleto = (env.PUBLIC_SITIO_COMPLETO ?? '') === '' || env.PUBLIC_SITIO_COMPLETO === 'true';
 
 export default defineConfig({
   site,

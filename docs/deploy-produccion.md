@@ -22,7 +22,7 @@ Si la compuerta falla, **no publica nada** y la versión anterior sigue en el ai
 
 | Rama | Qué publica | URL | Protegida |
 |---|---|---|---|
-| `main` | La portada de «Próximamente» | `covicen.com.ar` y `www.covicen.com.ar` | No (es pública a propósito) |
+| `main` | El sitio entero (desde el lanzamiento, 06/10/2026) | `covicen.com.ar` y `www.covicen.com.ar` | No (es pública a propósito) |
 | `dev` | El sitio entero, para revisar | a definir con Gustavo | Sí, con usuario y contraseña |
 
 **El flujo de trabajo:** se trabaja en `dev`, se mira en su URL, y cuando la versión está para salir se hace un
@@ -43,9 +43,12 @@ Se cargan **en la consola de Amplify, por rama**. Son lo que decide qué publica
 | `PUBLIC_INDEXABLE` | `false` |
 | `FUENTE_DATOS` | `local` |
 
-**`PUBLIC_SITIO_COMPLETO` NO se carga en `main`.** Ausente, la rama publica la portada de «Próximamente», que es
-lo que se decidió. El día que haya que publicar el sitio entero, se agrega con valor `true`. Es un solo cambio en
-la consola, sin tocar código.
+**`PUBLIC_SITIO_COMPLETO` NO se carga en `main`.** Desde el lanzamiento (06/10/2026), ausente quiere decir **el sitio
+entero**: el default se dio vuelta en el código para salir sin depender de la consola. Para volver a la portada de
+«Próximamente» (por ejemplo, ante un problema grave), se carga con valor `false` y se relanza el armado.
+
+**Para que Google indexe el sitio** hay que cambiar `PUBLIC_INDEXABLE` a `true` en la consola: con `false`, el sitio
+entero sale igual, pero con `noindex` y el `robots.txt` cerrado.
 
 > **Por qué el interruptor va al revés:** el default es «publicar de menos». Si alguien crea una rama nueva y se
 > olvida de configurarla, publica un cartel, no las 27 páginas. Olvidarse falla hacia el lado seguro.

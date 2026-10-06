@@ -37,7 +37,8 @@ frontend:
         - pnpm test
         # Los DOS modos pasan por la compuerta, y el de la portada PRIMERO. El orden no es cosmético: cada uno deja
         # su propio dist/, así que el último que corre es el que se publica. Con `verificar` al final, la rama sube
-        # lo que le corresponda según sus variables: el sitio entero en dev, «Próximamente» en main.
+        # lo que le corresponda según sus variables: desde el lanzamiento (06/10/2026), el sitio entero en dev y en main;
+        # la portada de «Próximamente» solo si la rama tiene PUBLIC_SITIO_COMPLETO=false.
         - 'pnpm verificar:portada'
         - pnpm verificar
   artifacts:
