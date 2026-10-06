@@ -23,6 +23,22 @@ Este es el vault del proyecto (vive en el repo, viaja con el código). El punter
 - Manual de marca: `docs/marca/Logo Covicen 2.pdf` · Prompts de imágenes: `docs/marca/prompts-imagenes.md`
 
 ## Estado
+- **2026-10-06, a producción (rama `web-detalles-2026-10-05`, `f0ef034` en `origin/main` y `organizacion/main`)**
+  - **Qué salió.** Tanda visual:
+    - fichas de ruta con escudo en lugar de la tabla de El tramo;
+    - preguntas frecuentes con índice al costado y tarjetas `.tarjeta-luz`;
+    - pie en mosaico;
+    - maquillaje del formulario de Bitrix, que se monta en la página: el «sol» era su `b24-form-loader-icon`;
+    - tarifas en tarjeta con pestañas de estación (`scripts/pestanas-tarifas.ts`);
+    - misión, visión y valores en Quiénes somos.
+  - **Cambios de contenido.**
+    - La póliza pasó a `/responsabilidad-civil/`. El interruptor sigue llamándose `publicado.transparencia`.
+    - Todos los títulos van sin punto final (pedido del 06/10).
+  - **Lecciones durables.**
+    - **El compresor de HTML de Astro se come el espacio entre texto y una etiqueta si hay un salto de línea en el medio.** La portada decía «Concesiones:679,03 km»: el espacio va en el mismo renglón o con `{' '}`.
+    - **`html-validate` rechaza los `role` explícitos en tablas.** Hacen falta cuando el CSS del celular le cambia el `display` a las filas (Safari les saca la semántica). Se exceptúa por bloque con un comentario `[html-validate-disable-block no-redundant-role: motivo]`, que Astro conserva.
+    - **La guarda de «efectivo» de `verificar.ts` acepta solo negaciones.** Son «sin efectivo» y «no se acepta (más) (el pago) en efectivo», y las fija `tests/scripts/prohibidos.test.ts`.
+  - **El hero en video quedó en pausa.** Google Flow no dio la calidad. El prompt maestro está en `docs/prompts/2026-10-06-hero-video-maestro.md`.
 - **2026-10-05, fase C: el mapa nuevo (rama `web-detalles-2026-10-05`)**
   - **`src/lib/red.ts` sin dependencias**: red de rutas, camino más corto (Dijkstra), `trazoRedondeado`, recorrido del auto con **vuelta en U** (al arrancar y en cualquier vértice donde el camino vuelve), `continuarDesde` para cambiar de destino en pleno viaje. Lo usa el navegador: **`lib/tramo.ts` no puede llegar al cliente** porque importa el esquema (zod).
   - **Encuadre** (`encuadreDelMapa`): el viewBox es la caja de lo dibujado + 24; las coordenadas del contrato no cambian. **La ficha flota desde 1280** (`lugarDeLaFicha`, `fichaLibre` con test de geometría: a 1024 no entra), compacta: 21rem, servicios como íconos (`xl:sr-only`), posición en `cqw` del mapa (el SVG escala por el ancho).
