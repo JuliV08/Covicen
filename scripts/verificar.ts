@@ -38,11 +38,11 @@ const PLAZOS_DE_RESPUESTA = [/respuesta,? en \d+ d[ií]as/i, /\brespond\w*[^.]{0
 // cosas que no aparezcan». Vale para las siglas Y para la palabra escrita con todas las letras: son la misma mención,
 // y había ocho lugares que la escribían larga («según el Pliego de Especificaciones Técnicas Particulares…»), que
 // ningún filtro de siglas habría agarrado.
-// EXCEPCIÓN: /transparencia/, donde la normativa ES el contenido y citarla es justamente lo institucional.
+// EXCEPCIÓN: /responsabilidad-civil/ (hasta el 06/10/2026, /transparencia/), donde la normativa ES el contenido y citarla es justamente lo institucional.
 // La `fuente` de cada dato NO se borra de src/content/ —es la trazabilidad de por qué la web dice lo que dice—:
 // deja de pintarse. Se apaga la UI, no se rompe el dato.
 const PROHIBIDOS_USUARIO = [/\bPET[GP]\b/, /\bpliego/i];
-const SIN_PLIEGO = (nombre: string) => !nombre.startsWith('transparencia');
+const SIN_PLIEGO = (nombre: string) => !nombre.startsWith('responsabilidad-civil');
 // Mientras el estado de la traza se publique con datos de muestra, ninguna página puede mostrar marcadores de incidente
 // sin el cartel que lo aclara (spec §10.1): un corte de ruta inventado que se lee como real es el error más caro del sitio.
 const estadoDeMuestra = (JSON.parse(readFileSync('src/content/estado-ruta.json', 'utf8')) as { ejemplo?: boolean }).ejemplo === true;
@@ -236,7 +236,7 @@ if (sitioCompleto) {
   // poner src/pages/obras.astro como ruta fija, el interruptor deja de mandar y acá se cae.
   const sitemap = existsSync(join(DIST, 'sitemap-0.xml')) ? readFileSync(join(DIST, 'sitemap-0.xml'), 'utf8') : '';
   // Políticas y Transparencia, desde el 02/10/2026 (reunión con el gerente del 01/10).
-  for (const [ruta, prendida] of [['obras', publicado.obras], ['politicas', publicado.politicas], ['transparencia', publicado.transparencia], ['proveedores', publicado.proveedores]] as const) {
+  for (const [ruta, prendida] of [['obras', publicado.obras], ['politicas', publicado.politicas], ['responsabilidad-civil', publicado.transparencia], ['proveedores', publicado.proveedores]] as const) {
     if (prendida) continue;
     if (existsSync(join(DIST, ruta, 'index.html'))) fallo(`/${ruta}/ está apagada en src/lib/publicado.ts y el build la generó igual`);
     if (sitemap.includes(`/${ruta}/`)) fallo(`/${ruta}/ está apagada y el sitemap la lista`);

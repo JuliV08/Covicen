@@ -3,10 +3,10 @@ import { describe, expect, it } from 'vitest';
 
 // No se puede importar verificar.ts (corre al importarse y lee dist/). Lo que hay que fijar acá es el CONTRATO de la
 // guarda, no su implementación: que las dos formas de nombrar el pliego estén prohibidas y que la excepción sea
-// exactamente /transparencia/ y ninguna otra. Si alguien la afloja para que le pase su página, este test lo dice.
+// exactamente /responsabilidad-civil/ (hasta el 06/10/2026, /transparencia/) y ninguna otra. Si alguien la afloja para que le pase su página, este test lo dice.
 //
 // Pedido del gerente (call del 20/09/2026): «hace mención del pliego; esas cosas que no aparezcan». La excepción es
-// /transparencia/, donde la normativa ES el contenido y citarla es justamente lo institucional.
+// /responsabilidad-civil/, donde la normativa ES el contenido y citarla es justamente lo institucional.
 const fuente = readFileSync('scripts/verificar.ts', 'utf8');
 // El corchete de cierre se busca al final de la línea, no el primero que aparezca: los propios patrones traen uno
 // adentro (`[GP]`) y un `[^\]]*` cortaba la captura en la mitad de la expresión regular.
@@ -28,9 +28,9 @@ describe('prohibidos del pliego en la cara del público', () => {
     }
   });
 
-  it('la única página exceptuada es transparencia', () => {
+  it('la única página exceptuada es la de responsabilidad civil', () => {
     const excepcion = /const SIN_PLIEGO = [^;]+;/.exec(fuente)?.[0] ?? '';
-    expect(excepcion).toContain("startsWith('transparencia')");
+    expect(excepcion).toContain("startsWith('responsabilidad-civil')");
     expect(excepcion.match(/startsWith/g)?.length, 'hay más de una página exceptuada').toBe(1);
   });
 

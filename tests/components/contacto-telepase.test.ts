@@ -19,7 +19,7 @@ describe('/contacto/ con el formulario de TelePASE apagado', () => {
     }
     expect(html).toContain('id="reclamos"');
     // Sin TelePASE en el medio, «Cómo hacer un reclamo» pasa a llevar el tono.
-    const reclamo = html.split('<section').find((s) => s.includes('Cuatro pasos.')) ?? '';
+    const reclamo = html.split('<section').find((s) => s.includes('Cuatro pasos')) ?? '';
     expect(/^[^>]*class="([^"]*)"/.exec(reclamo)?.[1]).toContain('seccion-tono');
   });
 });

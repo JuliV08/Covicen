@@ -25,7 +25,7 @@ describe('Footer', () => {
   it('no enlaza Políticas mientras esté escondida, y Transparencia sí', async () => {
     const html = await render(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto());
     expect(html).not.toContain('href="/politicas/"');
-    expect(html).toContain('href="/transparencia/"');
+    expect(html).toContain('href="/responsabilidad-civil/"');
     expect(html).toContain('href="/quienes-somos/"');
   });
   it('con datos registrales y redes los muestra', async () => {

@@ -26,7 +26,7 @@ const formularios = prov ? 'los formularios de Contacto y de Proveedores' : 'el 
 const porCorreo = contacto.whatsapp.numero ? 'por WhatsApp o por correo' : 'por correo';
 ---
 <Base titulo="Política de privacidad" descripcion="Cómo trata Covicen los datos personales que recibe por sus canales de contacto, según la Ley 25.326 de Protección de Datos Personales." migas={[{ nombre: 'Privacidad', href: '/privacidad' }]}>
-  <Seccion nivel="h1" eyebrow="Privacidad" titulo="Qué datos recibimos y qué hacemos con ellos." class="pt-10">
+  <Seccion nivel="h1" eyebrow="Privacidad" titulo="Qué datos recibimos y qué hacemos con ellos" class="pt-10">
     <div class="revelar prose-covicen max-w-prose text-texto-2">
       <h2>Responsable</h2>
       <p>{conPunto(`${e.razonSocial ?? e.marca}${e.cuit ? `, CUIT ${e.cuit}` : ''}${!e.razonSocial && e.enFormacion ? ', sociedad en formación' : ''}`)} Los datos registrales del responsable se publican en el pie de página cuando estén completos.</p>

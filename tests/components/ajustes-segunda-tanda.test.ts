@@ -21,7 +21,7 @@ describe('Políticas escondida; Transparencia de vuelta, solo con la póliza', (
   // Como /obras/: ruta rest que se vacía con el interruptor. Que no se genere lo controla verificar.ts (11b) sobre el
   // dist; acá se fija el cableado y que el contenido siga versionado para cuando se prenda.
   it('son rutas rest que se apagan con su interruptor, y el contenido sigue en el repo', () => {
-    for (const [pagina, clave] of [['politicas', 'politicas'], ['transparencia', 'transparencia']] as const) {
+    for (const [pagina, clave] of [['politicas', 'politicas'], ['responsabilidad-civil', 'transparencia']] as const) {
       expect(existsSync(`src/pages/${pagina}.astro`), `/${pagina}/ volvió a ser una ruta fija: se genera sí o sí`).toBe(false);
       const fuente = readFileSync(`src/pages/${pagina}/[...resto].astro`, 'utf8');
       expect(fuente).toContain(`export const getStaticPaths = () => (publicado.${clave} ?`);
@@ -30,17 +30,17 @@ describe('Políticas escondida; Transparencia de vuelta, solo con la póliza', (
     expect(publicado.transparencia, 'se apagó transparencia: revisar este test').toBe(true);
     expect(publicado.normativa, 'se prendió normativa: revisar este test').toBe(false);
     expect(readFileSync('src/pages/politicas/[...resto].astro', 'utf8')).toContain('Política anticorrupción');
-    expect(readFileSync('src/pages/transparencia/[...resto].astro', 'utf8')).toContain('Póliza de responsabilidad civil');
+    expect(readFileSync('src/pages/responsabilidad-civil/[...resto].astro', 'utf8')).toContain('Póliza de responsabilidad civil');
   });
   // «Datos registrales» se eliminó de Transparencia (punto 5): esos datos van en el pie.
   it('Transparencia ya no tiene la sección de datos registrales', () => {
-    expect(readFileSync('src/pages/transparencia/[...resto].astro', 'utf8')).not.toContain('titulo="Datos registrales."');
+    expect(readFileSync('src/pages/responsabilidad-civil/[...resto].astro', 'utf8')).not.toContain('titulo="Datos registrales."');
   });
   it('el menú «Nosotros» no ofrece Políticas, y Transparencia sí', async () => {
     const props = { contacto: await fuenteLocalJson.contacto(), rutaActual: '/' };
     const html = await (await AstroContainer.create()).renderToString(Header as never, { props });
     expect(html).not.toContain('href="/politicas/"');
-    expect(html).toContain('href="/transparencia/"');
+    expect(html).toContain('href="/responsabilidad-civil/"');
     expect(html, 'Proveedores está escondida desde el 05/10/2026').not.toContain('href="/proveedores/"');
   });
 });

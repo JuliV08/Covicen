@@ -66,8 +66,9 @@ export const publicado = Object.freeze({
   /** Página /politicas/ (calidad, seguridad vial, anticorrupción): «no es para este momento», hace falta una
    *  consultoría para escribirlas. No se genera, y sale del menú y del pie. */
   politicas: false,
-  /** Página /transparencia/. Escondida el 02/10/2026 y de vuelta el 05/10, cuando llegó la póliza de responsabilidad
-   *  civil («agregarla donde estaba originalmente la de ejemplo»). */
+  /** Página de la póliza de responsabilidad civil, en /responsabilidad-civil/ desde el 06/10/2026 (antes /transparencia/:
+   *  «el endpoint sigue diciendo /transparencia/, cuando debe decir responsabilidad civil»). Escondida el 02/10/2026 y de
+   *  vuelta el 05/10, cuando llegó la póliza («agregarla donde estaba originalmente la de ejemplo»). */
   transparencia: true,
   /** Página /proveedores/ (registro de proveedores). Escondida el 05/10/2026 por pedido de Juli. No se genera, y sale
    *  del menú, del pie y de la política de privacidad. */

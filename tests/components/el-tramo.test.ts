@@ -74,12 +74,12 @@ describe('/el-tramo/', () => {
   // bloque se llama como su ancla, sin bajada y sin las notas de abajo de las estaciones.
   it('título nuevo, bajada con las tres rutas, y bloques titulados como sus anclas', async () => {
     const { document } = parseHTML(await render());
-    // «Nuestras rutas.» desde la reunión con el gerente del 01/10/2026; los números de las rutas siguen en la bajada.
-    expect(document.querySelector('h1')?.textContent).toBe('Nuestras rutas.');
+    // «Nuestras rutas» desde la reunión con el gerente del 01/10/2026; los números de las rutas siguen en la bajada.
+    expect(document.querySelector('h1')?.textContent).toBe('Nuestras rutas');
     const bajada = document.querySelector('h1')?.nextElementSibling?.textContent ?? '';
     expect(bajada).toContain('679 km entre Santa Fe y Córdoba');
     for (const ruta of ['Rosario–Córdoba', 'RN 19', 'RN 34']) expect(bajada, `la bajada no nombra ${ruta}`).toContain(ruta);
-    for (const [id, titulo] of [['rutas', 'Rutas y longitudes.'], ['estaciones', 'Estaciones de peaje.']]) {
+    for (const [id, titulo] of [['rutas', 'Rutas y longitudes'], ['estaciones', 'Estaciones de peaje']]) {
       const encabezado = document.querySelector(`section#${id} header`)!;
       expect(encabezado.querySelector('h2')?.textContent).toBe(titulo);
       expect(encabezado.querySelector('p'), `${id} volvió a tener eyebrow o bajada`).toBeNull();

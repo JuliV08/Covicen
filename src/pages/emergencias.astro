@@ -13,7 +13,7 @@ const grua = servicios.find((s) => s.id === 'grua-y-remolque');
 const pasos = consejos.filter((c) => c.categoria === 'emergencia');
 ---
 <Base titulo="Emergencias" descripcion="Emergencias y auxilio en ruta en el Tramo Centro (RN 9, RN 19 y RN 34): qué hacer ante un desperfecto o accidente y a quién llamar." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Emergencias', href: '/emergencias' }]}>
-  <Seccion nivel="h1" eyebrow="Emergencias" titulo="Ante una emergencia en la ruta." class="pt-10">
+  <Seccion nivel="h1" eyebrow="Emergencias" titulo="Ante una emergencia en la ruta" class="pt-10">
     <div class="revelar tarjeta tarjeta-vial p-8">
       <p class="eyebrow">{contacto.emergencias.etiqueta} · 24 horas · gratis desde cualquier celular</p>
       <a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="mt-3 inline-flex items-center gap-4 font-extrabold tabular-nums text-vial-texto no-underline" style="font-size: clamp(3rem, 2rem + 5vw, 6rem)" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={44} aria-hidden="true" /> {tel}</a>

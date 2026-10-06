@@ -9,7 +9,7 @@ const tel = contacto.emergencias.telefono;
 const hayCanal = Boolean(contacto.whatsapp.numero || contacto.atencionUsuario || contacto.email.general);
 ---
 <Base titulo="Asistencia en ruta" descripcion="Pedí asistencia en el Tramo Centro: llamá al 140 (gratis, las 24 horas), compartí la ubicación de tu celular y contanos qué pasó. Grúa y remolque gratuitos para despejar la calzada." migas={[{ nombre: 'Emergencias', href: '/emergencias' }, { nombre: 'Asistencia en ruta', href: '/asistencia' }]}>
-  <Seccion nivel="h1" eyebrow="Asistencia en ruta" titulo="¿Te quedaste en la ruta? Primero, llamá." intro="El 140 es gratis, funciona sin crédito y lo atienden personas las 24 horas. Después, si no sabés en qué kilómetro estás, compartí tu ubicación." class="pt-10">
+  <Seccion nivel="h1" eyebrow="Asistencia en ruta" titulo="¿Te quedaste en la ruta? Primero, llamá" intro="El 140 es gratis, funciona sin crédito y lo atienden personas las 24 horas. Después, si no sabés en qué kilómetro estás, compartí tu ubicación." class="pt-10">
     <div class="revelar tarjeta tarjeta-vial p-8 text-center">
       <a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="inline-flex items-center justify-center gap-4 font-extrabold tabular-nums text-vial-texto no-underline" style="font-size: clamp(3.5rem, 2rem + 8vw, 8rem)" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={56} aria-hidden="true" /> {tel}</a>
       <p class="mt-2 text-texto-2">Tocá el número para llamar. Decí ruta, sentido y kilómetro, y qué pasó.</p>

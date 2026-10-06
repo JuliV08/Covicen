@@ -7,7 +7,7 @@ import { publicado } from '@/lib/publicado';
 const APAGADAS: Record<string, boolean> = {
   '/obras': !publicado.obras,
   '/politicas': !publicado.politicas,
-  '/transparencia': !publicado.transparencia,
+  '/responsabilidad-civil': !publicado.transparencia,
   '/proveedores': !publicado.proveedores,
 };
 

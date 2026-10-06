@@ -1,8 +1,7 @@
 ---
-import { ArrowUpRight, ExternalLink } from '@lucide/astro';
+import { ArrowUpRight, ExternalLink, Eye, Gem, Leaf, Lightbulb, Scale, ShieldCheck, Target, Users } from '@lucide/astro';
 import { Image } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
-import ImagenAtmosfera from '@/components/ilustraciones/ImagenAtmosfera.astro';
 import Mojon from '@/components/ui/Mojon.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
@@ -14,7 +13,7 @@ import { conPunto } from '@/lib/texto';
 const [e, tramo] = await Promise.all([datos.empresa(), datos.tramo()]);
 const c = e.concesion;
 const organigrama = imagenInstitucional('organigrama');
-const [fAsumimos, fControla, fConsorcio, fOrganigrama] = alternarFondos([publicado.queAsumimos, publicado.quienNosControla, true, Boolean(organigrama)]);
+const [fIdentidad, fAsumimos, fControla, fConsorcio, fOrganigrama] = alternarFondos([true, publicado.queAsumimos, publicado.quienNosControla, true, Boolean(organigrama)]);
 const enumerar = (xs: string[]) => xs.join(', ').replace(/, ([^,]*)$/, ' y $1');
 const rutas = `las rutas nacionales ${enumerar(c.rutas.map((r) => r.replace(/^RN /, '')))}`;
 // Texto nuevo del 02/10/2026 (reunión con el gerente del 01/10): «redactarla usando de ejemplo lo que dice Corresur,
@@ -23,6 +22,19 @@ const rutas = `las rutas nacionales ${enumerar(c.rutas.map((r) => r.replace(/^RN
 // institucional. El de antes era el de la licitación (resolución, «sociedad en formación»); la razón social y el
 // CUIT se siguen publicando en el pie cuando existan.
 const descripcion = `Covicen cuida ${numero(c.km)} km de ${rutas} entre Córdoba y Santa Fe: el Tramo Centro de la Red Federal de Concesiones. Detrás están ${conPunto(enumerar(e.consorcio.map((x) => x.nombre)))}`;
+// Misión, visión y valores: el texto del documento institucional, tal cual (06/10/2026, «3. Nuestra identidad» y
+// «4. Nuestros valores»). Solo se le sumó el punto final que le faltaba a la misión.
+const identidad = [
+  { Icono: Target, titulo: 'Misión', texto: 'Construimos, operamos y mantenemos las Rutas Nacionales y la infraestructura vial y servicios asociados, garantizando corredores seguros, eficientes y confiables. Combinamos la trayectoria y la capacidad técnica de nuestras empresas fundadoras para generar valor sostenible, actuando siempre con transparencia e integridad.' },
+  { Icono: Eye, titulo: 'Visión', texto: 'Ser la concesionaria vial de referencia en la región centro del país, reconocida por la calidad de sus rutas, la seguridad de quienes las transitan y una gestión transparente e íntegra frente al Estado y la comunidad.' },
+] as const;
+const valores = [
+  { Icono: Scale, titulo: 'Integridad', texto: 'Hacemos lo correcto aun cuando nadie nos ve. No toleramos prácticas corruptas, ni ponemos nuestros intereses personales por sobre los de la compañía. Actuamos con transparencia en cada decisión, en especial en nuestra relación con el Estado.' },
+  { Icono: ShieldCheck, titulo: 'Seguridad', texto: 'La vida, el bienestar y la salud tanto de usuarios como de nuestros colaboradores van primero. Siempre, sin excepción, en cada obra y en cada ruta.' },
+  { Icono: Lightbulb, titulo: 'Excelencia e innovación', texto: 'Buscamos hacer las cosas cada vez mejor: con los más altos estándares técnicos, mejora continua y responsabilidad por cumplir lo que prometemos a nuestros clientes, usuarios, al Estado y a la comunidad.' },
+  { Icono: Users, titulo: 'Trabajo en equipo', texto: 'Somos tres empresas que se convirtieron en una. Nos tratamos con respeto, colaboramos y construimos juntos. Hablar cuando algo no está bien es parte de cómo cuidamos ese equipo.' },
+  { Icono: Leaf, titulo: 'Sostenibilidad', texto: 'Cuidamos el ambiente y usamos los recursos con responsabilidad, para dejar un impacto positivo en cada lugar donde trabajamos.' },
+] as const;
 // Obligaciones tomadas del contrato de concesión del Tramo Centro y del contrato general.
 const asumimos = [
   ['Conservar los 679 km', 'Calzada, banquinas, señalización, iluminación, desagües y forestación de las tres rutas, todos los días de los veinte años.'],
@@ -36,7 +48,7 @@ const asumimos = [
 ] as const;
 ---
 <Base titulo="Quiénes somos" {descripcion} migas={[{ nombre: 'Quiénes somos', href: '/quienes-somos' }]}>
-  <Seccion nivel="h1" eyebrow="Quiénes somos" titulo="La concesionaria del Tramo Centro." intro={`En Covicen sabemos que una ruta es mucho más que asfalto: es el camino de todos los días para ir a trabajar, llevar lo que se produce y volver a casa. Por eso, desde el ${fechaLarga(c.inicioOperacion)} y durante ${c.plazoAnios} años, cuidar nuestras rutas en el centro del país es nuestro trabajo.`} class="pt-10">
+  <Seccion nivel="h1" eyebrow="Quiénes somos" titulo="La concesionaria del Tramo Centro" intro={`En Covicen sabemos que una ruta es mucho más que asfalto: es el camino de todos los días para ir a trabajar, llevar lo que se produce y volver a casa. Por eso, desde el ${fechaLarga(c.inicioOperacion)} y durante ${c.plazoAnios} años, cuidar nuestras rutas en el centro del país es nuestro trabajo.`} class="pt-10">
     {/* Centrado bajo el encabezado (05/10/2026: «sigue flotando a la izquierda, pese a que el título ya está
         centrado»). Son tres párrafos cortos, así que el texto también va al centro, como la bajada de arriba. */}
     <div class="revelar prose-covicen mx-auto max-w-prose text-center text-lg text-texto-2">
@@ -50,10 +62,36 @@ const asumimos = [
     </div>
   </Seccion>
 
+  {/* 06/10/2026: misión, visión y valores en tarjetas con luz que sigue al mouse (.tarjeta-luz, como el pie y las
+      preguntas). Misión y visión lado a lado; los valores, a todo el ancho abajo, cada uno con su ícono. */}
+  <Seccion id="identidad" eyebrow="Nuestra identidad" titulo="Misión, visión y valores" fondo={fIdentidad}>
+    <div class="grid gap-4 lg:grid-cols-2">
+      {identidad.map(({ Icono, titulo, texto }) => (
+        <article class="revelar tarjeta-luz p-7 sm:p-9" data-spotlight>
+          <span class="tarjeta-icono"><Icono size={24} aria-hidden="true" /></span>
+          <h3 class="mt-5 text-2xl">{titulo}</h3>
+          <p class="mt-3 text-lg text-texto-2">{texto}</p>
+        </article>
+      ))}
+      <article class="revelar tarjeta-luz p-7 sm:p-9 lg:col-span-2" data-spotlight>
+        <span class="tarjeta-icono"><Gem size={24} aria-hidden="true" /></span>
+        <h3 class="mt-5 text-2xl">Valores</h3>
+        <ul class="escalonar mt-7 grid gap-x-8 gap-y-8 sm:grid-cols-2 xl:grid-cols-5">
+          {valores.map(({ Icono, titulo, texto }, i) => (
+            <li class:list={['valor', i === valores.length - 1 && 'sm:col-span-2 xl:col-span-1']} style={`--i: ${i}`}>
+              <div class="flex items-start gap-2.5 text-acento"><Icono size={20} aria-hidden="true" class="mt-1 shrink-0" /><h4 class="text-lg font-bold text-texto">{titulo}</h4></div>
+              <p class="mt-2 text-texto-2">{texto}</p>
+            </li>
+          ))}
+        </ul>
+      </article>
+    </div>
+  </Seccion>
+
   {/* «Qué asume Covicen» y «Quién nos controla» se escondieron el 02/10/2026 (reunión con el gerente del 01/10). El
       contenido queda acá: se vuelven a mostrar con su interruptor en src/lib/publicado.ts. */}
   {publicado.queAsumimos && (
-  <Seccion eyebrow="Qué asumimos" titulo="Qué asume Covicen." intro="Obligaciones del contrato de concesión, exigibles y verificables por Vialidad Nacional." fondo={fAsumimos}>
+  <Seccion eyebrow="Qué asumimos" titulo="Qué asume Covicen" intro="Obligaciones del contrato de concesión, exigibles y verificables por Vialidad Nacional." fondo={fAsumimos}>
     <ol class="escalonar grid gap-4 md:grid-cols-2">
       {asumimos.map(([t, d], i) => <li class="tarjeta p-6" style={`--i: ${i}`}><span class="eyebrow tabular-nums">0{i + 1}</span><h3 class="mt-3 text-xl">{t}</h3><p class="mt-2 text-texto-2">{d}</p></li>)}
     </ol>
@@ -61,7 +99,7 @@ const asumimos = [
   )}
 
   {publicado.quienNosControla && (
-  <Seccion eyebrow="Quién nos controla" titulo="Vialidad Nacional, con indicadores. Y vos, con este sitio." fondo={fControla}>
+  <Seccion eyebrow="Quién nos controla" titulo="Vialidad Nacional, con indicadores. Y vos, con este sitio" fondo={fControla}>
     <div class="revelar grid gap-8 md:grid-cols-2">
       <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 text-texto-2">
         <dt class="eyebrow">Régimen</dt><dd>Concesión de obra pública por peaje, inversión privada, sin subsidios del Estado.</dd>
@@ -71,17 +109,15 @@ const asumimos = [
         <dt class="eyebrow">Control</dt><dd>La Dirección Nacional de Vialidad supervisa la concesión con niveles de servicio, indicadores de desempeño e informes periódicos, y puede sancionar los incumplimientos.</dd>
       </dl>
       <div class="prose-covicen text-texto-2">
-        <p><strong>Misión.</strong> Que cruzar el centro del país sea seguro, previsible y justo en lo que cuesta: rutas en condiciones, auxilio a tiempo y un peaje que se explica solo.</p>
-        <p><strong>Visión.</strong> Un corredor donde cada peaje tenga una obra que lo respalde y cada persona que viaja sepa a quién llamar y qué esperar.</p>
+        {/* La misión y la visión que estaban acá se sacaron el 06/10/2026: las oficiales están en «Nuestra identidad». */}
         <p>Este sitio publica el cuadro tarifario con su resolución, el estado de las obras y los tiempos de auxilio comprometidos. Si algo de eso no se cumple, el reclamo tiene fundamento escrito.</p>
       </div>
     </div>
   </Seccion>
   )}
 
-  <Seccion eyebrow="El consorcio" titulo="Tres empresas de construcción vial." fondo={fConsorcio}>
-    <!-- Foto opcional (src/assets/atmosfera/consorcio.jpg). Sin archivo, el marco no se renderiza. -->
-    <div class="revelar tarjeta mb-6 aspect-[21/9] w-full overflow-hidden p-0 empty:hidden"><div class="h-full w-full overflow-hidden rounded-[calc(var(--tarjeta-radio)-1.5px)]"><ImagenAtmosfera nombre="consorcio" alt="Tablero de un puente en construcción sobre la autopista, con una grúa torre al anochecer" sizes="(min-width: 80rem) 80rem, 100vw" /></div></div>
+  <Seccion eyebrow="El consorcio" titulo="Tres empresas de construcción vial" fondo={fConsorcio}>
+    {/* La foto del consorcio se sacó el 06/10/2026 («más adelante hacemos una nueva»): sin hueco ni marco vacío. */}
     {/* Cada tarjeta lleva a la web de su empresa (pedido del 01/10/2026). La tarjeta entera es el enlace: el nombre
         accesible dice adónde va y que se abre en otra pestaña. */}
     <ul class="escalonar grid gap-4 md:grid-cols-3">{e.consorcio.map((s, i) => (
@@ -100,7 +136,7 @@ const asumimos = [
   </Seccion>
 
   {organigrama && (
-    <Seccion eyebrow="Organigrama" titulo="Cómo estamos organizados." fondo={fOrganigrama}>
+    <Seccion eyebrow="Organigrama" titulo="Cómo estamos organizados" fondo={fOrganigrama}>
       <figure class="revelar tarjeta overflow-hidden p-2"><Image src={organigrama} alt="Organigrama de Covicen" widths={[640, 1024, 1600]} sizes="(min-width: 80rem) 80rem, 100vw" class="h-auto w-full rounded-[calc(var(--tarjeta-radio)-1.5px)] bg-white" /></figure>
     </Seccion>
   )}

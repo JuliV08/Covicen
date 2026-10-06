@@ -214,7 +214,7 @@ describe('/tarifas/', () => {
     expect(html).not.toContain('Solo los vehículos de esta lista');
     expect(html).not.toContain('habilitado a ese efecto');
     expect(html).not.toContain('según el reglamento de Vialidad Nacional');
-    const seccion = html.split('<section').find((s) => s.includes('Quiénes no pagan.')) ?? '';
+    const seccion = html.split('<section').find((s) => s.includes('Quiénes no pagan')) ?? '';
     // [^>]*: desde el 05/10/2026 la página tiene <style> propio (las pestañas) y Astro les suma su atributo de alcance.
     expect(seccion).toMatch(/<div class="grid gap-4 md:grid-cols-2"[^>]*>\s*<div class="tarjeta p-6"[^>]*><h3 class="text-xl"[^>]*>Ex combatientes de Malvinas/);
     expect(seccion).not.toContain('lg:grid-cols-[1.2fr_1fr]');

@@ -51,7 +51,7 @@ describe('Hero', () => {
   it('un h1, los km del dato y los dos CTAs', async () => {
     const html = await render(Hero, { empresa: await fuenteLocalJson.empresa() });
     expect(html.match(/<h1/g)?.length).toBe(1);
-    expect(html).toContain('Viajá por nuestras rutas en el centro del país.');
+    expect(html).toContain('Viajá por nuestras rutas en el centro del país');
     expect(html).toContain('679 km del Tramo Centro');
     expect(html).toContain('href="/tarifas/"');
     expect(html).toContain('href="/el-tramo/"');
@@ -67,8 +67,9 @@ describe('Hero', () => {
     const html = (await renderHome()).split('<footer')[0];
     expect(html, 'la home volvió a anunciar la fecha de inicio').not.toContain('de octubre');
     expect(html).not.toContain('data-cuenta-regresiva');
-    // Salvo el nombre de la página de la póliza en el menú (05/10/2026): es un enlace, no un anuncio en la portada.
-    expect(html.replaceAll('Póliza de responsabilidad civil', '')).not.toContain('responsabilidad');
+    // Salvo el enlace a la página de la póliza en el menú (05/10/2026), que desde el 06/10 vive en
+    // /responsabilidad-civil/: es un enlace, no un anuncio en la portada.
+    expect(html.replaceAll('Póliza de responsabilidad civil', '').replaceAll('/responsabilidad-civil/', '')).not.toContain('responsabilidad');
     expect(html, 'la cinta de avisos desapareció de la home').toContain('Emergencias en la ruta');
   });
   // Decisión de Juli (15/09/2026): la primera pantalla del sitio dice UNA cosa y la dice quieta. El hero tenía un
@@ -134,15 +135,15 @@ describe('Hero', () => {
 });
 
 // En la home entera NovedadesRecientes no aparece (astro:content está vacío fuera de un build), así que se prueba
-// suelta con novedades armadas acá. Pedido del 24/09/2026: el título es «Novedades.», sin número, sin volanta y sin
+// suelta con novedades armadas acá. Pedido del 24/09/2026: el título es «Novedades», sin número, sin volanta y sin
 // «Lo último».
 describe('NovedadesRecientes', () => {
-  it('se titula «Novedades.», sin número ni volanta', async () => {
+  it('se titula «Novedades», sin número ni volanta', async () => {
     const novedad = (n: number) => ({ slug: `n-${n}`, titulo: `Novedad ${n}`, fecha: '2026-09-13', resumen: 'Resumen.', etiquetas: [], destacada: false });
     const html = await render(NovedadesRecientes, { novedades: [novedad(1), novedad(2)] });
     // Se mira el encabezado de la sección: las fechas de las tarjetas también usan la clase eyebrow, y está bien.
     const encabezado = /<header[\s\S]*?<\/header>/.exec(html)?.[0] ?? '';
-    expect(encabezado).toMatch(/<h2[^>]*>Novedades\.<\/h2>/);
+    expect(encabezado).toMatch(/<h2[^>]*>Novedades<\/h2>/);
     expect(encabezado, 'volvió la volanta sobre el título').not.toContain('eyebrow');
     expect(html).not.toContain('Lo último');
     expect(html, 'volvió un número de sección').not.toMatch(/>0\d</);

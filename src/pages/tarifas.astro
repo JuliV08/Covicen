@@ -58,7 +58,7 @@ const exentos = [
 ];
 ---
 <Base titulo="Tarifas" descripcion={`Cuadro tarifario vigente en los peajes del Tramo Centro (Carcarañá, James Craik y Franck): ${precio !== null ? moneda(precio) : ''} por auto, Resolución 248/2026 de Vialidad Nacional. Cuadro tarifario por estación, TelePASE, pago en la vía y exenciones.`} migas={[{ nombre: 'Tarifas', href: '/tarifas' }]}>
-  <Seccion nivel="h1" eyebrow="Tarifas" titulo="Cuánto cuesta el peaje." intro={bajada} class="pt-10">
+  <Seccion nivel="h1" eyebrow="Tarifas" titulo="Cuánto cuesta el peaje" intro={bajada} class="pt-10">
     {/* Pedido del gerente (24/09/2026): sale el recuadro grande con el precio del auto, porque el precio de cada
         categoría ya está en la tabla de cada estación, dos pasos más abajo. Lo que estaba a su derecha pasa a
         ocupar todo el ancho: vigencia y resolución a la izquierda, Imprimir a la derecha. La línea «rige el mismo
@@ -93,7 +93,7 @@ const exentos = [
   </Seccion>
 
   {publicado.descuentosPorFrecuencia && (
-  <Seccion eyebrow="Descuentos por frecuencia" titulo="Cuanto más pasás, menos pagás." intro="Para autos, con TelePASE, por estación y por mes calendario, en ambos sentidos. Es una obligación del contrato de concesión." fondo={fDescuentos}>
+  <Seccion eyebrow="Descuentos por frecuencia" titulo="Cuanto más pasás, menos pagás" intro="Para autos, con TelePASE, por estación y por mes calendario, en ambos sentidos. Es una obligación del contrato de concesión." fondo={fDescuentos}>
     <dl class="revelar grid gap-4 md:grid-cols-3">
       {descuentos.map(([pasadas, pct]) => <div class="tarjeta p-6"><dt class="eyebrow">{pasadas}</dt><dd class="mt-2 text-4xl font-extrabold text-texto">{pct}</dd><dd class="mt-1 text-sm text-texto-2">de descuento a partir de esa pasada</dd></div>)}
     </dl>
@@ -102,7 +102,7 @@ const exentos = [
 
   {/* La lista arriba y las dos tarjetas abajo, una al lado de la otra (01/10/2026): en dos columnas, la lista quedaba
       a la izquierda con un hueco debajo y las tarjetas apiladas a la derecha, «de modo asimétrico». */}
-  <Seccion eyebrow="Exenciones" titulo="Quiénes no pagan." fondo={fExenciones}>
+  <Seccion eyebrow="Exenciones" titulo="Quiénes no pagan" fondo={fExenciones}>
     <div class="revelar flex flex-col gap-8">
       <ul class="flex max-w-prose flex-col gap-2 text-texto-2">{exentos.map((e) => <li class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-vial" aria-hidden="true"></span>{e}</li>)}</ul>
       <div class="grid gap-4 md:grid-cols-2">
@@ -113,13 +113,13 @@ const exentos = [
   </Seccion>
 
   {publicado.tarifaDiferencial && (
-  <Seccion eyebrow="Tarifa diferencial" titulo="Vecinos, frentistas y docentes." intro="Existe una tarifa diferencial para vecinos y frentistas de una estación y para docentes, solo para la categoría 1, que se renueva cada año. El monto se informa al hacer el trámite." fondo={fDiferencial}>
+  <Seccion eyebrow="Tarifa diferencial" titulo="Vecinos, frentistas y docentes" intro="Existe una tarifa diferencial para vecinos y frentistas de una estación y para docentes, solo para la categoría 1, que se renueva cada año. El monto se informa al hacer el trámite." fondo={fDiferencial}>
     <div class="revelar flex justify-center"><Boton href="/tramites" variante="secundario">Requisitos y cómo tramitarla</Boton></div>
   </Seccion>
   )}
 
   {publicado.pasasteSinPagar && (
-  <Seccion eyebrow="Si pasaste sin pagar" titulo="Cómo regularizarlo." intro="Si cruzás una estación sin TelePASE vigente y sin pagar:" fondo={fSinPagar}>
+  <Seccion eyebrow="Si pasaste sin pagar" titulo="Cómo regularizarlo" intro="Si cruzás una estación sin TelePASE vigente y sin pagar:" fondo={fSinPagar}>
     <ol class="revelar grid gap-4 md:grid-cols-2">
       <li class="tarjeta p-6"><p class="eyebrow">Dentro de los 30 días</p><p class="mt-2 text-texto-2">Pagás la tarifa que correspondía más <strong class="text-texto">una tarifa</strong> de tu categoría, por gastos administrativos.</p></li>
       <li class="tarjeta p-6"><p class="eyebrow">Después de los 30 días</p><p class="mt-2 text-texto-2">Pagás la tarifa más <strong class="text-texto">dos tarifas</strong> de tu categoría, con intereses a la tasa activa del Banco Nación.</p></li>
@@ -129,7 +129,7 @@ const exentos = [
   )}
 
   {publicado.excesoDeCarga && (
-  <Seccion eyebrow="Exceso de carga" titulo="Pasar con sobrepeso sale 50 o 100 peajes." intro="Si una balanza de pesaje dinámico detecta que un vehículo lleva más carga que la que permiten la Ley 24.449 y su decreto reglamentario, la tarifa de esa pasada se multiplica." fondo={fExceso}>
+  <Seccion eyebrow="Exceso de carga" titulo="Pasar con sobrepeso sale 50 o 100 peajes" intro="Si una balanza de pesaje dinámico detecta que un vehículo lleva más carga que la que permiten la Ley 24.449 y su decreto reglamentario, la tarifa de esa pasada se multiplica." fondo={fExceso}>
     <dl class="revelar grid gap-4 md:grid-cols-2">
       {excesoDeCarga.map(([tramoExceso, multiplicador]) => <div class="tarjeta p-6"><dt class="eyebrow">{tramoExceso}</dt><dd class="mt-2 text-4xl font-extrabold text-texto">{multiplicador}</dd><dd class="mt-1 text-sm text-texto-2">la tarifa vigente de su categoría</dd></div>)}
     </dl>
@@ -138,7 +138,7 @@ const exentos = [
   )}
 
   {publicado.categoriasFuturas && (
-  <Seccion eyebrow="Después de las obras iniciales" titulo="Las categorías que van a regir." intro="Cuando terminen las Obras Iniciales de Puesta en Valor, el cuadro pasa a las categorías del contrato de concesión: cada una es un múltiplo de la tarifa básica. Acá va la estructura; los precios, cuando Vialidad Nacional homologue el cuadro." fondo={fCategorias}>
+  <Seccion eyebrow="Después de las obras iniciales" titulo="Las categorías que van a regir" intro="Cuando terminen las Obras Iniciales de Puesta en Valor, el cuadro pasa a las categorías del contrato de concesión: cada una es un múltiplo de la tarifa básica. Acá va la estructura; los precios, cuando Vialidad Nacional homologue el cuadro." fondo={fCategorias}>
     <section class="bloque-oscuro revelar overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label="Categorías futuras de vehículos">
       <table class="w-full border-collapse text-left">
         <caption class="sr-only">Categorías de vehículos del contrato de concesión y su múltiplo sobre la tarifa básica.</caption>

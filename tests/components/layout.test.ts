@@ -13,7 +13,7 @@ const render = async (path: string, props: Record<string, unknown>) => {
 
 describe('Base', () => {
   it('título con patrón, canonical absoluta, noindex en demo, lang es-AR', async () => {
-    const html = await render('/tarifas/', { titulo: 'Tarifas', descripcion: 'Cuánto cuesta el peaje.' });
+    const html = await render('/tarifas/', { titulo: 'Tarifas', descripcion: 'Cuánto cuesta el peaje' });
     expect(html).toContain('<html lang="es-AR"');
     expect(html).toContain('<title>Tarifas | Covicen</title>');
     expect(html).toContain('<link rel="canonical" href="https://covicen.test/tarifas/"');

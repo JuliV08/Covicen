@@ -26,9 +26,9 @@ const descripcion = publicado.normativa
   ? 'Normativa de la concesión del Tramo Centro para descargar, póliza de responsabilidad civil de Covicen y control de Vialidad Nacional. Covicen publica lo que se puede verificar, con la fuente al lado.'
   : 'Póliza de responsabilidad civil de Covicen, la concesionaria del Tramo Centro: aseguradora, número, vigencia y el documento para descargar.';
 ---
-<Base titulo={publicado.normativa ? 'Transparencia' : 'Póliza de responsabilidad civil'} {descripcion} migas={[{ nombre: publicado.normativa ? 'Transparencia' : 'Póliza de responsabilidad civil', href: '/transparencia' }]}>
+<Base titulo={publicado.normativa ? 'Transparencia' : 'Póliza de responsabilidad civil'} {descripcion} migas={[{ nombre: publicado.normativa ? 'Transparencia' : 'Póliza de responsabilidad civil', href: '/responsabilidad-civil' }]}>
   {publicado.normativa && (
-    <Seccion nivel="h1" eyebrow="Transparencia" titulo="Lo que se puede verificar, con la fuente al lado." intro="Vialidad Nacional supervisa la concesión con indicadores objetivos. Acá están la normativa aplicable y la póliza de responsabilidad civil." class="pt-10">
+    <Seccion nivel="h1" eyebrow="Transparencia" titulo="Lo que se puede verificar, con la fuente al lado" intro="Vialidad Nacional supervisa la concesión con indicadores objetivos. Acá están la normativa aplicable y la póliza de responsabilidad civil." class="pt-10">
       <h2 class="titulo revelar mx-auto mb-6 text-center text-2xl">Normativa aplicable</h2>
       <ol class="escalonar grid gap-4 md:grid-cols-2">
         {normativa.map((n, i) => (
@@ -47,7 +47,7 @@ const descripcion = publicado.normativa
   )}
   {/* Sin «(PETG art. 61.6)» desde el 05/10/2026: la excepción a las citas del pliego en Transparencia era por la
       normativa, que está escondida. */}
-  <Seccion id="poliza" {...seccionPoliza} titulo="Póliza de responsabilidad civil." intro="El contrato de concesión exige publicar la aseguradora y los datos de la póliza que cubre a los usuarios.">
+  <Seccion id="poliza" {...seccionPoliza} titulo="Póliza de responsabilidad civil">
     {/* 05/10/2026: «acá el contenido quedó descentrado». Desde la fase A el encabezado va al medio, y los datos quedaban
         pegados a la izquierda: van en una ficha centrada, con el PDF como botón. */}
     {poliza ? (

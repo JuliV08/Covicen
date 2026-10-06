@@ -8,7 +8,7 @@ import TarjetaEstacion from '@/components/TarjetaEstacion.astro';
 import Contacto from '@/pages/contacto.astro';
 import Emergencias from '@/pages/emergencias.astro';
 import Tramites from '@/pages/tramites.astro';
-import Transparencia from '@/pages/transparencia/[...resto].astro';
+import Transparencia from '@/pages/responsabilidad-civil/[...resto].astro';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
 import { publicado } from '@/lib/publicado';
 
@@ -69,9 +69,9 @@ describe('la póliza de responsabilidad civil', () => {
   it('Transparencia es solo la póliza: un h1, los datos, el PDF en otra pestaña y sin la normativa', async () => {
     expect(publicado.transparencia).toBe(true);
     expect(publicado.normativa, 'se prendió la normativa: revisar este test').toBe(false);
-    const html = await pagina(Transparencia, '/transparencia/');
+    const html = await pagina(Transparencia, '/responsabilidad-civil/');
     expect(html.match(/<h1/g)?.length).toBe(1);
-    expect(/<h1[^>]*>([\s\S]*?)<\/h1>/.exec(html)?.[1]).toContain('Póliza de responsabilidad civil.');
+    expect(/<h1[^>]*>([\s\S]*?)<\/h1>/.exec(html)?.[1]).toContain('Póliza de responsabilidad civil');
     for (const dato of ['Seguros Galicia S.A.', `N.º 000277475`, 'Del 5 de octubre de 2026 al 5 de octubre de 2027']) expect(html).toContain(dato);
     const enlace = /<a href="\/documentos\/poliza-responsabilidad-civil\.pdf"[^>]*>/.exec(html)?.[0] ?? '';
     expect(enlace).toContain('target="_blank"');
@@ -84,7 +84,7 @@ describe('la póliza de responsabilidad civil', () => {
     // Sin «Transparencia» en el título y sin cortar «responsabilidad» con guion: la letra baja hasta que entra entera.
     expect(html).not.toMatch(/eyebrow[^>]*>\s*Transparencia/i);
     expect(/<title>([^<]*)<\/title>/.exec(html)?.[1]).not.toMatch(/Transparencia/);
-    const css = readFileSync('src/pages/transparencia/[...resto].astro', 'utf8');
+    const css = readFileSync('src/pages/responsabilidad-civil/[...resto].astro', 'utf8');
     expect(css).not.toContain('hyphens: auto');
     expect(css).toMatch(/:global\(#poliza h1\) \{ font-size: min\(clamp\(2\.5rem, 2rem \+ 4vw, 6rem\), 8\.6vw\); overflow-wrap: break-word; \}/);
   });

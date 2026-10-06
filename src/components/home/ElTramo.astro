@@ -25,7 +25,7 @@ const provincias = enumerar(tramo.provincias);
     <MapaInteractivo {tramo} modo="scroll">
       <div slot="arriba" class="text-center xl:text-left">
         <Eyebrow centrado class="xl:justify-start">El tramo</Eyebrow>
-        <h2 class="titulo mx-auto mt-3 xl:mx-0 xl:text-4xl">Tres rutas nacionales bajo una misma concesión.</h2>
+        <h2 class="titulo mx-auto mt-3 xl:mx-0 xl:text-4xl">Tres rutas nacionales bajo una misma concesión</h2>
         <p class="mx-auto mt-4 max-w-2xl text-lg text-texto-2 xl:mx-0 xl:text-base">{rutas} en {provincias}. Tocá una estación para ver su ficha: en verde las que cobran hoy, en amarillo las próximas.</p>
         <div class="escalonar mt-8 grid grid-cols-3 gap-4 border-t border-borde pt-6 text-left xl:mt-6">
           <div style="--i: 0"><Mojon valor={Math.floor(tramo.km)} unidad="km" etiqueta="de rutas nacionales" animar compacto /></div>
