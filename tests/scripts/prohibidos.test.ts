@@ -45,3 +45,22 @@ describe('prohibidos del pliego en la cara del público', () => {
     expect(readFileSync('src/content/contacto.json', 'utf8')).toContain('PETG');
   });
 });
+
+// «Efectivo» solo negado (06/10/2026): la pregunta de cómo se paga dice, con las palabras de la gerencia, que ya no se
+// acepta; cualquier otra mención sigue haciendo fallar el build, porque en la vía se cobra solo con medios electrónicos.
+describe('efectivo, solo para decir que ya no hay', () => {
+  const generales = /const PROHIBIDOS = (\[.*\]);/.exec(fuente)?.[1] ?? '';
+  // eslint-disable-next-line no-eval -- literales de expresión regular leídos del propio repo, no entrada externa
+  const efectivo = (generales ? (eval(generales) as RegExp[]) : []).find((p) => p.source.includes('efectivo'));
+  it('deja pasar las negaciones', () => {
+    expect(efectivo, 'falta la guarda de «efectivo» en PROHIBIDOS').toBeDefined();
+    for (const texto of ['Pago sin efectivo.', 'Ya no se acepta más el pago en efectivo.', 'Ya no se acepta más en efectivo.', 'No se acepta en efectivo.']) {
+      expect(efectivo!.test(texto), `bloquea «${texto}»`).toBe(false);
+    }
+  });
+  it('frena cualquier otra mención', () => {
+    for (const texto of ['Pagá en efectivo en la cabina.', 'Se acepta efectivo y tarjeta.', 'Efectivo o TelePASE.', 'Ya no se acepta tarjeta, solo efectivo.']) {
+      expect(efectivo!.test(texto), `deja pasar «${texto}»`).toBe(true);
+    }
+  });
+});

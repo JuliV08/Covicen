@@ -25,8 +25,10 @@ const fallo = (m: string) => fallos.push(m);
 
 // `efectivo` (01/10/2026): en la vía se cobra solo con medios electrónicos, en las terminales POS. La palabra sola, no
 // «efectiva» ni «efectivamente»: en este sitio «efectivo» siempre quiso decir plata en mano. Desde el 05/10/2026 se
-// permite SOLO negada («sin efectivo»): la pregunta frecuente de cómo se paga tiene que decir que ya no hay.
-const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/, /(?<!\bsin )\befectivo\b/i];
+// permite SOLO negada («sin efectivo»): la pregunta frecuente de cómo se paga tiene que decir que ya no hay. Desde el
+// 06/10/2026 también como «no se acepta (más) (el pago) en efectivo», que es como lo escribió la gerencia en esa misma
+// respuesta. Cualquier otra forma sigue prohibida.
+const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/, /(?<!\bsin |\bno se acepta (?:más )?(?:el pago )?en )\befectivo\b/i];
 // Plazos de respuesta (02/10/2026): el gerente pidió «bajarle el compromiso de los días de respuesta» y Juli eligió
 // sacarlos de todos lados. Se guardan las frases que PROMETEN un plazo, no «días hábiles» a secas: la disponibilidad de
 // los canales («se gestiona en días hábiles») se queda, y un trámite o una norma pueden tener su propio plazo («entra en

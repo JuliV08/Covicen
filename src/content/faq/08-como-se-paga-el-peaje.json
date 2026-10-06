@@ -4,5 +4,5 @@
   "orden": 8,
   "enHome": false,
   "pregunta": "¿Cómo se paga el servicio de peaje?",
-  "respuesta": "Sin efectivo: en ninguna estación se acepta más el pago en billetes. Se paga con TelePASE, prepago (cargás saldo por adelantado y cada pasada se descuenta a la tarifa de tu categoría) o pospago (asociás una tarjeta de crédito o débito y pagás a mes vencido), o en la vía con medios electrónicos, en las terminales POS de las estaciones con cabina. Todos los detalles están en Medios de pago."
+  "respuesta": "Ya no se acepta más el pago en efectivo. Se paga con TelePASE, prepago (cargás saldo por adelantado y cada pasada se descuenta a la tarifa de tu categoría) o pospago (asociás una tarjeta de crédito o débito y pagás a mes vencido), o en la vía con medios electrónicos, en las terminales POS de las estaciones con cabina. Todos los detalles están en Medios de pago."
 }

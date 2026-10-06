@@ -89,8 +89,9 @@ const descripcion = `Covicen, concesionaria del Tramo Centro de la Red Federal d
           <Eyebrow class="text-texto">Concesionaria del Tramo Centro · {c.rutas.join(' · ')}</Eyebrow>
           <h1 class="titulo titulo-foto mt-6">Próximamente</h1>
           <p class="mt-6 max-w-2xl text-lg text-texto md:text-xl">
-            Estamos preparando el sitio de Covicen, la concesionaria del Tramo Centro de la Red Federal de Concesiones:
-            <strong>{numero(c.km, 2)} km</strong> sobre {c.rutas.join(', ')}, entre {c.provincias.join(' y ')}.
+            {/* El espacio después de los dos puntos va en el mismo renglón que el <strong>: con un salto de línea en el
+                medio, el compresor de HTML de Astro lo borraba y quedaba «Concesiones:679,03 km» (06/10/2026). */}
+            Estamos preparando el sitio de Covicen, la concesionaria del Tramo Centro de la Red Federal de Concesiones: <strong>{numero(c.km, 2)} km</strong> sobre {c.rutas.join(', ')}, entre {c.provincias.join(' y ')}.
             Operación desde el <strong>{fechaLarga(c.inicioOperacion)}</strong>.
           </p>
         </div>
