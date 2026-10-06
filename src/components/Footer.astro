@@ -38,7 +38,7 @@ const actualizado = fechaHoraLarga(ahora);
   {/* 05/10/2026: «el footer también, con cards premium, que el mouse refleje luz al hacer hover». Mosaico de tarjetas con
       luz que sigue al puntero (.tarjeta-luz): la de la marca, más ancha, con los dos teléfonos bien grandes, y al lado
       Usuarios, Empresa y Contacto. Sin halos que giran: cuatro a la vez serían un show de luces. */}
-  <div class="contenedor grid gap-4 py-14 md:grid-cols-3 lg:grid-cols-[1.45fr_1fr_1fr_1fr]">
+  <div class="contenedor grid gap-4 py-14 md:grid-cols-3 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
     <div class="tarjeta-luz flex flex-col p-6 sm:p-7 md:col-span-3 lg:col-span-1" data-spotlight>
       <div class="flex items-center gap-3"><Isotipo size={40} /><span class="text-xl font-extrabold">COVICEN</span></div>
       <p class="mt-4 text-sm text-texto-2">Concesionaria del Tramo Centro de la <a href={redFederal.url} rel="noopener noreferrer" target="_blank">{redFederal.nombre}</a>. {empresa.concesion.rutas.join(' · ')} · {empresa.concesion.provincias.join(' y ')}.</p>

@@ -19,10 +19,18 @@ const iniciar = () => {
   // Arriba de todo ninguna sección cruza la franja todavía: arranca marcado el primer tema.
   const primero = enlaces.keys().next().value;
   if (primero) marcar(primero);
-  // La franja de lectura va del 30 % al 45 % de la pantalla: el tema marcado es el que la está cruzando.
+  // La franja de lectura va del 30 % al 45 % de la pantalla: el tema marcado es el que la está cruzando. Si la cruzan
+  // dos (el final de uno y el principio del otro), el de arriba, que es el que se está terminando de leer.
+  const enFranja = new Set<string>();
   io = new IntersectionObserver(
     (entradas) => {
-      for (const e of entradas) if (e.isIntersecting) marcar((e.target as HTMLElement).dataset.temaSeccion!);
+      for (const e of entradas) {
+        const tema = (e.target as HTMLElement).dataset.temaSeccion!;
+        if (e.isIntersecting) enFranja.add(tema);
+        else enFranja.delete(tema);
+      }
+      const arriba = [...enlaces.keys()].find((t) => enFranja.has(t));
+      if (arriba) marcar(arriba);
     },
     { rootMargin: '-30% 0px -55% 0px' },
   );

@@ -18,18 +18,49 @@ const { crm, id, plazos, linea } = Astro.props;
 // La dirección entra como literal de JS con JSON.stringify, y el esquema ya la limitó a un cargador del CDN de Bitrix24.
 const cargador = `(function(w,d,u){var s=d.createElement('script');s.async=true;s.src=u+'?'+(Date.now()/180000|0);var h=d.getElementsByTagName('script')[0];h.parentNode.insertBefore(s,h);})(window,document,${JSON.stringify(crm.script)});`;
 ---
+{/* 05/10/2026, maquillaje completo («tiene una animación rara de un sol… más allá del estilo muy simple»): el formulario
+    va en una tarjeta como las del sitio, y los estilos de abajo pisan los de Bitrix en campos, errores, botón, pasos y
+    carga. Bitrix lo arma adentro de esta página (no en un iframe), por eso le llegan. */}
 <div class="formulario-crm grid gap-5" {id}>
-  <div class="crm-montaje">
+  <div class="crm-montaje tarjeta p-5 sm:p-8">
+    {/* Mientras Bitrix carga, un brillo suave sobre la silueta de los campos en lugar de un hueco vacío. Se va cuando
+        el formulario se monta, igual que el respaldo. */}
+    <div class="crm-esqueleto grid gap-4" aria-hidden="true"><span></span><span></span><span></span><span></span><span class="crm-esqueleto-boton"></span></div>
     {/* Respaldo para cuando el formulario no llega: sin JavaScript, o con un bloqueador que frena a bitrix24. Aparece
         recién a los 4 segundos, para no asustar mientras carga, y se va apenas el formulario se monta. */}
-    <p class="crm-respaldo rounded-md border border-dashed border-borde-fuerte p-4 text-sm text-texto-2">
+    <p class="crm-respaldo mt-5 rounded-md border border-dashed border-borde-fuerte p-4 text-sm text-texto-2">
       ¿No ves el formulario? Necesita JavaScript, y algunos bloqueadores de anuncios lo frenan: probá desactivarlo en esta página.{linea && <> También podés llamar gratis al <a href={`tel:${linea.replace(/[^\d+]/g, '')}`}>{sinCortes(linea)}</a>.</>} Para emergencias, llamá al <a href="tel:140">140</a>, las 24 horas.
     </p>
     <script is:inline data-b24-form={crm.codigo} data-skip-moving="true" set:html={cargador} />
   </div>
   {plazos && <p class="text-sm text-texto-2">{plazos}</p>}
   <p class="text-sm text-texto-2">Lo que cargues en este formulario llega al sistema de gestión de Covicen, que funciona sobre Bitrix24. Ver <a href={ruta('/privacidad')}>política de privacidad</a>.</p>
+  {/* El cartel de reCAPTCHA se esconde (abajo) y Google lo permite si el aviso queda a la vista en el formulario: es
+      este párrafo. Los dos dependen de que el cartel exista, así que si el CRM deja de usar reCAPTCHA, se van juntos. */}
+  <p class="crm-recaptcha text-sm text-texto-2">Este formulario está protegido por reCAPTCHA: se aplican la <a href="https://policies.google.com/privacy" rel="noopener noreferrer" target="_blank" aria-label="Política de privacidad de Google (se abre en otra pestaña)">política de privacidad</a> y las <a href="https://policies.google.com/terms" rel="noopener noreferrer" target="_blank" aria-label="Condiciones del servicio de Google (se abre en otra pestaña)">condiciones del servicio</a> de Google.</p>
 </div>
+<script>
+  // La barra de pasos: Bitrix escribe «1/2» adentro de su círculo de progreso. Esto lo lee cada vez que cambia y se lo
+  // pasa al CSS (--crm-progreso, de 0 a 1, y --crm-paso, el texto «Paso 1 de 2»). Si Bitrix cambia ese marcado, no hay
+  // data-progreso y queda su círculo con nuestros colores: nada se rompe.
+  const seguirPasos = () => {
+    document.querySelectorAll<HTMLElement>('.crm-montaje:not([data-pasos-observados])').forEach((m) => {
+      m.dataset.pasosObservados = '';
+      const leer = () => {
+        const r = /(\d+)\s*\/\s*(\d+)/.exec(m.querySelector('.b24-form-progress-bar-counter')?.textContent ?? '');
+        if (!r) { m.removeAttribute('data-progreso'); return; }
+        const paso = Number(r[1]);
+        const pasos = Number(r[2]);
+        m.dataset.progreso = '';
+        m.style.setProperty('--crm-progreso', String(paso / pasos));
+        m.style.setProperty('--crm-paso', JSON.stringify(`Paso ${paso} de ${pasos}`));
+      };
+      new MutationObserver(leer).observe(m, { childList: true, subtree: true, characterData: true });
+      leer();
+    });
+  };
+  document.addEventListener('astro:page-load', seguirPasos);
+</script>
 <style>
   .crm-respaldo { animation: crm-respaldo 0s linear 4s both; }
   @keyframes crm-respaldo { from { visibility: hidden; } to { visibility: visible; } }
@@ -93,4 +124,137 @@ const cargador = `(function(w,d,u){var s=d.createElement('script');s.async=true;
     opacity: 1 !important;
   }
   .crm-montaje :global(.b24-form-state-container .b24-form-error .b24-form-btn) { border-color: var(--color-borde-fuerte) !important; }
+
+  /* ── Maquillaje completo (05/10/2026). Va con !important porque la hoja de Bitrix llega después que la nuestra. Si
+     Bitrix cambia estos nombres, vuelve su diseño: nada se rompe. ── */
+
+  /* La silueta de carga: un brillo que pasa por los campos. Seis pasadas y queda quieta, por si el formulario no llega. */
+  .crm-esqueleto > span {
+    display: block; height: 3.25rem; border-radius: 12px;
+    background: linear-gradient(90deg, var(--color-superficie) 0%, var(--color-superficie-2) 50%, var(--color-superficie) 100%) 0 0 / 200% 100%;
+    animation: crm-brillo 1.4s ease-in-out 6;
+  }
+  .crm-esqueleto > span:first-child { width: 10rem; height: 1rem; border-radius: 999px; }
+  .crm-esqueleto > .crm-esqueleto-boton {
+    margin-top: 0.5rem;
+    background-image: linear-gradient(90deg, color-mix(in srgb, var(--color-acento) 22%, var(--color-superficie)) 0%, color-mix(in srgb, var(--color-acento) 38%, var(--color-superficie-2)) 50%, color-mix(in srgb, var(--color-acento) 22%, var(--color-superficie)) 100%);
+  }
+  @keyframes crm-brillo { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+  .crm-montaje:has([class*="b24-form"]) .crm-esqueleto { display: none; }
+
+  /* Sin los rellenos propios de Bitrix: el aire lo da la tarjeta. */
+  .crm-montaje :global(.b24-form-header-padding),
+  .crm-montaje :global(.b24-form-content) { padding: 0 !important; }
+  .crm-montaje :global(.b24-form-padding-side) { padding-left: 0 !important; padding-right: 0 !important; }
+
+  /* Los pasos: «Paso 1 de 2» arriba, el título y una barra fina, en lugar del círculo «1/2». Solo con data-progreso (lo
+     pone el script de arriba); sin él queda el círculo de Bitrix, con nuestros colores. */
+  .crm-montaje[data-progreso] :global(.b24-form-progress-container) {
+    /* La columna explícita: Bitrix le pone justify-content: flex-start, que en una grilla encoge la columna al título. */
+    display: grid !important; grid-template-columns: minmax(0, 1fr); gap: 0.5rem; margin-bottom: 1.75rem !important;
+    font: 700 1.375rem/1.25 var(--font-sans) !important; color: var(--color-texto) !important;
+  }
+  .crm-montaje[data-progreso] :global(.b24-form-progress) { display: none !important; }
+  .crm-montaje[data-progreso] :global(.b24-form-progress-bar-counter) {
+    position: static !important; transform: none !important; font-size: 0 !important; line-height: 0 !important; text-align: left !important;
+  }
+  .crm-montaje[data-progreso] :global(.b24-form-progress-bar-counter)::before {
+    content: var(--crm-paso); display: block;
+    font: 700 0.8125rem/1.2 var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-acento);
+  }
+  .crm-montaje[data-progreso] :global(.b24-form-progress-bar-title) {
+    padding: 0 !important; font: 700 1.375rem/1.25 var(--font-sans) !important; letter-spacing: var(--tracking-titulo); color: var(--color-texto) !important;
+  }
+  .crm-montaje[data-progreso] :global(.b24-form-progress-container)::after {
+    content: ""; height: 4px; margin-top: 0.5rem; border-radius: 999px;
+    background: linear-gradient(90deg, var(--color-marca-500), var(--color-acento)) 0 0 / calc(var(--crm-progreso, 0) * 100%) 100% no-repeat, color-mix(in srgb, var(--color-texto) 14%, transparent);
+    box-shadow: 0 0 14px -2px color-mix(in srgb, var(--color-acento) 45%, transparent);
+    transition: background-size var(--dur-ui) var(--ease-salida);
+  }
+
+  /* Los campos: redondeados como el resto del sitio, con el foco en el celeste de la marca. La etiqueta, sin la
+     transparencia de Bitrix (a 50 % no llegaba al contraste mínimo). */
+  .crm-montaje :global(.b24-form-field) { margin-bottom: 1rem !important; }
+  .crm-montaje :global(.b24-form-control-string .b24-form-control),
+  .crm-montaje :global(.b24-form-control-list .b24-form-control),
+  .crm-montaje :global(.b24-form-control-text .b24-form-control) {
+    border: 1px solid var(--color-borde-fuerte) !important; border-radius: 12px !important;
+    background-color: var(--color-fondo-2) !important; color: var(--color-texto) !important;
+    transition: border-color var(--dur-micro) var(--ease-salida), box-shadow var(--dur-ui) var(--ease-salida) !important;
+  }
+  .crm-montaje :global(.b24-form-control:focus:not([readonly])),
+  .crm-montaje :global(.b24-form-control-container[role="combobox"]:focus .b24-form-control) {
+    border-color: var(--color-acento) !important;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-acento) 22%, transparent) !important;
+  }
+  .crm-montaje :global(.b24-form-control-label) { opacity: 1 !important; color: var(--color-texto-2) !important; }
+  .crm-montaje :global(.b24-form-control-required) { color: var(--color-error) !important; }
+
+  /* Los errores: en rojo debajo del campo, con su signo, en lugar de las etiquetas naranjas que flotaban encima del
+     campo de abajo. */
+  .crm-montaje :global(.b24-form-control-alert.b24-form-control-string .b24-form-control),
+  .crm-montaje :global(.b24-form-control-alert.b24-form-control-list .b24-form-control),
+  .crm-montaje :global(.b24-form-control-alert.b24-form-control-text .b24-form-control) {
+    border-color: var(--color-error) !important; background-color: var(--color-fondo-2) !important;
+  }
+  .crm-montaje :global(.b24-form-control-alert-message) {
+    position: relative !important; left: 0 !important; top: 0 !important; max-width: none !important;
+    margin-top: 0.4rem; padding: 0 0 0 1.6rem !important; border-radius: 0 !important; background: none !important;
+    font: 600 0.875rem/1.35 var(--font-sans) !important; color: var(--color-error) !important;
+  }
+  .crm-montaje :global(.b24-form-control-alert-message)::after { display: none !important; }
+  /* El mensaje ahora ocupa lugar debajo del campo y agranda la caja donde Bitrix centra la etiqueta (top: 50 %): la
+     etiqueta vacía se queda a la altura del campo, 26 px, la mitad de sus 52. La que ya subió (top: 8px) no cambia. */
+  .crm-montaje :global(.b24-form-control-alert .b24-form-control:not(:focus):not(.b24-form-control-not-empty) + .b24-form-control-label) { top: 26px !important; }
+  .crm-montaje :global(.b24-form-control-alert-message)::before {
+    content: "!" !important; left: 0 !important; top: 0.05rem !important; width: 1.1rem !important; height: 1.1rem !important;
+    border-radius: 999px; background: var(--color-error) !important; color: var(--color-fondo);
+    font: 800 0.75rem/1.1rem var(--font-sans); text-align: center;
+  }
+
+  /* El botón: el del sitio, con su sombra celeste y una flecha que avanza. El de «Atrás» (con borde), sin relleno. */
+  .crm-montaje :global(.b24-form-btn) {
+    min-height: 3.25rem !important; border-radius: 12px !important; font: 700 1rem/1.4 var(--font-sans) !important;
+    box-shadow: 0 12px 28px -14px color-mix(in srgb, var(--color-acento) 75%, transparent) !important;
+    transition: background-color var(--dur-micro) var(--ease-salida), box-shadow var(--dur-ui) var(--ease-salida), transform var(--dur-ui) var(--ease-salida) !important;
+  }
+  .crm-montaje :global(.b24-form-btn:hover) {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 32px -14px color-mix(in srgb, var(--color-acento) 85%, transparent) !important;
+  }
+  .crm-montaje :global(.b24-form-btn:focus-visible) { outline: 2px solid var(--color-acento) !important; outline-offset: 3px !important; }
+  .crm-montaje :global(.b24-form-btn-block .b24-form-btn:not(.b24-form-btn-border))::after {
+    content: "→"; display: inline-block; margin-left: 0.5rem; transition: transform var(--dur-ui) var(--ease-salida);
+  }
+  .crm-montaje :global(.b24-form-btn-block .b24-form-btn:not(.b24-form-btn-border):hover)::after { transform: translateX(3px); }
+  .crm-montaje :global(.b24-form-btn-border) {
+    border: 1px solid var(--color-borde-fuerte) !important; background: transparent !important; color: var(--color-texto) !important; box-shadow: none !important;
+  }
+
+  /* La carga (al pasar de paso y al enviar): sin el sol de Bitrix, un anillo que gira. */
+  .crm-montaje :global(.b24-form-loader-icon) { display: none !important; }
+  .crm-montaje :global(div.b24-form-loader)::before {
+    content: ""; width: 2.5rem; height: 2.5rem; border-radius: 999px;
+    border: 3px solid color-mix(in srgb, var(--color-acento) 22%, transparent); border-top-color: var(--color-acento);
+    animation: crm-girar 0.8s linear infinite;
+  }
+  @keyframes crm-girar { to { transform: rotate(360deg); } }
+
+  /* «Reportar un abuso» de Bitrix: a 40 % de opacidad no llegaba al contraste mínimo. */
+  .crm-montaje :global(.b24-form-sign) { margin: 0 !important; padding: 1rem 0 0 !important; }
+  .crm-montaje :global(.b24-form .b24-form-sign-abuse-link) {
+    opacity: 1 !important; color: var(--color-texto-2) !important; border-bottom-color: currentColor !important; font-size: 0.8125rem !important;
+  }
+
+  /* El cartel de reCAPTCHA, escondido como lo pide Google (visibility, no display) y solo cuando está el aviso de arriba. */
+  .formulario-crm .crm-recaptcha { display: none; }
+  .formulario-crm:has(.grecaptcha-badge) .crm-recaptcha { display: block; }
+  .formulario-crm:has(.grecaptcha-badge) :global(.grecaptcha-badge) { visibility: hidden !important; }
+  .formulario-crm:has(.grecaptcha-badge) :global(.b24-form-recaptcha) { height: 0; margin: 0 !important; overflow: hidden; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .crm-esqueleto > span { animation: none; }
+    .crm-montaje :global(.b24-form-btn:hover) { transform: none; }
+    .crm-montaje :global(div.b24-form-loader)::before { animation-duration: 2.4s; }
+  }
 </style>

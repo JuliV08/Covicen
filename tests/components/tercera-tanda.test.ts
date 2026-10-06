@@ -40,15 +40,16 @@ describe('el 0800 444 7777', () => {
     expect(html.indexOf('href="tel:08004447777"')).toBeGreaterThan(html.indexOf('href="tel:140"'));
   });
 
-  // La revisión del 05/10 midió que «Atención al usuario 0800 444 7777» entero adentro del enlace (todo con espacios
-  // duros) medía 277 px en una columna de 216 y metía scroll de costado entre 1024 y 1200 px. Solo el número es enlace.
-  it('en la columna Contacto del pie, solo el número es enlace', async () => {
+  // Desde el pie en tarjetas (05/10/2026), el 0800 va en la tarjeta de la marca, la más ancha del mosaico, como una
+  // ficha de teléfono junto al 140: el enlace es la ficha entera, con el rótulo arriba y el número abajo, en dos
+  // renglones. (Antes, «Atención al usuario 0800 444 7777» en un solo renglón sin cortes medía 277 px en una columna de
+  // 216 y metía scroll de costado entre 1024 y 1200 px.)
+  it('en el pie, el 0800 es una ficha de teléfono en la tarjeta de la marca', async () => {
     const html = await (await contenedor()).renderToString(Footer, { props: { empresa: await fuenteLocalJson.empresa(), contacto: await fuenteLocalJson.contacto() } });
-    const columna = html.split('>Contacto</h2>')[1]?.split('</ul>')[0] ?? '';
-    const enlace = /<a href="tel:08004447777"[^>]*>([^<]*)<\/a>/.exec(columna);
-    expect(enlace, 'falta el 0800 en la columna Contacto').not.toBeNull();
-    expect(enlace![1]).toBe(NUMERO);
-    expect(columna).toContain('Atención al usuario');
+    const ficha = /<a href="tel:08004447777" class="pie-telefono"[^>]*>([\s\S]*?)<\/a>/.exec(html);
+    expect(ficha, 'falta la ficha del 0800 en el pie').not.toBeNull();
+    expect(ficha![1]).toMatch(new RegExp(`<span class="eyebrow block"[^>]*>Atención${NBSP}al${NBSP}usuario</span>`));
+    expect(ficha![1]).toMatch(new RegExp(`<span class="pie-telefono-numero"[^>]*>${NUMERO}</span>`));
   });
 
   it('en la home («¿Consultas, reclamos?»), en el respaldo del formulario del CRM y en la Guía de trámites', async () => {
