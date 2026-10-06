@@ -1,6 +1,6 @@
 ---
 import { existsSync } from 'node:fs';
-import { Phone } from '@lucide/astro';
+import { ArrowRight, Phone } from '@lucide/astro';
 import Atencion0800 from '@/components/Atencion0800.astro';
 import Isotipo from '@/components/marca/Isotipo.astro';
 import type { Contacto, Empresa } from '@/lib/datos/esquemas';
@@ -35,8 +35,11 @@ const ahora = new Date();
 const actualizado = fechaHoraLarga(ahora);
 ---
 <footer class="mt-24 border-t border-borde bg-fondo-2">
-  <div class="contenedor grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
-    <div>
+  {/* 05/10/2026: «el footer también, con cards premium, que el mouse refleje luz al hacer hover». Mosaico de tarjetas con
+      luz que sigue al puntero (.tarjeta-luz): la de la marca, más ancha, con los dos teléfonos bien grandes, y al lado
+      Usuarios, Empresa y Contacto. Sin halos que giran: cuatro a la vez serían un show de luces. */}
+  <div class="contenedor grid gap-4 py-14 md:grid-cols-3 lg:grid-cols-[1.45fr_1fr_1fr_1fr]">
+    <div class="tarjeta-luz flex flex-col p-6 sm:p-7 md:col-span-3 lg:col-span-1" data-spotlight>
       <div class="flex items-center gap-3"><Isotipo size={40} /><span class="text-xl font-extrabold">COVICEN</span></div>
       <p class="mt-4 text-sm text-texto-2">Concesionaria del Tramo Centro de la <a href={redFederal.url} rel="noopener noreferrer" target="_blank">{redFederal.nombre}</a>. {empresa.concesion.rutas.join(' · ')} · {empresa.concesion.provincias.join(' y ')}.</p>
       {(Object.keys(contacto.redes).length > 0) && (
@@ -46,36 +49,40 @@ const actualizado = fechaHoraLarga(ahora);
           ))}
         </ul>
       )}
+      <div class="mt-auto grid gap-3 pt-7 sm:grid-cols-2 lg:grid-cols-1">
+        {/* Todo en un renglón y con sinCortes: html-validate exige espacio duro en cada espacio de un <a href="tel:">. */}
+        <a href={`tel:${soloDigitos(tel)}`} class="pie-telefono pie-telefono-vial" aria-label={`Llamar a emergencias, ${tel}`}><span class="pie-telefono-icono" aria-hidden="true"><Phone size={18} /></span><span><span class="eyebrow block">{sinCortes(`${contacto.emergencias.etiqueta} · 24 h`)}</span><span class="pie-telefono-numero">{tel}</span></span></a>
+        {contacto.lineaGratuita && <a href={`tel:${soloDigitos(contacto.lineaGratuita)}`} class="pie-telefono" aria-label={`Llamar a atención al usuario, ${contacto.lineaGratuita}`}><span class="pie-telefono-icono" aria-hidden="true"><Phone size={18} /></span><span><span class="eyebrow block">{sinCortes('Atención al usuario')}</span><span class="pie-telefono-numero">{sinCortes(contacto.lineaGratuita)}</span></span></a>}
+      </div>
     </div>
     {columnas.map((c) => (
-      <nav aria-label={c.titulo}>
+      <nav aria-label={c.titulo} class="tarjeta-luz p-6 sm:p-7" data-spotlight>
         <h2 class="eyebrow mb-4 text-texto">{c.titulo}</h2>
-        <ul class="flex flex-col gap-2">
-          {c.links.map(([n, h]) => <li><a href={ruta(h)} class="inline-block py-1 text-texto-2 no-underline hover:text-texto hover:underline">{n}</a></li>)}
+        <ul class="flex flex-col gap-1">
+          {c.links.map(([n, h]) => <li><a href={ruta(h)} class="pie-enlace inline-block py-1 text-texto-2 no-underline hover:text-texto hover:underline">{n}</a></li>)}
         </ul>
       </nav>
     ))}
-    <div>
+    <div class="tarjeta-luz flex flex-col p-6 sm:p-7" data-spotlight>
       <h2 class="eyebrow mb-4 text-texto">Contacto</h2>
-      <ul class="flex flex-col gap-2 text-texto-2">
-        <li><a href={`tel:${soloDigitos(tel)}`} class="inline-flex items-center gap-2 py-1 font-semibold text-texto no-underline hover:underline" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={16} aria-hidden="true" /> {contacto.emergencias.etiqueta}&nbsp;{tel}</a></li>
-        {/* Solo el número es enlace: html-validate exige espacio duro en todo espacio de un <a href="tel:">, y con el
-            rótulo adentro el enlace medía 277 px sin poder cortarse, en una columna de 216 (scroll de costado entre
-            1024 y 1200 px, lo midió la revisión del 05/10/2026). Así el rótulo baja de renglón si no entra. */}
-        {contacto.lineaGratuita && <li class="flex flex-wrap items-center gap-x-2 py-1 font-semibold text-texto"><Phone size={16} aria-hidden="true" /> Atención al usuario <a href={`tel:${soloDigitos(contacto.lineaGratuita)}`} class="tabular-nums text-texto no-underline hover:underline" aria-label={`Llamar a atención al usuario, ${contacto.lineaGratuita}`}>{sinCortes(contacto.lineaGratuita)}</a></li>}
-        {contacto.atencionUsuario && <li><a href={`mailto:${contacto.atencionUsuario}`} class="inline-block py-1 no-underline hover:underline">{contacto.atencionUsuario}</a></li>}
-        {contacto.whatsapp.numero && <li><a href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen')} class="inline-block py-1 no-underline hover:underline" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>}
-        <li><a href={ruta('/contacto')} class="inline-block py-1 no-underline hover:underline">Formulario de contacto</a></li>
-        {paginaPublicada('/proveedores') && <li><a href={ruta('/proveedores')} class="inline-block py-1 no-underline hover:underline">Proveedores</a></li>}
-      </ul>
+      <p class="text-sm text-texto-2">Reclamos, consultas y sugerencias.</p>
+      {/* Enlace con flecha y no botón: entre 1024 y 1280 la tarjeta mide ~150 px de ancho y un botón no entraba. */}
+      <a href={ruta('/contacto')} class="pie-cta mt-4 inline-flex items-center gap-2 self-start font-semibold no-underline">Formulario de contacto <ArrowRight size={16} aria-hidden="true" class="shrink-0" /></a>
+      {(contacto.atencionUsuario || contacto.whatsapp.numero || paginaPublicada('/proveedores')) && (
+        <ul class="mt-5 flex flex-col gap-1 text-texto-2">
+          {contacto.atencionUsuario && <li><a href={`mailto:${contacto.atencionUsuario}`} class="inline-block py-1 [overflow-wrap:anywhere] no-underline hover:underline">{contacto.atencionUsuario}</a></li>}
+          {contacto.whatsapp.numero && <li><a href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen')} class="inline-block py-1 no-underline hover:underline" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>}
+          {paginaPublicada('/proveedores') && <li><a href={ruta('/proveedores')} class="inline-block py-1 no-underline hover:underline">Proveedores</a></li>}
+        </ul>
+      )}
       {registrales && (
         <>
           <h2 class="eyebrow mb-3 mt-8 text-texto">Datos registrales</h2>
-          <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm text-texto-2">
-            <dt>Razón social</dt><dd>{empresa.razonSocial}</dd>
-            <dt>CUIT</dt><dd>{empresa.cuit}</dd>
-            <dt>Domicilio legal</dt><dd>{empresa.domicilioLegal}</dd>
-            {empresa.domicilioComercial && <><dt>Domicilio comercial</dt><dd>{empresa.domicilioComercial}</dd></>}
+          <dl class="grid gap-y-2 text-sm text-texto-2">
+            <div><dt class="text-texto-3">Razón social</dt><dd>{empresa.razonSocial}</dd></div>
+            <div><dt class="text-texto-3">CUIT</dt><dd class="tabular-nums">{empresa.cuit}</dd></div>
+            <div><dt class="text-texto-3">Domicilio legal</dt><dd>{empresa.domicilioLegal}</dd></div>
+            {empresa.domicilioComercial && <div><dt class="text-texto-3">Domicilio comercial</dt><dd>{empresa.domicilioComercial}</dd></div>}
           </dl>
         </>
       )}
@@ -120,6 +127,26 @@ const actualizado = fechaHoraLarga(ahora);
   </div>
 </footer>
 <style>
+  /* Los dos teléfonos de la tarjeta de la marca: el 140 con el amarillo vial y el 0800 con el celeste. */
+  .pie-telefono {
+    display: flex; align-items: center; gap: 0.875rem; padding: 0.875rem 1rem; border-radius: 14px;
+    border: 1px solid var(--color-borde); background: color-mix(in srgb, var(--color-fondo-2) 55%, transparent);
+    color: var(--color-texto); text-decoration: none;
+    transition: border-color var(--dur-micro) var(--ease-salida), box-shadow var(--dur-ui) var(--ease-salida), transform var(--dur-ui) var(--ease-salida);
+  }
+  .pie-telefono:hover { border-color: color-mix(in srgb, var(--color-acento) 55%, transparent); box-shadow: 0 10px 28px -14px color-mix(in srgb, var(--color-acento) 60%, transparent); transform: translateY(-1px); }
+  .pie-telefono-icono {
+    display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 999px;
+    color: var(--color-acento); background: color-mix(in srgb, var(--color-acento) 14%, transparent);
+  }
+  .pie-telefono-numero { display: block; margin-top: 0.125rem; font-size: 1.5rem; font-weight: 800; line-height: 1.1; letter-spacing: var(--tracking-titulo); font-variant-numeric: tabular-nums; }
+  .pie-telefono-vial .pie-telefono-icono { color: var(--color-sobre-vial); background: var(--color-vial); }
+  .pie-telefono-vial .pie-telefono-numero { color: var(--color-vial-texto); }
+  .pie-telefono-vial:hover { border-color: color-mix(in srgb, var(--color-vial) 60%, transparent); box-shadow: 0 10px 28px -14px color-mix(in srgb, var(--color-vial) 55%, transparent); }
+  .pie-cta :global(svg) { transition: transform var(--dur-ui) var(--ease-salida); }
+  .pie-cta:hover { text-decoration: underline; }
+  .pie-cta:hover :global(svg) { transform: translateX(3px); }
+  @media (prefers-reduced-motion: reduce) { .pie-telefono:hover, .pie-cta:hover :global(svg) { transform: none; } }
   /* El logo es la máscara; el color, el del enlace. Ancho y alto explícitos: reservan el lugar antes de que llegue el
      archivo, así la fila no salta. Al imprimir, los fondos se omiten por defecto y el logo saldría en blanco: por eso
      `print-color-adjust`. Con colores forzados (alto contraste de Windows) el fondo se reemplaza y el logo
