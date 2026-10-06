@@ -26,4 +26,4 @@ El **140**, gratis desde cualquier celular y visible en cada página de este sit
 
 ## Atención al usuario
 
-Para consultas y reclamos, la línea gratuita **0800 444 7777**, el formulario de Contacto o el correo atencionalusuario@covicen.com.ar.
+Para consultas y reclamos, la línea gratuita **0800 555 2224**, el formulario de Contacto o el correo atencionalusuario@covicen.com.ar.

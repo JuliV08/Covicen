@@ -76,8 +76,8 @@ describe('Footer', () => {
   // 05/10/2026: el 0800 en negrita en Contacto, y en la línea de abajo el CUIT y la póliza de responsabilidad civil.
   it('lleva el 0800, el CUIT y la póliza', async () => {
     const html = await render(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto());
-    expect(html).toContain('href="tel:08004447777"');
-    expect(html).toContain('0800 444 7777');
+    expect(html).toContain('href="tel:08005552224"');
+    expect(html).toContain('0800 555 2224');
     expect(html).toMatch(/CUIT <span class="tabular-nums"[^>]*>30-71959948-2<\/span>/);
     expect(html).toMatch(/href="\/documentos\/poliza-responsabilidad-civil\.pdf" target="_blank"/);
   });

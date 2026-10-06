@@ -24,8 +24,8 @@ describe('contenido del repo', () => {
     const c = await fuenteLocalJson.contacto();
     expect(c.emergencias.telefono).toBe('140');
     // El 0800 llegó el 05/10/2026.
-    expect(c.lineaGratuita).toBe('0800 444 7777');
-    expect(c.canales.find((k) => k.id === 'linea-0800')?.valor).toBe('0800 444 7777');
+    expect(c.lineaGratuita).toBe('0800 555 2224');
+    expect(c.canales.find((k) => k.id === 'linea-0800')?.valor).toBe('0800 555 2224');
     expect(c.atencionUsuario).toBeNull();
     expect(c.enlaces.telepase).toMatch(/^https:\/\/www\.telepase\.com\.ar/);
     // La oficina virtual se definió el 25/09/2026: Autogestión, la web de Telepeaje Plus.
