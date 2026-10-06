@@ -36,6 +36,7 @@ const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km
       afuera. Adentro, el redondeado acompaña al de la tarjeta para que el resaltado de la última fila no asome. */}
   <section class="tarjeta" aria-label={`Tabla de tarifas, ${titulo}`}>
     <div class="overflow-hidden rounded-[calc(var(--tarjeta-radio)-1.5px)]">
+    <!-- [html-validate-disable-block no-redundant-role: los role de la tabla no sobran: en el celular el CSS le cambia el display a las filas y Safari deja de anunciarla como tabla sin ellos] -->
     <table class="w-full border-collapse text-left" role="table">
       <caption class="sr-only">Tarifas de peaje, {titulo}, en pesos argentinos con IVA incluido. {vigencia} {t.vigencia.descripcion}</caption>
       <thead class="tabla-cabecera" role="rowgroup">
