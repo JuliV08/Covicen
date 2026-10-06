@@ -24,7 +24,7 @@ Copiá `.env.example` a `.env`. Sin `.env` también anda, con base `/` y sin ind
 |---|---|---|---|---|
 | `PUBLIC_SITE_URL` | Origen del sitio, sin base ni barra final. Va en `canonical`, OG, sitemap, JSON-LD y en el encabezado de la hoja de impresión. | `http://localhost:4321` | `https://juliv08.github.io` | `https://www.covicen.com.ar` |
 | `PUBLIC_BASE_PATH` | Ruta base con barras. En Pages de un repo es `/<repo>/`. | `/` | `/Covicen/` | `/` |
-| `PUBLIC_INDEXABLE` | `false` = demo: `noindex` y `robots.txt` cerrado. `true` = indexable (solo con dominio). | `false` | `false` | `true` |
+| `PUBLIC_NO_INDEXAR` | Desde el 06/10/2026 se indexa solo el sitio entero en el dominio oficial (`src/lib/indexacion.ts`); `PUBLIC_INDEXABLE` ya no se usa. `true` = `noindex` y `robots.txt` cerrado, para una emergencia. | — | — | — |
 | `PUBLIC_SITIO_COMPLETO` | **Qué se publica.** Sin la variable o con `true`: el sitio entero. `false`: solo la portada de «Próximamente» (default hasta el lanzamiento del 06/10/2026). Ver «El interruptor de lo que se publica». | `true` (en tu `.env`) | `true` | `true` cuando salga al público |
 | `FUENTE_DATOS` | `local` (todo del repo) o `api` (tramo y tarifario del sistema; el resto sigue en el repo). | `local` | `local`; pasa a `api` solo cuando existe la variable de repositorio `API_URL` | según el sistema |
 | `API_URL` | Origen de la API del sistema, sin barra final. Obligatoria con `FUENTE_DATOS=api`. | — | variable de repositorio | `https://api.covicen.com.ar` (cuando exista) |

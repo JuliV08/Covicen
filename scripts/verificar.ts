@@ -9,14 +9,15 @@ import { archivosDe, existeDestino, hrefsConEsquemaProhibido, jsonLdDe, linksInt
 import { alcanzables } from './lib/solo-portada.ts';
 import { paresContraste } from './lib/pares.ts';
 import { publicado } from '../src/lib/publicado.ts';
+import { esIndexable } from '../src/lib/indexacion.ts';
 
 const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
 const base = `/${(env.PUBLIC_BASE_PATH || '/').replace(/^\/+|\/+$/g, '')}/`.replace('//', '/');
 // La misma regla que src/lib/config.ts y astro.config.mjs: sin la variable, el sitio entero (desde el 06/10/2026). Si
 // este control leyera distinto que el build, Amplify armaría una cosa, verificaría otra, fallaría y no publicaría nada.
 const sitioCompleto = (env.PUBLIC_SITIO_COMPLETO ?? '') === '' || env.PUBLIC_SITIO_COMPLETO === 'true';
-// Misma definición que src/lib/config.ts: una portada de «Próximamente» no es indexable aunque haya dominio.
-const indexable = env.PUBLIC_INDEXABLE === 'true' && sitioCompleto;
+// La misma regla que src/lib/config.ts, del mismo módulo: el sitio entero en el dominio oficial (desde el 06/10/2026).
+const indexable = esIndexable({ sitioCompleto, sitio: env.PUBLIC_SITE_URL ?? '', noIndexar: env.PUBLIC_NO_INDEXAR });
 // ¿Este build va a parar a un hosting, o es alguien compilando en su máquina? `CI` lo pone GitHub Actions;
 // `AWS_APP_ID`, el build de Amplify. Sirve para exigir cosas que en local serían molestas y afuera son errores.
 const hospedado = Boolean(process.env.CI || process.env.AWS_APP_ID);
@@ -132,7 +133,7 @@ for (const ruta of paginas) {
   if ((head.match(/<title>/g) ?? []).length !== 1) fallo(`${nombre}: debe haber exactamente un <title> en <head>`);
   if (!/<meta name="description" content="[^"]{20,}"/.test(html)) fallo(`${nombre}: falta description (≥ 20 chars)`);
   if (!/<link rel="canonical" href="https?:\/\//.test(html)) fallo(`${nombre}: falta canonical absoluta`);
-  if (indexable && /<link rel="canonical" href="http:\/\/localhost/.test(html)) fallo(`${nombre}: canonical apunta a localhost con PUBLIC_INDEXABLE=true (falta PUBLIC_SITE_URL)`);
+  if (indexable && /<link rel="canonical" href="http:\/\/localhost/.test(html)) fallo(`${nombre}: canonical apunta a localhost en un build indexable (falta PUBLIC_SITE_URL)`);
   // Y en un build que va a un hosting, un canonical a localhost está mal SIEMPRE, con o sin indexación. No es
   // teórico: el build del 18/09/2026 que estuvo publicado en www.covicen.com.ar salió así, porque se compiló sin
   // PUBLIC_SITE_URL. El chequeo de arriba no lo agarró justamente porque ese build tampoco era indexable.
@@ -188,8 +189,8 @@ for (const ruta of paginas) {
   if (estadoDeMuestra && marcador >= 0 && (cartel < 0 || cartel > marcador)) fallo(`${nombre}: marcadores de incidente sin el cartel "Datos de ejemplo" arriba`);
   // 7. indexabilidad
   const tieneNoindex = html.includes('content="noindex, nofollow"');
-  if (indexable && tieneNoindex) fallo(`${nombre}: noindex presente con PUBLIC_INDEXABLE=true`);
-  if (!indexable && !tieneNoindex) fallo(`${nombre}: falta noindex con PUBLIC_INDEXABLE=false`);
+  if (indexable && tieneNoindex) fallo(`${nombre}: noindex presente en un build indexable (sitio entero en el dominio oficial)`);
+  if (!indexable && !tieneNoindex) fallo(`${nombre}: falta noindex en un build no indexable`);
   // 8. accesibilidad básica estática
   // `alt` vacío es válido (imagen decorativa); Astro lo puede emitir como `alt` a secas o `alt=""`.
   for (const m of html.matchAll(/<img\b(?![^>]*\balt(?:[\s=>/]))[^>]*>/g)) fallo(`${nombre}: <img> sin alt → ${m[0].slice(0, 60)}`);

@@ -47,8 +47,9 @@ Se cargan **en la consola de Amplify, por rama**. Son lo que decide qué publica
 entero**: el default se dio vuelta en el código para salir sin depender de la consola. Para volver a la portada de
 «Próximamente» (por ejemplo, ante un problema grave), se carga con valor `false` y se relanza el armado.
 
-**Para que Google indexe el sitio** hay que cambiar `PUBLIC_INDEXABLE` a `true` en la consola: con `false`, el sitio
-entero sale igual, pero con `noindex` y el `robots.txt` cerrado.
+**Indexación en Google:** desde el 06/10/2026 la decide el código (`src/lib/indexacion.ts`): se indexa el sitio
+entero publicado en `covicen.com.ar` o `www.covicen.com.ar`, y nada más. `PUBLIC_INDEXABLE` ya no se usa (puede
+quedar en la consola, no hace nada). Para apagarla en una emergencia: `PUBLIC_NO_INDEXAR=true` y relanzar el armado.
 
 > **Por qué el interruptor va al revés:** el default es «publicar de menos». Si alguien crea una rama nueva y se
 > olvida de configurarla, publica un cartel, no las 27 páginas. Olvidarse falla hacia el lado seguro.

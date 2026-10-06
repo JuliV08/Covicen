@@ -21,11 +21,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Sin dominio: URL de Pages del repo. Cuando haya dominio: PUBLIC_SITE_URL=https://www.covicen.com.ar (con www: el
-      # apex redirige 301 al www, lo pide el pliego), PUBLIC_BASE_PATH=/, PUBLIC_INDEXABLE=true. Paso a paso completo en
+      # apex redirige 301 al www, lo pide el pliego), PUBLIC_BASE_PATH=/. Paso a paso completo en
       # README.md, "Migración al dominio propio". Esa URL termina en la cartelería de las cabinas: no cambiarla después.
       PUBLIC_SITE_URL: https://${{ github.repository_owner }}.github.io
       PUBLIC_BASE_PATH: /${{ github.event.repository.name }}/
-      PUBLIC_INDEXABLE: "false"
+      # Pages no se indexa nunca: desde el 06/10/2026 solo se indexa el dominio oficial (src/lib/indexacion.ts).
       # Pages es donde Juli revisa: acá va el sitio ENTERO. El default de la variable es al revés (sin ella se
       # publica solo la portada de «Próximamente») porque el hosting de producción lo sube hoy una persona a mano.
       PUBLIC_SITIO_COMPLETO: "true"

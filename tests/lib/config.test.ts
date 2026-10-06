@@ -25,7 +25,8 @@ describe('config', () => {
     for (const archivo of ['astro.config.mjs', 'scripts/verificar.ts']) {
       expect(readFileSync(archivo, 'utf8'), archivo).toContain("const sitioCompleto = (env.PUBLIC_SITIO_COMPLETO ?? '') === '' || env.PUBLIC_SITIO_COMPLETO === 'true';");
     }
-    // Y que `indexable` siga dependiendo de él: una portada de «Próximamente» no se indexa ni con dominio.
-    expect(fuente).toMatch(/indexable: oDefecto\(import\.meta\.env\.PUBLIC_INDEXABLE, 'false'\) === 'true' && sitioCompleto,/);
+    // Y que `indexable` siga dependiendo de él: una portada de «Próximamente» no se indexa ni con dominio (la regla, en
+    // lib/indexacion.ts y su test).
+    expect(fuente).toMatch(/indexable: esIndexable\(\{ sitioCompleto, sitio, noIndexar: import\.meta\.env\.PUBLIC_NO_INDEXAR \}\),/);
   });
 });
