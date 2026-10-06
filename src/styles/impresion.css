@@ -69,6 +69,9 @@
   /* Lo que el JS esconde para mostrar de a uno sale completo: las seis tarjetas de estación.
      Tailwind pone `display: none !important` en [hidden]; esta excepción es más específica y también importante. */
   [data-tarjeta-estacion][hidden] { display: block !important; }
+  /* Y los tres cuadros de /tarifas/ aunque se vea uno por pestaña (05/10/2026); el selector no sirve en papel. */
+  [data-pestanas] [role="tabpanel"][hidden] { display: block !important; }
+  [data-pestanas-lista] { display: none !important; }
 
   /* La cinta de avisos en papel: quieta, una sola vez y sin el botón de frenar. */
   .marquesina { overflow: visible !important; }

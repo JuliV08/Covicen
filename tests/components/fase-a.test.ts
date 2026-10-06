@@ -135,7 +135,8 @@ const CENTRADOS: Array<[string, RegExp]> = [
   // Los que encontró la revisión del 05/10/2026: el enlace final de El tramo y las filas de anclas debajo de un
   // encabezado centrado.
   ['src/pages/el-tramo.astro', /<p class="revelar text-center"><a href=\{ruta\('\/servicios'\)\}/],
-  ['src/pages/tarifas.astro', /<nav aria-label="Estaciones" class="revelar mb-8 flex flex-wrap justify-center gap-2">/],
+  // Desde el 05/10/2026 es un selector de una pieza (pestañas), centrado.
+  ['src/pages/tarifas.astro', /<nav aria-label="Estaciones" class="revelar mb-8 flex justify-center">\s*<div class="pestanas" data-pestanas-lista>/],
 ];
 
 describe('lo suelto, al centro', () => {

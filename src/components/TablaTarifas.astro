@@ -22,36 +22,68 @@ const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km
 ---
 <!-- scroll-mt-32: el header es fijo (--alto-header: 7rem) y al llegar por #slug el título de la estación y la vigencia
      quedarían tapados, aterrizando sobre un thead idéntico al de las otras dos tablas. -->
-<div class="revelar scroll-mt-32" {id}>
+<div class="revelar tabla-tarifas scroll-mt-32" {id}>
   <div class="mb-4 flex flex-wrap items-baseline justify-between gap-3">
     <h3 class="text-xl">{titulo}</h3>
     <p class="text-sm text-texto-2">{vigencia}{t.resolucion && ` ${t.resolucion}.`}{enlazarFuente && esHttp(t.fuente.url) && <> <a href={t.fuente.url} rel="noopener noreferrer" target="_blank">Ver en el Boletín Oficial</a>.</>}</p>
   </div>
-  <section class="bloque-oscuro overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label={`Tabla de tarifas, ${titulo}`}>
-    <table class="w-full border-collapse text-left">
+  {/* 05/10/2026 («a los cuadros tarifarios también hay que darles un reskin»): la tabla va en una tarjeta con halo;
+      «Categoría» y «Tipo de vehículo» se juntan (ícono, nombre y la descripción debajo), así «Categoría 1» no se parte en
+      dos renglones y los precios ganan lugar. En el celular cada fila es una tarjetita con los dos precios lado a lado,
+      sin deslizar de costado. Los role explícitos sostienen la tabla para los lectores de pantalla aunque el CSS le
+      cambie el display a las filas (Safari se la sacaba). */}
+  {/* El recorte va en un envoltorio y no en la tarjeta: con overflow en la tarjeta se cortaba su halo, que se dibuja
+      afuera. Adentro, el redondeado acompaña al de la tarjeta para que el resaltado de la última fila no asome. */}
+  <section class="tarjeta" aria-label={`Tabla de tarifas, ${titulo}`}>
+    <div class="overflow-hidden rounded-[calc(var(--tarjeta-radio)-1.5px)]">
+    <table class="w-full border-collapse text-left" role="table">
       <caption class="sr-only">Tarifas de peaje, {titulo}, en pesos argentinos con IVA incluido. {vigencia} {t.vigencia.descripcion}</caption>
-      <thead class="bg-fondo-2 text-sm uppercase tracking-wider text-texto-2">
-        <tr><th scope="col" class="px-4 py-3">Categoría</th><th scope="col" class="px-4 py-3">Tipo de vehículo</th><th scope="col" class="px-4 py-3 text-right">TelePASE</th><th scope="col" class="px-4 py-3 text-right">Pago electrónico en la vía</th></tr>
+      <thead class="tabla-cabecera" role="rowgroup">
+        <tr role="row"><th scope="col" role="columnheader" class="eyebrow px-5 py-4 sm:px-6">Categoría</th><th scope="col" role="columnheader" class="eyebrow px-5 py-4 text-right sm:px-6">TelePASE</th><th scope="col" role="columnheader" class="eyebrow px-5 py-4 text-right sm:px-6">Pago electrónico en la vía</th></tr>
       </thead>
-      <tbody class="divide-y divide-borde">
+      <tbody class="divide-y divide-borde" role="rowgroup">
         {filas.map((f) => {
           const telepase = f.telepaseConIva;
           const manual = f.manualConIva;
           return (
-            <tr class="fila transition-colors hover:bg-superficie">
-              <th scope="row" class="px-4 py-4 font-semibold text-texto"><span class="flex items-center gap-3"><IconoVehiculo icono={iconoDeTarifa(f)} class="icono text-texto-2" /> {f.nombre}</span></th>
-              <td class="px-4 py-4 text-texto-2">{f.descripcion}{f.nota && <span class="anotacion mt-1 block text-xs text-texto-2">{f.nota}</span>}</td>
-              <td class="px-4 py-4 text-right tabular-nums text-texto">{telepase === null ? <span class="text-texto-2"><span aria-hidden="true">—</span><span class="sr-only">Sin valor publicado</span></span> : <><span class="text-lg font-extrabold">{moneda(telepase)}</span>{f.telepaseSinIva !== null && <span class="anotacion block text-xs text-texto-2">{moneda(f.telepaseSinIva)} sin IVA</span>}</>}</td>
-              <td class="px-4 py-4 text-right tabular-nums text-texto">{manual === null ? <span class="text-texto-2"><span aria-hidden="true">—</span><span class="sr-only">Sin valor publicado</span></span> : <><span class="text-lg font-extrabold">{moneda(manual)}</span>{f.manualSinIva !== null && <span class="anotacion block text-xs text-texto-2">{moneda(f.manualSinIva)} sin IVA</span>}</>}</td>
+            <tr class="fila" role="row">
+              <th scope="row" role="rowheader" class="px-5 py-4 font-normal sm:px-6">
+                <span class="flex items-start gap-4">
+                  <span class="tarifa-icono" aria-hidden="true"><IconoVehiculo icono={iconoDeTarifa(f)} class="icono" /></span>
+                  <span class="min-w-0"><span class="block whitespace-nowrap font-bold text-texto">{f.nombre}</span><span class="mt-0.5 block text-sm text-texto-2">{f.descripcion}</span>{f.nota && <span class="anotacion mt-1 block text-xs text-texto-2">{f.nota}</span>}</span>
+                </span>
+              </th>
+              <td class="precio px-5 py-4 text-right tabular-nums text-texto sm:px-6" role="cell" data-etiqueta="TelePASE">{telepase === null ? <span class="text-texto-2"><span aria-hidden="true">—</span><span class="sr-only">Sin valor publicado</span></span> : <><span class="block whitespace-nowrap text-xl font-extrabold">{moneda(telepase)}</span>{f.telepaseSinIva !== null && <span class="anotacion block whitespace-nowrap text-xs text-texto-2">{moneda(f.telepaseSinIva)} sin IVA</span>}</>}</td>
+              <td class="precio px-5 py-4 text-right tabular-nums text-texto sm:px-6" role="cell" data-etiqueta="En la vía">{manual === null ? <span class="text-texto-2"><span aria-hidden="true">—</span><span class="sr-only">Sin valor publicado</span></span> : <><span class="block whitespace-nowrap text-xl font-extrabold">{moneda(manual)}</span>{f.manualSinIva !== null && <span class="anotacion block whitespace-nowrap text-xs text-texto-2">{moneda(f.manualSinIva)} sin IVA</span>}</>}</td>
             </tr>
           );
         })}
       </tbody>
     </table>
+    </div>
   </section>
-  <p class="mt-2 text-sm text-texto-2 sm:hidden">Deslizá la tabla hacia el costado para ver todas las columnas.</p>
   {t.avisos.length > 0 && <ul class="mt-6 flex flex-col gap-2 text-sm text-texto-2">{t.avisos.map((a) => <li class="flex gap-2"><span aria-hidden="true">—</span>{a}</li>)}</ul>}
 </div>
 <style>
-  .fila:hover :global(.icono) { color: var(--color-acento); }
+  .tabla-cabecera { border-bottom: 1px solid var(--color-borde); background: color-mix(in srgb, var(--color-superficie-2) 35%, transparent); }
+  .tarifa-icono {
+    display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; border-radius: 12px;
+    border: 1px solid color-mix(in srgb, var(--color-acento) 28%, transparent); background: color-mix(in srgb, var(--color-acento) 9%, transparent);
+    color: var(--color-acento); transition: background-color var(--dur-micro) var(--ease-salida), border-color var(--dur-micro) var(--ease-salida);
+  }
+  .fila { transition: background-color var(--dur-micro) var(--ease-salida); }
+  .fila:hover { background: color-mix(in srgb, var(--color-acento) 6%, transparent); }
+  .fila:hover .tarifa-icono { background: color-mix(in srgb, var(--color-acento) 18%, transparent); border-color: color-mix(in srgb, var(--color-acento) 55%, transparent); }
+  /* En el celular: cada fila, una tarjetita. Arriba la categoría a todo el ancho; abajo los dos precios lado a lado,
+     cada uno con su rótulo (el encabezado de columna queda solo para los lectores de pantalla). Solo en pantalla: una
+     hoja impresa también mide menos de 768 px, y ahí va la tabla. */
+  @media screen and (max-width: 47.99rem) {
+    .tabla-tarifas table, .tabla-tarifas tbody { display: block; }
+    .tabla-cabecera { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .fila { display: grid; grid-template-columns: 1fr 1fr; padding: 0.5rem 0 0.75rem; }
+    .fila > th { grid-column: 1 / -1; }
+    .fila > .precio { padding-top: 0.25rem; padding-bottom: 0.25rem; text-align: left; }
+    .fila > .precio + .precio { border-left: 1px solid var(--color-borde); }
+    .fila > .precio::before { content: attr(data-etiqueta); display: block; margin-bottom: 0.25rem; font-size: 0.8125rem; font-weight: 600; color: var(--color-texto-2); }
+  }
 </style>
