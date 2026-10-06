@@ -48,7 +48,7 @@ describe('el 0800 444 7777', () => {
     const html = await (await contenedor()).renderToString(Footer, { props: { empresa: await fuenteLocalJson.empresa(), contacto: await fuenteLocalJson.contacto() } });
     const ficha = /<a href="tel:08004447777" class="pie-telefono"[^>]*>([\s\S]*?)<\/a>/.exec(html);
     expect(ficha, 'falta la ficha del 0800 en el pie').not.toBeNull();
-    expect(ficha![1]).toMatch(new RegExp(`<span class="eyebrow block"[^>]*>Atención${NBSP}al${NBSP}usuario</span>`));
+    expect(ficha![1]).toMatch(new RegExp(`<span class="pie-telefono-etiqueta"[^>]*>Atención${NBSP}al${NBSP}usuario</span>`));
     expect(ficha![1]).toMatch(new RegExp(`<span class="pie-telefono-numero"[^>]*>${NUMERO}</span>`));
   });
 

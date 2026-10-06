@@ -92,6 +92,11 @@
     mask: linear-gradient(black 0 0) content-box exclude, linear-gradient(black 0 0);
     transition: opacity var(--dur-ui) var(--ease-salida);
   }
+  /* En el tema claro la luz va más tenue: al 17 %, el texto-2 de una respuesta quedaba en ~4,4:1 en el centro del
+     brillo, por debajo del 4,5 (revisión del 05/10/2026). */
+  html[data-tema="claro"] .tarjeta-luz::before {
+    background: radial-gradient(28rem circle at var(--mx) var(--my), color-mix(in srgb, var(--color-acento) 9%, transparent), transparent 60%);
+  }
   .tarjeta-luz:hover::before, .tarjeta-luz:hover::after { opacity: 1; }
   @media (hover: none) { .tarjeta-luz::before, .tarjeta-luz::after { content: none; } }
 

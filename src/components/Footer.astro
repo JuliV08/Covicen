@@ -51,8 +51,8 @@ const actualizado = fechaHoraLarga(ahora);
       )}
       <div class="mt-auto grid gap-3 pt-7 sm:grid-cols-2 lg:grid-cols-1">
         {/* Todo en un renglón y con sinCortes: html-validate exige espacio duro en cada espacio de un <a href="tel:">. */}
-        <a href={`tel:${soloDigitos(tel)}`} class="pie-telefono pie-telefono-vial" aria-label={`Llamar a emergencias, ${tel}`}><span class="pie-telefono-icono" aria-hidden="true"><Phone size={18} /></span><span><span class="eyebrow block">{sinCortes(`${contacto.emergencias.etiqueta} · 24 h`)}</span><span class="pie-telefono-numero">{tel}</span></span></a>
-        {contacto.lineaGratuita && <a href={`tel:${soloDigitos(contacto.lineaGratuita)}`} class="pie-telefono" aria-label={`Llamar a atención al usuario, ${contacto.lineaGratuita}`}><span class="pie-telefono-icono" aria-hidden="true"><Phone size={18} /></span><span><span class="eyebrow block">{sinCortes('Atención al usuario')}</span><span class="pie-telefono-numero">{sinCortes(contacto.lineaGratuita)}</span></span></a>}
+        <a href={`tel:${soloDigitos(tel)}`} class="pie-telefono pie-telefono-vial" aria-label={`Llamar a emergencias, ${tel}`}><span class="pie-telefono-icono" aria-hidden="true"><Phone size={18} /></span><span><span class="pie-telefono-etiqueta">{sinCortes(`${contacto.emergencias.etiqueta} · 24 h`)}</span><span class="pie-telefono-numero">{tel}</span></span></a>
+        {contacto.lineaGratuita && <a href={`tel:${soloDigitos(contacto.lineaGratuita)}`} class="pie-telefono" aria-label={`Llamar a atención al usuario, ${contacto.lineaGratuita}`}><span class="pie-telefono-icono" aria-hidden="true"><Phone size={18} /></span><span><span class="pie-telefono-etiqueta">{sinCortes('Atención al usuario')}</span><span class="pie-telefono-numero">{sinCortes(contacto.lineaGratuita)}</span></span></a>}
       </div>
     </div>
     {columnas.map((c) => (
@@ -79,10 +79,10 @@ const actualizado = fechaHoraLarga(ahora);
         <>
           <h2 class="eyebrow mb-3 mt-8 text-texto">Datos registrales</h2>
           <dl class="grid gap-y-2 text-sm text-texto-2">
-            <div><dt class="text-texto-3">Razón social</dt><dd>{empresa.razonSocial}</dd></div>
-            <div><dt class="text-texto-3">CUIT</dt><dd class="tabular-nums">{empresa.cuit}</dd></div>
-            <div><dt class="text-texto-3">Domicilio legal</dt><dd>{empresa.domicilioLegal}</dd></div>
-            {empresa.domicilioComercial && <div><dt class="text-texto-3">Domicilio comercial</dt><dd>{empresa.domicilioComercial}</dd></div>}
+            <div><dt class="font-semibold text-texto">Razón social</dt><dd>{empresa.razonSocial}</dd></div>
+            <div><dt class="font-semibold text-texto">CUIT</dt><dd class="tabular-nums">{empresa.cuit}</dd></div>
+            <div><dt class="font-semibold text-texto">Domicilio legal</dt><dd>{empresa.domicilioLegal}</dd></div>
+            {empresa.domicilioComercial && <div><dt class="font-semibold text-texto">Domicilio comercial</dt><dd>{empresa.domicilioComercial}</dd></div>}
           </dl>
         </>
       )}
@@ -139,7 +139,11 @@ const actualizado = fechaHoraLarga(ahora);
     display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 999px;
     color: var(--color-acento); background: color-mix(in srgb, var(--color-acento) 14%, transparent);
   }
-  .pie-telefono-numero { display: block; margin-top: 0.125rem; font-size: 1.5rem; font-weight: 800; line-height: 1.1; letter-spacing: var(--tracking-titulo); font-variant-numeric: tabular-nums; }
+  /* Rótulo y número no se cortan (espacios duros, ver arriba): con el espaciado del eyebrow y el número a 24 px, a 320
+     de pantalla la ficha medía 259 px en una caja de 230 (revisión del 05/10/2026). Rótulo en minúsculas, sin el
+     espaciado del eyebrow, y número que baja con la pantalla. */
+  .pie-telefono-etiqueta { display: block; font-size: 0.8125rem; font-weight: 600; color: var(--color-texto-2); }
+  .pie-telefono-numero { display: block; margin-top: 0.125rem; font-size: clamp(1.25rem, 1rem + 1.5vw, 1.5rem); font-weight: 800; line-height: 1.1; letter-spacing: var(--tracking-titulo); font-variant-numeric: tabular-nums; }
   .pie-telefono-vial .pie-telefono-icono { color: var(--color-sobre-vial); background: var(--color-vial); }
   .pie-telefono-vial .pie-telefono-numero { color: var(--color-vial-texto); }
   .pie-telefono-vial:hover { border-color: color-mix(in srgb, var(--color-vial) 60%, transparent); box-shadow: 0 10px 28px -14px color-mix(in srgb, var(--color-vial) 55%, transparent); }

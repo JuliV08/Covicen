@@ -13,7 +13,7 @@ const preguntas = preguntasPublicables(recibidas);
 ---
 <div class:list={['faq escalonar grid gap-3', clase]}>
   {preguntas.map((p, i) => (
-    <details class="faq-item tarjeta-luz scroll-mt-28" id={p.slug} style={`--i: ${i}`} data-spotlight>
+    <details class="faq-item tarjeta-luz scroll-mt-[calc(var(--alto-header)+5rem)] lg:scroll-mt-[calc(var(--alto-header)+2rem)]" id={p.slug} style={`--i: ${i}`} data-spotlight>
       <summary class="flex cursor-pointer list-none items-center justify-between gap-6 px-5 py-4 text-left font-semibold text-texto sm:px-6 sm:py-5">
         <span>{p.pregunta}</span>
         <span class="faq-signo" aria-hidden="true"></span>
@@ -35,6 +35,10 @@ const preguntas = preguntasPublicables(recibidas);
 </script>
 <style>
   .faq-item summary::-webkit-details-marker { display: none; }
+  /* El foco de teclado va en la tarjeta: el summary la ocupa de borde a borde y su anillo, que se dibuja afuera, lo
+     recortaba el overflow de .tarjeta-luz (revisión del 05/10/2026). El contorno propio no lo recorta su overflow. */
+  .faq-item summary:focus-visible { outline: none; }
+  .faq-item:has(> summary:focus-visible) { outline: 2px solid var(--color-acento); outline-offset: 2px; }
   .faq-item summary:hover { color: var(--color-texto); }
   .faq-item[open] {
     border-color: color-mix(in srgb, var(--color-acento) 40%, transparent);

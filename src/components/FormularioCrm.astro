@@ -40,6 +40,7 @@ const cargador = `(function(w,d,u){var s=d.createElement('script');s.async=true;
   <p class="crm-recaptcha text-sm text-texto-2">Este formulario está protegido por reCAPTCHA: se aplican la <a href="https://policies.google.com/privacy" rel="noopener noreferrer" target="_blank" aria-label="Política de privacidad de Google (se abre en otra pestaña)">política de privacidad</a> y las <a href="https://policies.google.com/terms" rel="noopener noreferrer" target="_blank" aria-label="Condiciones del servicio de Google (se abre en otra pestaña)">condiciones del servicio</a> de Google.</p>
 </div>
 <script>
+  import { pasoDeBitrix } from '@/lib/indice';
   // La barra de pasos: Bitrix escribe «1/2» adentro de su círculo de progreso. Esto lo lee cada vez que cambia y se lo
   // pasa al CSS (--crm-progreso, de 0 a 1, y --crm-paso, el texto «Paso 1 de 2»). Si Bitrix cambia ese marcado, no hay
   // data-progreso y queda su círculo con nuestros colores: nada se rompe.
@@ -47,13 +48,11 @@ const cargador = `(function(w,d,u){var s=d.createElement('script');s.async=true;
     document.querySelectorAll<HTMLElement>('.crm-montaje:not([data-pasos-observados])').forEach((m) => {
       m.dataset.pasosObservados = '';
       const leer = () => {
-        const r = /(\d+)\s*\/\s*(\d+)/.exec(m.querySelector('.b24-form-progress-bar-counter')?.textContent ?? '');
-        if (!r) { m.removeAttribute('data-progreso'); return; }
-        const paso = Number(r[1]);
-        const pasos = Number(r[2]);
+        const paso = pasoDeBitrix(m.querySelector('.b24-form-progress-bar-counter')?.textContent ?? '');
+        if (!paso) { m.removeAttribute('data-progreso'); return; }
         m.dataset.progreso = '';
-        m.style.setProperty('--crm-progreso', String(paso / pasos));
-        m.style.setProperty('--crm-paso', JSON.stringify(`Paso ${paso} de ${pasos}`));
+        m.style.setProperty('--crm-progreso', String(paso.progreso));
+        m.style.setProperty('--crm-paso', JSON.stringify(paso.rotulo));
       };
       new MutationObserver(leer).observe(m, { childList: true, subtree: true, characterData: true });
       leer();
@@ -141,6 +140,10 @@ const cargador = `(function(w,d,u){var s=d.createElement('script');s.async=true;
   }
   @keyframes crm-brillo { from { background-position: 100% 0; } to { background-position: -100% 0; } }
   .crm-montaje:has([class*="b24-form"]) .crm-esqueleto { display: none; }
+  /* A los 4 segundos, cuando aparece el «¿No ves el formulario?», la silueta se va: con Bitrix bloqueado quedaba para
+     siempre arriba del aviso y parecía un formulario apagado (revisión del 05/10/2026). */
+  .crm-esqueleto { animation: crm-esqueleto-fin 0s linear 4s both; }
+  @keyframes crm-esqueleto-fin { to { visibility: hidden; height: 0; overflow: hidden; } }
 
   /* Sin los rellenos propios de Bitrix: el aire lo da la tarjeta. */
   .crm-montaje :global(.b24-form-header-padding),
