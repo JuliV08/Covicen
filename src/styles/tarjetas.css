@@ -68,6 +68,33 @@
   .tarjeta-icono { display: inline-flex; align-items: center; justify-content: center; width: 3.25rem; height: 3.25rem; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--color-acento) 30%, transparent); background: color-mix(in srgb, var(--color-superficie-2) 50%, transparent); color: var(--color-acento); }
   .tarjeta-vial .tarjeta-icono { border-color: color-mix(in srgb, var(--color-vial) 35%, transparent); background: color-mix(in srgb, var(--color-vial) 12%, transparent); color: var(--color-vial-texto); }
 
+  /* Tarjeta con luz que sigue al puntero (05/10/2026: el pie y las preguntas frecuentes). Más quieta que .tarjeta: sin
+     halo que gira, porque van muchas juntas y serían un show de luces. Con el mouse encima, una luz suave adentro y el
+     borde que brilla cerca del cursor; spotlight.ts mueve --mx/--my en el elemento con [data-spotlight]. En táctil no
+     hay luz (no hay puntero que seguir). */
+  .tarjeta-luz {
+    --mx: 50%; --my: -20rem;
+    position: relative; isolation: isolate; overflow: hidden;
+    border: 1px solid var(--color-borde); border-radius: 18px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--color-superficie) 72%, transparent), color-mix(in srgb, var(--color-superficie) 36%, transparent));
+    transition: border-color var(--dur-ui) var(--ease-salida), box-shadow var(--dur-ui) var(--ease-salida);
+  }
+  .tarjeta-luz::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0;
+    background: radial-gradient(28rem circle at var(--mx) var(--my), color-mix(in srgb, var(--color-acento) 17%, transparent), transparent 60%);
+    transition: opacity var(--dur-ui) var(--ease-salida);
+  }
+  .tarjeta-luz::after {
+    content: ""; position: absolute; inset: 0; padding: 1px; border-radius: inherit; pointer-events: none; opacity: 0;
+    background: radial-gradient(16rem circle at var(--mx) var(--my), color-mix(in srgb, var(--color-acento) 80%, transparent), transparent 70%);
+    -webkit-mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(black 0 0) content-box exclude, linear-gradient(black 0 0);
+    transition: opacity var(--dur-ui) var(--ease-salida);
+  }
+  .tarjeta-luz:hover::before, .tarjeta-luz:hover::after { opacity: 1; }
+  @media (hover: none) { .tarjeta-luz::before, .tarjeta-luz::after { content: none; } }
+
   @keyframes halo-girar { to { --angulo: 360deg; } }
 
   /* En táctil el halo queda quieto (sin repintado constante); con reduced-motion, todo quieto. */

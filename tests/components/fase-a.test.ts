@@ -129,12 +129,12 @@ const CENTRADOS: Array<[string, RegExp]> = [
   ['src/pages/404.astro', /<section class="contenedor py-24 text-center">/],
   ['src/pages/404.astro', /<h1 class="titulo mx-auto mt-3">/],
   ['src/pages/404.astro', /<p class="mx-auto mt-4 max-w-prose text-texto-2">/],
-  ['src/pages/preguntas-frecuentes.astro', /<h2 class="titulo revelar mx-auto mb-4 text-center text-2xl">/],
+  // Preguntas frecuentes, desde el 05/10/2026: índice al costado y preguntas en una columna; el bloque entero, al medio.
+  ['src/pages/preguntas-frecuentes.astro', /<div class="mx-auto grid max-w-5xl grid-cols-\[minmax\(0,1fr\)\] gap-8 lg:grid-cols-\[14rem_minmax\(0,1fr\)\]/],
   ['src/pages/transparencia/[...resto].astro', /<h2 class="titulo revelar mx-auto mb-6 text-center text-2xl">Normativa aplicable<\/h2>/],
   // Los que encontró la revisión del 05/10/2026: el enlace final de El tramo y las filas de anclas debajo de un
   // encabezado centrado.
   ['src/pages/el-tramo.astro', /<p class="revelar text-center"><a href=\{ruta\('\/servicios'\)\}/],
-  ['src/pages/preguntas-frecuentes.astro', /<nav aria-label="Temas" class="revelar mb-10 flex flex-wrap justify-center gap-2">/],
   ['src/pages/tarifas.astro', /<nav aria-label="Estaciones" class="revelar mb-8 flex flex-wrap justify-center gap-2">/],
 ];
 
