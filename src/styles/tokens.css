@@ -26,6 +26,10 @@
   --color-texto-3: #8593A0; /* ≥ 4.5:1 sobre fondo y fondo-2; NUNCA sobre superficie ni superficie-2 */
   --color-acento: #68BCE1;
   --color-titulo-brillo: #FFFFFF; /* la franja del título sobre la foto: hacia MÁS contraste (05/10/2026) */
+  /* El logotipo (manual de marca, septiembre de 2026): COVICEN, SA y «CORREDOR VIAL CENTRO». En oscuro, el negativo. */
+  --color-logo-palabra: #FFFFFF;
+  --color-logo-sa: #68B6DC;
+  --color-logo-lema: #A9C4D8;
   --color-acento-hover: #8FCDE8;
   --color-vial: #F0C419;         /* señalética: SOLO como fondo; el texto encima es sobre-vial */
   --color-vial-texto: #F0C419;   /* el amarillo usado como texto (en claro se oscurece para llegar a 4.5:1) */
@@ -112,6 +116,9 @@ html[data-tema="claro"] {
   --color-texto-3: #546070;
   --color-acento: #2C688F;
   --color-titulo-brillo: #0B1526;
+  --color-logo-palabra: #27496F;
+  --color-logo-sa: #4A91B9;
+  --color-logo-lema: #999999;
   --color-acento-hover: #1E4870;
   --color-vial-texto: #6E5A00;
   --color-sobre-acento: #FFFFFF;
@@ -165,6 +172,9 @@ html[data-tema="claro"] {
     --color-texto-3: #8593A0;
     --color-acento: #68BCE1;
     --color-titulo-brillo: #FFFFFF;
+    --color-logo-palabra: #FFFFFF;
+    --color-logo-sa: #68B6DC;
+    --color-logo-lema: #A9C4D8;
     --color-acento-hover: #8FCDE8;
     --color-vial-texto: #F0C419;
     --color-sobre-acento: #0B1526;
@@ -221,6 +231,9 @@ html[data-tema="claro"] {
     --color-texto-3: #8A8A8A;
     --color-acento: #68BCE1;
     --color-titulo-brillo: #FFFFFF;
+    --color-logo-palabra: #FFFFFF;
+    --color-logo-sa: #68B6DC;
+    --color-logo-lema: #A3A3A3;
     --color-acento-hover: #8FCDE8;
     --color-vial-texto: #F0C419;
     --color-sobre-acento: #070E18;

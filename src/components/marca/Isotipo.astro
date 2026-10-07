@@ -1,5 +1,8 @@
 ---
-import { ISOTIPO_D, ISOTIPO_VIEWBOX } from '@/assets/marca/isotipo-path';
+// El isotipo de Covicen: la C con la ruta (manual de marca de septiembre de 2026, desde el 06/10/2026). Los trazos y el
+// degradado salen de src/assets/marca/marca.ts, que genera scripts/extraer-marca.mjs desde los SVG oficiales.
+import DibujoMarca from './DibujoMarca.astro';
+import { ISOTIPO } from '@/assets/marca/marca';
 
 interface Props {
   variante?: 'degradado' | 'tinta';
@@ -9,28 +12,5 @@ interface Props {
   titulo?: string;
 }
 const { variante = 'degradado', size = 32, class: clase = '', titulo } = Astro.props;
-// id único por instancia (dos isotipos en la misma página no comparten gradiente), determinista entre builds.
-const id = `iso-${size}-${variante}-${(globalThis as { __isotipos?: number }).__isotipos = ((globalThis as { __isotipos?: number }).__isotipos ?? 0) + 1}`;
 ---
-<svg
-  viewBox={ISOTIPO_VIEWBOX}
-  width={size}
-  height={size}
-  class={clase || undefined}
-  aria-hidden={titulo ? undefined : 'true'}
-  role={titulo ? 'img' : undefined}
-  focusable="false"
->
-  {titulo && <title>{titulo}</title>}
-  {variante === 'degradado' && (
-    <defs>
-      <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="139" y1="139" x2="885" y2="885">
-        <stop offset="0" stop-color="#68BCE1"></stop>
-        <stop offset=".4" stop-color="#4A92BA"></stop>
-        <stop offset=".75" stop-color="#2C688F"></stop>
-        <stop offset="1" stop-color="#1E4870"></stop>
-      </linearGradient>
-    </defs>
-  )}
-  <path d={ISOTIPO_D} fill={variante === 'degradado' ? `url(#${id})` : 'currentColor'} fill-rule="evenodd"></path>
-</svg>
+<DibujoMarca dibujo={ISOTIPO} variante={variante === 'tinta' ? 'tinta' : 'color'} width={size} height={size} class={clase} {titulo} />

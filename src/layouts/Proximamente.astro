@@ -12,7 +12,7 @@
 import '@/styles/global.css';
 import { Image } from 'astro:assets';
 import { Phone } from '@lucide/astro';
-import Isotipo from '@/components/marca/Isotipo.astro';
+import Logotipo from '@/components/marca/Logotipo.astro';
 import Seo from '@/components/Seo.astro';
 import Eyebrow from '@/components/ui/Eyebrow.astro';
 import { imagenAtmosfera, variantesHero } from '@/lib/atmosfera';
@@ -79,10 +79,8 @@ const descripcion = `Covicen, concesionaria del Tramo Centro de la Red Federal d
       <div class:list={['absolute inset-0 -z-10', hayFoto ? 'velo-portada' : 'velo-hero-vector']} aria-hidden="true"></div>
 
       <div class="contenedor flex flex-1 flex-col justify-center py-20">
-        <div class="flex items-center gap-3">
-          <Isotipo size={40} class="shrink-0" />
-          <span class="font-extrabold text-[1.25rem] leading-none tracking-[0.02em]">COVICEN</span>
-        </div>
+        {/* El logotipo largo del manual de marca (06/10/2026). */}
+        <Logotipo version="largo" enlace={false} class="h-auto w-64 max-w-full" />
 
         <div class="mt-10 max-w-3xl">
           {/* Color pleno, no el `texto-2` de la volanta: cae sobre la foto y en tema claro `texto-2` da 1,8:1. */}

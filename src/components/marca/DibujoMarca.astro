@@ -1,0 +1,41 @@
+---
+// Dibuja una versión del logo (src/assets/marca/marca.ts, generado desde el manual de marca de septiembre de 2026).
+// El degradado del isotipo es el del manual en los dos temas; la palabra, la SA y el lema toman --color-logo-* (tokens.css),
+// así el logotipo es el positivo del manual en el tema claro y el negativo en el oscuro. `tinta` lo pinta todo de un
+// color (currentColor), para usos de un solo tono como el separador.
+import type { Dibujo } from '@/assets/marca/marca';
+interface Props { dibujo: Dibujo; variante?: 'color' | 'tinta'; class?: string; titulo?: string; width?: number; height?: number }
+const { dibujo, variante = 'color', class: clase = '', titulo, width, height } = Astro.props;
+// id único por instancia (dos logos en la misma página no comparten degradado), determinista entre builds.
+const g = globalThis as { __dibujosMarca?: number };
+const id = `marca-${(g.__dibujosMarca = (g.__dibujosMarca ?? 0) + 1)}`;
+---
+<svg
+  viewBox={dibujo.viewBox}
+  width={width}
+  height={height}
+  class={clase || undefined}
+  aria-hidden={titulo ? undefined : 'true'}
+  role={titulo ? 'img' : undefined}
+  focusable="false"
+>
+  {titulo && <title>{titulo}</title>}
+  {variante === 'color' && (
+    <defs>
+      {dibujo.degradados.map((d, i) => (
+        <linearGradient id={`${id}-${i}`} gradientUnits="userSpaceOnUse" x1={d.x1} y1={d.y1} x2={d.x2} y2={d.y2}>
+          {dibujo.paradas.map(([offset, color]) => <stop offset={offset} stop-color={color}></stop>)}
+        </linearGradient>
+      ))}
+    </defs>
+  )}
+  <g class="logo-isotipo">{dibujo.trazos.filter((t) => t.degradado !== undefined).map((t) => <path d={t.d} fill={variante === 'tinta' ? 'currentColor' : `url(#${id}-${t.degradado})`}></path>)}</g>
+  {dibujo.trazos.filter((t) => t.papel).map((t) => <path d={t.d} class={variante === 'tinta' ? undefined : `logo-${t.papel}`} fill={variante === 'tinta' ? 'currentColor' : undefined}></path>)}
+</svg>
+<style>
+  .logo-palabra { fill: var(--color-logo-palabra); }
+  .logo-sa { fill: var(--color-logo-sa); }
+  .logo-lema { fill: var(--color-logo-lema); }
+  /* El isotipo gira apenas sobre su propio centro (Logotipo, al pasar el mouse). */
+  .logo-isotipo { transform-box: fill-box; transform-origin: center; }
+</style>
