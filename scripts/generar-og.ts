@@ -9,10 +9,12 @@ const fuentes = ['scripts/fuentes/Archivo-ExtraBold.ttf', 'scripts/fuentes/Archi
 
 // Un dibujo del logo como <svg> anidado, con los colores de la palabra, la SA y el lema que se le pasen (en la imagen
 // de redes, el negativo del manual: el fondo es oscuro).
-const anidar = (d: Dibujo, prefijo: string, colores: Record<'palabra' | 'sa' | 'lema', string>, posicion: string) => {
+const anidar = (d: Dibujo, prefijo: string, colores: Record<'marcas' | 'palabra' | 'sa' | 'lema', string>, posicion: string) => {
   const defs = d.degradados.map((g, i) => `<linearGradient id="${prefijo}${i}" gradientUnits="userSpaceOnUse" x1="${g.x1}" y1="${g.y1}" x2="${g.x2}" y2="${g.y2}">${d.paradas.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join('')}</linearGradient>`).join('');
-  const caminos = d.trazos.map((t) => `<path d="${t.d}" fill="${t.degradado !== undefined ? `url(#${prefijo}${t.degradado})` : colores[t.papel!]}"/>`).join('');
-  return `<svg ${posicion} viewBox="${d.viewBox}"><defs>${defs}</defs>${caminos}</svg>`;
+  const camino = (t: Dibujo['trazos'][number]) => `<path d="${t.d}" fill="${t.degradado !== undefined ? `url(#${prefijo}${t.degradado})` : colores[t.papel!]}"/>`;
+  const delIsotipo = (t: Dibujo['trazos'][number]) => t.degradado !== undefined || t.papel === 'marcas';
+  const isotipo = `<g transform="${d.transformIsotipo ?? ''}">${d.trazos.filter(delIsotipo).map(camino).join('')}</g>`;
+  return `<svg ${posicion} viewBox="${d.viewBox}"><defs>${defs}</defs>${isotipo}${d.trazos.filter((t) => !delIsotipo(t)).map(camino).join('')}</svg>`;
 };
 
 const renderizar = (svg: string, ancho: number, salida: string) => {
@@ -25,7 +27,7 @@ const renderizar = (svg: string, ancho: number, salida: string) => {
 };
 
 mkdirSync('public', { recursive: true });
-const logo = anidar(LOGO_LARGO, 'logo-', { palabra: '#FFFFFF', sa: '#68B6DC', lema: '#A9C4D8' }, 'x="96" y="140" width="640" height="130"');
+const logo = anidar(LOGO_LARGO, 'logo-', { marcas: '#FFFFFF', palabra: '#FFFFFF', sa: '#68B6DC', lema: '#A9C4D8' }, 'x="96" y="140" width="640" height="130"');
 renderizar(readFileSync('src/assets/marca/og.svg', 'utf8').replace('LOGO', logo), 1200, 'public/og.png');
 // El ícono del iPhone: el isotipo sobre blanco, con aire, como en las aplicaciones del manual. Sin fondo, iOS lo
 // pondría sobre negro.

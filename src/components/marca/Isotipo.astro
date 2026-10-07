@@ -1,8 +1,9 @@
 ---
-// El isotipo de Covicen: la C con la ruta (manual de marca de septiembre de 2026, desde el 06/10/2026). Los trazos y el
-// degradado salen de src/assets/marca/marca.ts, que genera scripts/extraer-marca.mjs desde los SVG oficiales.
+// El isotipo de Covicen: la C con la ruta (manual de marca de septiembre de 2026, versión «ruta», desde el 06/10/2026).
+// Los trazos y el degradado salen de src/assets/marca/marca.ts, que genera scripts/extraer-marca.mjs desde los SVG
+// oficiales. En `tinta` (un solo color, como el separador) va el isotipo con las marcas caladas.
 import DibujoMarca from './DibujoMarca.astro';
-import { ISOTIPO } from '@/assets/marca/marca';
+import { ISOTIPO, ISOTIPO_UN_COLOR } from '@/assets/marca/marca';
 
 interface Props {
   variante?: 'degradado' | 'tinta';
@@ -13,4 +14,6 @@ interface Props {
 }
 const { variante = 'degradado', size = 32, class: clase = '', titulo } = Astro.props;
 ---
-<DibujoMarca dibujo={ISOTIPO} variante={variante === 'tinta' ? 'tinta' : 'color'} width={size} height={size} class={clase} {titulo} />
+{variante === 'tinta'
+  ? <DibujoMarca dibujo={ISOTIPO_UN_COLOR} variante="tinta" width={size} height={size} class={clase} {titulo} />
+  : <DibujoMarca dibujo={ISOTIPO} width={size} height={size} class={clase} {titulo} />}

@@ -3,7 +3,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import Isotipo from '@/components/marca/Isotipo.astro';
 import Logotipo from '@/components/marca/Logotipo.astro';
-import { ISOTIPO, LOGO_CORTO, LOGO_LARGO } from '@/assets/marca/marca';
+import { ISOTIPO, ISOTIPO_UN_COLOR, LOGO_CORTO, LOGO_LARGO } from '@/assets/marca/marca';
 
 describe('Isotipo', () => {
   it('renderiza SVG inline con degradado y es decorativo por defecto', async () => {
@@ -24,15 +24,26 @@ describe('Isotipo', () => {
 
 // 06/10/2026: el logo del manual de marca de septiembre de 2026, con los trazos oficiales (scripts/extraer-marca.mjs).
 describe('el logo del manual de marca de septiembre de 2026', () => {
-  it('el isotipo es la C con la ruta: dos trazos con el degradado del manual', () => {
-    expect(ISOTIPO.trazos).toHaveLength(2);
-    expect(ISOTIPO.trazos.every((t) => t.degradado !== undefined)).toBe(true);
+  // 06/10/2026, «quieren este logo»: la versión «ruta», con la ruta rellena y sus marcas blancas encima (la «color»
+  // las tenía caladas y sobre un fondo oscuro se veían oscuras).
+  it('el isotipo es la C con la ruta, con el degradado del manual y las marcas de la ruta en blanco', async () => {
+    expect(ISOTIPO.trazos.filter((t) => t.degradado !== undefined)).toHaveLength(2);
+    expect(ISOTIPO.trazos.filter((t) => t.papel === 'marcas').length).toBeGreaterThan(0);
     expect(ISOTIPO.paradas.map(([, c]) => c)).toEqual(['#68b4da', '#62aad0', '#5290b6', '#39678d', '#27496f']);
+    const html = await (await AstroContainer.create()).renderToString(Isotipo, { props: { size: 40 } });
+    expect(html).toContain('class="logo-marcas"');
   });
-  it('el corto dice COVICEN SA y el largo suma el lema', () => {
+  it('en un solo color, las marcas son huecos: no se dibujan aparte', async () => {
+    expect(ISOTIPO_UN_COLOR.trazos.some((t) => t.papel === 'marcas')).toBe(false);
+    const html = await (await AstroContainer.create()).renderToString(Isotipo, { props: { variante: 'tinta' } });
+    expect(html).not.toContain('logo-marcas');
+  });
+  it('los dos logotipos llevan el isotipo «ruta»; el corto dice COVICEN SA y el largo suma el lema', () => {
     const papeles = (d: typeof LOGO_CORTO) => new Set(d.trazos.map((t) => t.papel).filter(Boolean));
-    expect([...papeles(LOGO_CORTO)].sort()).toEqual(['palabra', 'sa']);
-    expect([...papeles(LOGO_LARGO)].sort()).toEqual(['lema', 'palabra', 'sa']);
+    expect([...papeles(LOGO_CORTO)].sort()).toEqual(['marcas', 'palabra', 'sa']);
+    expect([...papeles(LOGO_LARGO)].sort()).toEqual(['lema', 'marcas', 'palabra', 'sa']);
+    // El manual no trae el corto «ruta»: se arma con el isotipo del largo, ubicado donde el corto tiene el suyo.
+    expect(LOGO_CORTO.transformIsotipo).toMatch(/^translate\([\d.]+ [\d.]+\) scale\(0\.\d+\)$/);
   });
   it('el header usa el corto, como link a la home con nombre accesible y sin texto tipeado', async () => {
     const c = await AstroContainer.create();

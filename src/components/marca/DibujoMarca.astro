@@ -29,10 +29,18 @@ const id = `marca-${(g.__dibujosMarca = (g.__dibujosMarca ?? 0) + 1)}`;
       ))}
     </defs>
   )}
-  <g class="logo-isotipo">{dibujo.trazos.filter((t) => t.degradado !== undefined).map((t) => <path d={t.d} fill={variante === 'tinta' ? 'currentColor' : `url(#${id}-${t.degradado})`}></path>)}</g>
-  {dibujo.trazos.filter((t) => t.papel).map((t) => <path d={t.d} class={variante === 'tinta' ? undefined : `logo-${t.papel}`} fill={variante === 'tinta' ? 'currentColor' : undefined}></path>)}
+  {/* El isotipo en dos grupos: el de afuera gira al pasar el mouse (CSS) y el de adentro lo ubica (transformIsotipo).
+      Un transform de CSS pisa al atributo, así que no pueden ser el mismo. Las marcas blancas de la ruta van con él; en
+      un solo tono no se dibujan (serían del mismo color que la ruta): para eso está ISOTIPO_UN_COLOR, con las marcas caladas. */}
+  <g class="logo-isotipo"><g transform={dibujo.transformIsotipo}>
+    {dibujo.trazos.filter((t) => t.degradado !== undefined).map((t) => <path d={t.d} fill={variante === 'tinta' ? 'currentColor' : `url(#${id}-${t.degradado})`}></path>)}
+    {variante === 'color' && dibujo.trazos.filter((t) => t.papel === 'marcas').map((t) => <path d={t.d} class="logo-marcas"></path>)}
+  </g></g>
+  {dibujo.trazos.filter((t) => t.papel && t.papel !== 'marcas').map((t) => <path d={t.d} class={variante === 'tinta' ? undefined : `logo-${t.papel}`} fill={variante === 'tinta' ? 'currentColor' : undefined}></path>)}
 </svg>
 <style>
+  /* Las marcas de la ruta son blancas en los dos temas, como en el manual. */
+  .logo-marcas { fill: white; }
   .logo-palabra { fill: var(--color-logo-palabra); }
   .logo-sa { fill: var(--color-logo-sa); }
   .logo-lema { fill: var(--color-logo-lema); }
