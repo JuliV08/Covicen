@@ -20,7 +20,9 @@ describe('BarraSuperior', () => {
     const html = await render();
     // Desde el 01/10/2026 van destacados (AccesosDestacados.astro): TelePASE lleno de verde y con el nombre escrito como
     // lo escribe su marca, Autogestión con borde degradé.
-    const telepase = /<a href="https:\/\/www\.telepase\.com\.ar\/"[^>]*>/.exec(html)?.[0] ?? '';
+    // Desde el 08/10/2026 el botón va a la adhesión de Telepeaje Plus (contacto.enlaces.adhesionTelepase); los demás
+    // enlaces a TelePASE del sitio (Contacto, Medios de pago, el logo del pie) siguen yendo a telepase.com.ar.
+    const telepase = /<a href="https:\/\/www\.telepeajeplus\.com\/Adhierase"[^>]*>/.exec(html)?.[0] ?? '';
     expect(telepase).toContain('target="_blank"');
     expect(telepase).toContain('acceso-telepase');
     expect(telepase).toContain('aria-label="TelePASE (se abre en otra pestaña)"');
