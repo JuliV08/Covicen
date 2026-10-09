@@ -1,7 +1,7 @@
 ---
-titulo: "Cómo se fija la tarifa de peaje, y por qué la nuestra es la más baja"
+titulo: "Cómo se fija la tarifa de peaje"
 fecha: "2026-08-27"
-resumen: "En la Red Federal de Concesiones no hay subsidios: la ruta se paga con el peaje, y gana la licitación quien pide el peaje más bajo. Así funciona el mecanismo."
+resumen: "En la Red Federal de Concesiones no hay subsidios: la ruta se paga con el peaje, y la licitación se define por la tarifa. Así funciona el mecanismo."
 etiquetas: ["tarifas", "transparencia"]
 destacada: false
 ---
@@ -10,8 +10,6 @@ La Red Federal de Concesiones cambió la lógica de las rutas nacionales concesi
 ## El criterio de adjudicación
 
 Cada tramo se licita con una **tarifa tope** (en el Tramo Centro, $3.200 más IVA por auto). Las empresas ofertan una tarifa por debajo de ese tope, y **gana la que ofrece la más baja**. No hay otro criterio de puntaje: la tarifa es la oferta.
-
-Covicen ofertó **$1.399 más IVA**. Fue la más baja de los ocho tramos de la Etapa III.
 
 ## Cómo se actualiza
 

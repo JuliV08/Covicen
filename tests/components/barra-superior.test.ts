@@ -20,7 +20,9 @@ describe('BarraSuperior', () => {
     const html = await render();
     // Desde el 01/10/2026 van destacados (AccesosDestacados.astro): TelePASE lleno de verde y con el nombre escrito como
     // lo escribe su marca, Autogestión con borde degradé.
-    const telepase = /<a href="https:\/\/www\.telepase\.com\.ar\/"[^>]*>/.exec(html)?.[0] ?? '';
+    // Desde el 08/10/2026 el botón va a la adhesión de Telepeaje Plus (contacto.enlaces.adhesionTelepase); los demás
+    // enlaces a TelePASE del sitio (Contacto, Medios de pago, el logo del pie) siguen yendo a telepase.com.ar.
+    const telepase = /<a href="https:\/\/www\.telepeajeplus\.com\/Adhierase"[^>]*>/.exec(html)?.[0] ?? '';
     expect(telepase).toContain('target="_blank"');
     expect(telepase).toContain('acceso-telepase');
     expect(telepase).toContain('aria-label="TelePASE (se abre en otra pestaña)"');
@@ -84,7 +86,7 @@ describe('Marquesina', () => {
     expect(html).toContain('data-reanudar="Reanudar los avisos"');
     const fuente = await import('node:fs').then((fs) => fs.readFileSync('src/components/Marquesina.astro', 'utf8'));
     expect(fuente).toMatch(/\.marquesina:hover[^{]*animation-play-state:\s*paused|:hover[\s\S]{0,200}animation-play-state:\s*paused/);
-    expect(fuente).toMatch(/focus-within/);
+    expect(fuente).toMatch(/\.marquesina:has\(:focus-visible\) \.marquesina-cinta/); // foco de teclado (05/10/2026)
     expect(fuente, 'con "menos movimiento" no desfila').toMatch(/prefers-reduced-motion[\s\S]{0,200}animation:\s*none/);
   });
 

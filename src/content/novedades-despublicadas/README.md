@@ -12,5 +12,6 @@ la colección es sacarlo de la carpeta base.
 | Archivo | Por qué salió | Qué la devuelve |
 |---|---|---|
 | `2026-08-27-obras-antes-que-peaje.md` | Call del 20/09/2026: «no se sabe nada del tema obras». La nota enlaza dos veces a `/obras/`, que dejó de generarse. | Prender `obras` en `src/lib/publicado.ts` y mover el archivo a `src/content/novedades/`. |
+| `2026-08-27-como-se-fija-la-tarifa.md` | Pedido de Juli del 05/10/2026: despublicar la nota por completo. Explica cómo se fija la tarifa; se le sacó además toda referencia a «la tarifa más baja». | Mover el archivo a `src/content/novedades/`. |
 
 El pedido de confirmación que hay que hacer para devolverla está en `docs/pendientes-de-confirmacion.md`.

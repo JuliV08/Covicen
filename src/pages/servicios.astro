@@ -20,8 +20,8 @@ const descripcion = `Servicios de Covicen en el Tramo Centro: emergencias 140, g
   {/* La bajada decía «El contrato de concesión obliga a prestarlos y a informar cuáles son gratuitos y cuáles tienen
       costo». Pedido del 01/10/2026: algo como «A continuación te informamos los servicios que tenés disponibles», en el
       tono del sitio. */}
-  <Seccion nivel="h1" eyebrow="Servicios" titulo="Servicios al usuario." intro="Estos son los servicios que tenés a disposición cuando viajás por nuestras rutas." class="pt-10 pb-0" />
-  <Seccion id="gratuitos" eyebrow="Sin costo" titulo="Servicios gratuitos." fondo={fGratuitos}>
+  <Seccion nivel="h1" eyebrow="Servicios" titulo="Servicios al usuario" intro="Estos son los servicios que tenés a disposición cuando viajás por nuestras rutas." class="pt-10 pb-0" />
+  <Seccion id="gratuitos" eyebrow="Sin costo" titulo="Servicios gratuitos" fondo={fGratuitos}>
     <ul class="escalonar grid gap-4 md:grid-cols-2">
       {gratuitos.map((s, i) => (
         <li class="tarjeta p-6" style={`--i: ${i}`}>
@@ -34,7 +34,7 @@ const descripcion = `Servicios de Covicen en el Tramo Centro: emergencias 140, g
     </ul>
   </Seccion>
   {publicado.serviciosConCosto && (
-  <Seccion id="con-costo" eyebrow="Con costo" titulo="Servicios que se cobran." intro="Estos servicios no están cubiertos por la tarifa de peaje." fondo={fConCosto}>
+  <Seccion id="con-costo" eyebrow="Con costo" titulo="Servicios que se cobran" intro="Estos servicios no están cubiertos por la tarifa de peaje." fondo={fConCosto}>
     <ul class="escalonar grid gap-4 md:grid-cols-2">
       {onerosos.map((s, i) => <li class="tarjeta p-6" style={`--i: ${i}`}><div class="flex items-start justify-between gap-3"><h3 class="text-xl">{s.nombre}</h3><Senal variante="frio">Con costo</Senal></div><p class="mt-2 text-texto-2">{s.descripcion}</p></li>)}
     </ul>
@@ -42,7 +42,7 @@ const descripcion = `Servicios de Covicen en el Tramo Centro: emergencias 140, g
   )}
   {/* Título y bajada con los cambios del 01/10/2026 («Canales de atención.», sin bajada), para cuando vuelva. */}
   {publicado.canalesEnServicios && (
-  <Seccion id="canales" eyebrow="Atención" titulo="Canales de atención." fondo={fCanales}>
+  <Seccion id="canales" eyebrow="Atención" titulo="Canales de atención" fondo={fCanales}>
     <div class="revelar"><Canales canales={contacto.canales} /></div>
   </Seccion>
   )}

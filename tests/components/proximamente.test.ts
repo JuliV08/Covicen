@@ -22,8 +22,8 @@ describe('portada de «Próximamente»', () => {
   // Hasta el 04/10/2026 el 0800 no existía y la portada no lo anunciaba. Desde el 05/10 tiene número.
   it('anuncia la línea 0800 de atención al usuario', async () => {
     const html = await render();
-    expect(html).toContain('href="tel:08004447777"');
-    expect(html).toContain('0800 444 7777');
+    expect(html).toContain('href="tel:08005552224"');
+    expect(html).toContain('0800 555 2224');
   });
 
   it('dice quién es Covicen y el largo oficial del tramo', async () => {

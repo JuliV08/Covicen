@@ -17,7 +17,7 @@ describe('JSON-LD', () => {
     expect(o).not.toHaveProperty('alternateName');
     expect(o.contactPoint).toEqual([
       { '@type': 'ContactPoint', telephone: '140', contactType: 'emergency', areaServed: 'AR', availableLanguage: 'es' },
-      { '@type': 'ContactPoint', telephone: '0800 444 7777', contactType: 'customer service', contactOption: 'TollFree', areaServed: 'AR', availableLanguage: 'es' },
+      { '@type': 'ContactPoint', telephone: '0800 555 2224', contactType: 'customer service', contactOption: 'TollFree', areaServed: 'AR', availableLanguage: 'es' },
     ]);
   });
   it('WebSite', () => expect(jsonLdSitioWeb('https://covicen.test')['@type']).toBe('WebSite'));

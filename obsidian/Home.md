@@ -23,6 +23,34 @@ Este es el vault del proyecto (vive en el repo, viaja con el código). El punter
 - Manual de marca: `docs/marca/Logo Covicen 2.pdf` · Prompts de imágenes: `docs/marca/prompts-imagenes.md`
 
 ## Estado
+- **2026-10-06, a producción (rama `web-detalles-2026-10-05`, `f0ef034` en `origin/main` y `organizacion/main`)**
+  - **Qué salió.** Tanda visual:
+    - fichas de ruta con escudo en lugar de la tabla de El tramo;
+    - preguntas frecuentes con índice al costado y tarjetas `.tarjeta-luz`;
+    - pie en mosaico;
+    - maquillaje del formulario de Bitrix, que se monta en la página: el «sol» era su `b24-form-loader-icon`;
+    - tarifas en tarjeta con pestañas de estación (`scripts/pestanas-tarifas.ts`);
+    - misión, visión y valores en Quiénes somos.
+  - **Cambios de contenido.**
+    - La póliza pasó a `/responsabilidad-civil/`. El interruptor sigue llamándose `publicado.transparencia`.
+    - Todos los títulos van sin punto final (pedido del 06/10).
+  - **Lecciones durables.**
+    - **El compresor de HTML de Astro se come el espacio entre texto y una etiqueta si hay un salto de línea en el medio.** La portada decía «Concesiones:679,03 km»: el espacio va en el mismo renglón o con `{' '}`.
+    - **`html-validate` rechaza los `role` explícitos en tablas.** Hacen falta cuando el CSS del celular le cambia el `display` a las filas (Safari les saca la semántica). Se exceptúa por bloque con un comentario `[html-validate-disable-block no-redundant-role: motivo]`, que Astro conserva.
+    - **La guarda de «efectivo» de `verificar.ts` acepta solo negaciones.** Son «sin efectivo» y «no se acepta (más) (el pago) en efectivo», y las fija `tests/scripts/prohibidos.test.ts`.
+  - **El hero en video quedó en pausa.** Google Flow no dio la calidad. El prompt maestro está en `docs/prompts/2026-10-06-hero-video-maestro.md`.
+- **2026-10-05, fase C: el mapa nuevo (rama `web-detalles-2026-10-05`)**
+  - **`src/lib/red.ts` sin dependencias**: red de rutas, camino más corto (Dijkstra), `trazoRedondeado`, recorrido del auto con **vuelta en U** (al arrancar y en cualquier vértice donde el camino vuelve), `continuarDesde` para cambiar de destino en pleno viaje. Lo usa el navegador: **`lib/tramo.ts` no puede llegar al cliente** porque importa el esquema (zod).
+  - **Encuadre** (`encuadreDelMapa`): el viewBox es la caja de lo dibujado + 24; las coordenadas del contrato no cambian. **La ficha flota desde 1280** (`lugarDeLaFicha`, `fichaLibre` con test de geometría: a 1024 no entra), compacta: 21rem, servicios como íconos (`xl:sr-only`), posición en `cqw` del mapa (el SVG escala por el ancho).
+  - **El auto frena `ESTACIONADO = 34` antes de la estación**: encima tapaba el punto de estado. Cinta = halo (`glow`), cuerpo (`borde-fuerte`, 7) y filo (`acento`); con `superficie-2` el cuerpo no se veía. Tamaños de letra por tramo de pantalla (la guarda general rechaza «11px» escrito: 11,5).
+  - **Capturas con Chrome sin ventana**: Git Bash convierte `/el-tramo/` en ruta de Windows (`MSYS_NO_PATHCONV=1`); el dibujo atado al scroll no avanza (forzar `.dibujar` o «reducir movimiento»); el `requestAnimationFrame` sí corre, así que el viaje del auto se puede capturar a mitad de camino.
+- **2026-10-05, fase A estética (rama `web-detalles-2026-10-05`, en el worktree `C:\Users\Villex\dev\Covicen-detalles` porque otra sesión trabajaba en la carpeta principal)**
+  - Tanda estética en tres fases: **A** encabezados y títulos, **B** la cinta de avisos y el separador con el isotipo (que se sacó el 15/09 porque le caía encima a la cinta), **C** el mapa nuevo con un vehículo que recorre la ruta. Spec y plan de A en `docs/superpowers/`.
+  - **Fuera la grilla animada que seguía al mouse** (`GrillaCinetica`, `grilla-cinetica.ts` y su `lib/color.ts`): en tema claro pasaba por detrás de las bajadas. Las secciones con fondo alternado son `.seccion-tono`. El fondo de reemplazo lo trae Juli de 21st; entra solo si nada se mueve detrás del texto.
+  - **`.titulo`**: degradé `texto → acento → texto` recortado a las letras, CSS puro (el GradientText de reactbits es React + `motion` y el sitio no tiene React). Solo el `h1` se anima; `reduced-motion` lo apaga explícito, `forced-colors` y la impresión lo dejan en color pleno, y `::selection` lo hace legible. **Sobre la foto el azul no llega a 3:1** (1,65–2,7 en claro, 2,05 a 1023 px en oscuro, medido con `hero-foto.test.ts`): ahí `.titulo-foto` usa `--color-titulo-brillo`, hacia más contraste. Los títulos de tarjeta no llevan degradé.
+  - **Encabezados centrados** en `Seccion` (escape `alinear="izquierda"`), `Eyebrow centrado` con una línea a cada lado, migas centradas, y una lista cerrada de botones sueltos al centro (test en `fase-a.test.ts`). El hero queda a la izquierda.
+  - **`rotulosDelMapa`** en `lib/tramo.ts`: ubica los rótulos de ruta y de ciudad sin pisar halos ni rótulos de estación, sin tocar las coordenadas (contrato con el backend).
+  - **Un worktree no trae `.env`** (está en `.gitignore`): sin él, `pnpm verificar` arma la portada sola («1 página»). Copiarlo de la carpeta principal.
 - **2026-10-05, tercera tanda (rama `web-ajustes-2026-10-05`, a dos días del lanzamiento del 7/10)**
   - **0800 444 7777** cargado (`contacto.lineaGratuita` y el canal). Píldora `Atencion0800.astro` (azul de marca, `.acceso-0800`): a la **izquierda de la barra superior**, espejando a TelePASE y Autogestión (en la fila del logo no entraba: a 1024 px quedaban 21 px), primera en el menú del celular y al lado del 140 en el pie. También en Contacto, la tarjeta de estación del mapa, la tabla de canales, FAQ, Servicios, Privacidad, la portada «Próximamente» y el JSON-LD (ContactPoint TollFree).
   - **html-validate `tel-non-breaking` exige &nbsp; en TODO espacio dentro de un `<a href="tel:">`**, también el de «Atención al usuario»: `sinCortes()` en `src/lib/texto.ts`.

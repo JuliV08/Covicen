@@ -6,7 +6,7 @@ const { migas } = Astro.props;
 const todas = [{ nombre: 'Inicio', href: '/' }, ...migas];
 ---
 <nav aria-label="Migas de pan" class="contenedor pt-6">
-  <ol class="flex flex-wrap items-center gap-1 text-sm text-texto-2">
+  <ol class="flex flex-wrap items-center justify-center gap-1 text-sm text-texto-2">
     {todas.map((m, i) => (
       <li class="flex items-center gap-1">
         {i > 0 && <ChevronRight size={14} aria-hidden="true" class="opacity-60" />}

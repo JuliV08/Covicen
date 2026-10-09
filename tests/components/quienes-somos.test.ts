@@ -52,4 +52,20 @@ describe('/quienes-somos/', () => {
       expect(enlace).toContain('se abre en otra pestaña');
     }
   });
+
+  // 06/10/2026: misión, visión y valores del documento institucional, entre «Quiénes somos» y el consorcio; la foto del
+  // consorcio se sacó sin dejar hueco.
+  it('publica la identidad (misión, visión y los cinco valores) antes del consorcio, y el consorcio va sin foto', async () => {
+    const html = await render();
+    const identidad = html.indexOf('id="identidad"');
+    expect(identidad, 'falta la sección de identidad').toBeGreaterThan(-1);
+    expect(identidad).toBeLessThan(html.indexOf('Tres empresas de construcción vial'));
+    for (const titulo of ['Misión', 'Visión', 'Valores']) expect(html).toMatch(new RegExp(`<h3[^>]*>${titulo}</h3>`));
+    for (const valor of ['Integridad', 'Seguridad', 'Excelencia e innovación', 'Trabajo en equipo', 'Sostenibilidad']) expect(html).toMatch(new RegExp(`<h4[^>]*>${valor}</h4>`));
+    expect(html).toContain('garantizando corredores seguros, eficientes y confiables');
+    expect(html).toContain('Ser la concesionaria vial de referencia en la región centro del país');
+    expect(html).toContain('Hacemos lo correcto aun cuando nadie nos ve.');
+    expect(html, 'volvió la misión vieja').not.toContain('Que cruzar el centro del país');
+    expect(html, 'volvió la foto del consorcio').not.toMatch(/consorcio[^"]*\.(jpg|avif|webp)/);
+  });
 });

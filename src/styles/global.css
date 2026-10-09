@@ -28,7 +28,9 @@
     border-radius: var(--radius-sm);
   }
   h1, h2, h3 { @apply font-extrabold text-texto; letter-spacing: var(--tracking-titulo); line-height: 1.05; text-wrap: balance; }
-  h1 { font-size: clamp(2.5rem, 2rem + 4vw, 6rem); }
+  /* `12vw` (05/10/2026): solo pesa por debajo de unos 380 px. A 320 px el título iba a 44,8 px y «concesionaria»
+     (Quiénes somos) medía 309 px en una columna de 280: corría la página de costado. Con 12vw va a 38,4 px y entra. */
+  h1 { font-size: min(clamp(2.5rem, 2rem + 4vw, 6rem), 12vw); }
   h2 { font-size: clamp(1.9rem, 1.4rem + 2.2vw, 3.25rem); }
   h3 { font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.75rem); }
   p { text-wrap: pretty; }
@@ -64,15 +66,13 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
       linear-gradient(to bottom, var(--color-plano) 1px, transparent 1px);
     background-size: 4rem 4rem;
   }
-  /* Sección con grilla cinética, fundida con las vecinas: el fondo va de `fondo` a `fondo-2` y vuelve, la grilla se
-     desvanece en los bordes, y una "costura" (hairline + marca vial centrada, como el divisor del hero) une los bloques. */
-  .seccion-cinetica {
+  /* Sección con tono, fundida con las vecinas: el fondo va de `fondo` a `fondo-2` y vuelve, y una "costura" (hairline
+     + marca vial centrada) une los bloques. Hasta el 05/10/2026 llevaba además la grilla animada que seguía al
+     puntero; se sacó a pedido («saquen el background grid animado que sigue al mouse») y en tema claro las líneas
+     pasaban por detrás de las bajadas. */
+  .seccion-tono {
     overflow: hidden;
     background: linear-gradient(180deg, var(--color-fondo) 0%, var(--color-fondo-2) 16%, var(--color-fondo-2) 84%, var(--color-fondo) 100%);
-  }
-  .seccion-cinetica > canvas {
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
-    mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
   }
   .costura { position: absolute; left: 0; right: 0; height: 1px; z-index: 5; pointer-events: none;
     background: linear-gradient(90deg, transparent, var(--color-borde-fuerte) 25%, color-mix(in srgb, var(--color-acento) 55%, transparent) 50%, var(--color-borde-fuerte) 75%, transparent); }
@@ -80,7 +80,7 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
   .costura-abajo { bottom: 0; }
   .costura::before { content: ""; position: absolute; left: 50%; top: 50%; width: 2.5rem; height: 3px; border-radius: 2px; transform: translate(-50%, -50%);
     background: var(--color-acento); box-shadow: 0 0 14px var(--color-glow), 0 0 2px var(--color-acento); }
-  /* resplandor que "derrama" la grilla hacia la sección vecina */
+  /* resplandor que "derrama" el tono hacia la sección vecina */
   .costura::after { content: ""; position: absolute; left: 20%; right: 20%; top: 50%; height: 120px; transform: translateY(-50%); pointer-events: none;
     background: radial-gradient(60% 100% at 50% 50%, var(--color-luz), transparent 70%); }
   /* Volanta. 12 px a propósito y declarada acá como anotación del pliego (61.7, spec §11): una volanta nunca es cuerpo
@@ -88,6 +88,38 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
      ruta y el km de una estación—. Junto con .anotacion es la única excepción a los 14 px, y lo guarda
      tests/styles/legibilidad.test.ts: los 12 px escritos a mano fuera de .anotacion o .eyebrow hacen fallar. */
   .eyebrow { @apply font-medium uppercase text-texto-2; letter-spacing: var(--tracking-eyebrow); font-size: 0.75rem; }
+  /* Títulos con el degradé de Covicen (fase A, 05/10/2026). Del color del texto al azul de la marca y vuelta, recortado
+     a las letras. Sale solo de variables: cambia con el tema sin recargar y, adentro de una zona oscura del tema claro,
+     sigue al color de lo que tiene debajo. `texto` y `acento` ya están medidos en pares.ts, y los colores intermedios
+     caen entre los dos. Ancho del texto y no de la caja, para que un título corto muestre el degradé entero. */
+  .titulo {
+    --titulo-b: var(--color-acento);
+    width: fit-content;
+    /* Sin el diccionario de guiones, `fit-content` toma el ancho de la palabra más larga y el título corría la página de
+       costado a 320 px (revisión del 05/10/2026, «responsabilidad» en Transparencia). */
+    max-width: 100%;
+    background-image: linear-gradient(90deg, var(--color-texto) 0%, var(--titulo-b) 50%, var(--color-texto) 100%);
+    background-size: 200% 100%;
+    background-position: 0% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* Con el color transparente, lo seleccionado no se vería: se pinta como una selección común. */
+  .titulo::selection { color: var(--color-fondo); background-color: var(--color-acento); }
+  /* Sobre la foto (hero y portada) el azul no llega a 3:1 (medido el 05/10/2026: entre 1,65 y 2,7:1 en claro, 2,05:1 a
+     1023 px en oscuro). Ahí la franja va hacia MÁS contraste: blanco en oscuro, navy profundo en claro. */
+  .titulo-foto { --titulo-b: var(--color-titulo-brillo); }
+  /* Solo el título principal de la página se mueve (hay uno por página: lo controla verificar.ts). */
+  h1.titulo { animation: titulo-recorre 10s var(--ease-suave) infinite alternate; }
+  @keyframes titulo-recorre { to { background-position: 100% 50%; } }
+  /* Explícito: la regla global de «reducir movimiento» acorta la animación a 0,01 ms pero no la apaga. */
+  @media (prefers-reduced-motion: reduce) {
+    h1.titulo { animation: none; }
+  }
+  @media (forced-colors: active) {
+    .titulo { background: none; color: CanvasText; }
+  }
   /* texto largo (privacidad, novedades) */
   .prose-covicen h2 { margin-top: 2rem; font-size: 1.35rem; color: var(--color-texto); }
   .prose-covicen h3 { margin-top: 1.5rem; font-size: 1.15rem; color: var(--color-texto); }

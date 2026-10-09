@@ -25,7 +25,7 @@ describe('Footer', () => {
   it('no enlaza Políticas mientras esté escondida, y Transparencia sí', async () => {
     const html = await render(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto());
     expect(html).not.toContain('href="/politicas/"');
-    expect(html).toContain('href="/transparencia/"');
+    expect(html).toContain('href="/responsabilidad-civil/"');
     expect(html).toContain('href="/quienes-somos/"');
   });
   it('con datos registrales y redes los muestra', async () => {
@@ -76,8 +76,8 @@ describe('Footer', () => {
   // 05/10/2026: el 0800 en negrita en Contacto, y en la línea de abajo el CUIT y la póliza de responsabilidad civil.
   it('lleva el 0800, el CUIT y la póliza', async () => {
     const html = await render(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto());
-    expect(html).toContain('href="tel:08004447777"');
-    expect(html).toContain('0800 444 7777');
+    expect(html).toContain('href="tel:08005552224"');
+    expect(html).toContain('0800 555 2224');
     expect(html).toMatch(/CUIT <span class="tabular-nums"[^>]*>30-71959948-2<\/span>/);
     expect(html).toMatch(/href="\/documentos\/poliza-responsabilidad-civil\.pdf" target="_blank"/);
   });
@@ -102,10 +102,10 @@ describe('Footer', () => {
 });
 
 describe('Footer, columna Empresa (20/09/2026)', () => {
-  it('ya no enlaza Obras ni Trabajá con nosotros, y sigue enlazando Proveedores', async () => {
+  it('ya no enlaza Obras ni Trabajá con nosotros, y no enlaza Proveedores (escondida el 05/10/2026)', async () => {
     const html = await render(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto());
     expect(html, 'Obras volvió al pie').not.toContain('href="/obras/"');
     expect(html, 'Trabajá con nosotros volvió al pie').not.toContain('href="/trabaja-con-nosotros/"');
-    expect(html).toContain('href="/proveedores/"');
+    expect(html).not.toContain('href="/proveedores/"');
   });
 });

@@ -47,8 +47,8 @@ describe('Seccion', () => {
   });
   // Sin eyebrow, el título es lo primero del encabezado: el margen que lo separaba del eyebrow sobra.
   it('con título solo, el h2 no arrastra el margen del eyebrow', async () => {
-    const html = await render(Seccion, { id: 'novedades', titulo: 'Novedades.' });
-    expect(html).toMatch(/<h2[^>]*>Novedades\.<\/h2>/);
+    const html = await render(Seccion, { id: 'novedades', titulo: 'Novedades' });
+    expect(html).toMatch(/<h2[^>]*>Novedades<\/h2>/);
     expect(html).not.toContain('class="eyebrow');
     expect(html.match(/<h2[^>]*>/)?.[0]).not.toContain('mt-3');
   });

@@ -81,7 +81,9 @@ export const esquemaContacto = z.object({
   }),
   redes: z.object({ instagram: url.optional(), x: url.optional(), linkedin: url.optional(), facebook: url.optional(), youtube: url.optional() }),
   /** oficinaVirtual: Telepeaje Plus, cuando exista. atencionDnv: canales de atención al usuario de la DNV (PETG 61.6), cuando indiquen la URL. */
-  enlaces: z.object({ telepase: url, oficinaVirtual: url.nullable(), atencionDnv: url.nullable() }),
+  /** `adhesionTelepase` (08/10/2026): adonde lleva el botón de TelePASE de la barra de arriba y del menú (la adhesión de
+   *  Telepeaje Plus). Opcional: sin él, el botón va a `telepase`, que es lo que siguen usando los demás enlaces. */
+  enlaces: z.object({ telepase: url, adhesionTelepase: url.optional(), oficinaVirtual: url.nullable(), atencionDnv: url.nullable() }),
   canales: z.array(esquemaCanal),
   /** Cuenta bancaria para regularizar peajes impagos (PETG 51.1.4 c). */
   cuentaRegularizacion: z.string().min(1).nullable(),

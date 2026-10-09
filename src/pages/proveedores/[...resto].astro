@@ -7,6 +7,10 @@ import Formulario from '@/components/Formulario.astro';
 import FormularioCrm from '@/components/FormularioCrm.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
+import { publicado } from '@/lib/publicado';
+// Escondida el 05/10/2026 (pedido de Juli). Ruta rest con un solo destino, igual que /politicas/: con el interruptor
+// apagado getStaticPaths devuelve [] y Astro no genera nada. El menú y el pie la sacan solos (lib/paginas.ts).
+export const getStaticPaths = () => (publicado.proveedores ? [{ params: { resto: undefined } }] : []);
 const contacto = await datos.contacto();
 const portal = destinoPortalProveedores();
 // Desde el 02/10/2026 el registro va por el formulario del CRM de PREVI (Bitrix24), el mismo de Contacto: «modificar
@@ -15,7 +19,7 @@ const portal = destinoPortalProveedores();
 // `contacto.formularioCrm` en null vuelve el formulario propio.
 ---
 <Base titulo="Proveedores" descripcion="Proveedores y licitaciones de Covicen para el Tramo Centro: registrate y recibí las convocatorias." migas={[{ nombre: 'Proveedores', href: '/proveedores' }]}>
-  <Seccion nivel="h1" eyebrow="Proveedores" titulo="Registro de proveedores." intro={portal ? "Ingresá para cotizar, completar los datos de tu empresa, presentar facturas y consultar pagos y retenciones. Si todavía no sos proveedor, registrá tu interés en el formulario." : "Insumos viales, señalización, tecnología de cobro, servicios de auxilio y obra civil. El portal de proveedores se habilita junto con los sistemas; hasta entonces, el registro se hace por este formulario."} class="pt-10">
+  <Seccion nivel="h1" eyebrow="Proveedores" titulo="Registro de proveedores" intro={portal ? "Ingresá para cotizar, completar los datos de tu empresa, presentar facturas y consultar pagos y retenciones. Si todavía no sos proveedor, registrá tu interés en el formulario." : "Insumos viales, señalización, tecnología de cobro, servicios de auxilio y obra civil. El portal de proveedores se habilita junto con los sistemas; hasta entonces, el registro se hace por este formulario."} class="pt-10">
     <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.2fr]">
       {portal ? <div class="tarjeta p-6" data-capacidad="portalProveedores">
         <h2>Portal de proveedores</h2>

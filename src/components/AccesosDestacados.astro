@@ -9,8 +9,10 @@ import type { Contacto } from '@/lib/datos/esquemas';
 interface Props { contacto: Contacto; /** Clases de más para cada enlace (en el menú, la altura táctil de 44 px). */ clase?: string }
 const { contacto, clase } = Astro.props;
 const oficina = contacto.enlaces.oficinaVirtual;
+// Desde el 08/10/2026 el botón de TelePASE lleva a la adhesión de Telepeaje Plus; sin ese dato, al sitio de TelePASE.
+const telepase = contacto.enlaces.adhesionTelepase ?? contacto.enlaces.telepase;
 ---
-<a href={contacto.enlaces.telepase} class:list={['acceso-destacado acceso-telepase', clase]} rel="noopener noreferrer" target="_blank" aria-label="TelePASE (se abre en otra pestaña)">
+<a href={telepase} class:list={['acceso-destacado acceso-telepase', clase]} rel="noopener noreferrer" target="_blank" aria-label="TelePASE (se abre en otra pestaña)">
   <span class="ficha" aria-hidden="true"><Tag size={14} /></span>
   <span class="etiqueta"><span class="marca-tele">Tele</span><span class="marca-pase">PASE</span></span>
   <ArrowUpRight size={14} class="flecha" aria-hidden="true" />

@@ -10,4 +10,6 @@ export const paresContraste: Array<[string, string]> = [
   ['sobre-marca', 'marca-700'], ['sobre-marca', 'marca-900'], ['texto-2', 'tarjeta-interior-1'],
   // El botón de TelePASE de la barra de arriba, con el verde de su marca (01/10/2026).
   ['sobre-telepase', 'telepase'],
+  // La franja del título sobre la foto del hero y de la portada (05/10/2026): va hacia más contraste que el texto.
+  ['titulo-brillo', 'fondo'],
 ];

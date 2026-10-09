@@ -9,13 +9,15 @@ import { archivosDe, existeDestino, hrefsConEsquemaProhibido, jsonLdDe, linksInt
 import { alcanzables } from './lib/solo-portada.ts';
 import { paresContraste } from './lib/pares.ts';
 import { publicado } from '../src/lib/publicado.ts';
+import { esIndexable } from '../src/lib/indexacion.ts';
 
 const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
 const base = `/${(env.PUBLIC_BASE_PATH || '/').replace(/^\/+|\/+$/g, '')}/`.replace('//', '/');
-// Default invertido, igual que en src/lib/config.ts: sin la variable lo que se publica es la portada sola.
-const sitioCompleto = env.PUBLIC_SITIO_COMPLETO === 'true';
-// Misma definición que src/lib/config.ts: una portada de «Próximamente» no es indexable aunque haya dominio.
-const indexable = env.PUBLIC_INDEXABLE === 'true' && sitioCompleto;
+// La misma regla que src/lib/config.ts y astro.config.mjs: sin la variable, el sitio entero (desde el 06/10/2026). Si
+// este control leyera distinto que el build, Amplify armaría una cosa, verificaría otra, fallaría y no publicaría nada.
+const sitioCompleto = (env.PUBLIC_SITIO_COMPLETO ?? '') === '' || env.PUBLIC_SITIO_COMPLETO === 'true';
+// La misma regla que src/lib/config.ts, del mismo módulo: el sitio entero en el dominio oficial (desde el 06/10/2026).
+const indexable = esIndexable({ sitioCompleto, sitio: env.PUBLIC_SITE_URL ?? '', noIndexar: env.PUBLIC_NO_INDEXAR });
 // ¿Este build va a parar a un hosting, o es alguien compilando en su máquina? `CI` lo pone GitHub Actions;
 // `AWS_APP_ID`, el build de Amplify. Sirve para exigir cosas que en local serían molestas y afuera son errores.
 const hospedado = Boolean(process.env.CI || process.env.AWS_APP_ID);
@@ -24,8 +26,11 @@ const fallos: string[] = [];
 const fallo = (m: string) => fallos.push(m);
 
 // `efectivo` (01/10/2026): en la vía se cobra solo con medios electrónicos, en las terminales POS. La palabra sola, no
-// «efectiva» ni «efectivamente»: en este sitio «efectivo» siempre quiso decir plata en mano.
-const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/, /\befectivo\b/i];
+// «efectiva» ni «efectivamente»: en este sitio «efectivo» siempre quiso decir plata en mano. Desde el 05/10/2026 se
+// permite SOLO negada («sin efectivo»): la pregunta frecuente de cómo se paga tiene que decir que ya no hay. Desde el
+// 06/10/2026 también como «no se acepta (más) (el pago) en efectivo», que es como lo escribió la gerencia en esa misma
+// respuesta. Cualquier otra forma sigue prohibida.
+const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/, /(?<!\bsin |\bno se acepta (?:más )?(?:el pago )?en )\befectivo\b/i];
 // Plazos de respuesta (02/10/2026): el gerente pidió «bajarle el compromiso de los días de respuesta» y Juli eligió
 // sacarlos de todos lados. Se guardan las frases que PROMETEN un plazo, no «días hábiles» a secas: la disponibilidad de
 // los canales («se gestiona en días hábiles») se queda, y un trámite o una norma pueden tener su propio plazo («entra en
@@ -37,11 +42,11 @@ const PLAZOS_DE_RESPUESTA = [/respuesta,? en \d+ d[ií]as/i, /\brespond\w*[^.]{0
 // cosas que no aparezcan». Vale para las siglas Y para la palabra escrita con todas las letras: son la misma mención,
 // y había ocho lugares que la escribían larga («según el Pliego de Especificaciones Técnicas Particulares…»), que
 // ningún filtro de siglas habría agarrado.
-// EXCEPCIÓN: /transparencia/, donde la normativa ES el contenido y citarla es justamente lo institucional.
+// EXCEPCIÓN: /responsabilidad-civil/ (hasta el 06/10/2026, /transparencia/), donde la normativa ES el contenido y citarla es justamente lo institucional.
 // La `fuente` de cada dato NO se borra de src/content/ —es la trazabilidad de por qué la web dice lo que dice—:
 // deja de pintarse. Se apaga la UI, no se rompe el dato.
 const PROHIBIDOS_USUARIO = [/\bPET[GP]\b/, /\bpliego/i];
-const SIN_PLIEGO = (nombre: string) => !nombre.startsWith('transparencia');
+const SIN_PLIEGO = (nombre: string) => !nombre.startsWith('responsabilidad-civil');
 // Mientras el estado de la traza se publique con datos de muestra, ninguna página puede mostrar marcadores de incidente
 // sin el cartel que lo aclara (spec §10.1): un corte de ruta inventado que se lee como real es el error más caro del sitio.
 const estadoDeMuestra = (JSON.parse(readFileSync('src/content/estado-ruta.json', 'utf8')) as { ejemplo?: boolean }).ejemplo === true;
@@ -128,7 +133,7 @@ for (const ruta of paginas) {
   if ((head.match(/<title>/g) ?? []).length !== 1) fallo(`${nombre}: debe haber exactamente un <title> en <head>`);
   if (!/<meta name="description" content="[^"]{20,}"/.test(html)) fallo(`${nombre}: falta description (≥ 20 chars)`);
   if (!/<link rel="canonical" href="https?:\/\//.test(html)) fallo(`${nombre}: falta canonical absoluta`);
-  if (indexable && /<link rel="canonical" href="http:\/\/localhost/.test(html)) fallo(`${nombre}: canonical apunta a localhost con PUBLIC_INDEXABLE=true (falta PUBLIC_SITE_URL)`);
+  if (indexable && /<link rel="canonical" href="http:\/\/localhost/.test(html)) fallo(`${nombre}: canonical apunta a localhost en un build indexable (falta PUBLIC_SITE_URL)`);
   // Y en un build que va a un hosting, un canonical a localhost está mal SIEMPRE, con o sin indexación. No es
   // teórico: el build del 18/09/2026 que estuvo publicado en www.covicen.com.ar salió así, porque se compiló sin
   // PUBLIC_SITE_URL. El chequeo de arriba no lo agarró justamente porque ese build tampoco era indexable.
@@ -184,8 +189,8 @@ for (const ruta of paginas) {
   if (estadoDeMuestra && marcador >= 0 && (cartel < 0 || cartel > marcador)) fallo(`${nombre}: marcadores de incidente sin el cartel "Datos de ejemplo" arriba`);
   // 7. indexabilidad
   const tieneNoindex = html.includes('content="noindex, nofollow"');
-  if (indexable && tieneNoindex) fallo(`${nombre}: noindex presente con PUBLIC_INDEXABLE=true`);
-  if (!indexable && !tieneNoindex) fallo(`${nombre}: falta noindex con PUBLIC_INDEXABLE=false`);
+  if (indexable && tieneNoindex) fallo(`${nombre}: noindex presente en un build indexable (sitio entero en el dominio oficial)`);
+  if (!indexable && !tieneNoindex) fallo(`${nombre}: falta noindex en un build no indexable`);
   // 8. accesibilidad básica estática
   // `alt` vacío es válido (imagen decorativa); Astro lo puede emitir como `alt` a secas o `alt=""`.
   for (const m of html.matchAll(/<img\b(?![^>]*\balt(?:[\s=>/]))[^>]*>/g)) fallo(`${nombre}: <img> sin alt → ${m[0].slice(0, 60)}`);
@@ -235,7 +240,7 @@ if (sitioCompleto) {
   // poner src/pages/obras.astro como ruta fija, el interruptor deja de mandar y acá se cae.
   const sitemap = existsSync(join(DIST, 'sitemap-0.xml')) ? readFileSync(join(DIST, 'sitemap-0.xml'), 'utf8') : '';
   // Políticas y Transparencia, desde el 02/10/2026 (reunión con el gerente del 01/10).
-  for (const [ruta, prendida] of [['obras', publicado.obras], ['politicas', publicado.politicas], ['transparencia', publicado.transparencia]] as const) {
+  for (const [ruta, prendida] of [['obras', publicado.obras], ['politicas', publicado.politicas], ['responsabilidad-civil', publicado.transparencia], ['proveedores', publicado.proveedores]] as const) {
     if (prendida) continue;
     if (existsSync(join(DIST, ruta, 'index.html'))) fallo(`/${ruta}/ está apagada en src/lib/publicado.ts y el build la generó igual`);
     if (sitemap.includes(`/${ruta}/`)) fallo(`/${ruta}/ está apagada y el sitemap la lista`);

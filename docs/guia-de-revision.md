@@ -1,6 +1,13 @@
 # Guía de revisión — web de Covicen
 
-**Al día al 5 de octubre de 2026.** Empezá por «Lo que cambió el 5 de octubre», «Lo que cambió el 2 de octubre, segunda tanda», «Lo que cambió el 2 de octubre», «Lo que cambió el 1 de octubre», «Lo que cambió el 28 de septiembre», «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
+**Correcciones de contenido del 5 de octubre (rama `contenido-correcciones-2026-10-05`).** Qué mirar:
+- **Póliza:** la página ya no dice «Transparencia» (ni arriba del título, ni en la pestaña, ni en el menú y el pie, que ahora dicen «Póliza de responsabilidad civil»). El título no se corta con guion: en celulares angostos la letra baja de tamaño.
+- **Proveedores** está escondida (no se genera, no está en el menú, el pie ni el sitemap; la privacidad ya no la nombra). Se vuelve a prender con `proveedores` en `src/lib/publicado.ts`. La pregunta «¿Cómo puedo ser proveedor?» ya no habla de un portal.
+- **«La tarifa más baja»** no aparece en ningún texto público: salió de Quiénes somos, de la nota de adjudicación (también sus secciones «La tarifa más baja…» y «Qué sigue») y de las preguntas frecuentes (se borró «¿Por qué la tarifa de Covicen es la más baja?»). La nota «Cómo se fija la tarifa» está despublicada.
+- **Novedad «Qué cambia el 7 de octubre»:** «continúan operando»; sin «Se suman» (ni en el resumen ni en la lista), sin la oración de la tarifa ofertada y sin «No es obligatorio» en TelePASE. En «Qué cuadro rige» ya no está «Cuándo cambia». La pregunta «¿Qué tarifa se cobra desde el 7 de octubre?» perdió la misma oración, y «¿Cuánto cuesta el peaje?» perdió «Se actualiza por índices oficiales cada tres meses».
+- **Grúa** (Servicios): sin los dos renglones de tiempos. **Quiénes somos:** «las localidades».
+
+**Al día al 5 de octubre de 2026 (correcciones de contenido y fase A estética).** Empezá por las correcciones de arriba, «Fase A estética (5 de octubre)», «Lo que cambió el 5 de octubre», «Lo que cambió el 2 de octubre, segunda tanda», «Lo que cambió el 2 de octubre», «Lo que cambió el 1 de octubre», «Lo que cambió el 28 de septiembre», «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
 
 Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/superpowers/plans/2026-09-13-actualizacion-web.md`, más la **revisión final del 14 y 15 de septiembre**) se hizo **sin pruebas visuales**: esta guía es la lista de lo que hay que mirar a mano, pantalla por pantalla, más lo que quedó oculto a propósito y cómo cargarlo.
 
@@ -12,6 +19,64 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 **Navegadores:** lo atado a scroll-driven animations (dibujo del mapa al scrollear, parallax del hero, fondo del header) anda en Chrome, Edge y Safari; en Firefox estable aparece ya dibujado o fijo.
 
 **Si tenés "reducir movimiento" activado en Windows** (Configuración › Accesibilidad › Efectos visuales): todo queda estático, **la cinta de avisos no desfila** (se recorre a mano, de costado) y el botón de pausa ni aparece, porque no hay nada que frenar. El cambio de tema también es instantáneo, sin la disolvencia. Si no usás esa opción, ignorá este punto.
+
+---
+
+## El mapa nuevo (fase C, 5 de octubre) — mirá esto primero
+
+En la home y en El tramo. El diseño está en
+`C:\Users\Villex\dev\Covicen-detalles\docs\superpowers\specs\2026-10-05-fase-c-mapa-design.md`.
+
+- **El dibujo**: el mapa ocupa todo el panel y se encuadra sobre las rutas. Cada ruta es una cinta (halo suave, banda y
+  línea azul) que dobla con curva en los pueblos; ya no hay grilla de fondo, marcas que fluyen ni luces dando vueltas.
+  Las estaciones son anillos: operativa con punto verde lleno, próxima con anillo amarillo y centro hueco. Los nombres
+  van sobre una placa.
+- **La ficha**: en una pantalla de 1280 px o más, flota arriba a la izquierda, entre Córdoba y San Francisco, sin tapar
+  ninguna ruta; es compacta (los servicios con su ícono, como en la leyenda; «Vías» y «Sentido» están en «Ficha
+  completa»). Entre 1024 y 1279 px, y en el celular, va completa debajo del mapa.
+- **El auto**: arranca estacionado antes de Carcarañá. Tocá Leones, después Franck y después James Craik: viaja por la
+  ruta (pasando por Rosario y el empalme cuando hace falta), dobla con las curvas, frena antes del peaje sin taparlo y el
+  halo de la estación late una vez. Para ir a Franck desde Leones tiene que volver: hace una U chica al costado y sale de
+  frente. Probá tocar otra estación en pleno viaje: termina el tramo y cambia de rumbo sin saltar.
+- **Con «reducir movimiento»**: el auto aparece directo en la estación, sin viajar ni latir.
+- **En el celular** el mapa queda chico (unos 300 px de ancho) y los nombres de ciudades y rutas se ven muy pequeños; ya
+  pasaba antes. La información está en la ficha de abajo. Si querés, lo vemos aparte.
+
+## Fase A estética (5 de octubre) — mirá esto primero
+
+Primera fase de la tanda estética, en la rama `web-detalles-2026-10-05` (el diseño está en
+`C:\Users\Villex\dev\Covicen-detalles\docs\superpowers\specs\2026-10-05-fase-a-encabezados-design.md`). Ningún texto
+cambió, salvo los dos arreglos que pediste aparte: la home dice «¿Consultas, reclamos?» y en Quiénes somos ya no está
+la frase de la licitación. Mirá todo en los dos temas, en la compu y en el celular.
+
+**Encabezados centrados**
+- En Tarifas, Servicios, El tramo, Contacto y cualquier página interna: las migas de pan, la etiqueta chica (ahora con
+  una línea a cada lado, «── TARIFAS ──»), el título y la bajada van al centro. Las tablas, las tarjetas y los textos
+  largos siguen alineados a la izquierda adentro de su bloque.
+- El hero de la home sigue a la izquierda, a propósito.
+- Los botones que quedaban solos al final de una sección van al centro: «Ver el tramo en detalle» en la home, «Ver el
+  cuadro tarifario» en El tramo, «Pedir asistencia» y «Consejos de seguridad vial» en Emergencias, la fila de botones del
+  final de Tarifas, «Entrar a Autogestión» en Medios de pago, los de Seguridad vial, «Todas las novedades» al pie de una
+  novedad, y el bloque «¿Tenés una consulta sobre un trámite?» en Trámites.
+- El bloque de Contacto del final de la home pasó de fila a columna: título, texto y botones, todo centrado.
+- La página 404 (entrá a cualquier dirección que no exista) y una novedad abierta, centradas.
+
+**Títulos con el degradé de Covicen**
+- Todos los títulos de página y de sección van del color del texto al azul de la marca. Los de las tarjetas no.
+- El título principal de cada página se mueve, lento, de ida y vuelta; los demás quedan quietos.
+- En el hero (y en la portada de «Próximamente») el título no lleva azul: lleva un brillo que pasa, blanco en tema
+  oscuro y navy profundo en claro. Medido, el azul no se leía bien sobre la foto.
+- Seleccioná un título con el mouse: lo seleccionado se tiene que leer.
+- Con «reducir movimiento» activado en Windows, el título principal queda quieto.
+- Cambiá de tema con la página abierta: el degradé cambia solo.
+
+**Sin la grilla que seguía al mouse**: las secciones con fondo alternado conservan el tono y las líneas finas que las
+separan, pero ya no hay líneas moviéndose detrás de las bajadas. En tema claro, comprobá que las bajadas se lean
+limpias.
+
+**El mapa** (home y El tramo): «RN 19» ahora va arriba del tramo entre San Francisco y el empalme, lejos de Franck;
+«Santa Fe» va debajo de su punto; «Rosario» también bajó, porque a la izquierda pisaba el halo de Carcarañá; «RN 9» y
+«RN 34» van en el medio de su tramo más largo.
 
 ---
 
@@ -708,7 +773,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 > **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió quiénes somos: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
 
-- Texto **original** (se chequeó con `pnpm originalidad` contra otras concesionarias): "Nacimos de tres empresas… ganaron ofreciendo el peaje más bajo de los 8 tramos…"; párrafo "La sociedad está en formación. Cuando se complete la inscripción, publicamos acá y en el pie de página la razón social, el CUIT y los domicilios." **Ya no dice "+10 prorrogables"**: era un dato de prensa sin artículo del pliego que lo respalde. Decisión: ver al final.
+- Texto **original** (se chequeó con `pnpm originalidad` contra otras concesionarias): "Nacimos de tres empresas…" (la frase del peaje más bajo se sacó el 05/10/2026); párrafo "La sociedad está en formación. Cuando se complete la inscripción, publicamos acá y en el pie de página la razón social, el CUIT y los domicilios." **Ya no dice "+10 prorrogables"**: era un dato de prensa sin artículo del pliego que lo respalde. Decisión: ver al final.
 - Mojones 20 años · 6 peajes. **Ocho compromisos** exigibles (conservar los 679 km, losas de hormigón, banquinas Rosario–Carcarañá, puente sobre el Carcarañá, rehabilitación asfáltica, auxilio gratis 30/60 min, 140 con personas, cobrar solo lo habilitado), todos con base en el pliego.
 - Quién nos controla: ficha (régimen, tramo, plazo, adjudicación con link al BO, control) y misión/visión.
 - El consorcio: foto 21:9 (`consorcio.jpg`) y tres tarjetas. **Organigrama**: la sección aparece solo si existe `src/assets/institucional/organigrama.png`.

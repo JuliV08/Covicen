@@ -1,5 +1,7 @@
 ---
-interface Props { class?: string }
-const { class: clase = '' } = Astro.props;
+// `centrado` (fase A, 05/10/2026): la etiqueta de un encabezado centrado lleva una línea a cada lado («── EL TRAMO ──»).
+// Sin él queda la de una sola línea, a la izquierda, que es la del hero.
+interface Props { class?: string; centrado?: boolean }
+const { class: clase = '', centrado = false } = Astro.props;
 ---
-<p class:list={['eyebrow flex items-center gap-3', clase]}><span class="inline-block h-px w-6 bg-acento" aria-hidden="true"></span><slot /></p>
+<p class:list={['eyebrow flex items-center gap-3', centrado && 'justify-center', clase]}><span class="inline-block h-px w-6 bg-acento" aria-hidden="true"></span><slot />{centrado && <span class="inline-block h-px w-6 bg-acento" aria-hidden="true"></span>}</p>

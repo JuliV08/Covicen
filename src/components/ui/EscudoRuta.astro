@@ -1,0 +1,33 @@
+---
+// Escudo de ruta nacional con el número (05/10/2026, fichas de las rutas en /el-tramo/). No copia el cartel oficial de
+// Vialidad: toma su forma de escudo y lo pinta con la paleta del sitio, como el resto de los íconos. Es decorativo: el
+// nombre de la ruta va en el texto de al lado. Sin la sigla «RN» adentro: a este tamaño quedaba en 7 px y el sitio no
+// baja de 12 (pliego 61.7); «Ruta Nacional» ya está escrito al lado.
+import type { Ruta } from '@/lib/datos/esquemas';
+interface Props { ruta: Ruta['nombre']; class?: string }
+const { ruta, class: clase = '' } = Astro.props;
+const numero = ruta.replace(/^RN\s*/, '');
+const id = `escudo-${numero}`;
+const forma = 'M24 2.5c6.4 2.6 13 3.4 20 2.6v18.4c0 14.2-8.2 24.2-20 30-11.8-5.8-20-15.8-20-30V5.1c7 .8 13.6 0 20-2.6z';
+---
+<svg viewBox="0 0 48 56" width="52" height="61" aria-hidden="true" class:list={['escudo-ruta shrink-0', clase]}>
+  <defs>
+    <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" class="escudo-luz" />
+      <stop offset="1" class="escudo-sombra" />
+    </linearGradient>
+  </defs>
+  <path d={forma} fill={`url(#${id})`} class="escudo-borde" />
+  <path d={forma} fill="none" class="escudo-filete" transform="translate(24 28.5) scale(0.84) translate(-24 -28.5)" />
+  <path d="M17 13.5h14" class="escudo-banda" />
+  <text x="24" y="37" text-anchor="middle" class="escudo-numero">{numero}</text>
+</svg>
+<style>
+  .escudo-ruta { filter: drop-shadow(0 0 10px color-mix(in srgb, var(--color-acento) 35%, transparent)); }
+  .escudo-luz { stop-color: var(--color-superficie-2); }
+  .escudo-sombra { stop-color: var(--color-fondo-2); }
+  .escudo-borde { stroke: var(--color-acento); stroke-width: 1.75; stroke-linejoin: round; }
+  .escudo-filete { stroke: color-mix(in srgb, var(--color-acento) 40%, transparent); stroke-width: 1; }
+  .escudo-banda { stroke: color-mix(in srgb, var(--color-acento) 55%, transparent); stroke-width: 1.5; stroke-linecap: round; }
+  .escudo-numero { fill: var(--color-texto); font-family: var(--font-sans); font-size: 19px; font-weight: 800; letter-spacing: -0.02em; }
+</style>

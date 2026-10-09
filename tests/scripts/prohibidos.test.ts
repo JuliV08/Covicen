@@ -3,10 +3,10 @@ import { describe, expect, it } from 'vitest';
 
 // No se puede importar verificar.ts (corre al importarse y lee dist/). Lo que hay que fijar acá es el CONTRATO de la
 // guarda, no su implementación: que las dos formas de nombrar el pliego estén prohibidas y que la excepción sea
-// exactamente /transparencia/ y ninguna otra. Si alguien la afloja para que le pase su página, este test lo dice.
+// exactamente /responsabilidad-civil/ (hasta el 06/10/2026, /transparencia/) y ninguna otra. Si alguien la afloja para que le pase su página, este test lo dice.
 //
 // Pedido del gerente (call del 20/09/2026): «hace mención del pliego; esas cosas que no aparezcan». La excepción es
-// /transparencia/, donde la normativa ES el contenido y citarla es justamente lo institucional.
+// /responsabilidad-civil/, donde la normativa ES el contenido y citarla es justamente lo institucional.
 const fuente = readFileSync('scripts/verificar.ts', 'utf8');
 // El corchete de cierre se busca al final de la línea, no el primero que aparezca: los propios patrones traen uno
 // adentro (`[GP]`) y un `[^\]]*` cortaba la captura en la mitad de la expresión regular.
@@ -28,9 +28,9 @@ describe('prohibidos del pliego en la cara del público', () => {
     }
   });
 
-  it('la única página exceptuada es transparencia', () => {
+  it('la única página exceptuada es la de responsabilidad civil', () => {
     const excepcion = /const SIN_PLIEGO = [^;]+;/.exec(fuente)?.[0] ?? '';
-    expect(excepcion).toContain("startsWith('transparencia')");
+    expect(excepcion).toContain("startsWith('responsabilidad-civil')");
     expect(excepcion.match(/startsWith/g)?.length, 'hay más de una página exceptuada').toBe(1);
   });
 
@@ -43,5 +43,24 @@ describe('prohibidos del pliego en la cara del público', () => {
   it('el dato de la fuente sigue en el contenido, aunque no se muestre', () => {
     expect(readFileSync('src/content/servicios.json', 'utf8')).toContain('PETG');
     expect(readFileSync('src/content/contacto.json', 'utf8')).toContain('PETG');
+  });
+});
+
+// «Efectivo» solo negado (06/10/2026): la pregunta de cómo se paga dice, con las palabras de la gerencia, que ya no se
+// acepta; cualquier otra mención sigue haciendo fallar el build, porque en la vía se cobra solo con medios electrónicos.
+describe('efectivo, solo para decir que ya no hay', () => {
+  const generales = /const PROHIBIDOS = (\[.*\]);/.exec(fuente)?.[1] ?? '';
+  // eslint-disable-next-line no-eval -- literales de expresión regular leídos del propio repo, no entrada externa
+  const efectivo = (generales ? (eval(generales) as RegExp[]) : []).find((p) => p.source.includes('efectivo'));
+  it('deja pasar las negaciones', () => {
+    expect(efectivo, 'falta la guarda de «efectivo» en PROHIBIDOS').toBeDefined();
+    for (const texto of ['Pago sin efectivo.', 'Ya no se acepta más el pago en efectivo.', 'Ya no se acepta más en efectivo.', 'No se acepta en efectivo.']) {
+      expect(efectivo!.test(texto), `bloquea «${texto}»`).toBe(false);
+    }
+  });
+  it('frena cualquier otra mención', () => {
+    for (const texto of ['Pagá en efectivo en la cabina.', 'Se acepta efectivo y tarjeta.', 'Efectivo o TelePASE.', 'Ya no se acepta tarjeta, solo efectivo.']) {
+      expect(efectivo!.test(texto), `deja pasar «${texto}»`).toBe(true);
+    }
   });
 });

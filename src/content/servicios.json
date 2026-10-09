@@ -12,10 +12,6 @@
     "gratuito": true,
     "descripcion": "Si tu vehículo queda detenido en la calzada por un accidente o un desperfecto, lo retiramos sin cargo.",
     "alcance": "Traslado hasta la localidad más próxima, o hasta cualquier punto anterior a esa localidad o estación de servicio más cercana, para que puedas conseguir asistencia mecánica.",
-    "tiempos": [
-      "Vehículos livianos: 30 minutos en al menos el 90 % de los casos, y nunca más de 40.",
-      "Vehículos pesados: 60 minutos en al menos el 90 % de los casos, y nunca más de 72."
-    ],
     "fuente": "PETG art. 54.1, 54.2 y 54.5"
   },
   {
@@ -36,7 +32,7 @@
     "id": "atencion-al-usuario",
     "nombre": "Atención al usuario",
     "gratuito": true,
-    "descripcion": "Reclamos, consultas y sugerencias por formulario web, correo o la línea gratuita 0800 444 7777. Cada caso recibe un número de gestión para seguirlo.",
+    "descripcion": "Reclamos, consultas y sugerencias por formulario web, correo o la línea gratuita 0800 555 2224. Cada caso recibe un número de gestión para seguirlo.",
     "fuente": "PETG art. 58 y 61"
   },
   {

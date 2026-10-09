@@ -1,0 +1,77 @@
+---
+import { Download, ExternalLink, FileText } from '@lucide/astro';
+import Base from '@/layouts/Base.astro';
+import Boton from '@/components/ui/Boton.astro';
+import Seccion from '@/components/ui/Seccion.astro';
+import { datos } from '@/lib/datos';
+import { fechaLarga } from '@/lib/formato';
+import { publicado } from '@/lib/publicado';
+
+// Escondida el 02/10/2026 (reunión con el gerente del 01/10: «comentala») y de vuelta el 05/10 para publicar la póliza
+// de responsabilidad civil «donde estaba originalmente la de ejemplo». La normativa sigue escondida con su propio
+// interruptor (publicado.normativa). Ruta rest con un solo destino, igual que /obras/: con el interruptor apagado
+// getStaticPaths devuelve [] y Astro no genera nada; el menú y el pie la siguen solos (lib/paginas.ts).
+export const getStaticPaths = () => (publicado.transparencia ? [{ params: { resto: undefined } }] : []);
+const [e, normativa] = await Promise.all([datos.empresa(), datos.normativa()]);
+// La sección «Datos registrales» se eliminó el 02/10/2026 (punto 5 de la reunión): razón social, CUIT y domicilios van
+// en el pie de página, que es donde los busca la gente.
+const poliza = e.polizaRc;
+// La póliza puede ser un PDF del propio sitio (/documentos/…) o una dirección externa; las dos se abren en otra pestaña
+// (sin target, el ClientRouter bajaría el PDF entero por fetch para después recargar igual). Boton le aplica ruta().
+// Con la normativa escondida, la póliza es toda la página: una sola sección, la del h1. Con la normativa, dos.
+const seccionPoliza = publicado.normativa
+  ? { eyebrow: 'Seguro', fondo: 'fondo-2' as const }
+  : { nivel: 'h1' as const, class: 'pt-10' };
+const descripcion = publicado.normativa
+  ? 'Normativa de la concesión del Tramo Centro para descargar, póliza de responsabilidad civil de Covicen y control de Vialidad Nacional. Covicen publica lo que se puede verificar, con la fuente al lado.'
+  : 'Póliza de responsabilidad civil de Covicen, la concesionaria del Tramo Centro: aseguradora, número, vigencia y el documento para descargar.';
+---
+<Base titulo={publicado.normativa ? 'Transparencia' : 'Póliza de responsabilidad civil'} {descripcion} migas={[{ nombre: publicado.normativa ? 'Transparencia' : 'Póliza de responsabilidad civil', href: '/responsabilidad-civil' }]}>
+  {publicado.normativa && (
+    <Seccion nivel="h1" eyebrow="Transparencia" titulo="Lo que se puede verificar, con la fuente al lado" intro="Vialidad Nacional supervisa la concesión con indicadores objetivos. Acá están la normativa aplicable y la póliza de responsabilidad civil." class="pt-10">
+      <h2 class="titulo revelar mx-auto mb-6 text-center text-2xl">Normativa aplicable</h2>
+      <ol class="escalonar grid gap-4 md:grid-cols-2">
+        {normativa.map((n, i) => (
+          <li class="tarjeta p-6" style={`--i: ${i}`}>
+            <h3 class="text-xl">{n.titulo}</h3>
+            <p class="mt-2 text-texto-2">{n.descripcion}</p>
+            {n.url && n.descargable ? (
+              <a href={n.url} rel="noopener noreferrer" target="_blank" class="mt-4 inline-flex items-center gap-1 text-sm font-semibold" aria-label={`${n.titulo}: ver o descargar en la fuente oficial (se abre en otra pestaña)`}><Download size={14} aria-hidden="true" /> Ver o descargar</a>
+            ) : (
+              <p class="anotacion mt-4 text-xs text-texto-2">Sin versión definitiva publicada todavía.</p>
+            )}
+          </li>
+        ))}
+      </ol>
+    </Seccion>
+  )}
+  {/* Sin «(PETG art. 61.6)» desde el 05/10/2026: la excepción a las citas del pliego en Transparencia era por la
+      normativa, que está escondida. */}
+  <Seccion id="poliza" {...seccionPoliza} titulo="Póliza de responsabilidad civil">
+    {/* 05/10/2026: «acá el contenido quedó descentrado». Desde la fase A el encabezado va al medio, y los datos quedaban
+        pegados a la izquierda: van en una ficha centrada, con el PDF como botón. */}
+    {poliza ? (
+      <div class="revelar tarjeta mx-auto max-w-4xl p-6 text-center sm:p-10">
+        <dl class="grid gap-6 sm:grid-cols-2 lg:grid-cols-[auto_auto_1fr] lg:gap-0">
+          <div class="lg:px-8"><dt class="eyebrow">Aseguradora</dt><dd class="mt-2 text-lg font-semibold text-texto lg:whitespace-nowrap">{poliza.aseguradora}</dd></div>
+          <div class="lg:border-l lg:border-borde lg:px-8"><dt class="eyebrow">Póliza</dt><dd class="mt-2 text-lg font-semibold tabular-nums text-texto lg:whitespace-nowrap">N.º {poliza.numero}</dd></div>
+          <div class="sm:col-span-2 lg:col-span-1 lg:border-l lg:border-borde lg:px-8"><dt class="eyebrow">Vigencia</dt><dd class="mt-2 text-balance text-lg font-semibold text-texto">{poliza.vigenciaDesde ? `Del ${fechaLarga(poliza.vigenciaDesde)} al ${fechaLarga(poliza.vigenciaHasta)}` : `Hasta el ${fechaLarga(poliza.vigenciaHasta)}`}</dd></div>
+        </dl>
+        {poliza.url && (
+          <div class="mt-8 flex justify-center border-t border-borde pt-8">
+            {poliza.url.startsWith('/')
+              ? <Boton href={poliza.url} externo ariaLabel="Ver la póliza de responsabilidad civil (PDF, se abre en otra pestaña)"><FileText size={18} aria-hidden="true" /> Ver la póliza (PDF)</Boton>
+              : <Boton href={poliza.url} externo ariaLabel="Ver la póliza de responsabilidad civil (se abre en otra pestaña)">Ver la póliza <ExternalLink size={16} aria-hidden="true" /></Boton>}
+          </div>
+        )}
+      </div>
+    ) : (
+      <p class="revelar text-texto-2">Se publica con la toma de posesión, el {fechaLarga(e.concesion.inicioOperacion)}.</p>
+    )}
+  </Seccion>
+</Base>
+<style>
+  /* Con la normativa apagada, el h1 es «Póliza de responsabilidad civil.» y no se corta con guion (pedido del 05/10/2026):
+     la letra baja en pantallas angostas hasta que «responsabilidad» entra entera en el renglón. */
+  :global(#poliza h1) { font-size: min(clamp(2.5rem, 2rem + 4vw, 6rem), 8.6vw); overflow-wrap: break-word; }
+</style>
