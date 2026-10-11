@@ -7,12 +7,12 @@ describe('tarifas', async () => {
   const tramo = await fuenteLocalJson.tramo();
   it('sin excepciones, TelePASE y manual salen del cuadro general', () => {
     const filas = tarifasParaCabina(t, 'franck');
-    expect(filas[0]).toMatchObject({ categoria: 'cat-1', telepaseSinIva: 1239.67, manualSinIva: 1239.67 });
+    expect(filas[0]).toMatchObject({ categoria: 'cat-1', telepaseSinIva: 1529.01, manualSinIva: 1529.01, telepaseConIva: 1850.1, manualConIva: 1850.1 });
   });
   it('una excepción por cabina reemplaza solo esa categoría; manual sin dato hereda el de TelePASE', () => {
     const conEx = { ...t, excepciones: [{ cabina: 'franck', categoria: 'cat-1', montoSinIva: 2000 }] };
     expect(tarifasParaCabina(conEx, 'franck')[0]).toMatchObject({ telepaseSinIva: 2000, manualSinIva: 2000 });
-    expect(tarifasParaCabina(conEx, 'carcarana')[0]).toMatchObject({ telepaseSinIva: 1239.67 });
+    expect(tarifasParaCabina(conEx, 'carcarana')[0]).toMatchObject({ telepaseSinIva: 1529.01 });
     const manualNulo = { ...t, tarifas: [{ ...t.tarifas[0]!, montoManualSinIva: null }] };
     expect(tarifasParaCabina(manualNulo, 'franck')[0]!.manualSinIva).toBeNull();
   });
@@ -25,7 +25,7 @@ describe('tarifas', async () => {
       excepciones: [{ cabina: 'franck', categoria: 'cat-1', montoSinIva: 2000 }],
     };
     expect(tarifasParaCabina(conEx, 'franck')[0]).toMatchObject({ telepaseSinIva: 2000, telepaseConIva: 2420, manualConIva: 2420 });
-    expect(tarifasParaCabina(conEx, 'carcarana')[0]).toMatchObject({ telepaseSinIva: 1239.67, telepaseConIva: 1500.5, manualConIva: 1500.5 });
+    expect(tarifasParaCabina(conEx, 'carcarana')[0]).toMatchObject({ telepaseSinIva: 1529.01, telepaseConIva: 1500.5, manualConIva: 1500.5 });
   });
   it('mismo sin IVA en las dos columnas = mismo precio al público, aunque el con-IVA del sistema no siga el redondeo', () => {
     const desparejo = { ...t, tarifas: [{ ...t.tarifas[0]!, montoSinIva: 1399, montoManualSinIva: 1399, montoConIva: 1692.79 }] };

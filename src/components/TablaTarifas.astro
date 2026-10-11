@@ -9,6 +9,8 @@
 // `enlazarFuente` pone el enlace al Boletín Oficial en la línea de vigencia, ARRIBA de la tabla: lo usan las páginas de
 // estación. En /tarifas/ no va: el 01/10/2026 el gerente pidió sacar de esa página la línea de la resolución con el
 // enlace, y con tres tablas quedaría tres veces. La URL pasa por esHttp (lib/rutas).
+// El enlace al Boletín va con la resolución (10/10/2026): el cuadro del 11/10 llegó sin número de resolución, y sin
+// ella la fuente no es el Boletín. Cuando se cargue `resolucion` con su `fuente`, el enlace vuelve solo.
 import IconoVehiculo from '@/components/ilustraciones/IconoVehiculo.astro';
 import type { Cabina, Tarifario } from '@/lib/datos/esquemas';
 import { fechaLarga, kmTexto, moneda } from '@/lib/formato';
@@ -25,7 +27,7 @@ const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km
 <div class="revelar tabla-tarifas scroll-mt-32" {id}>
   <div class="mb-4 flex flex-wrap items-baseline justify-between gap-3">
     <h3 class="text-xl">{titulo}</h3>
-    <p class="text-sm text-texto-2">{vigencia}{t.resolucion && ` ${t.resolucion}.`}{enlazarFuente && esHttp(t.fuente.url) && <> <a href={t.fuente.url} rel="noopener noreferrer" target="_blank">Ver en el Boletín Oficial</a>.</>}</p>
+    <p class="text-sm text-texto-2">{vigencia}{t.resolucion && ` ${t.resolucion}.`}{enlazarFuente && t.resolucion && esHttp(t.fuente.url) && <> <a href={t.fuente.url} rel="noopener noreferrer" target="_blank">Ver en el Boletín Oficial</a>.</>}</p>
   </div>
   {/* 05/10/2026 («a los cuadros tarifarios también hay que darles un reskin»): la tabla va en una tarjeta con halo;
       «Categoría» y «Tipo de vehículo» se juntan (ícono, nombre y la descripción debajo), así «Categoría 1» no se parte en
@@ -83,7 +85,9 @@ const titulo = cabina ? `Estación ${cabina.nombre} · ${cabina.ruta}${cabina.km
     .tabla-cabecera { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
     .fila { display: grid; grid-template-columns: 1fr 1fr; padding: 0.5rem 0 0.75rem; }
     .fila > th { grid-column: 1 / -1; }
-    .fila > .precio { padding-top: 0.25rem; padding-bottom: 0.25rem; text-align: left; }
+    /* padding-right corto (10/10/2026): con centavos, «$ 9.250,51» mide 103 px y a 320 px las dos celdas con 20 px
+       de cada lado pedían 287 en una tarjeta de 278: la tabla se pasaba 10 px y la tarjeta la recortaba. */
+    .fila > .precio { padding-top: 0.25rem; padding-bottom: 0.25rem; padding-right: 0.5rem; text-align: left; }
     .fila > .precio + .precio { border-left: 1px solid var(--color-borde); }
     .fila > .precio::before { content: attr(data-etiqueta); display: block; margin-bottom: 0.25rem; font-size: 0.8125rem; font-weight: 600; color: var(--color-texto-2); }
   }

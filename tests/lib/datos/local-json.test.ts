@@ -52,16 +52,22 @@ describe('contenido del repo', () => {
     expect(t.trazados.find((x) => x.ruta === 'RN 19')?.ciudades[0]).toBe('santo-tome');
     for (const c of t.cabinas) expect(c.fuente?.url).toMatch(/^https:\/\//);
   });
-  it('tarifario: el cuadro heredado de la Res. 248/2026, cinco categorías con precio, igual en las tres estaciones', async () => {
+  // El cuadro que rige desde las 00:00 del 11/10/2026, tal como lo comunicó Covicen (hasta el 10/10 fue el heredado
+  // de la Res. 248/2026: $ 1.500 el auto). El comunicado trae el precio al público, con centavos, y ningún número de
+  // resolución: no se inventa una ni se arrastra la anterior.
+  it('tarifario: el cuadro vigente desde el 11/10/2026, cinco categorías con precio, igual en las tres estaciones', async () => {
     const t = await fuenteLocalJson.tarifario();
-    expect(t.origen).toBe('heredado');
-    expect(t.vigencia.desde).toBe('2026-02-26');
-    expect(t.resolucion).toContain('248/2026');
+    expect(t.vigencia.desde).toBe('2026-10-11');
+    expect(t.resolucion).toBeUndefined();
+    expect(JSON.stringify(t)).not.toMatch(/248\/2026|boletinoficial/);
     expect(t.cabinas).toEqual(['carcarana', 'james-craik', 'franck']);
     expect(t.categoriaDestacada).toBe('cat-1');
     expect(t.tarifas).toHaveLength(5);
     expect(t.tarifas.every((x) => x.montoSinIva !== null && x.montoManualSinIva === x.montoSinIva)).toBe(true);
-    expect(t.tarifas.map((x) => Math.round(x.montoSinIva! * 1.21))).toEqual([1500, 3000, 4500, 6000, 7500]);
+    // Los precios al público, al centavo, son los del comunicado…
+    expect(t.tarifas.map((x) => x.montoConIva)).toEqual([1850.1, 3700.2, 5550.31, 7400.41, 9250.51]);
+    // …y el sin IVA no viene en el comunicado: es el único importe al centavo que, con el 21 %, da ese precio.
+    for (const x of t.tarifas) expect(Math.round(x.montoSinIva! * (1 + t.alicuotaIva) * 100) / 100, x.categoria).toBe(x.montoConIva);
     expect(t.tarifas.map((x) => x.icono)).toEqual(['auto', 'camioneta', 'camion-3-4', 'camion-5-6', 'camion-7']);
     // Las tres notas del pie (leyenda de pago manual, actualización trimestral, criterio de categorías) se sacaron por
     // pedido del gerente el 24/09/2026. Si vuelven, que sea a propósito.

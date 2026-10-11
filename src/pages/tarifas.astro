@@ -22,8 +22,8 @@ const nombres = cabinas.map((c) => c.nombre).join(', ').replace(/, ([^,]*)$/, ' 
 const estaciones = cabinas.length === 0 ? '' : ` Rige el mismo cuadro tarifario para ${cabinas.length === 1 ? 'la estación' : 'las estaciones'} ${nombres}.`;
 const bajada = `${tarifario.vigencia.descripcion}${estaciones}`;
 // Qué se publica y qué espera certificación del área (call del 20/09/2026). El cuadro tarifario por estación queda
-// tal cual —sale de la Res. 248/2026, publicada en el Boletín Oficial— y las exenciones también, porque son las del
-// contrato. Lo demás son porcentajes, recargos y multiplicadores que nadie certificó todavía: se esconden enteros,
+// tal cual —hasta el 10/10/2026 fue el de la Res. 248/2026; desde el 11/10 es el que comunicó Covicen, sin número de
+// resolución todavía (por eso no se nombra ninguna)— y las exenciones también, porque son las del contrato. Lo demás son porcentajes, recargos y multiplicadores que nadie certificó todavía: se esconden enteros,
 // no se publican con salvedades. El interruptor está en src/lib/publicado.ts y el pedido, en
 // docs/pendientes-de-confirmacion.md. Los fondos se alternan sobre las secciones que se ven (lib/fondos.ts).
 const [fDescuentos, fExenciones, fDiferencial, fSinPagar, fExceso, fCategorias] = alternarFondos([publicado.descuentosPorFrecuencia, true,
@@ -57,7 +57,7 @@ const exentos = [
   'Vehículos afectados a ex combatientes de Malvinas.',
 ];
 ---
-<Base titulo="Tarifas" descripcion={`Cuadro tarifario vigente en los peajes del Tramo Centro (Carcarañá, James Craik y Franck): ${precio !== null ? moneda(precio) : ''} por auto, Resolución 248/2026 de Vialidad Nacional. Cuadro tarifario por estación, TelePASE, pago en la vía y exenciones.`} migas={[{ nombre: 'Tarifas', href: '/tarifas' }]}>
+<Base titulo="Tarifas" descripcion={`Cuadro tarifario vigente en los peajes del Tramo Centro (Carcarañá, James Craik y Franck): ${precio !== null ? moneda(precio) : ''} por auto${tarifario.resolucion ? `, ${tarifario.resolucion}` : ''}. Cuadro tarifario por estación, TelePASE, pago en la vía y exenciones.`} migas={[{ nombre: 'Tarifas', href: '/tarifas' }]}>
   <Seccion nivel="h1" eyebrow="Tarifas" titulo="Cuánto cuesta el peaje" intro={bajada} class="pt-10">
     {/* Pedido del gerente (24/09/2026): sale el recuadro grande con el precio del auto, porque el precio de cada
         categoría ya está en la tabla de cada estación, dos pasos más abajo. Lo que estaba a su derecha pasa a

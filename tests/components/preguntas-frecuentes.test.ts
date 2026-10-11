@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 import Preguntas from '@/pages/preguntas-frecuentes.astro';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
 import { preguntasPublicables } from '@/lib/faq';
+import { moneda } from '@/lib/formato';
+import { tarifasParaCabina } from '@/lib/tarifas';
 import { publicado } from '@/lib/publicado';
 
 // Esto lo encontró la revisión, no los tests, y es la clase de error más cara que tiene este sitio: se escondieron
@@ -59,6 +61,18 @@ describe('/preguntas-frecuentes/', () => {
     for (const slug of ['descuentos-por-frecuencia', 'pase-sin-pagar', 'tarifa-vecinal', 'telepase']) {
       expect(slugs, `se borró la pregunta ${slug} en vez de esconderla`).toContain(slug);
     }
+  });
+
+  // 10/10/2026, el día que cambió el cuadro: la respuesta de «¿Cuánto cuesta el peaje?» tiene el precio escrito a mano
+  // y nada la ataba al tarifario; se habría quedado diciendo $1.500 con la tabla en $1.850,10. Todo importe en pesos de
+  // una pregunta frecuente tiene que ser un precio al público del cuadro vigente: si cambia el cuadro, esto avisa.
+  it('todo precio escrito en una respuesta es un precio del cuadro vigente', async () => {
+    const [todas, tarifario] = await Promise.all([fuenteLocalJson.faq(), fuenteLocalJson.tarifario()]);
+    const sinEspacios = (s: string) => s.replace(/\s/g, '');
+    const delCuadro = new Set(tarifasParaCabina(tarifario).flatMap((f) => [f.telepaseConIva, f.manualConIva]).filter((n) => n !== null).map((n) => sinEspacios(moneda(n))));
+    const importes = todas.flatMap((p) => [...`${p.pregunta} ${p.respuesta}`.matchAll(/\$\s?\d{1,3}(?:\.\d{3})*(?:,\d{2})?/g)].map((m) => ({ slug: p.slug, importe: sinEspacios(m[0]) })));
+    expect(importes.length, 'ninguna pregunta dice un precio: ¿cambió el formato y este test quedó mirando nada?').toBeGreaterThan(0);
+    for (const { slug, importe } of importes) expect(delCuadro.has(importe), `«${slug}» dice ${importe}, que no es un precio del cuadro vigente`).toBe(true);
   });
 
   // El candado mecánico es lo único que cubre una página futura que nadie previó. Si alguien lo vacía, este test lo dice.

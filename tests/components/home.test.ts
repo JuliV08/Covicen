@@ -151,15 +151,18 @@ describe('NovedadesRecientes', () => {
 });
 
 describe('TarifaDestacada', () => {
-  it('muestra la categoría destacada al público, la vigencia y la resolución', async () => {
+  // El cuadro del 11/10/2026 llegó como comunicado de Covicen, sin número de resolución: no se nombra ninguna ni se
+  // enlaza el Boletín Oficial (ese enlace va con la resolución; lo prueba tests/components/tarifas.test.ts).
+  it('muestra la categoría destacada al público y la vigencia, sin resolución mientras no la haya', async () => {
     // Intl separa "$" del número con un espacio no separable (U+00A0 o U+202F): se normaliza con escapes, no con literales.
     const html = (await render(TarifaDestacada, { tarifario: await fuenteLocalJson.tarifario() })).replace(/[  ]/g, ' ');
-    expect(html).toContain('$ 1.500');
+    expect(html).toContain('$ 1.850,10');
     expect(html).toContain('Autos');
-    expect(html).toContain('$ 1.239,67');
-    expect(html).toContain('26 de febrero de 2026');
+    expect(html).toContain('$ 1.529,01');
+    expect(html).toContain('11 de octubre de 2026');
     expect(html).toContain('Cuadro vigente');
-    expect(html).toContain('248/2026');
+    expect(html).not.toContain('248/2026');
+    expect(html).not.toContain('Boletín Oficial');
     expect(html).not.toContain('Tarifa ofertada');
   });
   // `montoSinIva` es nullable en el contrato y significa "sin valor publicado": va el criterio de la casa (esconder,
