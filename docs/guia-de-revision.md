@@ -22,6 +22,44 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 
 ---
 
+## El cuadro tarifario nuevo (10 de octubre) — mirá esto primero
+
+Se cargó el cuadro que rige desde las 00:00 del domingo 11 de octubre de 2026, tal como vino en el comunicado. Salió
+a producción y al sitio de revisión (https://juliv08.github.io/Covicen/) el sábado 10 a la noche, por pedido de Juli,
+un rato antes de la hora de vigencia: los textos dicen la fecha y la hora. Todo lo que más abajo en esta guía dice
+«$ 1.500» o «Resolución 248/2026» describe el cuadro anterior; **en el sitio publicado esa resolución ya no se nombra
+en ningún lado** (pedido de Juli del 10/10).
+
+Qué mirar, con el comunicado al lado:
+
+- **`/tarifas/`**: arriba, «Cuadro tarifario vigente desde las 00:00 del domingo 11 de octubre de 2026. Rige el mismo
+  cuadro tarifario para las estaciones Carcarañá, James Craik y Franck.» y la etiqueta «Desde el 11 de octubre de
+  2026». En las tres pestañas (Carcarañá, James Craik, Franck), las dos columnas iguales: **$ 1.850,10 · $ 3.700,20 ·
+  $ 5.550,31 · $ 7.400,41 · $ 9.250,51**. Debajo de cada precio, en chico, el sin IVA ($ 1.529,01 · $ 3.058,02 ·
+  $ 4.587,03 · $ 6.116,04 · $ 7.645,05): **ese dato no vino en el comunicado, está calculado** (ver
+  `docs/pendientes-de-confirmacion.md`, primera sección). Arriba de cada tabla dice solo «Vigencia: desde el 11 de
+  octubre de 2026.», sin nombrar ninguna resolución.
+- **En el celular**: los precios ahora llevan centavos y son más largos. Que los dos precios de cada categoría entren
+  lado a lado sin cortarse ni correr la página de costado.
+- **`/peajes/carcarana/`, `/peajes/james-craik/`, `/peajes/franck/`**: la misma tabla. Ya **no está** el enlace «Ver
+  en el Boletín Oficial» (llevaba a la resolución del cuadro viejo); vuelve cuando se sepa la resolución del nuevo.
+- **`/preguntas-frecuentes/`**: «¿Cuánto cuesta el peaje?» dice $1.850,10 desde el 11 de octubre; «¿Qué tarifa se
+  cobra desde el 7 de octubre?» pasó a ser **«¿Desde cuándo rige el cuadro tarifario actual?»**; «¿Qué pasa con los
+  peajes que ya existían?» ya no dice «el mismo cuadro tarifario que hasta ahora».
+- **Novedades, por el pedido de sacar la referencia a la resolución:**
+  - «Qué cuadro tarifario rige desde el 7 de octubre» **se bajó del sitio**: la nota entera era la Resolución 248/2026
+    y los $ 1.500. Está guardada, tal como se publicó, en `src/content/novedades-despublicadas/`.
+  - «Qué cambia el 7 de octubre…»: el apartado «La tarifa» ahora dice que desde el 11 de octubre rige un nuevo cuadro
+    y manda a Tarifas, sin resolución ni precio.
+- **Dos cosas que agregué sin que me las pidieran** (si alguna no va, se saca en un minuto):
+  - la **cinta de avisos** dice «Nuevo cuadro tarifario. Consultá los valores por estación de peaje.» (antes:
+    «Consultá el cuadro tarifario vigente por estación de peaje.»), sin fecha, porque la portada no lleva fechas;
+  - una **novedad nueva**, «Nuevo cuadro tarifario desde el 11 de octubre», con los cinco valores (`/novedades/`, y
+    primera en las novedades de la portada).
+- **Imprimir el cuadro** (botón en `/tarifas/`): que salgan las tres tablas con los precios nuevos.
+
+---
+
 ## El mapa nuevo (fase C, 5 de octubre) — mirá esto primero
 
 En la home y en El tramo. El diseño está en

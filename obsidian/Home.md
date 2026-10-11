@@ -23,6 +23,13 @@ Este es el vault del proyecto (vive en el repo, viaja con el código). El punter
 - Manual de marca: `docs/marca/Logo Covicen 2.pdf` · Prompts de imágenes: `docs/marca/prompts-imagenes.md`
 
 ## Estado
+- **2026-10-10, el cuadro tarifario que rige desde el 11/10 (rama `tarifario-2026-10-11`)**
+  - **Qué cambió.** `src/content/tarifario.json` con los precios del comunicado de Covicen: $ 1.850,10 · $ 3.700,20 · $ 5.550,31 · $ 7.400,41 · $ 9.250,51 con IVA, vigentes desde las 00:00 del domingo 11/10/2026 en Carcarañá, James Craik y Franck. Hasta el 10/10 rigió el de la Res. 248/2026 ($ 1.500).
+  - **Lo que no vino en el comunicado**: la resolución (no se nombra ninguna y salió el enlace al Boletín de las páginas de estación) y el sin IVA (calculado). Las dos cosas están en `docs/pendientes-de-confirmacion.md`, primera sección.
+  - **Lo que arrastraba el precio viejo**: tres preguntas frecuentes, la descripción de Tarifas para buscadores, dos novedades y el aviso de la cinta. Novedad nueva: `2026-10-11-nuevo-cuadro-tarifario`.
+  - **«Quitar la referencia de esa resolución»** (pedido de Juli, 10/10 a la noche): la Res. 248/2026 no se nombra más en el sitio publicado. La novedad «Qué cuadro tarifario rige desde el 7 de octubre» se despublicó (toda la nota era esa resolución) y a «Qué cambia el 7 de octubre» se le reescribió el apartado de la tarifa. Sigue en `normativa.json`, que está escondida.
+  - **Publicación**: el plan era Pages primero y producción a las 00:00; Juli pidió subirlo a producción el 10/10 a las 22 h, así que salió a los dos remotos juntos, con los textos diciendo «desde las 00:00 del domingo 11».
+  - Lecciones y detalle: [[Costura de datos]], «Cuando cambia el cuadro tarifario».
 - **2026-10-06, a producción (rama `web-detalles-2026-10-05`, `f0ef034` en `origin/main` y `organizacion/main`)**
   - **Qué salió.** Tanda visual:
     - fichas de ruta con escudo en lugar de la tabla de El tramo;
