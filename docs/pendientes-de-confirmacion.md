@@ -72,7 +72,8 @@ TelePASE.
 - Si PREVI lo agrega, en la web no hay que tocar nada: el formulario de Bitrix24 se arma en el CRM.
 
 **Lo que se resolvió:**
-- **La línea 0800**: 0800 444 7777, cargada en `contacto.json` (`lineaGratuita` y el `valor` del canal). Sale en
+- **La línea 0800**: 0800 444 7777 (del 06/10 al 13/10 estuvo el de repuesto, el 0800 555 2224, porque este no
+  funcionaba; el 13/10 Covicen pidió volver y dar de baja el otro), en `contacto.json` (`lineaGratuita` y el `valor` del canal). Sale en
   la barra de arriba, en el menú del celular, en el pie, en Contacto, en el mapa, en la tabla de canales y en la
   portada de «Próximamente».
 - **La póliza de responsabilidad civil**, publicada: Transparencia volvió solo con la póliza (`transparencia` en

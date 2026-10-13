@@ -22,6 +22,20 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 
 ---
 
+## El 0800 vuelve a ser el 0800 444 7777 (13 de octubre) — mirá esto primero
+
+Covicen pidió volver al 0800 444 7777 y dar de baja con CVSA el de repuesto, que estuvo del 06/10 al 13/10.
+
+- **Llamá al 0800 444 7777 antes de dar de baja el otro.** El 06/10 no funcionaba y por eso se había cambiado. Eso
+  no se puede probar desde la computadora.
+- **En el celular**: abrí el menú (las tres rayitas) y tocá la píldora azul del 0800. Tiene que ofrecer llamar al
+  08004447777. Lo mismo el botón del bloque «¿Consultas, reclamos, propuestas?» de la home y la tarjeta «Atención al
+  usuario» de Contacto.
+- **El número escrito**: en la barra de arriba, en el pie, en Contacto (la tarjeta, el paso 1 y la tabla de canales),
+  en Servicios (tarjeta Atención al usuario), en la pregunta frecuente «¿Cómo hago un reclamo o una consulta?» y en la
+  novedad «Qué cambia el 7 de octubre».
+- **Google** puede seguir mostrando unos días el número anterior en el resultado de búsqueda: se actualiza solo.
+
 ## El cuadro tarifario nuevo (10 de octubre) — mirá esto primero
 
 Se cargó el cuadro que rige desde las 00:00 del domingo 11 de octubre de 2026, tal como vino en el comunicado. Salió
@@ -124,7 +138,9 @@ Los 5 puntos de la tanda del 05/10, en la rama `web-ajustes-2026-10-05`. Leé an
 `C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`: sacar el formulario de TelePASE choca con el
 contrato.
 
-**El 0800 444 7777** (puntos 1 y 4). Dónde mirarlo:
+**El 0800 444 7777** (puntos 1 y 4). Del 06/10 al 13/10 estuvo en su lugar el de repuesto, que terminaba en 2224,
+porque este no funcionaba; el 13/10 Covicen pidió volver a este y dar de baja el otro. Si en algún lado aparece el de
+repuesto, está mal. Dónde mirarlo:
 - **Arriba de todo, en la compu**: la barra fina de arriba lleva el 0800 a la izquierda, en una píldora azul, y
   TelePASE y Autogestión a la derecha, como estaban. En la fila del logo y el menú no entraba: a 1024 px de ancho ya
   quedaban 21 px libres. Mirá que la píldora del 0800 tenga la misma altura que las de la derecha y el texto centrado,
@@ -146,8 +162,8 @@ contrato.
   Servicios, Privacidad (en «Tus derechos»), el final de la Guía de trámites («¿Tenés una consulta sobre un trámite?»),
   el aviso que aparece si el formulario del CRM no carga, y la novedad «Qué cambia el 7 de octubre», que suma una
   sección «Atención al usuario».
-- **La portada de «Próximamente»** (lo que hoy está en producción): debajo del 140 aparece «Atención al usuario: 0800
-  444 7777».
+- **La portada de «Próximamente»** (lo que estaba en producción hasta el 7/10): debajo del 140 aparece «Atención al
+  usuario: 0800 444 7777».
 - El número nunca se parte en dos renglones: va con espacios que no se cortan.
 
 **La póliza de responsabilidad civil** (punto 2). El PDF que mandaste se publica tal cual, en
