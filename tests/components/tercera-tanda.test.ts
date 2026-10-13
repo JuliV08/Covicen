@@ -70,11 +70,14 @@ describe('el 0800 444 7777', () => {
     const { lineaGratuita } = await fuenteLocalJson.contacto();
     expect(lineaGratuita).not.toBeNull();
     const listar = (dir: string): string[] => readdirSync(dir, { withFileTypes: true }).flatMap((d) => (d.isDirectory() ? listar(`${dir}/${d.name}`) : [`${dir}/${d.name}`]));
+    // Se comparan solo los dígitos: «0800-555-2224», «(0800) 555 2224», «0 800…» o con &nbsp; son el mismo número mal
+    // puesto, y con una regex de un solo formato se escapaban (lo marcó la revisión del 13/10).
+    const digitos = (n: string) => n.replace(/&nbsp;/g, '').replace(/\D/g, '');
     const escritos = listar('src/content')
       .filter((archivo) => !archivo.includes('novedades-despublicadas'))
-      .flatMap((archivo) => (readFileSync(archivo, 'utf8').match(/0800[\s -]?\d{3}[\s -]?\d{4}/g) ?? []).map((n) => `${archivo}: ${n}`));
-    expect(escritos.length, 'no encontró ningún 0800 en el contenido').toBeGreaterThan(3);
-    expect(escritos.filter((e) => !e.endsWith(`: ${lineaGratuita}`))).toEqual([]);
+      .flatMap((archivo) => (readFileSync(archivo, 'utf8').match(/\b0(?:&nbsp;|[\s.-])?800(?:(?:&nbsp;|[^\da-zA-Z"]){0,3}\d){7}/g) ?? []).map((n) => `${archivo}: ${digitos(n)}`));
+    expect(escritos.length, 'tienen que aparecer al menos los dos de contacto.json').toBeGreaterThanOrEqual(2);
+    expect(escritos.filter((e) => !e.endsWith(`: ${digitos(lineaGratuita!)}`))).toEqual([]);
   });
 });
 
