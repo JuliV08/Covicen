@@ -1,0 +1,82 @@
+---
+// /telepase/ (14/10/2026): la página a la que lleva el QR del folleto de TelePASE. Covicen quiere saber cuántos entran
+// por el folleto, así que el QR no va directo a Telepeaje Plus: pasa por acá, Google Analytics cuenta la visita y la
+// persona sigue sola a la adhesión, en menos de dos segundos aunque Google no conteste (lib/redireccion.ts).
+//
+// Fuera del menú, del sitemap (astro.config.mjs) y de los buscadores (noIndexar): es una puerta, no una página para
+// leer. Y fuera de Base.astro, igual que la portada de «Próximamente»: el menú, el pie y los scripts del sitio en una
+// pantalla que dura un segundo serían pura carga. Lo que sí lleva es lo que scripts/verificar.ts exige en TODA página:
+// el tel:140, el salto al contenido, un solo <h1> y la «Última actualización».
+//
+// El destino es el mismo dato que el botón de TelePASE de la barra de arriba (`adhesionTelepase`). Si Telepeaje Plus
+// cambia su dirección, se cambia en contacto.json y los folletos ya repartidos siguen funcionando: esa es la otra razón
+// para que el QR pase por la web de Covicen.
+import '@/styles/global.css';
+import { ArrowRight, Phone } from '@lucide/astro';
+import Logotipo from '@/components/marca/Logotipo.astro';
+import Seo from '@/components/Seo.astro';
+import Boton from '@/components/ui/Boton.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import { ID_GOOGLE_ANALYTICS, esIdAnalytics } from '@/lib/analitica';
+import { config } from '@/lib/config';
+import { datos } from '@/lib/datos';
+import { fechaHoraLarga } from '@/lib/formato';
+import { TOPE_MS } from '@/lib/redireccion';
+import { CLAVE_TEMA, COLOR_TEMA, TEMA_POR_DEFECTO, temaInicial } from '@/lib/tema';
+
+const [empresa, contacto] = await Promise.all([datos.empresa(), datos.contacto()]);
+const destino = contacto.enlaces.adhesionTelepase ?? contacto.enlaces.telepase;
+const ga = esIdAnalytics(ID_GOOGLE_ANALYTICS) ? ID_GOOGLE_ANALYTICS : null;
+const tel = contacto.emergencias.telefono;
+const ahora = new Date();
+const sitio = config.sitio.replace(/^https?:\/\//, '');
+const impreso = ahora.toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
+---
+<!doctype html>
+<html lang="es-AR" data-tema={temaInicial()}>
+  <head>
+    <Seo titulo="Adhesión a TelePASE" descripcion="La página del QR del folleto de TelePASE de Covicen: lleva a la adhesión de TelePASE en la web de Telepeaje Plus." jsonLd={[]} tipo="website" {empresa} {contacto} noIndexar />
+    <!-- Tema ANTES de pintar, sin destello. Copia mínima de resolverTema() de src/lib/tema.ts, como en la portada de
+         «Próximamente»: un script inline no puede importar, y acá no hay ClientRouter. -->
+    <script is:inline define:vars={{ porDefecto: TEMA_POR_DEFECTO, clave: CLAVE_TEMA, colores: COLOR_TEMA }}>
+      let guardado = null;
+      try { guardado = localStorage.getItem(clave); } catch { /* sin storage: se usa el default */ }
+      const valido = guardado === 'oscuro' || guardado === 'claro';
+      const prefiereClaro = matchMedia('(prefers-color-scheme: light)').matches;
+      const tema = valido ? guardado : porDefecto === 'sistema' ? (prefiereClaro ? 'claro' : 'oscuro') : porDefecto;
+      document.documentElement.dataset.tema = tema;
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', colores[tema]);
+    </script>
+    {ga && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga}`}></script>}
+    {/* Sin JS no hay conteo, pero la persona llega igual. */}
+    <noscript><meta http-equiv="refresh" content={`0;url=${destino}`} /></noscript>
+  </head>
+  <body class="flex min-h-dvh flex-col bg-fondo text-texto" data-sitio={sitio} data-fecha={impreso}>
+    <a href="#contenido" class="salto">Saltar al contenido</a>
+    <main id="contenido" tabindex="-1" class="flex flex-1 flex-col" data-destino={destino} data-analytics={ga ?? ''}>
+      <div class="contenedor flex flex-1 flex-col items-center justify-center py-16 text-center">
+        <Logotipo version="largo" enlace={false} class="h-auto w-56 max-w-full" />
+        <Eyebrow class="mt-12">TelePASE</Eyebrow>
+        <h1 class="titulo mt-4 text-3xl md:text-4xl">Te llevamos a la adhesión de TelePASE</h1>
+        <p class="mt-4 max-w-md text-lg text-texto-2">La adhesión se hace en la web de Telepeaje Plus. Si en unos segundos no pasa nada, tocá el botón.</p>
+        {/* La espera, a la vista: una línea que se llena en lo que dura el tope. Es decoración (aria-hidden). */}
+        <div class="espera mt-8" style={`--espera: ${TOPE_MS}ms`} aria-hidden="true"><span></span></div>
+        <Boton href={destino} class="mt-8">Ir a la adhesión <ArrowRight size={18} aria-hidden="true" /></Boton>
+      </div>
+      <div class="border-t border-borde">
+        <div class="contenedor flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-4 text-sm text-texto-2">
+          <p>{contacto.emergencias.etiqueta} en ruta: <a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="inline-flex items-center gap-1 font-bold text-texto tabular-nums" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={14} aria-hidden="true" />{tel}</a>, las 24 horas.</p>
+          <p><span class="text-texto-3">Última actualización:</span> <time datetime={ahora.toISOString()}>{fechaHoraLarga(ahora)}</time></p>
+        </div>
+      </div>
+    </main>
+    <script src="../scripts/telepase.ts"></script>
+  </body>
+</html>
+<style>
+  .espera { width: min(16rem, 100%); height: 3px; overflow: hidden; border-radius: 999px; background: var(--color-borde); }
+  .espera span { display: block; height: 100%; border-radius: inherit; background: var(--color-acento); transform-origin: left; animation: llenar var(--espera) linear forwards; }
+  @keyframes llenar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @media (prefers-reduced-motion: reduce) { .espera span { animation: none; transform: scaleX(0.5); } }
+</style>

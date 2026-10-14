@@ -15,8 +15,10 @@ interface Props {
   imagen?: string;
   empresa: Empresa;
   contacto: Contacto;
+  /** `noindex` aunque el sitio se indexe: /telepase/, la página del QR del folleto, que solo redirige (14/10/2026). */
+  noIndexar?: boolean;
 }
-const { titulo, descripcion, jsonLd, tipo, imagen, empresa, contacto } = Astro.props;
+const { titulo, descripcion, jsonLd, tipo, imagen, empresa, contacto, noIndexar = false } = Astro.props;
 const esHome = Astro.url.pathname === config.base;
 const tituloCompleto = esHome ? 'Covicen — Tramo Centro' : `${titulo} | Covicen`;
 // pathname ya trae base y barra final (trailingSlash: always)
@@ -30,7 +32,7 @@ const bloques = [jsonLdOrganizacion(empresa, contacto, inicio, absoluta('/favico
 <title>{tituloCompleto}</title>
 <meta name="description" content={descripcion} />
 <link rel="canonical" href={canonical} />
-{!config.indexable && <meta name="robots" content="noindex, nofollow" />}
+{(!config.indexable || noIndexar) && <meta name="robots" content="noindex, nofollow" />}
 {/* Verificación de Google Search Console, propiedad «https://www.covicen.com.ar/» (06/10/2026). Google la busca en
     la home cada tanto: si se saca, la propiedad deja de estar verificada. No es un dato secreto. */}
 <meta name="google-site-verification" content="Owc6oPDUvOU5deDKUUflAAT-OyxtQZJW9xMt2mlmxfw" />

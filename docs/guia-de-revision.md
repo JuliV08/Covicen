@@ -22,6 +22,23 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 
 ---
 
+## La página del QR del folleto de TelePASE (14 de octubre) — mirá esto primero
+
+`/telepase/` es la página a la que lleva el QR nuevo del folleto. Cuenta la visita en Google Analytics y pasa sola a la
+adhesión de TelePASE en Telepeaje Plus. No está en el menú, ni en el mapa del sitio, ni en los buscadores.
+
+- **Escaneá el QR** (`C:\Users\Villex\dev\Covicen\docs\panfleto-telepase\qr-telepase.png`, en la pantalla de la
+  compu) con el celular, **una vez que esté en producción**. Tiene que abrir una pantalla con el logo, «Te llevamos a
+  la adhesión de TelePASE», y en uno o dos segundos pasar sola a la adhesión de Telepeaje Plus. Antes de producción el
+  QR da error de página: apunta a www.covicen.com.ar.
+- **En el sitio de revisión** está en `/Covicen/telepase/`. Mientras no haya ID de Analytics pasa a Telepeaje Plus
+  en medio segundo, así que la pantalla casi no se ve: es lo esperado.
+- **Volvé atrás** desde Telepeaje Plus: tiene que volver a donde estabas antes de escanear, no a la pantalla de Covicen.
+- **Mientras no esté el ID de Google Analytics** (empieza con G-), la página lleva a la adhesión pero no cuenta, y la
+  política de privacidad no nombra a Google. Con el ID cargado, Privacidad suma «Página del folleto de TelePASE».
+- **Privacidad, aparte**: en «Canales de terceros» decía «Bitrix24, el sistema de {formularios}», con las llaves a la
+  vista. Ahora dice «el sistema del formulario de Contacto».
+
 ## El 0800 vuelve a ser el 0800 444 7777 (13 de octubre) — mirá esto primero
 
 Covicen pidió volver al 0800 444 7777 y dar de baja con CVSA el de repuesto, que estuvo del 06/10 al 13/10.

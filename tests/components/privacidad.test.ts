@@ -24,4 +24,12 @@ describe('/privacidad/', () => {
     expect(html).toContain('href="/contacto/"');
     expect(html).not.toContain('no usa cookies de terceros ni herramientas de seguimiento');
   });
+
+  // 14/10/2026: «Bitrix24, el sistema de {formularios}» salía así, con las llaves, en la página publicada: la frase
+  // estaba entre comillas simples y no se reemplazaba.
+  it('no deja ninguna variable sin reemplazar en el texto', async () => {
+    const html = await (await AstroContainer.create()).renderToString(Privacidad, { request: new Request('https://covicen.test/privacidad/') });
+    expect(html).toContain('Bitrix24, el sistema del formulario de Contacto, tiene');
+    expect(html.match(/\{[a-zA-Záéíóúñ]+\}/g) ?? []).toEqual([]);
+  });
 });

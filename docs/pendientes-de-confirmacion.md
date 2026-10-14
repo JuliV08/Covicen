@@ -19,6 +19,21 @@ entera. No hay que tocar nada más.
 
 ---
 
+## QR del folleto de TelePASE (14/10) · falta el ID de Google Analytics y el folleto
+
+La página `/telepase/` ya existe: el QR lleva ahí y de ahí pasa a la adhesión de Telepeaje Plus. **Todavía no cuenta
+nada**: falta el ID de la cuenta de Google Analytics de Covicen.
+
+- **El ID de medición** (empieza con `G-`). Se crea en analytics.google.com con una cuenta de Google de Covicen:
+  Administrar › Crear cuenta («Covicen») › propiedad «covicen.com.ar», zona horaria de Argentina › flujo de datos
+  «Web» con `www.covicen.com.ar`. Se carga en `C:\Users\Villex\dev\Covicen\src\lib\analitica.ts`
+  (`ID_GOOGLE_ANALYTICS`). Con eso, la página empieza a contar y la política de privacidad suma solo el párrafo que lo
+  explica. Conviene sumar como usuarios de la cuenta a quien vaya a leer los números.
+- **El archivo del folleto actual**, para cambiarle el QR viejo por `C:\Users\Villex\dev\Covicen\docs\panfleto-telepase\qr-telepase.svg`.
+  Cómo imprimirlo: `C:\Users\Villex\dev\Covicen\docs\panfleto-telepase\LEEME.md`.
+- **Dónde se leen los números**: en Analytics, Informes › Adquisición › Adquisición de tráfico, la fila
+  «folleto / qr». En el momento, Informes › Tiempo real. Es un mínimo: quien usa un bloqueador de publicidad no se cuenta.
+
 ## Cuadro tarifario del 11/10 · falta saber con qué resolución salió
 
 **Agregado el 10/10/2026.** Se cargó el cuadro que rige desde las 00:00 del domingo 11 de octubre, tal como vino en

@@ -46,6 +46,9 @@ const PLAZOS_DE_RESPUESTA = [/respuesta,? en \d+ d[ií]as/i, /\brespond\w*[^.]{0
 // La `fuente` de cada dato NO se borra de src/content/ —es la trazabilidad de por qué la web dice lo que dice—:
 // deja de pintarse. Se apaga la UI, no se rompe el dato.
 const PROHIBIDOS_USUARIO = [/\bPET[GP]\b/, /\bpliego/i];
+// La puerta del QR del folleto de TelePASE (14/10/2026): no se indexa nunca y es la única con Google Analytics.
+const SIN_INDEXAR = ['telepase/index.html'];
+const CON_ANALYTICS = ['telepase/index.html'];
 const SIN_PLIEGO = (nombre: string) => !nombre.startsWith('responsabilidad-civil');
 // Mientras el estado de la traza se publique con datos de muestra, ninguna página puede mostrar marcadores de incidente
 // sin el cartel que lo aclara (spec §10.1): un corte de ruta inventado que se lee como real es el error más caro del sitio.
@@ -187,10 +190,17 @@ for (const ruta of paginas) {
   const marcador = html.indexOf('data-severidad="');
   const cartel = html.indexOf('Datos de ejemplo');
   if (estadoDeMuestra && marcador >= 0 && (cartel < 0 || cartel > marcador)) fallo(`${nombre}: marcadores de incidente sin el cartel "Datos de ejemplo" arriba`);
-  // 7. indexabilidad
+  // 7. indexabilidad. /telepase/ es la excepción: la puerta del QR del folleto no se indexa nunca (14/10/2026).
   const tieneNoindex = html.includes('content="noindex, nofollow"');
-  if (indexable && tieneNoindex) fallo(`${nombre}: noindex presente en un build indexable (sitio entero en el dominio oficial)`);
-  if (!indexable && !tieneNoindex) fallo(`${nombre}: falta noindex en un build no indexable`);
+  const siempreNoindex = SIN_INDEXAR.includes(nombre);
+  if (indexable && tieneNoindex && !siempreNoindex) fallo(`${nombre}: noindex presente en un build indexable (sitio entero en el dominio oficial)`);
+  if ((!indexable || siempreNoindex) && !tieneNoindex) fallo(`${nombre}: falta noindex${siempreNoindex ? ' (esta página no se indexa nunca)' : ' en un build no indexable'}`);
+  // 7b. Google Analytics solo en la página del QR del folleto: el resto del sitio no lleva seguimiento, y la política
+  // de privacidad lo dice así.
+  if (/googletagmanager\.com|google-analytics\.com/.test(html) && !CON_ANALYTICS.includes(nombre)) fallo(`${nombre}: carga Google Analytics, que va solo en /telepase/`);
+  // 7c. Nada de variables sin reemplazar en lo que se lee: «el sistema de {formularios}» estuvo publicado en la
+  // política de privacidad hasta el 14/10/2026 (la frase iba entre comillas simples).
+  for (const m of plano.matchAll(/\{[a-zA-Záéíóúñ]+\}/g)) fallo(`${nombre}: muestra una variable sin reemplazar → ${m[0]}`);
   // 8. accesibilidad básica estática
   // `alt` vacío es válido (imagen decorativa); Astro lo puede emitir como `alt` a secas o `alt=""`.
   for (const m of html.matchAll(/<img\b(?![^>]*\balt(?:[\s=>/]))[^>]*>/g)) fallo(`${nombre}: <img> sin alt → ${m[0].slice(0, 60)}`);
@@ -245,6 +255,10 @@ if (sitioCompleto) {
     if (existsSync(join(DIST, ruta, 'index.html'))) fallo(`/${ruta}/ está apagada en src/lib/publicado.ts y el build la generó igual`);
     if (sitemap.includes(`/${ruta}/`)) fallo(`/${ruta}/ está apagada y el sitemap la lista`);
   }
+
+  // La puerta del QR del folleto existe y no está en el sitemap (astro.config.mjs la filtra).
+  if (!existsSync(join(DIST, 'telepase', 'index.html'))) fallo('falta la página /telepase/, la del QR del folleto de TelePASE');
+  if (sitemap.includes('/telepase/')) fallo('/telepase/ es la puerta del QR del folleto y el sitemap la lista');
 
   // Y que no haya quedado ninguna página eliminada a propósito (§4.4 del prompt del 20/09: se elimina, no se oculta).
   for (const ruta of ['trabaja-con-nosotros']) {

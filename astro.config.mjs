@@ -26,7 +26,14 @@ export default defineConfig({
   integrations: [
     // Con la portada sola el sitemap tiene una sola URL: la portada. Sin el filtro listaría las 29 páginas que la
     // integración de abajo borra del build, y sería un índice de páginas que no existen.
-    sitemap({ filter: (pagina) => sitioCompleto || new URL(pagina).pathname === base }),
+    // /telepase/ (14/10/2026) no va nunca: es la puerta del QR del folleto, que cuenta la visita y redirige.
+    sitemap({
+      filter: (pagina) => {
+        const camino = new URL(pagina).pathname;
+        if (camino === `${base.replace(/\/$/, '')}/telepase/`) return false;
+        return sitioCompleto || camino === base;
+      },
+    }),
     // Va DESPUÉS de sitemap: las dos podan en `astro:build:done` y los hooks corren en el orden de esta lista, así
     // que el sitemap ya está escrito (y filtrado) cuando esta borra lo que sobra.
     soloPortada(!sitioCompleto),
