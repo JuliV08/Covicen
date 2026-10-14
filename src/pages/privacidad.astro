@@ -24,6 +24,8 @@ const crm = contacto.formularioCrm !== null;
 // /proveedores/ se escondió el 05/10/2026: mientras no se publique, la política habla solo del formulario de Contacto.
 const prov = publicado.proveedores;
 const formularios = prov ? 'los formularios de Contacto y de Proveedores' : 'el formulario de Contacto';
+// Con la preposición pegada: «fuera del formulario», y no «fuera de el formulario» (estuvo publicado hasta el 14/10/2026).
+const deFormularios = prov ? 'de los formularios de Contacto y de Proveedores' : 'del formulario de Contacto';
 // WhatsApp se nombra solo si hay número: el canal se escondió el 01/10/2026 («falta solicitar»).
 const porCorreo = contacto.whatsapp.numero ? 'por WhatsApp o por correo' : 'por correo';
 // Google Analytics (14/10/2026) va solo en /telepase/, la página del QR del folleto de TelePASE, y solo con el ID cargado
@@ -40,7 +42,7 @@ const conQr = analytics ? ' y de la página del QR del folleto de TelePASE' : ''
       <p>{conPunto(`${e.razonSocial ?? e.marca}${e.cuit ? `, CUIT ${e.cuit}` : ''}${!e.razonSocial && e.enFormacion ? ', sociedad en formación' : ''}`)} Los datos registrales del responsable se publican en el pie de página cuando estén completos.</p>
       <h2>Qué datos recibimos</h2>
       {crm ? (
-        <p>Este sitio no tiene cuentas de usuario y, fuera de {formularios}{conQr} (abajo), no usa cookies ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos: por {formularios}, o {porCorreo} desde los demás. Nombre, contacto y el contenido de tu mensaje, y lo que {prov ? 'esos dos formularios anotan' : 'ese formulario anota'} en tu navegador, que se detalla abajo.</p>
+        <p>Este sitio no tiene cuentas de usuario y, fuera {deFormularios}{conQr} (abajo), no usa cookies ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos: por {formularios}, o {porCorreo} desde los demás. Nombre, contacto y el contenido de tu mensaje, y lo que {prov ? 'esos dos formularios anotan' : 'ese formulario anota'} en tu navegador, que se detalla abajo.</p>
       ) : (
         <p>Este sitio no tiene cuentas de usuario{analytics ? ' y, fuera de la página del QR del folleto de TelePASE (abajo),' : ','} no usa cookies de terceros ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos {porCorreo} desde los formularios: nombre, contacto y el contenido de tu mensaje.</p>
       )}
@@ -53,7 +55,7 @@ const conQr = analytics ? ' y de la página del QR del folleto de TelePASE' : ''
       {analytics && (
         <>
           <h2>Página del folleto de TelePASE</h2>
-          <p>El código QR del folleto de TelePASE lleva a {paginaQr}, que en un instante te pasa a la adhesión en la web de Telepeaje Plus. En esa página, y solo en esa, Google Analytics cuenta la visita: guarda en tu navegador una cookie con un número al azar y registra la página, el día y la hora, el tipo de dispositivo y de navegador, y la ciudad aproximada. Covicen no ve tu nombre ni ningún dato que te identifique, solo los totales. Lo usamos para saber cuánta gente llega por el folleto, y no se usa para publicidad.</p>
+          <p>El código QR del folleto de TelePASE lleva a {paginaQr}, que en un instante te pasa a la adhesión en la web de Telepeaje Plus. En esa página, y solo en esa, Google Analytics cuenta la visita: guarda en tu navegador dos cookies con un número al azar, que duran dos años si no las borrás, y registra la página, el día y la hora, el tipo de dispositivo y de navegador, y la ciudad aproximada. Google conserva ese registro como máximo 14 meses. Covicen no ve tu nombre ni datos que te identifiquen. Lo usamos para saber cuánta gente llega por el folleto, y no se usa para publicidad.</p>
         </>
       )}
       <h2>Ubicación</h2>
@@ -63,7 +65,7 @@ const conQr = analytics ? ' y de la página del QR del folleto de TelePASE' : ''
       <h2>Canales de terceros</h2>
       {/* Bitrix24 con comillas invertidas (14/10/2026): con comillas simples, la variable de los formularios salía tal
           cual en la página publicada, con las llaves. */}
-      <p>{contacto.whatsapp.numero && 'WhatsApp es un servicio de Meta Platforms, con sus propias condiciones y política de privacidad. '}{crm && `Bitrix24, el sistema ${prov ? 'de los formularios de Contacto y de Proveedores' : 'del formulario de Contacto'}, tiene sus propias condiciones y política de privacidad. `}{analytics && 'Google Analytics es un servicio de Google, con sus propias condiciones y política de privacidad. '}El correo electrónico viaja por el proveedor que uses.</p>
+      <p>{contacto.whatsapp.numero && 'WhatsApp es un servicio de Meta Platforms, con sus propias condiciones y política de privacidad. '}{crm && `Bitrix24, el sistema ${deFormularios}, tiene sus propias condiciones y política de privacidad. `}{analytics && 'Google Analytics es un servicio de Google, con sus propias condiciones y política de privacidad. '}El correo electrónico viaja por el proveedor que uses.</p>
       <h2>Tus derechos</h2>
       <p>Según la Ley 25.326 podés acceder, rectificar y suprimir tus datos. Escribinos por el canal de contacto{contacto.email.general ? ` o a ${contacto.email.general}` : ''}{contacto.lineaGratuita ? `, o llamá gratis al ${contacto.lineaGratuita}` : ''}. La Agencia de Acceso a la Información Pública, órgano de control de la ley, atiende denuncias por incumplimiento.</p>
       <h2>Conservación</h2>

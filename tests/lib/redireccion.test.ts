@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { ESPERA_GA_MS, TOPE_MS, redirigir } from '@/lib/redireccion';
-import { esIdAnalytics } from '@/lib/analitica';
+import { ID_GOOGLE_ANALYTICS, esIdAnalytics } from '@/lib/analitica';
 
 // /telepase/ es la página del QR impreso en el folleto de TelePASE (14/10/2026). Si esto falla, el folleto lleva a una
 // pantalla muerta y no hay forma de corregir lo que ya se repartió: por eso se prueba el camino que importa, que la
@@ -12,8 +12,8 @@ const preparar = (idAnalytics: string | null, conGtag = true) => {
   const pendientes: Array<{ fn: () => void; ms: number }> = [];
   const esperar = vi.fn((fn: () => void, ms: number) => { pendientes.push({ fn, ms }); });
   const gtag = vi.fn();
-  redirigir({ destino: DESTINO, idAnalytics, gtag: conGtag ? gtag : undefined, reemplazar, esperar });
-  return { reemplazar, esperar, gtag, pendientes };
+  const ir = redirigir({ destino: DESTINO, idAnalytics, gtag: conGtag ? gtag : undefined, reemplazar, esperar });
+  return { reemplazar, esperar, gtag, pendientes, ir };
 };
 
 describe('redirigir, la página del QR de TelePASE', () => {
@@ -45,9 +45,20 @@ describe('redirigir, la página del QR de TelePASE', () => {
     expect(reemplazar).toHaveBeenCalledOnce();
   });
 
-  it('el tope le da a Google su tiempo y no hace esperar a la persona más de dos segundos', () => {
+  it('el tope le da a Google su tiempo y deja margen para que la espera total quede debajo de dos segundos', () => {
     expect(ESPERA_GA_MS).toBeLessThan(TOPE_MS);
-    expect(TOPE_MS).toBeLessThanOrEqual(2000);
+    // La revisión del 14/10/2026 midió 36 a 85 ms entre que arranca el script y que corre el tope.
+    expect(TOPE_MS).toBeLessThanOrEqual(1850);
+  });
+
+  it('el botón (y el aviso de que Google no cargó) pasan por el mismo camino: una sola navegación', () => {
+    const { reemplazar, ir, gtag, pendientes } = preparar('G-ABC123XYZ');
+    ir();
+    expect(reemplazar).toHaveBeenCalledExactlyOnceWith(DESTINO);
+    ir();
+    pendientes[0]!.fn();
+    (gtag.mock.calls.find((c) => c[0] === 'event')![2] as { event_callback: () => void }).event_callback();
+    expect(reemplazar).toHaveBeenCalledOnce();
   });
 
   it('con un ID pero sin gtag cargado, pasa en el acto', () => {
@@ -64,5 +75,10 @@ describe('esIdAnalytics', () => {
     expect(esIdAnalytics('UA-12345-1')).toBe(false);
     expect(esIdAnalytics('G-abc123xyz')).toBe(false);
     expect(esIdAnalytics('G-ABC"><script>')).toBe(false);
+  });
+
+  // Un ID mal escrito no se publica y la página deja de contar sin que nadie se entere: el build pasaría igual.
+  it('el ID cargado en src/lib/analitica.ts es null o un ID válido', () => {
+    expect(ID_GOOGLE_ANALYTICS === null || esIdAnalytics(ID_GOOGLE_ANALYTICS)).toBe(true);
   });
 });

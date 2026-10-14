@@ -44,7 +44,7 @@ tres veces dio la dirección exacta.
 - **No imprimir hasta que `/telepase/` esté en producción** y alguien lo haya escaneado con su celular.
 - Tamaño mínimo: **2 cm de lado**. Más grande es mejor; en un folleto de mano, 2,5 a 3 cm.
 - **El borde blanco es parte del QR**: no recortarlo ni apoyar texto o dibujos encima.
-- Negro sobre fondo claro. Invertido (claro sobre oscuro) muchos celulares no lo leen.
+- Negro sobre fondo claro. Invertido (claro sobre oscuro) algunos lectores no lo leen.
 - Debajo se puede poner la dirección para tipear: **covicen.com.ar/telepase**. Esa también lleva a la adhesión, pero
   sus visitas no cuentan como «folleto».
 

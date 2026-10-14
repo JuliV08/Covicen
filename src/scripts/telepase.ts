@@ -15,11 +15,23 @@ if (raiz?.dataset.destino) {
     // eslint-disable-next-line prefer-rest-params
     window.dataLayer.push(arguments);
   }
-  redirigir({
+  const ir = redirigir({
     destino: raiz.dataset.destino,
     idAnalytics,
     gtag: idAnalytics ? gtag : undefined,
     reemplazar: (url) => location.replace(url),
     esperar: (fn, ms) => { setTimeout(fn, ms); },
   });
+  // El botón también reemplaza: con el enlace común, /telepase/ quedaba en el historial y el «atrás» desde Telepeaje
+  // Plus volvía acá, que redirigía otra vez (revisión del 14/10/2026). El href queda para quien no tiene JS.
+  raiz.querySelector<HTMLAnchorElement>('a.btn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    ir();
+  });
+  // Si un bloqueador corta el script de Google, no tiene sentido esperar el tope: el `onerror` del <script> de la
+  // página marca `data-ga-fallo` (si ya pasó) o avisa con `ga-fallo` (si pasa después).
+  if (idAnalytics) {
+    if (document.documentElement.dataset.gaFallo) ir();
+    else addEventListener('ga-fallo', ir, { once: true });
+  }
 }

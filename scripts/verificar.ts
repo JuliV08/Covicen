@@ -200,7 +200,8 @@ for (const ruta of paginas) {
   if (/googletagmanager\.com|google-analytics\.com/.test(html) && !CON_ANALYTICS.includes(nombre)) fallo(`${nombre}: carga Google Analytics, que va solo en /telepase/`);
   // 7c. Nada de variables sin reemplazar en lo que se lee: «el sistema de {formularios}» estuvo publicado en la
   // política de privacidad hasta el 14/10/2026 (la frase iba entre comillas simples).
-  for (const m of plano.matchAll(/\{[a-zA-Záéíóúñ]+\}/g)) fallo(`${nombre}: muestra una variable sin reemplazar → ${m[0]}`);
+  // Con punto también: `{contacto.formulario}` es el mismo error.
+  for (const m of plano.matchAll(/\{[\w.áéíóúñ]+\}/g)) fallo(`${nombre}: muestra una variable sin reemplazar → ${m[0]}`);
   // 8. accesibilidad básica estática
   // `alt` vacío es válido (imagen decorativa); Astro lo puede emitir como `alt` a secas o `alt=""`.
   for (const m of html.matchAll(/<img\b(?![^>]*\balt(?:[\s=>/]))[^>]*>/g)) fallo(`${nombre}: <img> sin alt → ${m[0].slice(0, 60)}`);
@@ -316,6 +317,9 @@ if (css.includes('logo-institucional') && !/@supports[^{]*-webkit-mask-image:\s*
 const archivosJs = readdirSync(join(DIST, '_astro')).filter((f) => f.endsWith('.js'));
 const totalJs = archivosJs.reduce((s, f) => s + gzipSync(readFileSync(join(DIST, '_astro', f))).length, 0);
 console.log(`JS total: ${archivosJs.length} archivos, ${(totalJs / 1024).toFixed(1)} KB gz`);
+// 7b, en los JS: Google Analytics cargado desde un script del sitio (y no desde el HTML de /telepase/) llegaría a
+// todas las páginas que usen ese script, y el control de cada página no lo vería (revisión del 14/10/2026).
+for (const f of archivosJs) if (/googletagmanager\.com|google-analytics\.com/.test(readFileSync(join(DIST, '_astro', f), 'utf8'))) fallo(`_astro/${f}: carga Google Analytics, que va solo en el HTML de /telepase/`);
 if (totalJs > 30 * 1024) fallo(`JS enviado ${(totalJs / 1024).toFixed(1)} KB gz > 30 KB`);
 // `existsSync` antes de medir: og.png sale de `node scripts/generar-og.ts` y está gitignoreado, así que en un
 // clone limpio puede no estar. Sin esta guarda el script moría con un ENOENT en vez de decir qué falta.

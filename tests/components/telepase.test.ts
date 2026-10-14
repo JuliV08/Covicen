@@ -66,10 +66,17 @@ describe('/telepase/, la página del QR del folleto', () => {
     const html = await telepase();
     expect(html).toContain('src="https://www.googletagmanager.com/gtag/js?id=G-TEST12345"');
     expect(html).toContain('data-analytics="G-TEST12345"');
+    // Si un bloqueador corta el script de Google, la página pasa en el acto en vez de esperar el tope.
+    expect(html).toMatch(/<script async src="https:\/\/www\.googletagmanager\.com[^"]*" onerror="[^"]*ga-fallo[^"]*">/);
     const politica = await privacidad();
     expect(politica).not.toContain('googletagmanager');
     expect(politica).toContain('Google Analytics');
     expect(politica).toContain('/telepase');
+    expect(politica).toContain('fuera del formulario de Contacto y de la página del QR del folleto de TelePASE');
+    // Lo que GA4 hace de verdad (revisión del 14/10/2026): dos cookies (_ga y _ga_<ID>) de dos años, no «una cookie».
+    expect(politica).toContain('dos cookies con un número al azar, que duran dos años');
+    expect(politica).toContain('como máximo 14 meses');
+    expect(politica).not.toContain('solo los totales');
     expect(politica).toContain('no se usa para publicidad');
     // La dirección va escrita, no enlazada: un clic desde la política contaría como una visita del folleto.
     expect(politica).not.toContain('href="/telepase/"');

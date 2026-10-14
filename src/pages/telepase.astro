@@ -48,7 +48,9 @@ const impreso = ahora.toLocaleDateString('es-AR', { timeZone: 'America/Argentina
       const meta = document.querySelector('meta[name="theme-color"]');
       if (meta) meta.setAttribute('content', colores[tema]);
     </script>
-    {ga && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga}`}></script>}
+    {/* Si un bloqueador corta este script, el `onerror` lo avisa y la página pasa en el acto, sin esperar el tope
+        (scripts/telepase.ts). Marca el <html> por si el error llega antes de que corra el script de la página. */}
+    {ga && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga}`} onerror="document.documentElement.dataset.gaFallo = '1'; dispatchEvent(new Event('ga-fallo'))"></script>}
     {/* Sin JS no hay conteo, pero la persona llega igual. */}
     <noscript><meta http-equiv="refresh" content={`0;url=${destino}`} /></noscript>
   </head>
@@ -56,7 +58,9 @@ const impreso = ahora.toLocaleDateString('es-AR', { timeZone: 'America/Argentina
     <a href="#contenido" class="salto">Saltar al contenido</a>
     <main id="contenido" tabindex="-1" class="flex flex-1 flex-col" data-destino={destino} data-analytics={ga ?? ''}>
       <div class="contenedor flex flex-1 flex-col items-center justify-center py-16 text-center">
-        <Logotipo version="largo" enlace={false} class="h-auto w-56 max-w-full" />
+        {/* Por el alto, como pide Logotipo.astro: `.logotipo-dibujo { width: auto }` va sin capa y le gana a un `w-*`, y
+            con `w-56` el logo medía 1225 px de ancho a 1280 (revisión del 14/10/2026). */}
+        <Logotipo version="largo" enlace={false} class="h-14 max-w-full sm:h-16" />
         <Eyebrow class="mt-12">TelePASE</Eyebrow>
         <h1 class="titulo mt-4 text-3xl md:text-4xl">Te llevamos a la adhesión de TelePASE</h1>
         <p class="mt-4 max-w-md text-lg text-texto-2">La adhesión se hace en la web de Telepeaje Plus. Si en unos segundos no pasa nada, tocá el botón.</p>

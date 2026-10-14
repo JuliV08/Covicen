@@ -19,16 +19,21 @@ entera. No hay que tocar nada más.
 
 ---
 
-## QR del folleto de TelePASE (14/10) · falta el ID de Google Analytics y el folleto
+## QR del folleto de TelePASE (14/10) · revisar la cuenta de Google Analytics y el QR anterior
 
-La página `/telepase/` ya existe: el QR lleva ahí y de ahí pasa a la adhesión de Telepeaje Plus. **Todavía no cuenta
-nada**: falta el ID de la cuenta de Google Analytics de Covicen.
+La página `/telepase/` cuenta la visita en Google Analytics y pasa a la adhesión de Telepeaje Plus. El ID
+(`G-MSL9JZ23H0`, propiedad «covicen.com.ar», flujo «Web Covicen») está en `C:\Users\Villex\dev\Covicen\src\lib\analitica.ts`.
 
-- **El ID de medición** (empieza con `G-`). Se crea en analytics.google.com con una cuenta de Google de Covicen:
-  Administrar › Crear cuenta («Covicen») › propiedad «covicen.com.ar», zona horaria de Argentina › flujo de datos
-  «Web» con `www.covicen.com.ar`. Se carga en `C:\Users\Villex\dev\Covicen\src\lib\analitica.ts`
-  (`ID_GOOGLE_ANALYTICS`). Con eso, la página empieza a contar y la política de privacidad suma solo el párrafo que lo
-  explica. Conviene sumar como usuarios de la cuenta a quien vaya a leer los números.
+- **Revisar tres cosas en la cuenta**, para que siga siendo cierto lo que dice la política de privacidad («no se usa
+  para publicidad»). Todo en Administrar:
+  - **Configuración de la cuenta › Configuración de uso compartido de datos**: todo destildado salvo «Asistencia técnica».
+  - **Vinculaciones de productos**: que no haya nada vinculado con Google Ads.
+  - **Recopilación de datos › Google Signals**: apagado. (La página igual le pide a Google que no lo use.)
+  - Y sumar a una segunda persona como administradora, para que la cuenta no dependa de una sola.
+- **Si se quiere guardar menos**: Recopilación y modificación de datos › Retención de datos › «Conservación de datos de
+  eventos» en 2 meses. Los totales se guardan igual; la política dice «como máximo 14 meses», que vale para las dos.
+- **Para el área legal, sin apuro**: la página no muestra un aviso de cookies, y los datos los guarda Google fuera del
+  país (Ley 25.326, art. 12). La política de privacidad lo explica, pero conviene que lo confirme quien lleve lo legal.
 - **El folleto**: ya está con el QR nuevo, en `C:\Users\Villex\dev\Covicen\docs\panfleto-telepase\folleto-telepase-qr-nuevo.jpg`
   (se armó sobre la imagen de WhatsApp; si existe el archivo de diseño original, mejor cambiar el QR ahí).
   Cómo imprimirlo: `C:\Users\Villex\dev\Covicen\docs\panfleto-telepase\LEEME.md`.
@@ -37,7 +42,9 @@ nada**: falta el ID de la cuenta de Google Analytics de Covicen.
   quien la tenga puede apuntar ese QR a `https://www.covicen.com.ar/telepase/?utm_source=folleto-anterior&utm_medium=qr`
   para que esos folletos también se cuenten.
 - **Dónde se leen los números**: en Analytics, Informes › Adquisición › Adquisición de tráfico, la fila
-  «folleto / qr». En el momento, Informes › Tiempo real. Es un mínimo: quien usa un bloqueador de publicidad no se cuenta.
+  «folleto / qr» (arriba de la tabla, cambiar «Grupo de canales…» por «Fuente/medio de la sesión»). En el momento,
+  Informes › Tiempo real. **Es un mínimo**: no se cuentan quienes usan un bloqueador de publicidad, ni quienes pasan a
+  Telepeaje Plus antes de que Google confirme (con mala señal, la página no espera más de 1,8 segundos).
 
 ## Cuadro tarifario del 11/10 · falta saber con qué resolución salió
 
