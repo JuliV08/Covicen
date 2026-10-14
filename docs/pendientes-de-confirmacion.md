@@ -29,8 +29,13 @@ nada**: falta el ID de la cuenta de Google Analytics de Covicen.
   «Web» con `www.covicen.com.ar`. Se carga en `C:\Users\Villex\dev\Covicen\src\lib\analitica.ts`
   (`ID_GOOGLE_ANALYTICS`). Con eso, la página empieza a contar y la política de privacidad suma solo el párrafo que lo
   explica. Conviene sumar como usuarios de la cuenta a quien vaya a leer los números.
-- **El archivo del folleto actual**, para cambiarle el QR viejo por `C:\Users\Villex\dev\Covicen\docs\panfleto-telepase\qr-telepase.svg`.
+- **El folleto**: ya está con el QR nuevo, en `C:\Users\Villex\dev\Covicen\docs\panfleto-telepase\folleto-telepase-qr-nuevo.jpg`
+  (se armó sobre la imagen de WhatsApp; si existe el archivo de diseño original, mejor cambiar el QR ahí).
   Cómo imprimirlo: `C:\Users\Villex\dev\Covicen\docs\panfleto-telepase\LEEME.md`.
+- **¿Quién hizo el QR del folleto anterior?** Iba a `qrfy.io` (un QR «dinámico» de QRFY) y de ahí a Telepeaje Plus.
+  Preguntar si esa cuenta de QRFY es paga: si es de prueba, los folletos ya repartidos dejan de andar cuando venza. Y
+  quien la tenga puede apuntar ese QR a `https://www.covicen.com.ar/telepase/?utm_source=folleto-anterior&utm_medium=qr`
+  para que esos folletos también se cuenten.
 - **Dónde se leen los números**: en Analytics, Informes › Adquisición › Adquisición de tráfico, la fila
   «folleto / qr». En el momento, Informes › Tiempo real. Es un mínimo: quien usa un bloqueador de publicidad no se cuenta.
 
