@@ -19,10 +19,14 @@ entera. No hay que tocar nada más.
 
 ---
 
-## QR del folleto de TelePASE (14/10) · revisar la cuenta de Google Analytics y el QR anterior
+## Google Analytics y el QR del folleto de TelePASE (14/10) · el OK del gerente, la cuenta y el QR anterior
 
-La página `/telepase/` cuenta la visita en Google Analytics y pasa a la adhesión de Telepeaje Plus. El ID
-(`G-MSL9JZ23H0`, propiedad «covicen.com.ar», flujo «Web Covicen») está en `C:\Users\Villex\dev\Covicen\src\lib\analitica.ts`.
+La página `/telepase/` cuenta la visita en Google Analytics y pasa a la adhesión de Telepeaje Plus. El mismo día Juli
+pidió que Analytics cuente **toda la web** (de dónde llega la gente y qué páginas mira), solo en el build de producción.
+El ID (`G-MSL9JZ23H0`, propiedad «covicen.com.ar», flujo «Web Covicen») está en `C:\Users\Villex\dev\Covicen\src\lib\analitica.ts`.
+
+- **El OK del gerente** para Analytics en toda la web: la política de privacidad deja de decir que el sitio no usa
+  seguimiento y pasa a explicar que cuenta las visitas. Sin ese OK, no sale a producción.
 
 - **Revisar tres cosas en la cuenta**, para que siga siendo cierto lo que dice la política de privacidad («no se usa
   para publicidad»). Todo en Administrar:

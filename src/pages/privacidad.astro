@@ -1,7 +1,7 @@
 ---
 import Base from '@/layouts/Base.astro';
 import Seccion from '@/components/ui/Seccion.astro';
-import { ID_GOOGLE_ANALYTICS, esIdAnalytics } from '@/lib/analitica';
+import { ID_GOOGLE_ANALYTICS, idAnalyticsActivo } from '@/lib/analitica';
 import { config } from '@/lib/config';
 import { datos } from '@/lib/datos';
 import { ruta } from '@/lib/rutas';
@@ -28,12 +28,10 @@ const formularios = prov ? 'los formularios de Contacto y de Proveedores' : 'el 
 const deFormularios = prov ? 'de los formularios de Contacto y de Proveedores' : 'del formulario de Contacto';
 // WhatsApp se nombra solo si hay número: el canal se escondió el 01/10/2026 («falta solicitar»).
 const porCorreo = contacto.whatsapp.numero ? 'por WhatsApp o por correo' : 'por correo';
-// Google Analytics (14/10/2026) va solo en /telepase/, la página del QR del folleto de TelePASE, y solo con el ID cargado
-// (lib/analitica.ts). Mientras no esté, la política no lo nombra: diría algo que el sitio no hace. La dirección va
-// escrita y no enlazada: un clic desde acá contaría como una visita del folleto.
-const analytics = esIdAnalytics(ID_GOOGLE_ANALYTICS);
-const paginaQr = `${config.sitio.replace(/^https?:\/\/(www\.)?/, '')}${ruta('/telepase')}`.replace(/\/$/, '');
-const conQr = analytics ? ' y de la página del QR del folleto de TelePASE' : '';
+// Google Analytics cuenta las visitas de toda la web desde el 14/10/2026 (antes, solo /telepase/, la del QR del folleto),
+// en el build de producción y con el ID cargado (lib/analitica.ts). Donde no se carga (Pages, la máquina de uno) la
+// política no lo nombra: diría algo que esa copia del sitio no hace.
+const analytics = idAnalyticsActivo(ID_GOOGLE_ANALYTICS, config.enProduccion) !== null;
 ---
 <Base titulo="Política de privacidad" descripcion="Cómo trata Covicen los datos personales que recibe por sus canales de contacto, según la Ley 25.326 de Protección de Datos Personales." migas={[{ nombre: 'Privacidad', href: '/privacidad' }]}>
   <Seccion nivel="h1" eyebrow="Privacidad" titulo="Qué datos recibimos y qué hacemos con ellos" class="pt-10">
@@ -42,9 +40,9 @@ const conQr = analytics ? ' y de la página del QR del folleto de TelePASE' : ''
       <p>{conPunto(`${e.razonSocial ?? e.marca}${e.cuit ? `, CUIT ${e.cuit}` : ''}${!e.razonSocial && e.enFormacion ? ', sociedad en formación' : ''}`)} Los datos registrales del responsable se publican en el pie de página cuando estén completos.</p>
       <h2>Qué datos recibimos</h2>
       {crm ? (
-        <p>Este sitio no tiene cuentas de usuario y, fuera {deFormularios}{conQr} (abajo), no usa cookies ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos: por {formularios}, o {porCorreo} desde los demás. Nombre, contacto y el contenido de tu mensaje, y lo que {prov ? 'esos dos formularios anotan' : 'ese formulario anota'} en tu navegador, que se detalla abajo.</p>
+        <p>{analytics ? `Este sitio no tiene cuentas de usuario. Cuenta las visitas con Google Analytics y, fuera de eso y ${deFormularios} (abajo), no usa cookies ni herramientas de seguimiento.` : `Este sitio no tiene cuentas de usuario y, fuera ${deFormularios} (abajo), no usa cookies ni herramientas de seguimiento.`} Los únicos datos personales que recibimos son los que vos decidís enviarnos: por {formularios}, o {porCorreo} desde los demás. Nombre, contacto y el contenido de tu mensaje, y lo que {prov ? 'esos dos formularios anotan' : 'ese formulario anota'} en tu navegador, que se detalla abajo.</p>
       ) : (
-        <p>Este sitio no tiene cuentas de usuario{analytics ? ' y, fuera de la página del QR del folleto de TelePASE (abajo),' : ','} no usa cookies de terceros ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos {porCorreo} desde los formularios: nombre, contacto y el contenido de tu mensaje.</p>
+        <p>Este sitio no tiene cuentas de usuario{analytics ? ' y, fuera de Google Analytics (abajo),' : ','} no usa cookies de terceros ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos {porCorreo} desde los formularios: nombre, contacto y el contenido de tu mensaje.</p>
       )}
       {crm && (
         <>
@@ -54,8 +52,8 @@ const conQr = analytics ? ' y de la página del QR del folleto de TelePASE' : ''
       )}
       {analytics && (
         <>
-          <h2>Página del folleto de TelePASE</h2>
-          <p>El código QR del folleto de TelePASE lleva a {paginaQr}, que en un instante te pasa a la adhesión en la web de Telepeaje Plus. En esa página, y solo en esa, Google Analytics cuenta la visita: guarda en tu navegador dos cookies con un número al azar, que duran dos años si no las borrás, y registra la página, el día y la hora, el tipo de dispositivo y de navegador, y la ciudad aproximada. Google conserva ese registro como máximo 14 meses. Covicen no ve tu nombre ni datos que te identifiquen. Lo usamos para saber cuánta gente llega por el folleto, y no se usa para publicidad.</p>
+          <h2>Estadísticas de visitas</h2>
+          <p>Usamos Google Analytics para saber cuánta gente visita el sitio, qué páginas mira y desde dónde llega: un buscador, una red social, otro sitio o el código QR del folleto de TelePASE. Para eso guarda en tu navegador dos cookies con un número al azar, que duran dos años si no las borrás, y registra la página, el día y la hora, el tipo de dispositivo y de navegador, la ciudad aproximada y el sitio desde el que llegaste. Google conserva ese registro como máximo 14 meses. Covicen no ve tu nombre ni datos que te identifiquen, y no se usa para publicidad. Si no querés que se cuente tu visita, bloqueá las cookies de este sitio en tu navegador o instalá el <a href="https://tools.google.com/dlpage/gaoptout?hl=es" rel="noopener noreferrer" target="_blank">complemento de inhabilitación de Google Analytics</a>.</p>
         </>
       )}
       <h2>Ubicación</h2>

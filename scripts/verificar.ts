@@ -9,7 +9,8 @@ import { archivosDe, existeDestino, hrefsConEsquemaProhibido, jsonLdDe, linksInt
 import { alcanzables } from './lib/solo-portada.ts';
 import { paresContraste } from './lib/pares.ts';
 import { publicado } from '../src/lib/publicado.ts';
-import { esIndexable } from '../src/lib/indexacion.ts';
+import { esIndexable, esProduccion } from '../src/lib/indexacion.ts';
+import { ID_GOOGLE_ANALYTICS, idAnalyticsActivo } from '../src/lib/analitica.ts';
 
 const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
 const base = `/${(env.PUBLIC_BASE_PATH || '/').replace(/^\/+|\/+$/g, '')}/`.replace('//', '/');
@@ -18,6 +19,9 @@ const base = `/${(env.PUBLIC_BASE_PATH || '/').replace(/^\/+|\/+$/g, '')}/`.repl
 const sitioCompleto = (env.PUBLIC_SITIO_COMPLETO ?? '') === '' || env.PUBLIC_SITIO_COMPLETO === 'true';
 // La misma regla que src/lib/config.ts, del mismo módulo: el sitio entero en el dominio oficial (desde el 06/10/2026).
 const indexable = esIndexable({ sitioCompleto, sitio: env.PUBLIC_SITE_URL ?? '', noIndexar: env.PUBLIC_NO_INDEXAR });
+// Google Analytics: en toda página del build de producción, y en ninguna fuera de él (14/10/2026). Misma regla que el sitio.
+const enProduccion = esProduccion({ sitioCompleto, sitio: env.PUBLIC_SITE_URL ?? '' });
+const gaActivo = idAnalyticsActivo(ID_GOOGLE_ANALYTICS, enProduccion);
 // ¿Este build va a parar a un hosting, o es alguien compilando en su máquina? `CI` lo pone GitHub Actions;
 // `AWS_APP_ID`, el build de Amplify. Sirve para exigir cosas que en local serían molestas y afuera son errores.
 const hospedado = Boolean(process.env.CI || process.env.AWS_APP_ID);
@@ -46,9 +50,8 @@ const PLAZOS_DE_RESPUESTA = [/respuesta,? en \d+ d[ií]as/i, /\brespond\w*[^.]{0
 // La `fuente` de cada dato NO se borra de src/content/ —es la trazabilidad de por qué la web dice lo que dice—:
 // deja de pintarse. Se apaga la UI, no se rompe el dato.
 const PROHIBIDOS_USUARIO = [/\bPET[GP]\b/, /\bpliego/i];
-// La puerta del QR del folleto de TelePASE (14/10/2026): no se indexa nunca y es la única con Google Analytics.
+// La puerta del QR del folleto de TelePASE (14/10/2026): no se indexa nunca.
 const SIN_INDEXAR = ['telepase/index.html'];
-const CON_ANALYTICS = ['telepase/index.html'];
 const SIN_PLIEGO = (nombre: string) => !nombre.startsWith('responsabilidad-civil');
 // Mientras el estado de la traza se publique con datos de muestra, ninguna página puede mostrar marcadores de incidente
 // sin el cartel que lo aclara (spec §10.1): un corte de ruta inventado que se lee como real es el error más caro del sitio.
@@ -195,9 +198,11 @@ for (const ruta of paginas) {
   const siempreNoindex = SIN_INDEXAR.includes(nombre);
   if (indexable && tieneNoindex && !siempreNoindex) fallo(`${nombre}: noindex presente en un build indexable (sitio entero en el dominio oficial)`);
   if ((!indexable || siempreNoindex) && !tieneNoindex) fallo(`${nombre}: falta noindex${siempreNoindex ? ' (esta página no se indexa nunca)' : ' en un build no indexable'}`);
-  // 7b. Google Analytics solo en la página del QR del folleto: el resto del sitio no lleva seguimiento, y la política
-  // de privacidad lo dice así.
-  if (/googletagmanager\.com|google-analytics\.com/.test(html) && !CON_ANALYTICS.includes(nombre)) fallo(`${nombre}: carga Google Analytics, que va solo en /telepase/`);
+  // 7b. Google Analytics (14/10/2026): en producción, una vez en cada página (dos veces contaría doble); fuera de
+  // producción, en ninguna (Pages, la rama de revisión y la máquina de uno no cuentan, y la política no lo nombra).
+  const cargasGa = (html.match(/googletagmanager\.com\/gtag\/js/g) ?? []).length;
+  if (gaActivo && (cargasGa !== 1 || !html.includes(`gtag/js?id=${gaActivo}`))) fallo(`${nombre}: Google Analytics tiene que cargarse una vez, con ${gaActivo} (se carga ${cargasGa})`);
+  if (!gaActivo && /googletagmanager\.com|google-analytics\.com/.test(html)) fallo(`${nombre}: carga Google Analytics fuera del build de producción`);
   // 7c. Nada de variables sin reemplazar en lo que se lee: «el sistema de {formularios}» estuvo publicado en la
   // política de privacidad hasta el 14/10/2026 (la frase iba entre comillas simples).
   // Con punto también: `{contacto.formulario}` es el mismo error.
@@ -319,7 +324,7 @@ const totalJs = archivosJs.reduce((s, f) => s + gzipSync(readFileSync(join(DIST,
 console.log(`JS total: ${archivosJs.length} archivos, ${(totalJs / 1024).toFixed(1)} KB gz`);
 // 7b, en los JS: Google Analytics cargado desde un script del sitio (y no desde el HTML de /telepase/) llegaría a
 // todas las páginas que usen ese script, y el control de cada página no lo vería (revisión del 14/10/2026).
-for (const f of archivosJs) if (/googletagmanager\.com|google-analytics\.com/.test(readFileSync(join(DIST, '_astro', f), 'utf8'))) fallo(`_astro/${f}: carga Google Analytics, que va solo en el HTML de /telepase/`);
+for (const f of archivosJs) if (/googletagmanager\.com|google-analytics\.com/.test(readFileSync(join(DIST, '_astro', f), 'utf8'))) fallo(`_astro/${f}: carga Google Analytics, que se carga solo desde el HTML (Base.astro y /telepase/)`);
 if (totalJs > 30 * 1024) fallo(`JS enviado ${(totalJs / 1024).toFixed(1)} KB gz > 30 KB`);
 // `existsSync` antes de medir: og.png sale de `node scripts/generar-og.ts` y está gitignoreado, así que en un
 // clone limpio puede no estar. Sin esta guarda el script moría con un ENOENT en vez de decir qué falta.

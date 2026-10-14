@@ -8,6 +8,7 @@ import Header from '@/components/Header.astro';
 import HiloRuta from '@/components/HiloRuta.astro';
 import Marquesina from '@/components/Marquesina.astro';
 import Seo from '@/components/Seo.astro';
+import { ID_GOOGLE_ANALYTICS, idAnalyticsActivo } from '@/lib/analitica';
 import { config } from '@/lib/config';
 import { datos } from '@/lib/datos';
 import { absoluta } from '@/lib/rutas';
@@ -35,6 +36,8 @@ const bloques = migas
 // el fallback sin JS: imprimir.ts la pisa con la del momento de imprimir.
 const sitio = config.sitio.replace(/^https?:\/\//, '');
 const impreso = new Date().toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
+// Google Analytics en toda la web (14/10/2026), solo en producción y con el ID válido (lib/analitica.ts).
+const ga = idAnalyticsActivo(ID_GOOGLE_ANALYTICS, config.enProduccion);
 ---
 <!doctype html>
 <html lang="es-AR" data-tema={temaInicial()}>
@@ -56,6 +59,18 @@ const impreso = new Date().toLocaleDateString('es-AR', { timeZone: 'America/Arge
       aplicarTema();
       document.addEventListener('astro:after-swap', aplicarTema);
     </script>
+    {/* Google Analytics: el script de Google, asíncrono, y la configuración. Sin señales de Google ni personalización
+        de anuncios: el número sirve para contar, no para publicidad (la política de privacidad lo dice así). Los dos
+        quedan iguales de página en página, así que el ClientRouter no los vuelve a correr al navegar. */}
+    {ga && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga}`}></script>}
+    {ga && (
+      <script is:inline define:vars={{ ga }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { window.dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', ga, { allow_google_signals: false, allow_ad_personalization_signals: false });
+      </script>
+    )}
     <ClientRouter />
     <!-- Sin JS y sin scroll-driven animations, el fallback de reveal dejaría todo en opacity:0. -->
     <noscript><style>.revelar, .escalonar > * { opacity: 1 !important; transform: none !important; }</style></noscript>

@@ -22,6 +22,18 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 
 ---
 
+## Google Analytics en toda la web (14 de octubre, a la tarde) — mirá esto primero
+
+Desde ahora Analytics cuenta las visitas de todas las páginas, **solo en producción** (www.covicen.com.ar). El sitio de
+revisión no lo carga, para que las visitas del equipo no se mezclen con las del público.
+
+- **En producción**, con Analytics abierto en **Informes › Tiempo real**: entrá a la web desde el celular, pasá por dos
+  o tres páginas y fijate que aparezcan, cada una con su nombre. Tarda un minuto.
+- **Privacidad** (en producción): «Qué datos recibimos» dice que cuenta las visitas con Google Analytics, y hay una
+  sección nueva, «Estadísticas de visitas», con qué guarda, cuánto tiempo y cómo evitarlo. En el sitio de revisión esa
+  sección no aparece: ahí no se carga Analytics.
+- **Que nada se vea distinto**: Analytics no muestra nada en pantalla. Si algo cambió de lugar, es un error.
+
 ## La página del QR del folleto de TelePASE (14 de octubre) — mirá esto primero
 
 `/telepase/` es la página a la que lleva el QR nuevo del folleto. Cuenta la visita en Google Analytics y pasa sola a la

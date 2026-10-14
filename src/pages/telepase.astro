@@ -17,7 +17,7 @@ import Logotipo from '@/components/marca/Logotipo.astro';
 import Seo from '@/components/Seo.astro';
 import Boton from '@/components/ui/Boton.astro';
 import Eyebrow from '@/components/ui/Eyebrow.astro';
-import { ID_GOOGLE_ANALYTICS, esIdAnalytics } from '@/lib/analitica';
+import { ID_GOOGLE_ANALYTICS, idAnalyticsActivo } from '@/lib/analitica';
 import { config } from '@/lib/config';
 import { datos } from '@/lib/datos';
 import { fechaHoraLarga } from '@/lib/formato';
@@ -26,7 +26,8 @@ import { CLAVE_TEMA, COLOR_TEMA, TEMA_POR_DEFECTO, temaInicial } from '@/lib/tem
 
 const [empresa, contacto] = await Promise.all([datos.empresa(), datos.contacto()]);
 const destino = contacto.enlaces.adhesionTelepase ?? contacto.enlaces.telepase;
-const ga = esIdAnalytics(ID_GOOGLE_ANALYTICS) ? ID_GOOGLE_ANALYTICS : null;
+// Solo en producción (14/10/2026): en Pages o en la máquina de uno la página redirige igual, sin contar.
+const ga = idAnalyticsActivo(ID_GOOGLE_ANALYTICS, config.enProduccion);
 const tel = contacto.emergencias.telefono;
 const ahora = new Date();
 const sitio = config.sitio.replace(/^https?:\/\//, '');
