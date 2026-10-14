@@ -66,8 +66,9 @@ describe('/telepase/, la página del QR del folleto', () => {
     const html = await telepase();
     expect(html).toContain('src="https://www.googletagmanager.com/gtag/js?id=G-TEST12345"');
     expect(html).toContain('data-analytics="G-TEST12345"');
-    // Si un bloqueador corta el script de Google, la página pasa en el acto en vez de esperar el tope.
-    expect(html).toMatch(/<script async src="https:\/\/www\.googletagmanager\.com[^"]*" onerror="[^"]*ga-fallo[^"]*">/);
+    // Si un bloqueador corta el script de Google, la página pasa en el acto en vez de esperar el tope. El aviso va a
+    // `window`: un `dispatchEvent` suelto dentro de `onerror` es el del <script>, y la página no se enteraba.
+    expect(html).toMatch(/<script async src="https:\/\/www\.googletagmanager\.com[^"]*" onerror="[^"]*window\.dispatchEvent\(new Event\('ga-fallo'\)\)[^"]*">/);
     const politica = await privacidad();
     expect(politica).not.toContain('googletagmanager');
     expect(politica).toContain('Google Analytics');

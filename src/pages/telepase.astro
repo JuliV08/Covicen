@@ -49,8 +49,10 @@ const impreso = ahora.toLocaleDateString('es-AR', { timeZone: 'America/Argentina
       if (meta) meta.setAttribute('content', colores[tema]);
     </script>
     {/* Si un bloqueador corta este script, el `onerror` lo avisa y la página pasa en el acto, sin esperar el tope
-        (scripts/telepase.ts). Marca el <html> por si el error llega antes de que corra el script de la página. */}
-    {ga && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga}`} onerror="document.documentElement.dataset.gaFallo = '1'; dispatchEvent(new Event('ga-fallo'))"></script>}
+        (scripts/telepase.ts). Marca el <html> por si el error llega antes de que corra el script de la página.
+        `window.dispatchEvent` y no `dispatchEvent` a secas: adentro de un atributo `on…`, el nombre suelto es el del
+        propio <script>, y ese evento no llega a `window` (lo encontró la revisión del 14/10/2026). */}
+    {ga && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga}`} onerror="document.documentElement.dataset.gaFallo = '1'; window.dispatchEvent(new Event('ga-fallo'))"></script>}
     {/* Sin JS no hay conteo, pero la persona llega igual. */}
     <noscript><meta http-equiv="refresh" content={`0;url=${destino}`} /></noscript>
   </head>
