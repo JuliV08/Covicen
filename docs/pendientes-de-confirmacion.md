@@ -34,6 +34,9 @@ El ID (`G-MSL9JZ23H0`, propiedad «covicen.com.ar», flujo «Web Covicen») est�
   - **Vinculaciones de productos**: que no haya nada vinculado con Google Ads.
   - **Recopilación de datos › Google Signals**: apagado. (La página igual le pide a Google que no lo use.)
   - Y sumar a una segunda persona como administradora, para que la cuenta no dependa de una sola.
+- **No apagar «Cambios de página basados en eventos del historial del navegador»** (Flujos de datos › Web Covicen ›
+  Medición mejorada › Vistas de página). La web cambia de página sin recargar, y esa opción es la que cuenta cada
+  página: apagada, solo se contaría la primera de cada visita.
 - **Si se quiere guardar menos**: Recopilación y modificación de datos › Retención de datos › «Conservación de datos de
   eventos» en 2 meses. Los totales se guardan igual; la política dice «como máximo 14 meses», que vale para las dos.
 - **Para el área legal, sin apuro**: la página no muestra un aviso de cookies, y los datos los guarda Google fuera del

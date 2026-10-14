@@ -120,7 +120,12 @@ describe('Google Analytics en toda la web', () => {
     expect(politica).toContain('como máximo 14 meses');
     expect(politica).toContain('no se usa para publicidad');
     expect(politica).toContain('el código QR del folleto de TelePASE');
-    expect(politica).toMatch(/<a href="https:\/\/tools\.google\.com\/dlpage\/gaoptout\?hl=es" rel="noopener noreferrer" target="_blank">complemento de inhabilitación de Google Analytics<\/a>/);
+    // Bloquear las cookies no alcanza (gtag manda la visita igual, con otro número), y el complemento es solo para la
+    // computadora: la mayoría entra desde el celular (revisión del 14/10/2026).
+    expect(politica).toContain('usá un bloqueador de rastreadores o, en la computadora, el');
+    expect(politica).toMatch(/<a href="https:\/\/tools\.google\.com\/dlpage\/gaoptout\?hl=es" rel="noopener noreferrer" target="_blank" aria-label="[^"]*se abre en otra pestaña[^"]*">complemento de inhabilitación de Google Analytics<\/a>/);
+    // Lo de Bitrix24 («en el resto del sitio no anota nada») no puede leerse como que no hay Analytics.
+    expect(politica).toContain('en el resto del sitio no anota nada (las estadísticas de visitas, abajo, son aparte)');
     expect(politica).toContain('Google Analytics es un servicio de Google');
     // Un clic desde la política a la página del QR contaría como una visita del folleto.
     expect(politica).not.toContain('href="/telepase/"');
