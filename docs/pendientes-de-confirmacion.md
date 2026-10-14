@@ -25,8 +25,8 @@ La página `/telepase/` cuenta la visita en Google Analytics y pasa a la adhesi�
 pidió que Analytics cuente **toda la web** (de dónde llega la gente y qué páginas mira), solo en el build de producción.
 El ID (`G-MSL9JZ23H0`, propiedad «covicen.com.ar», flujo «Web Covicen») está en `C:\Users\Villex\dev\Covicen\src\lib\analitica.ts`.
 
-- **El OK del gerente** para Analytics en toda la web: la política de privacidad deja de decir que el sitio no usa
-  seguimiento y pasa a explicar que cuenta las visitas. Sin ese OK, no sale a producción.
+- **Publicado el 14/10/2026 con el OK de Juli.** La política de privacidad dejó de decir que el sitio no usa
+  seguimiento y pasó a explicar que cuenta las visitas.
 
 - **Revisar tres cosas en la cuenta**, para que siga siendo cierto lo que dice la política de privacidad («no se usa
   para publicidad»). Todo en Administrar:
