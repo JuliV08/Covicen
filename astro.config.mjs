@@ -10,9 +10,10 @@ import { soloPortada } from './scripts/lib/solo-portada.ts';
 const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), 'PUBLIC_');
 const site = env.PUBLIC_SITE_URL || 'http://localhost:4321';
 const base = env.PUBLIC_BASE_PATH || '/';
-// El mismo default invertido que src/lib/config.ts: sin la variable se publica solo la portada de «Próximamente».
-// Acá se lee otra vez (y no se importa config) porque la config de Astro corre fuera del grafo del sitio.
-const sitioCompleto = env.PUBLIC_SITIO_COMPLETO === 'true';
+// La misma regla que src/lib/config.ts: sin la variable se publica el sitio entero (desde el lanzamiento, 06/10/2026);
+// la portada de «Próximamente», solo con PUBLIC_SITIO_COMPLETO=false. Acá se lee otra vez (y no se importa config)
+// porque la config de Astro corre fuera del grafo del sitio.
+const sitioCompleto = (env.PUBLIC_SITIO_COMPLETO ?? '') === '' || env.PUBLIC_SITIO_COMPLETO === 'true';
 
 export default defineConfig({
   site,
@@ -25,7 +26,14 @@ export default defineConfig({
   integrations: [
     // Con la portada sola el sitemap tiene una sola URL: la portada. Sin el filtro listaría las 29 páginas que la
     // integración de abajo borra del build, y sería un índice de páginas que no existen.
-    sitemap({ filter: (pagina) => sitioCompleto || new URL(pagina).pathname === base }),
+    // /telepase/ (14/10/2026) no va nunca: es la puerta del QR del folleto, que cuenta la visita y redirige.
+    sitemap({
+      filter: (pagina) => {
+        const camino = new URL(pagina).pathname;
+        if (camino === `${base.replace(/\/$/, '')}/telepase/`) return false;
+        return sitioCompleto || camino === base;
+      },
+    }),
     // Va DESPUÉS de sitemap: las dos podan en `astro:build:done` y los hooks corren en el orden de esta lista, así
     // que el sitemap ya está escrito (y filtrado) cuando esta borra lo que sobra.
     soloPortada(!sitioCompleto),

@@ -1,35 +1,48 @@
 ---
 import { existsSync } from 'node:fs';
-import { Phone } from '@lucide/astro';
-import Isotipo from '@/components/marca/Isotipo.astro';
+import { ArrowRight, Phone } from '@lucide/astro';
+import Atencion0800 from '@/components/Atencion0800.astro';
+import Logotipo from '@/components/marca/Logotipo.astro';
 import type { Contacto, Empresa } from '@/lib/datos/esquemas';
 import { fechaHoraLarga } from '@/lib/formato';
-import { enlacesInstitucionales, logoInstitucional } from '@/lib/institucional';
+import { enlacesInstitucionales, logoInstitucional, redFederal } from '@/lib/institucional';
+import { paginaPublicada } from '@/lib/paginas';
 import { ruta } from '@/lib/rutas';
+import { sinCortes } from '@/lib/texto';
 import { enlaceWhatsapp } from '@/lib/whatsapp';
 
 interface Props { empresa: Empresa; contacto: Contacto }
 const { empresa, contacto } = Astro.props;
 const columnas = [
   { titulo: 'Usuarios', links: [['Tarifas', '/tarifas'], ['Medios de pago', '/medios-de-pago'], ['Emergencias', '/emergencias'], ['Asistencia en ruta', '/asistencia'], ['Guía de trámites', '/tramites'], ['Seguridad vial', '/seguridad-vial'], ['Preguntas frecuentes', '/preguntas-frecuentes']] },
-  { titulo: 'Empresa', links: [['Quiénes somos', '/quienes-somos'], ['Novedades', '/novedades'], ['Políticas', '/politicas'], ['Transparencia', '/transparencia']] },
-] as const;
+  { titulo: 'Empresa', links: [['Quiénes somos', '/quienes-somos'], ['Novedades', '/novedades'], ['Políticas', '/politicas'], ['Póliza de responsabilidad civil', '/responsabilidad-civil']] },
+].map((c) => ({ ...c, links: c.links.filter(([, href]) => paginaPublicada(href)) }));
 const tel = contacto.emergencias.telefono;
 const soloDigitos = (t: string) => t.replace(/[^\d+]/g, '');
 // Criterio "esconder, no a confirmar": los datos registrales aparecen completos o no aparecen.
 const registrales = empresa.razonSocial && empresa.cuit && empresa.domicilioLegal;
-// El QR de Data Fiscal lo carga Juli en public/qr-afip.png cuando exista el CUIT.
+// El QR de Data Fiscal lo carga Juli en public/qr-afip.png cuando exista el CUIT (lo genera ARCA con ese CUIT). Desde el
+// 25/09/2026 va en la fila de logos institucionales, como en el ejemplo que pasó el equipo.
 const hayQr = Boolean(empresa.cuit) && existsSync('public/qr-afip.png');
+// La póliza de responsabilidad civil: un PDF del propio sitio o una dirección externa.
+const urlPoliza = empresa.polizaRc?.url ?? null;
+// Se abre en otra pestaña: con el ClientRouter, un enlace sin target bajaría el PDF por fetch para recargar después.
+const poliza = urlPoliza ? (urlPoliza.startsWith('/') ? ruta(urlPoliza) : urlPoliza) : null;
+const sitios = enlacesInstitucionales.map((e) => ({ ...e, logo: logoInstitucional(e.id) }));
 // Lucide retiró los íconos de marcas: las redes van por nombre. Cuando haya cuentas, se suman los logos oficiales como SVG.
 const redes = [['instagram', 'Instagram'], ['facebook', 'Facebook'], ['linkedin', 'LinkedIn'], ['youtube', 'YouTube'], ['x', 'X']] as const;
 const ahora = new Date();
 const actualizado = fechaHoraLarga(ahora);
 ---
 <footer class="mt-24 border-t border-borde bg-fondo-2">
-  <div class="contenedor grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
-    <div>
-      <div class="flex items-center gap-3"><Isotipo size={40} /><span class="text-xl font-extrabold">COVICEN</span></div>
-      <p class="mt-4 text-sm text-texto-2">Concesionaria del Tramo Centro de la Red Federal de Concesiones. {empresa.concesion.rutas.join(' · ')} · {empresa.concesion.provincias.join(' y ')}.</p>
+  {/* 05/10/2026: «el footer también, con cards premium, que el mouse refleje luz al hacer hover». Mosaico de tarjetas con
+      luz que sigue al puntero (.tarjeta-luz): la de la marca, más ancha, con los dos teléfonos bien grandes, y al lado
+      Usuarios, Empresa y Contacto. Sin halos que giran: cuatro a la vez serían un show de luces. */}
+  <div class="contenedor grid gap-4 py-14 md:grid-cols-3 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+    <div class="tarjeta-luz flex flex-col p-6 sm:p-7 md:col-span-3 lg:col-span-1" data-spotlight>
+      {/* El logotipo largo del manual de marca (06/10/2026): isotipo, «COVICEN SA» y «CORREDOR VIAL CENTRO». */}
+      <Logotipo version="largo" enlace={false} class="h-auto w-64 max-w-full" />
+      <p class="mt-4 text-sm text-texto-2">Concesionaria del Tramo Centro de la <a href={redFederal.url} rel="noopener noreferrer" target="_blank">{redFederal.nombre}</a>. {empresa.concesion.rutas.join(' · ')} · {empresa.concesion.provincias.join(' y ')}.</p>
       {(Object.keys(contacto.redes).length > 0) && (
         <ul class="mt-5 flex flex-wrap gap-2" aria-label="Redes sociales">
           {redes.map(([clave, nombre]) => contacto.redes[clave] && (
@@ -37,63 +50,132 @@ const actualizado = fechaHoraLarga(ahora);
           ))}
         </ul>
       )}
+      <div class="mt-auto grid gap-3 pt-7 sm:grid-cols-2 lg:grid-cols-1">
+        {/* Todo en un renglón y con sinCortes: html-validate exige espacio duro en cada espacio de un <a href="tel:">. */}
+        <a href={`tel:${soloDigitos(tel)}`} class="pie-telefono pie-telefono-vial" aria-label={`Llamar a emergencias, ${tel}`}><span class="pie-telefono-icono" aria-hidden="true"><Phone size={18} /></span><span><span class="pie-telefono-etiqueta">{sinCortes(`${contacto.emergencias.etiqueta} · 24 h`)}</span><span class="pie-telefono-numero">{tel}</span></span></a>
+        {contacto.lineaGratuita && <a href={`tel:${soloDigitos(contacto.lineaGratuita)}`} class="pie-telefono" aria-label={`Llamar a atención al usuario, ${contacto.lineaGratuita}`}><span class="pie-telefono-icono" aria-hidden="true"><Phone size={18} /></span><span><span class="pie-telefono-etiqueta">{sinCortes('Atención al usuario')}</span><span class="pie-telefono-numero">{sinCortes(contacto.lineaGratuita)}</span></span></a>}
+      </div>
     </div>
     {columnas.map((c) => (
-      <nav aria-label={c.titulo}>
+      <nav aria-label={c.titulo} class="tarjeta-luz p-6 sm:p-7" data-spotlight>
         <h2 class="eyebrow mb-4 text-texto">{c.titulo}</h2>
-        <ul class="flex flex-col gap-2">
-          {c.links.map(([n, h]) => <li><a href={ruta(h)} class="inline-block py-1 text-texto-2 no-underline hover:text-texto hover:underline">{n}</a></li>)}
+        <ul class="flex flex-col gap-1">
+          {c.links.map(([n, h]) => <li><a href={ruta(h)} class="pie-enlace inline-block py-1 text-texto-2 no-underline hover:text-texto hover:underline">{n}</a></li>)}
         </ul>
       </nav>
     ))}
-    <div>
+    <div class="tarjeta-luz flex flex-col p-6 sm:p-7" data-spotlight>
       <h2 class="eyebrow mb-4 text-texto">Contacto</h2>
-      <ul class="flex flex-col gap-2 text-texto-2">
-        <li><a href={`tel:${soloDigitos(tel)}`} class="inline-flex items-center gap-2 py-1 font-semibold text-texto no-underline hover:underline" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={16} aria-hidden="true" /> {contacto.emergencias.etiqueta}&nbsp;{tel}</a></li>
-        {contacto.lineaGratuita && <li><a href={`tel:${soloDigitos(contacto.lineaGratuita)}`} class="inline-block py-1 no-underline hover:underline">Atención al usuario {contacto.lineaGratuita}</a></li>}
-        {contacto.atencionUsuario && <li><a href={`mailto:${contacto.atencionUsuario}`} class="inline-block py-1 no-underline hover:underline">{contacto.atencionUsuario}</a></li>}
-        {contacto.whatsapp.numero && <li><a href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen')} class="inline-block py-1 no-underline hover:underline" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>}
-        <li><a href={ruta('/contacto')} class="inline-block py-1 no-underline hover:underline">Formulario de contacto</a></li>
-        <li><a href={ruta('/proveedores')} class="inline-block py-1 no-underline hover:underline">Proveedores</a></li>
-      </ul>
+      <p class="text-sm text-texto-2">Reclamos, consultas y sugerencias.</p>
+      {/* Enlace con flecha y no botón: entre 1024 y 1280 la tarjeta mide ~150 px de ancho y un botón no entraba. */}
+      <a href={ruta('/contacto')} class="pie-cta mt-4 inline-flex items-center gap-2 self-start font-semibold no-underline">Formulario de contacto <ArrowRight size={16} aria-hidden="true" class="shrink-0" /></a>
+      {(contacto.atencionUsuario || contacto.whatsapp.numero || paginaPublicada('/proveedores')) && (
+        <ul class="mt-5 flex flex-col gap-1 text-texto-2">
+          {contacto.atencionUsuario && <li><a href={`mailto:${contacto.atencionUsuario}`} class="inline-block py-1 [overflow-wrap:anywhere] no-underline hover:underline">{contacto.atencionUsuario}</a></li>}
+          {contacto.whatsapp.numero && <li><a href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen')} class="inline-block py-1 no-underline hover:underline" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>}
+          {paginaPublicada('/proveedores') && <li><a href={ruta('/proveedores')} class="inline-block py-1 no-underline hover:underline">Proveedores</a></li>}
+        </ul>
+      )}
       {registrales && (
         <>
           <h2 class="eyebrow mb-3 mt-8 text-texto">Datos registrales</h2>
-          <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm text-texto-2">
-            <dt>Razón social</dt><dd>{empresa.razonSocial}</dd>
-            <dt>CUIT</dt><dd>{empresa.cuit}</dd>
-            <dt>Domicilio legal</dt><dd>{empresa.domicilioLegal}</dd>
-            {empresa.domicilioComercial && <><dt>Domicilio comercial</dt><dd>{empresa.domicilioComercial}</dd></>}
+          <dl class="grid gap-y-2 text-sm text-texto-2">
+            <div><dt class="font-semibold text-texto">Razón social</dt><dd>{empresa.razonSocial}</dd></div>
+            <div><dt class="font-semibold text-texto">CUIT</dt><dd class="tabular-nums">{empresa.cuit}</dd></div>
+            <div><dt class="font-semibold text-texto">Domicilio legal</dt><dd>{empresa.domicilioLegal}</dd></div>
+            {empresa.domicilioComercial && <div><dt class="font-semibold text-texto">Domicilio comercial</dt><dd>{empresa.domicilioComercial}</dd></div>}
           </dl>
-          {hayQr && (
-            <a href={empresa.constanciaUrl ?? undefined} class="mt-4 inline-block no-underline" rel={empresa.constanciaUrl ? 'noopener noreferrer' : undefined} target={empresa.constanciaUrl ? '_blank' : undefined}>
-              <img src={ruta('/qr-afip.png')} alt="Código QR de Data Fiscal de AFIP: constancia de inscripción de Covicen" width="96" height="96" loading="lazy" class="rounded-sm bg-white p-1" />
-            </a>
-          )}
         </>
       )}
     </div>
   </div>
   <div class="border-t border-borde">
-    <ul class="contenedor flex flex-wrap items-center justify-center gap-x-8 gap-y-4 py-8" aria-label="Sitios institucionales">
-      {enlacesInstitucionales.map((e) => (
-        <li>
-          <a href={e.url} rel="noopener noreferrer" target="_blank" class="institucional inline-flex items-center gap-2 text-texto-2 no-underline hover:text-texto" aria-label={`${e.nombre} (se abre en otra pestaña)`}>
-            {logoInstitucional(e.id) ? <span class="logo-institucional" set:html={logoInstitucional(e.id)} /> : <span class="eyebrow border-l-2 border-borde-fuerte pl-2 text-texto-2">{e.nombre}</span>}
+    {/* Logos oficiales en lugar de los nombres (pedido del 24/09/2026, con el pie de otra concesionaria como ejemplo).
+        Cada logo es una máscara pintada con el color del texto: blanco en el tema oscuro, azul marino en el claro. El
+        nombre lo lleva el aria-label del enlace; el de adentro del logo es solo la alternativa sin máscara. */}
+    <ul class="contenedor flex flex-wrap items-center justify-center gap-x-8 gap-y-6 py-8" aria-label="Sitios institucionales">
+      {sitios.map((e) => (
+        <li class="sitio flex items-center self-stretch">
+          <a href={e.url} rel="noopener noreferrer" target="_blank" class="institucional inline-flex items-center text-texto no-underline" aria-label={`${e.nombre} (se abre en otra pestaña)`}>
+            {e.logo
+              ? <span class="logo-institucional" style={`--logo: url("${e.logo.url}"); --alto: ${e.alto}rem; --proporcion: ${e.logo.proporcion.toFixed(3)}`} aria-hidden="true"><span class="logo-nombre eyebrow border-l-2 border-borde-fuerte pl-2 text-texto-2">{e.nombre}</span></span>
+              : <span class="eyebrow border-l-2 border-borde-fuerte pl-2 text-texto-2">{e.nombre}</span>}
           </a>
         </li>
       ))}
-      <li><a href={`tel:${soloDigitos(tel)}`} class="btn-vial inline-flex items-center gap-2 px-3 py-1 text-base font-extrabold" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={16} aria-hidden="true" /> {tel}</a></li>
+      {hayQr && (
+        <li class="sitio flex items-center self-stretch">
+          <a href={empresa.constanciaUrl ?? undefined} class="inline-block no-underline" rel={empresa.constanciaUrl ? 'noopener noreferrer' : undefined} target={empresa.constanciaUrl ? '_blank' : undefined}>
+            {/* 64 px: el QR se usa sobre todo como enlace a la constancia, pero tiene que poder escanearse desde un
+                celular; cuando llegue el real, confirmar que se lea a este tamaño. */}
+            <img src={ruta('/qr-afip.png')} alt="Código QR de Data Fiscal de ARCA: constancia de inscripción de Covicen" width="64" height="64" loading="lazy" class="rounded-sm bg-white p-1" />
+          </a>
+        </li>
+      )}
+      {/* El 0800 al lado del 140 (05/10/2026), con la misma píldora que en la barra de arriba. */}
+      {contacto.lineaGratuita && <li class="flex items-center self-stretch"><Atencion0800 {contacto} /></li>}
+      <li class="flex items-center self-stretch"><a href={`tel:${soloDigitos(tel)}`} class="btn-vial inline-flex items-center gap-2 px-3 py-1 text-base font-extrabold" aria-label={`Llamar a emergencias, ${tel}`}><Phone size={16} aria-hidden="true" /> {tel}</a></li>
     </ul>
   </div>
   <div class="border-t border-borde">
     <div class="contenedor flex flex-col gap-4 py-6 text-sm text-texto-2 md:flex-row md:items-center md:justify-between">
-      <p>{empresa.enFormacion && <span>Sociedad en formación · </span>}Adjudicación: {empresa.concesion.adjudicacion.resolucion}. <a href={ruta('/privacidad')}>Privacidad</a> · <a href="https://www.boletinoficial.gob.ar/" rel="noopener noreferrer" target="_blank">Boletín Oficial</a>{contacto.enlaces.atencionDnv && <> · <a href={contacto.enlaces.atencionDnv} rel="noopener noreferrer" target="_blank">Atención al usuario de Vialidad Nacional</a></>}</p>
+      {/* «COVICEN S.A.» en lugar de «Sociedad en formación» (02/10/2026), y su CUIT desde el 05/10 (sale de la póliza).
+          El bloque «Datos registrales» de arriba sigue esperando el domicilio legal para mostrarse completo. La póliza
+          de responsabilidad civil (05/10: «agregarla también en el footer») va directo al PDF. */}
+      <p>{empresa.razonSocial ? <span>{empresa.razonSocial}{empresa.cuit && <> · CUIT <span class="tabular-nums">{empresa.cuit}</span></>} · </span> : empresa.enFormacion && <span>Sociedad en formación · </span>}Adjudicación: {empresa.concesion.adjudicacion.resolucion}. <a href={ruta('/privacidad')}>Privacidad</a>{poliza && <> · <a href={poliza} target="_blank" rel="noopener noreferrer" aria-label="Póliza de responsabilidad civil (PDF, se abre en otra pestaña)">Póliza de responsabilidad civil</a></>} · <a href="https://www.boletinoficial.gob.ar/" rel="noopener noreferrer" target="_blank">Boletín Oficial</a>{contacto.enlaces.atencionDnv && <> · <a href={contacto.enlaces.atencionDnv} rel="noopener noreferrer" target="_blank">Atención al usuario de Vialidad Nacional</a></>}</p>
       <p><span class="text-texto-3">Última actualización:</span> <time datetime={ahora.toISOString()}>{actualizado}</time></p>
     </div>
   </div>
 </footer>
 <style>
-  .logo-institucional :global(svg) { height: 1.75rem; width: auto; fill: currentColor; }
-  .institucional { transition: color var(--dur-micro) var(--ease-salida); }
+  /* Los dos teléfonos de la tarjeta de la marca: el 140 con el amarillo vial y el 0800 con el celeste. */
+  .pie-telefono {
+    display: flex; align-items: center; gap: 0.875rem; padding: 0.875rem 1rem; border-radius: 14px;
+    border: 1px solid var(--color-borde); background: color-mix(in srgb, var(--color-fondo-2) 55%, transparent);
+    color: var(--color-texto); text-decoration: none;
+    transition: border-color var(--dur-micro) var(--ease-salida), box-shadow var(--dur-ui) var(--ease-salida), transform var(--dur-ui) var(--ease-salida);
+  }
+  .pie-telefono:hover { border-color: color-mix(in srgb, var(--color-acento) 55%, transparent); box-shadow: 0 10px 28px -14px color-mix(in srgb, var(--color-acento) 60%, transparent); transform: translateY(-1px); }
+  .pie-telefono-icono {
+    display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 999px;
+    color: var(--color-acento); background: color-mix(in srgb, var(--color-acento) 14%, transparent);
+  }
+  /* Rótulo y número no se cortan (espacios duros, ver arriba): con el espaciado del eyebrow y el número a 24 px, a 320
+     de pantalla la ficha medía 259 px en una caja de 230 (revisión del 05/10/2026). Rótulo en minúsculas, sin el
+     espaciado del eyebrow, y número que baja con la pantalla. */
+  .pie-telefono-etiqueta { display: block; font-size: 0.8125rem; font-weight: 600; color: var(--color-texto-2); }
+  .pie-telefono-numero { display: block; margin-top: 0.125rem; font-size: clamp(1.25rem, 1rem + 1.5vw, 1.5rem); font-weight: 800; line-height: 1.1; letter-spacing: var(--tracking-titulo); font-variant-numeric: tabular-nums; }
+  .pie-telefono-vial .pie-telefono-icono { color: var(--color-sobre-vial); background: var(--color-vial); }
+  .pie-telefono-vial .pie-telefono-numero { color: var(--color-vial-texto); }
+  .pie-telefono-vial:hover { border-color: color-mix(in srgb, var(--color-vial) 60%, transparent); box-shadow: 0 10px 28px -14px color-mix(in srgb, var(--color-vial) 55%, transparent); }
+  .pie-cta :global(svg) { transition: transform var(--dur-ui) var(--ease-salida); }
+  .pie-cta:hover { text-decoration: underline; }
+  .pie-cta:hover :global(svg) { transform: translateX(3px); }
+  @media (prefers-reduced-motion: reduce) { .pie-telefono:hover, .pie-cta:hover :global(svg) { transform: none; } }
+  /* El logo es la máscara; el color, el del enlace. Ancho y alto explícitos: reservan el lugar antes de que llegue el
+     archivo, así la fila no salta. Al imprimir, los fondos se omiten por defecto y el logo saldría en blanco: por eso
+     `print-color-adjust`. Con colores forzados (alto contraste de Windows) el fondo se reemplaza y el logo
+     desaparecería: se lo pinta con el color de enlace del sistema.
+     Todo va dentro de @supports: un navegador sin máscara pintaría un rectángulo macizo del color del texto. Ahí se ve
+     el nombre en texto, igual que cuando falta el archivo.
+     OJO con el orden de la condición: el prefijo va PRIMERO. Escrita al revés, el compilador de CSS (lightningcss, sin
+     lista de navegadores) la reducía a `(mask-image: none)` y los Chrome anteriores al 120 y Safari anteriores al 15.4,
+     que solo tienen `-webkit-mask`, mostraban el nombre en vez del logo. `verificar.ts` lo mira en el CSS compilado.
+     Los logos no cambian de color al pasar el mouse (el manual de Vialidad los admite solo en azul, negro o blanco): se
+     aclaran. Solo el logo, no el enlace entero: el nombre en texto de la alternativa, aclarado, perdía contraste. */
+  @supports (-webkit-mask-image: none) or (mask-image: none) {
+    .logo-institucional {
+      display: block; height: var(--alto); width: calc(var(--alto) * var(--proporcion));
+      background-color: currentColor;
+      -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      transition: opacity var(--dur-micro) var(--ease-salida);
+    }
+    .institucional:hover .logo-institucional { opacity: 0.75; }
+    .logo-nombre { display: none; }
+    @media (forced-colors: active) { .logo-institucional { forced-color-adjust: none; background-color: LinkText; } }
+  }
+  /* Separadores finos entre logos, como en el ejemplo. Solo desde tablet: en el celular la fila se parte en renglones
+     y una raya al principio de un renglón no separa nada. */
+  @media (min-width: 48rem) { .sitio + .sitio { border-left: 1px solid var(--color-borde-fuerte); padding-left: 2rem; } }
 </style>

@@ -106,10 +106,12 @@ describe('contraste del texto sobre la foto, caja por caja (pliego 61.7)', () =>
     });
 
     for (const tema of temas) {
-      it(`${caja.nombre}, tema ${tema.nombre}: el párrafo llega a 4,5:1 y el h1 a 3:1 en toda pantalla`, async () => {
+      it(`${caja.nombre}, tema ${tema.nombre}: el párrafo llega a 4,5:1 y el h1, con la franja del degradé, a 3:1 en toda pantalla`, async () => {
         const brillo = Number(tema.tokens['brillo-foto']);
         const fondo = aRgb(tema.tokens['color-fondo']!);
         const texto = aRgb(tema.tokens['color-texto']!);
+        // La franja del degradé del h1 sobre la foto (fase A, 05/10/2026): tiene que llegar a 3:1 igual que el texto.
+        const franja = aRgb(tema.tokens['color-titulo-brillo']!);
         const foto = await leerFoto(tema.archivo, brillo);
         const velo = {
           ancha: interpolar(paradas(reglaAncha!, tema.tokens)),
@@ -138,7 +140,8 @@ describe('contraste del texto sobre la foto, caja por caja (pliego 61.7)', () =>
             for (let vx = izquierda / vw; vx <= derecha; vx += 0.02) {
               for (let vy = caja.banda[0]; vy <= caja.banda[1]; vy += 0.015) {
                 const [fx, fy] = aFoto(vx, vy);
-                peor = Math.min(peor, contraste(sobre(foto(fx, fy), fondo, opacidad(angosta ? vy : vx)), texto));
+                const pixel = sobre(foto(fx, fy), fondo, opacidad(angosta ? vy : vx));
+                for (const color of cual === 'h1' ? [texto, franja] : [texto]) peor = Math.min(peor, contraste(pixel, color));
               }
             }
             if (peor < minimo) flojos.push(`${nombre}: ${cual} ${peor.toFixed(2)}:1 (mínimo ${minimo})`);

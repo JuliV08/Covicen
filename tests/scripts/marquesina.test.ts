@@ -82,6 +82,6 @@ describe('marquesina (freno de la cinta de avisos)', () => {
     const running = /\.marquesina\[data-corriendo\]:not\(\[data-pausado\]\) \.marquesina-cinta \{[^}]*animation-play-state:\s*running/.exec(fuente);
     expect(running, 'falta la regla que le gana a los frenos implícitos').not.toBeNull();
     // Tiene que ir DESPUÉS de las tres que frenan: a igualdad de peso gana la última.
-    expect(fuente.indexOf('data-corriendo')).toBeGreaterThan(fuente.indexOf('focus-within'));
+    expect(fuente.indexOf('.marquesina[data-corriendo]')).toBeGreaterThan(fuente.indexOf(':has(:focus-visible)'));
   });
 });

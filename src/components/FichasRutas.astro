@@ -1,0 +1,71 @@
+---
+// Las rutas del tramo en /el-tramo/. Desde el 05/10/2026 («hay que hacer este cuadro mucho mejor, no se ve premium»)
+// reemplazan a la tabla: una ficha por ruta con su escudo, los dos extremos unidos por el trazo (el mismo lenguaje que el
+// mapa: cuerpo gris, filo celeste y resplandor) y qué parte del tramo es. En el celular se apilan; la tabla obligaba a
+// deslizar de costado.
+import EscudoRuta from '@/components/ui/EscudoRuta.astro';
+import type { Ruta } from '@/lib/datos/esquemas';
+import { numero } from '@/lib/formato';
+interface Props { rutas: Ruta[]; totalKm: number }
+const { rutas, totalKm } = Astro.props;
+const progresiva = (n: number | undefined) => (n === undefined ? null : `km ${numero(n, 2)}`);
+---
+<ul class="escalonar grid gap-5" aria-label="Rutas del tramo">
+  {rutas.map((r, i) => {
+    const parte = r.km !== null ? Math.round((r.km / totalKm) * 100) : null;
+    const desde = progresiva(r.pkInicial);
+    const hasta = progresiva(r.pkFinal);
+    return (
+      <li class="ficha-ruta tarjeta p-6 sm:p-8" style={`--i: ${i}`}>
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-4">
+          <EscudoRuta ruta={r.nombre} />
+          <h3 class="min-w-0 flex-1 basis-56"><span class="eyebrow block">{r.nombre.replace(/^RN\s*/, 'Ruta Nacional ')}</span><span class="mt-1.5 block text-2xl">{r.descripcion}</span></h3>
+          {r.km !== null && <p class="ml-auto whitespace-nowrap text-4xl font-extrabold leading-none tracking-[var(--tracking-titulo)] tabular-nums text-texto">{numero(r.km, 2)}<span class="ml-1.5 text-lg font-medium text-texto-2">km</span></p>}
+        </div>
+        <div class="trazado mt-9" aria-hidden="true"><span class="extremo extremo-desde"></span><span class="extremo extremo-hasta"></span></div>
+        <dl class="mt-5 grid grid-cols-2 gap-6">
+          <div><dt class="eyebrow">Desde</dt><dd class="mt-1.5 text-texto">{r.desde}</dd>{desde && <dd class="mt-1 text-sm tabular-nums text-texto-2">{desde}</dd>}</div>
+          <div class="text-right"><dt class="eyebrow">Hasta</dt><dd class="mt-1.5 text-texto">{r.hasta}</dd>{hasta && <dd class="mt-1 text-sm tabular-nums text-texto-2">{hasta}</dd>}</div>
+        </dl>
+        {parte !== null && (
+          <div class="mt-6 flex items-center gap-4 border-t border-borde pt-5">
+            <div class="parte h-1.5 flex-1 overflow-hidden rounded-full bg-superficie-2" aria-hidden="true"><span class="block h-full rounded-full" style={`width: ${parte}%`}></span></div>
+            <p class="eyebrow shrink-0 tabular-nums">{parte}&nbsp;% del tramo</p>
+          </div>
+        )}
+      </li>
+    );
+  })}
+</ul>
+<style>
+  /* El trazo: cuerpo gris con filo celeste y resplandor, como las rutas del mapa. Los extremos son balizas. */
+  .trazado {
+    position: relative; height: 0.625rem; margin-inline: 0.5625rem; border-radius: 999px;
+    background: var(--color-borde-fuerte);
+    box-shadow: 0 0 22px -4px color-mix(in srgb, var(--color-acento) 55%, transparent);
+  }
+  .trazado::before {
+    content: ""; position: absolute; inset-inline: 0.75rem; top: 50%; height: 2px; translate: 0 -50%; border-radius: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-acento) 10%, var(--color-acento) 90%, transparent);
+  }
+  /* Al pasar el mouse por la ficha, una luz recorre el trazo una vez, de punta a punta. */
+  .trazado::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; opacity: 0;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-white) 65%, var(--color-acento)), transparent) no-repeat;
+    background-size: 30% 100%; background-position: -40% 0;
+  }
+  .ficha-ruta:hover .trazado::after { animation: recorrer 1.4s var(--ease-suave) 1; }
+  @keyframes recorrer { from { background-position: -40% 0; opacity: 1; } to { background-position: 140% 0; opacity: 0.2; } }
+  .extremo {
+    position: absolute; top: 50%; width: 1.125rem; height: 1.125rem; border-radius: 50%; translate: -50% -50%;
+    background: var(--color-fondo); border: 3px solid var(--color-acento);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-acento) 20%, transparent), 0 0 14px color-mix(in srgb, var(--color-acento) 50%, transparent);
+  }
+  .extremo-desde { left: 0; }
+  .extremo-hasta { left: 100%; }
+  .parte > span {
+    background: linear-gradient(90deg, var(--color-marca-500), var(--color-acento));
+    box-shadow: 0 0 12px color-mix(in srgb, var(--color-acento) 50%, transparent);
+  }
+  @media (prefers-reduced-motion: reduce) { .ficha-ruta:hover .trazado::after { animation: none; } }
+</style>

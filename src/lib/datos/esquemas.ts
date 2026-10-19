@@ -22,10 +22,18 @@ export const esquemaEmpresa = z.object({
   domicilioComercial: z.string().min(1).nullable(),
   /** Adónde lleva el QR de Data Fiscal (constancia de inscripción). */
   constanciaUrl: url.nullable(),
-  /** Póliza de responsabilidad civil (PETG 61.6). null hasta que Covicen la mande. */
-  polizaRc: z.object({ aseguradora: z.string().min(1), numero: z.string().min(1), vigenciaHasta: fechaIso, url: url.nullable() }).nullable(),
+  /** Póliza de responsabilidad civil (PETG 61.6). null hasta que Covicen la mande. `url`: una dirección http(s) o un
+   *  documento del propio sitio en /documentos/ (desde el 05/10/2026 la póliza se publica como PDF acá mismo). */
+  polizaRc: z.object({
+    aseguradora: z.string().min(1),
+    numero: z.string().min(1),
+    vigenciaDesde: fechaIso.optional(),
+    vigenciaHasta: fechaIso,
+    url: z.union([url, z.string().regex(/^\/documentos\/[a-z0-9-]+\.pdf$/)]).nullable(),
+  }).nullable(),
   enFormacion: z.boolean(),
-  consorcio: z.array(z.object({ nombre: z.string().min(1), descripcion: z.string().min(1) })).min(1),
+  /** `url`: la web de cada empresa; la tarjeta de Quiénes somos lleva ahí (pedido del 01/10/2026). */
+  consorcio: z.array(z.object({ nombre: z.string().min(1), descripcion: z.string().min(1), url: url.nullable().optional() })).min(1),
   concesion: z.object({
     tramo: z.literal('Centro'),
     km: z.number().positive(),
@@ -73,10 +81,22 @@ export const esquemaContacto = z.object({
   }),
   redes: z.object({ instagram: url.optional(), x: url.optional(), linkedin: url.optional(), facebook: url.optional(), youtube: url.optional() }),
   /** oficinaVirtual: Telepeaje Plus, cuando exista. atencionDnv: canales de atención al usuario de la DNV (PETG 61.6), cuando indiquen la URL. */
-  enlaces: z.object({ telepase: url, oficinaVirtual: url.nullable(), atencionDnv: url.nullable() }),
+  /** `adhesionTelepase` (08/10/2026): adonde lleva el botón de TelePASE de la barra de arriba y del menú (la adhesión de
+   *  Telepeaje Plus). Opcional: sin él, el botón va a `telepase`, que es lo que siguen usando los demás enlaces. */
+  enlaces: z.object({ telepase: url, adhesionTelepase: url.optional(), oficinaVirtual: url.nullable(), atencionDnv: url.nullable() }),
   canales: z.array(esquemaCanal),
   /** Cuenta bancaria para regularizar peajes impagos (PETG 51.1.4 c). */
   cuentaRegularizacion: z.string().min(1).nullable(),
+  /** Formulario de reclamos, consultas y sugerencias (PETG 61.5 a) servido por el CRM de atención al usuario: Bitrix24,
+   *  lo administra el proveedor (PREVI). Los dos valores salen tal cual del código que entrega Bitrix: `codigo` es el
+   *  `data-b24-form` y `script`, la dirección del cargador. null = vuelve el formulario propio (WhatsApp o correo, o
+   *  apagado con aviso). Las dos expresiones son una lista blanca a propósito: `script` termina siendo código que corre
+   *  en la página, así que solo se acepta un cargador de formularios del CDN de Bitrix24, y el de la región del portal
+   *  de Covicen (`covicen.bitrix24.es`). Si el portal se muda de región, se suma la terminación acá. */
+  formularioCrm: z.object({
+    codigo: z.string().regex(/^inline\/\d+\/[a-z0-9]+$/),
+    script: z.string().regex(/^https:\/\/cdn\.bitrix24\.es\/b\d+\/crm\/form\/loader_\d+\.js$/),
+  }).nullable(),
 });
 export type Contacto = z.infer<typeof esquemaContacto>;
 
@@ -164,7 +184,7 @@ export const esquemaTarifa = z.object({
   montoSinIva: z.number().positive().nullable(),
   /** Lo calcula el sistema (IVA + redondeo). La UI sigue formateando con lib/formato.ts. */
   montoConIva: z.number().positive().nullable().optional(),
-  /** Pago electrónico o manual en la vía. Hoy igual al de TelePASE (Res. 248/2026); rige distinto cuando haya vías 100% automáticas. */
+  /** Pago en la vía, solo electrónico con terminal POS (el nombre `Manual` quedó del contrato). Hoy igual al de TelePASE (Res. 248/2026); rige distinto cuando haya vías 100% automáticas. */
   montoManualSinIva: z.number().positive().nullable().optional(),
   /** Múltiplo de la tarifa básica (PETG 53.2). Informativo. */
   multiplicador: z.number().positive().optional(),

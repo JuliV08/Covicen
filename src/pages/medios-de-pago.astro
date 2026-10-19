@@ -4,35 +4,45 @@ import Base from '@/layouts/Base.astro';
 import Boton from '@/components/ui/Boton.astro';
 import Card from '@/components/ui/Card.astro';
 import Seccion from '@/components/ui/Seccion.astro';
-import Senal from '@/components/ui/Senal.astro';
 import { datos } from '@/lib/datos';
 import { cabinaOperativa } from '@/lib/datos/esquemas';
-import { indices } from '@/lib/indices';
+import { alternarFondos } from '@/lib/fondos';
 import { publicado } from '@/lib/publicado';
 const [tramo, contacto] = await Promise.all([datos.tramo(), datos.contacto()]);
 const conCabina = tramo.cabinas.filter(cabinaOperativa).map((c) => c.nombre);
 const colocacion = tramo.cabinas.filter((c) => c.servicios?.colocacionTelepase).map((c) => c.nombre);
 const oficina = contacto.enlaces.oficinaVirtual;
+const [fTelepase, fAutogestion, fSinPagar] = alternarFondos([true, Boolean(oficina), publicado.pasasteSinPagar]);
+// La descripción para buscadores ofrece solo lo que la página muestra: «dónde se coloca el dispositivo» seguía ahí
+// aunque esa tarjeta está escondida desde el 20/09 por falta del dato (la misma trampa que ya se había cerrado en
+// otras dos páginas). Cada parte opcional entra con la sección que la respalda.
+const descripcion = `Cómo pagar el peaje en el Tramo Centro: TelePASE prepago o pospago y pago en la vía en ${conCabina.join(', ').replace(/, ([^,]*)$/, ' y $1')}${[
+  colocacion.length > 0 && 'dónde se coloca el dispositivo', oficina && 'autogestión de tu cuenta'].filter(Boolean).map((p) => `; ${p}`).join('')}.`;
 // «Pasaste sin pagar» aparece acá y en /tarifas/: es EL MISMO dato sin certificar («certificar que va a ser así»),
-// así que lo gobierna el mismo interruptor. Un dato, un interruptor: si no, se esconde en una página y se publica
-// en la otra, que es peor que no esconderlo.
-const secciones = [true, true, publicado.pasasteSinPagar];
-const [nTelepase, nMiCuenta, nSinPagar] = indices(secciones);
+// así que lo gobierna el mismo interruptor, `publicado.pasasteSinPagar`. Un dato, un interruptor: si no, se esconde
+// en una página y se publica en la otra, que es peor que no esconderlo.
+
+// Que TelePASE no le cuesta nada al usuario quedó «a confirmar» en la reunión con el gerente del 01/10/2026: lo
+// gobierna `publicado.telepaseSinCosto`, el mismo interruptor que esconde la tarjeta de Servicios, la frase de la
+// home y la pregunta frecuente. Apagado, cada texto dice lo mismo sin la parte del costo.
+const gratis = publicado.telepaseSinCosto;
 // Modalidades de pago que fija el contrato de concesión.
 const modalidades = [
   { titulo: 'Prepago con TelePASE', texto: 'Cargás saldo por adelantado y cada pasada se descuenta a la tarifa vigente de tu categoría.' },
   { titulo: 'Pospago con TelePASE', texto: 'Asociás una tarjeta de crédito o débito y pagás a mes vencido. La factura detalla pasadas, estaciones e importes.' },
-  { titulo: 'Contado en la vía', texto: `Efectivo o medios electrónicos en las vías habilitadas de las estaciones con cabina (${conCabina.join(', ')}).` },
+  // En la vía se cobra solo con medios electrónicos, en las terminales POS (aviso del equipo del 01/10/2026: decía
+  // «Contado en la vía · Efectivo o medios electrónicos»). `verificar.ts` rechaza la palabra en todo el sitio.
+  { titulo: 'Pago electrónico en la vía', texto: `Solo con medios electrónicos, en las terminales POS de las vías habilitadas de las estaciones con cabina (${conCabina.join(', ')}).` },
 ];
 ---
-<Base titulo="Medios de pago" descripcion="Cómo pagar el peaje en el Tramo Centro: TelePASE prepago o pospago, pago en la vía en Carcarañá, James Craik y Franck, y dónde se coloca el dispositivo." migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Medios de pago', href: '/medios-de-pago' }]}>
-  <Seccion nivel="h1" eyebrow="Medios de pago" titulo="Cómo pagar el peaje." intro="Con TelePASE se paga lo mismo que en la vía. El dispositivo es gratis y sirve en toda la red nacional." class="pt-10">
+<Base titulo="Medios de pago" descripcion={descripcion} migas={[{ nombre: 'Servicios', href: '/servicios' }, { nombre: 'Medios de pago', href: '/medios-de-pago' }]}>
+  <Seccion nivel="h1" eyebrow="Medios de pago" titulo="Cómo pagar el peaje" intro={gratis ? 'Con TelePASE se paga lo mismo que en la vía. El dispositivo es gratis y sirve en toda la red nacional.' : 'Con TelePASE se paga lo mismo que en la vía, y el dispositivo sirve en toda la red nacional.'} class="pt-10">
     <ul class="escalonar grid gap-4 md:grid-cols-3">{modalidades.map((m, i) => <li style={`--i: ${i}`}><Card><h2 class="text-xl">{m.titulo}</h2><p class="mt-2 text-texto-2">{m.texto}</p></Card></li>)}</ul>
   </Seccion>
 
-  <Seccion id="telepase" indice={nTelepase} eyebrow="TelePASE" titulo="Gratis, y en todas las estaciones." intro="La adhesión, el primer dispositivo por vehículo, su colocación, la renovación, la cancelación y la reposición no tienen costo para el usuario. Las exenciones de peaje también se gestionan con TelePASE." fondo="fondo-2">
+  <Seccion id="telepase" eyebrow="TelePASE" titulo={gratis ? 'Gratis, y en todas las estaciones.' : 'En todas las estaciones.'} intro={gratis ? 'La adhesión, el primer dispositivo por vehículo, su colocación, la renovación, la cancelación y la reposición no tienen costo para el usuario. Las exenciones de peaje también se gestionan con TelePASE.' : 'El dispositivo sirve en toda la red nacional, y con él también se gestionan las exenciones de peaje.'} fondo={fTelepase}>
     <div class="revelar grid gap-6 md:grid-cols-2">
-      <div class="tarjeta p-6"><h3 class="text-xl">Cómo adherirte</h3><p class="mt-2 text-texto-2">En el sitio oficial de TelePASE o en un punto de colocación. Elegís prepago o pospago y retirás el dispositivo sin cargo.</p><div class="mt-4"><Boton href={contacto.enlaces.telepase} variante="secundario" externo>Ir a TelePASE <ExternalLink size={16} aria-hidden="true" /></Boton></div></div>
+      <div class="tarjeta p-6"><h3 class="text-xl">Cómo adherirte</h3><p class="mt-2 text-texto-2">En el sitio oficial de TelePASE o en un punto de colocación. Elegís prepago o pospago y retirás el dispositivo{gratis && ' sin cargo'}.</p><div class="mt-4"><Boton href={contacto.enlaces.telepase} variante="secundario" externo>Ir a TelePASE <ExternalLink size={16} aria-hidden="true" /></Boton></div></div>
       {/* Sin el dato de en qué estaciones se coloca, la tarjeta entera no va. El texto que estaba acá de fallback
           —«en los sectores de detención segura de las estaciones… publicamos las ubicaciones cuando Covicen las
           defina»— era un dato sin confirmar más un «próximamente» en prosa: las dos cosas que la regla de la casa
@@ -41,14 +51,21 @@ const modalidades = [
     </div>
   </Seccion>
 
-  <Seccion id="mi-cuenta" indice={nMiCuenta} eyebrow="Mi cuenta" titulo="Tus pasadas, facturas y pagos en un solo lugar." intro="La oficina virtual de TelePASE: consultás pasadas y facturas, ves si tenés deuda, descargás comprobantes y pagás." fondo="fondo-2">
-    <div class="revelar flex flex-wrap items-center gap-4">
-      {oficina ? <Boton href={oficina} externo>Entrar a Mi cuenta <ExternalLink size={16} aria-hidden="true" /></Boton> : <><Senal variante="frio">Se habilita con la toma de posesión</Senal><p class="text-texto-2">El acceso se publica acá y en la barra superior del sitio cuando esté disponible.</p></>}
+  {/* Autogestión (25/09/2026): la oficina virtual es la web de autogestión de Telepeaje Plus. La sección aparece solo
+      con `contacto.enlaces.oficinaVirtual` cargado, igual que el acceso del header. El texto dice lo que el propio
+      Telepeaje Plus publica que se hace ahí —gestionar la cuenta y cambiar la forma de pago— y nada más: la versión
+      anterior prometía pasadas, facturas, deuda, comprobantes y pagos, que nadie verificó. Y la nombra, para que el
+      usuario no se sorprenda al caer en el ingreso de otro sitio. */}
+  {oficina && (
+  <Seccion id="autogestion" eyebrow="Autogestión" titulo="Tu cuenta, en línea" intro="En la web de autogestión de Telepeaje Plus gestionás tu cuenta y cambiás tu forma de pago. Se entra con tu usuario; si todavía no tenés uno, te registrás ahí mismo." fondo={fAutogestion}>
+    <div class="revelar flex flex-wrap items-center justify-center gap-4">
+      <Boton href={oficina} externo>Entrar a Autogestión <ExternalLink size={16} aria-hidden="true" /></Boton>
     </div>
   </Seccion>
+  )}
 
   {publicado.pasasteSinPagar && (
-  <Seccion id="sin-pagar" indice={nSinPagar} eyebrow="Pasaste sin pagar" titulo="Cómo regularizarlo." intro="Si cruzás una estación sin TelePASE vigente y sin pagar:">
+  <Seccion id="sin-pagar" eyebrow="Pasaste sin pagar" titulo="Cómo regularizarlo" intro="Si cruzás una estación sin TelePASE vigente y sin pagar:" fondo={fSinPagar}>
     <ol class="revelar grid gap-4 md:grid-cols-2">
       <li class="tarjeta p-6"><p class="eyebrow">Dentro de los 30 días</p><p class="mt-2 text-texto-2">La tarifa que correspondía más <strong class="text-texto">una tarifa</strong> de tu categoría.</p></li>
       <li class="tarjeta p-6"><p class="eyebrow">Después de los 30 días</p><p class="mt-2 text-texto-2">La tarifa más <strong class="text-texto">dos tarifas</strong> de tu categoría, con intereses a la tasa activa del Banco Nación.</p></li>

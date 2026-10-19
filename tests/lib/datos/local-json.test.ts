@@ -7,21 +7,29 @@ describe('contenido del repo', () => {
     const e = await fuenteLocalJson.empresa();
     expect(e.concesion.km).toBe(679.03);
     expect(e.concesion.rutas).toEqual(['RN 9', 'RN 19', 'RN 34']);
-    expect(e.concesion.inicioOperacion).toBe('2026-10-05');
+    // Era el 5/10; el 28/09/2026 avisaron que el inicio de actividades es el 7 de octubre.
+    expect(e.concesion.inicioOperacion).toBe('2026-10-07');
     expect(e.concesion.tarifaOfertadaSinIva).toBe(1399);
-    expect(e.enFormacion).toBe(true);
-    expect(e.cuit).toBeNull();
+    // 02/10/2026: la sociedad ya está inscripta («COVICEN S.A.»). Falta que llegue el número de CUIT.
+    expect(e.enFormacion).toBe(false);
+    expect(e.razonSocial).toBe('COVICEN S.A.');
+    // El CUIT y la póliza llegaron el 05/10/2026, con la póliza de responsabilidad civil.
+    expect(e.cuit).toBe('30-71959948-2');
+    expect(e.polizaRc).toMatchObject({ aseguradora: 'Seguros Galicia S.A.', numero: '000277475', vigenciaHasta: '2027-10-05' });
     expect(e.domicilioComercial).toBeNull();
     expect(e).not.toHaveProperty('descriptor');
     expect(e.consorcio.map((c) => c.nombre)).toEqual(['AFEMA S.A.', 'Pablo Federico e Hijos S.A.', 'Guido Mogetta S.A.']);
   });
-  it('contacto: el 140 está, los canales comerciales todavía no, y la tabla de canales trae los plazos del pliego', async () => {
+  it('contacto: el 140 y el 0800 están, y la tabla de canales trae los plazos del pliego', async () => {
     const c = await fuenteLocalJson.contacto();
     expect(c.emergencias.telefono).toBe('140');
-    expect(c.lineaGratuita).toBeNull();
+    // El 0800 llegó el 05/10/2026.
+    expect(c.lineaGratuita).toBe('0800 444 7777');
+    expect(c.canales.find((k) => k.id === 'linea-0800')?.valor).toBe('0800 444 7777');
     expect(c.atencionUsuario).toBeNull();
     expect(c.enlaces.telepase).toMatch(/^https:\/\/www\.telepase\.com\.ar/);
-    expect(c.enlaces.oficinaVirtual).toBeNull();
+    // La oficina virtual se definió el 25/09/2026: Autogestión, la web de Telepeaje Plus.
+    expect(c.enlaces.oficinaVirtual).toBe('https://www.telepeajeplus.com/Login');
     expect(c.canales.map((k) => k.id)).toEqual(['emergencias-140', 'asistencia', 'formulario', 'correo', 'linea-0800', 'whatsapp']);
     expect(c.canales.find((k) => k.id === 'formulario')).toMatchObject({ acuse: '24 horas', respuesta: '5 días hábiles' });
   });
@@ -44,48 +52,51 @@ describe('contenido del repo', () => {
     expect(t.trazados.find((x) => x.ruta === 'RN 19')?.ciudades[0]).toBe('santo-tome');
     for (const c of t.cabinas) expect(c.fuente?.url).toMatch(/^https:\/\//);
   });
-  it('tarifario: el cuadro heredado de la Res. 248/2026, cinco categorías con precio, igual en las tres estaciones', async () => {
+  // El cuadro que rige desde las 00:00 del 11/10/2026, tal como lo comunicó Covicen (hasta el 10/10 fue el heredado
+  // de la Res. 248/2026: $ 1.500 el auto). El comunicado trae el precio al público, con centavos, y ningún número de
+  // resolución: no se inventa una ni se arrastra la anterior.
+  it('tarifario: el cuadro vigente desde el 11/10/2026, cinco categorías con precio, igual en las tres estaciones', async () => {
     const t = await fuenteLocalJson.tarifario();
-    expect(t.origen).toBe('heredado');
-    expect(t.vigencia.desde).toBe('2026-02-26');
-    expect(t.resolucion).toContain('248/2026');
+    expect(t.vigencia.desde).toBe('2026-10-11');
+    expect(t.resolucion).toBeUndefined();
+    expect(JSON.stringify(t)).not.toMatch(/248\/2026|boletinoficial/);
     expect(t.cabinas).toEqual(['carcarana', 'james-craik', 'franck']);
     expect(t.categoriaDestacada).toBe('cat-1');
     expect(t.tarifas).toHaveLength(5);
     expect(t.tarifas.every((x) => x.montoSinIva !== null && x.montoManualSinIva === x.montoSinIva)).toBe(true);
-    expect(t.tarifas.map((x) => Math.round(x.montoSinIva! * 1.21))).toEqual([1500, 3000, 4500, 6000, 7500]);
+    // Los precios al público, al centavo, son los del comunicado…
+    expect(t.tarifas.map((x) => x.montoConIva)).toEqual([1850.1, 3700.2, 5550.31, 7400.41, 9250.51]);
+    // …y el sin IVA no viene en el comunicado: es el único importe al centavo que, con el 21 %, da ese precio.
+    for (const x of t.tarifas) expect(Math.round(x.montoSinIva! * (1 + t.alicuotaIva) * 100) / 100, x.categoria).toBe(x.montoConIva);
     expect(t.tarifas.map((x) => x.icono)).toEqual(['auto', 'camioneta', 'camion-3-4', 'camion-5-6', 'camion-7']);
-    expect(t.avisos.some((a) => a.includes('en oportunidad de contar con todas las vías automáticas'))).toBe(true);
+    // Las tres notas del pie (leyenda de pago manual, actualización trimestral, criterio de categorías) se sacaron por
+    // pedido del gerente el 24/09/2026. Si vuelven, que sea a propósito.
+    expect(t.avisos).toEqual([]);
   });
   it('servicios: gratuitos con los tiempos del pliego y onerosos separados', async () => {
     const s = await fuenteLocalJson.servicios();
     const grua = s.find((x) => x.id === 'grua-y-remolque')!;
     expect(grua.gratuito).toBe(true);
-    expect(grua.tiempos).toEqual(['Vehículos livianos: 30 minutos en al menos el 90 % de los casos, y nunca más de 40.', 'Vehículos pesados: 60 minutos en al menos el 90 % de los casos, y nunca más de 72.']);
+    expect(grua.tiempos, 'los tiempos se sacaron de la tarjeta el 05/10/2026').toBeUndefined();
     expect(s.filter((x) => !x.gratuito).map((x) => x.id)).toEqual(['mecanica-general', 'remolque-extendido']);
   });
-  it('servicios: la tarjeta de atención al usuario no contradice el cuadro del art. 58.1 (el 0800 acusa en el momento)', async () => {
+  // Hasta el 01/10/2026 este test exigía que la tarjeta dijera que el 0800 acusa «en el momento» y el resto en 24
+  // horas, como el cuadro del PETG 58.1. El 02/10 el gerente pidió bajar el compromiso («el 0800 te confirma en el
+  // momento… no me quiero arriesgar») y Juli eligió sacar los plazos de todos lados. El dato sigue en contacto.json.
+  it('servicios: la tarjeta de atención al usuario no promete plazos, y el dato del contrato sigue en contacto.json', async () => {
     const [s, c] = await Promise.all([fuenteLocalJson.servicios(), fuenteLocalJson.contacto()]);
-    // El cuadro del PETG 58.1 da acuse INMEDIATO a la línea gratuita 0800 y 24 horas a formulario web / correo y
-    // ChatBot/WhatsApp. En /servicios/ esta tarjeta y la tabla de Canales conviven tres bloques aparte: si la tarjeta
-    // mete el 0800 en la bolsa de las 24 horas, la página se desmiente sola.
-    expect(c.canales.find((k) => k.id === 'linea-0800')?.acuse).toBe('Inmediato');
     const atencion = s.find((x) => x.id === 'atencion-al-usuario')!;
-    const clausulaDel0800 = atencion.descripcion.split(/[.;]/).find((frase) => frase.includes('0800'));
-    expect(clausulaDel0800, 'la tarjeta tiene que nombrar el 0800').toBeDefined();
-    expect(clausulaDel0800).toMatch(/en el momento|inmediat/i);
-    expect(clausulaDel0800).not.toMatch(/24 horas/);
-    expect(atencion.descripcion).toContain('24 horas');
-    expect(atencion.descripcion).toContain('5 días hábiles');
+    expect(atencion.descripcion).toContain('0800');
+    expect(atencion.descripcion).not.toMatch(/en el momento|inmediat|\d+ horas|d[ií]as h[aá]biles/i);
+    expect(c.canales.find((k) => k.id === 'linea-0800')?.acuse).toBe('Inmediato');
+    expect(c.canales.find((k) => k.id === 'formulario')?.respuesta).toBe('5 días hábiles');
   });
   it('faq del desperfecto en ruta: los tiempos de grúa se publican como los del pliego, no como promesa lisa', async () => {
     const p = (await fuenteLocalJson.faq()).find((x) => x.slug === 'desperfecto-en-ruta')!;
     // PETG 54.5: 30 minutos en al menos el 90 % de las ocurrencias y nunca más de 40 (livianos), 60 y 72 (pesados).
     // Publicar "30 para livianos y 60 para pesados" a secas promete algo que el contrato no compromete.
-    const grua = (await fuenteLocalJson.servicios()).find((x) => x.id === 'grua-y-remolque')!;
-    // La redacción sale de servicios.json: si allá cambia, acá tiene que cambiar igual.
-    for (const t of grua.tiempos ?? []) expect(p.respuesta).toContain(t.replace(/^Vehículos \w+: /, '').replace(/\.$/, ''));
-    expect(grua.tiempos).toHaveLength(2);
+    // La tarjeta de Servicios dejó de mostrar los tiempos el 05/10/2026; la pregunta frecuente los conserva tal cual.
+    expect(p.respuesta, 'los tiempos se sacaron de la pregunta el 05/10/2026').not.toMatch(/minutos/);
     expect(p.respuesta).not.toMatch(/30 minutos para livianos/);
   });
   it('normativa: cada norma enlaza el aviso del Boletín Oficial que le corresponde', async () => {

@@ -19,15 +19,28 @@ describe('portada de «Próximamente»', () => {
     expect(html).toContain('Las 24 horas, los 365 días del año');
   });
 
-  it('no anuncia el 0800, que todavía no existe', async () => {
+  // Hasta el 04/10/2026 el 0800 no existía y la portada no lo anunciaba. Desde el 05/10 tiene número.
+  it('anuncia la línea 0800 de atención al usuario', async () => {
     const html = await render();
-    expect(html).not.toContain('0800');
+    expect(html).toContain('href="tel:08004447777"');
+    expect(html).toContain('0800 444 7777');
   });
 
   it('dice quién es Covicen y el largo oficial del tramo', async () => {
     const html = await render();
     expect(html).toContain('679,03');
     expect(html).toContain('Tramo Centro');
+  });
+
+  // El 28/09/2026 avisaron que el inicio de actividades es el 7 de octubre, no el 5. La fecha sale del dato
+  // (empresa.concesion.inicioOperacion): esta es la pantalla que está en producción, así que se fija acá.
+  // Se mira hasta «Última actualización», que lleva la fecha del build: «15 de octubre de 2026» contiene «5 de
+  // octubre», y este test fallaba los días 5, 15 y 25 de octubre, también en el build de producción (amplify.yml
+  // corre los tests). Lo encontró la revisión del 01/10/2026 simulando la fecha.
+  it('anuncia el inicio de actividades el 7 de octubre', async () => {
+    const html = (await render()).split('Última actualización')[0].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+    expect(html).toContain('Operación desde el 7 de octubre de 2026');
+    expect(html).not.toContain('5 de octubre');
   });
 
   it('no trae el sitio colgando: ni menú, ni pie, ni cinta de avisos', async () => {

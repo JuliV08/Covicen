@@ -3,9 +3,9 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import Home from '@/components/home/Home.astro';
 import Hero from '@/components/home/Hero.astro';
+import NovedadesRecientes from '@/components/home/NovedadesRecientes.astro';
 import TarifaDestacada from '@/components/home/TarifaDestacada.astro';
 import Faq from '@/components/Faq.astro';
-import CuentaRegresiva from '@/components/CuentaRegresiva.astro';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
 
 const render = async (C: unknown, props: Record<string, unknown>) => (await AstroContainer.create()).renderToString(C as never, { props });
@@ -32,9 +32,8 @@ describe('Home', () => {
     }
     // El mapa interactivo viaja adentro de El tramo (está en la home desde septiembre, no hubo que moverlo).
     expect(html, 'la home perdió el mapa interactivo').toContain('data-estacion=');
-    // Y los índices quedan corridos: El tramo es 01.
-    expect(html).toContain('>01<');
-    expect(html, 'quedó un índice salteado').not.toContain('>03<');
+    // Sin números de sección (24/09/2026): el «01» de El tramo se fue con los del resto del sitio.
+    expect(html, 'volvió un número de sección').not.toMatch(/>0\d</);
   });
 
   // Call del 20/09/2026: obras se esconde y el estado de la traza no va a la home (los datos de estado-ruta.json
@@ -49,12 +48,29 @@ describe('Home', () => {
 });
 
 describe('Hero', () => {
-  it('un h1, la fecha de inicio y los dos CTAs', async () => {
+  it('un h1, los km del dato y los dos CTAs', async () => {
     const html = await render(Hero, { empresa: await fuenteLocalJson.empresa() });
     expect(html.match(/<h1/g)?.length).toBe(1);
-    expect(html).toContain('5 de octubre de 2026');
+    expect(html).toContain('Viajá por nuestras rutas en el centro del país');
+    expect(html).toContain('679 km del Tramo Centro');
     expect(html).toContain('href="/tarifas/"');
     expect(html).toContain('href="/el-tramo/"');
+  });
+  // Pedido del 24/09/2026: que la portada se lea definitiva. La fecha de inicio salía TRES veces sobre la foto: en el
+  // párrafo, en la cuenta regresiva y en el aviso de la cinta que va pegada al borde del hero. Se fueron las tres.
+  // Se mira la home entera y no el Hero solo, porque la cinta entra por un slot desde Home.astro. (Las tarjetas de
+  // novedades, que sí nombran el 7 de octubre en sus títulos, no aparecen acá: fuera de un build la colección está
+  // vacía. Son noticias con fecha y quedan como están.)
+  // Se mira hasta el <footer>: el pie lleva «Última actualización» con la fecha del build, y un build de octubre
+  // («1 de octubre de 2026, 19:41») hacía fallar este test todo el mes (se vio el 01/10/2026).
+  it('la portada no anuncia la fecha de inicio: ni el párrafo, ni la cuenta regresiva, ni la cinta', async () => {
+    const html = (await renderHome()).split('<footer')[0];
+    expect(html, 'la home volvió a anunciar la fecha de inicio').not.toContain('de octubre');
+    expect(html).not.toContain('data-cuenta-regresiva');
+    // Salvo el enlace a la página de la póliza en el menú (05/10/2026), que desde el 06/10 vive en
+    // /responsabilidad-civil/: es un enlace, no un anuncio en la portada.
+    expect(html.replaceAll('Póliza de responsabilidad civil', '').replaceAll('/responsabilidad-civil/', '')).not.toContain('responsabilidad');
+    expect(html, 'la cinta de avisos desapareció de la home').toContain('Emergencias en la ruta');
   });
   // Decisión de Juli (15/09/2026): la primera pantalla del sitio dice UNA cosa y la dice quieta. El hero tenía un
   // carrusel que alternaba la portada con las novedades destacadas y se sacó; las destacadas siguen en la home, en
@@ -118,16 +134,35 @@ describe('Hero', () => {
   });
 });
 
+// En la home entera NovedadesRecientes no aparece (astro:content está vacío fuera de un build), así que se prueba
+// suelta con novedades armadas acá. Pedido del 24/09/2026: el título es «Novedades», sin número, sin volanta y sin
+// «Lo último».
+describe('NovedadesRecientes', () => {
+  it('se titula «Novedades», sin número ni volanta', async () => {
+    const novedad = (n: number) => ({ slug: `n-${n}`, titulo: `Novedad ${n}`, fecha: '2026-09-13', resumen: 'Resumen.', etiquetas: [], destacada: false });
+    const html = await render(NovedadesRecientes, { novedades: [novedad(1), novedad(2)] });
+    // Se mira el encabezado de la sección: las fechas de las tarjetas también usan la clase eyebrow, y está bien.
+    const encabezado = /<header[\s\S]*?<\/header>/.exec(html)?.[0] ?? '';
+    expect(encabezado).toMatch(/<h2[^>]*>Novedades<\/h2>/);
+    expect(encabezado, 'volvió la volanta sobre el título').not.toContain('eyebrow');
+    expect(html).not.toContain('Lo último');
+    expect(html, 'volvió un número de sección').not.toMatch(/>0\d</);
+  });
+});
+
 describe('TarifaDestacada', () => {
-  it('muestra la categoría destacada al público, la vigencia y la resolución', async () => {
+  // El cuadro del 11/10/2026 llegó como comunicado de Covicen, sin número de resolución: no se nombra ninguna ni se
+  // enlaza el Boletín Oficial (ese enlace va con la resolución; lo prueba tests/components/tarifas.test.ts).
+  it('muestra la categoría destacada al público y la vigencia, sin resolución mientras no la haya', async () => {
     // Intl separa "$" del número con un espacio no separable (U+00A0 o U+202F): se normaliza con escapes, no con literales.
     const html = (await render(TarifaDestacada, { tarifario: await fuenteLocalJson.tarifario() })).replace(/[  ]/g, ' ');
-    expect(html).toContain('$ 1.500');
+    expect(html).toContain('$ 1.850,10');
     expect(html).toContain('Autos');
-    expect(html).toContain('$ 1.239,67');
-    expect(html).toContain('26 de febrero de 2026');
+    expect(html).toContain('$ 1.529,01');
+    expect(html).toContain('11 de octubre de 2026');
     expect(html).toContain('Cuadro vigente');
-    expect(html).toContain('248/2026');
+    expect(html).not.toContain('248/2026');
+    expect(html).not.toContain('Boletín Oficial');
     expect(html).not.toContain('Tarifa ofertada');
   });
   // `montoSinIva` es nullable en el contrato y significa "sin valor publicado": va el criterio de la casa (esconder,
@@ -147,14 +182,5 @@ describe('Faq', () => {
     const html = await render(Faq, { preguntas: (await fuenteLocalJson.faq()).slice(0, 2) });
     expect(html.match(/<details/g)?.length).toBe(2);
     expect(html).toContain('<summary');
-  });
-});
-
-describe('CuentaRegresiva', () => {
-  it('renderiza texto estático con la fecha y los data-attributes para el script', async () => {
-    const html = await render(CuentaRegresiva, { fecha: '2026-10-05' });
-    expect(html).toContain('data-cuenta-regresiva');
-    expect(html).toContain('data-fecha="2026-10-05"');
-    expect(html).toContain('5 de octubre de 2026');
   });
 });

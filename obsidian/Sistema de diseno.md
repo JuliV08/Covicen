@@ -4,7 +4,7 @@ Concepto rector, tokens, tipografía, movimiento. Fuente completa: spec §6. Ver
 
 ## Concepto: "La ruta, de noche"
 
-El sitio es el corredor visto de noche. Navy profundo (asfalto y cielo); **la ruta como hilo luminoso celeste** que une todas las páginas (se dibuja en el hero, acompaña el scroll en el margen, es el trazo del mapa con las **cabinas como balizas**); lo práctico habla en **señalética** (amarillo vial, Archivo 800, mayúsculas); los números grandes son **mojones** (tabulares, enormes, unidad chica). Registro tech: grilla de plano tenue, esquineros finos, índices `01 / 09`, glow solo en el hilo y las balizas. Sin glassmorphism, partículas, cursor custom ni scroll-jacking. Cero emojis.
+El sitio es el corredor visto de noche. Navy profundo (asfalto y cielo); **la ruta como hilo luminoso celeste** que une todas las páginas (se dibuja en el hero, acompaña el scroll en el margen, es el trazo del mapa con las **cabinas como balizas**); lo práctico habla en **señalética** (amarillo vial, Archivo 800, mayúsculas); los números grandes son **mojones** (tabulares, enormes, unidad chica). Registro tech: grilla de plano tenue, esquineros finos, glow solo en el hilo y las balizas. Sin glassmorphism, partículas, cursor custom ni scroll-jacking. Cero emojis.
 
 Dos líneas rojas de Juli: navegación intuitiva y directa (la tarifa a un clic) y nada de sobre-animación.
 
@@ -111,3 +111,49 @@ método de `tests/styles/hero-foto.test.ts`. Cada celda: menú (`texto-2`) · lo
 
 Las dos piezas sin pill entran igual a `tests/styles/header-foto.test.ts`, aunque hoy estén en verde: 0,45 de
 margen es poco, y este proyecto ya lo perdió **dos veces** al cambiar la foto del hero.
+
+## Encabezados sin número, y el formulario apagado sin transparencia (2026-09-24)
+
+**Sin números de sección.** El «01», «02» que iba a la izquierda de cada título se sacó de todo el sitio: el cliente
+lo marcó dos veces, y sacarlo de dos páginas dejaba el resto con otro estilo. `Seccion` ya no acepta `indice` y una
+guarda en `tests/components/ui.test.ts` impide que vuelva de a una página. De paso, el encabezado quedó alineado con
+el contenido de abajo (antes entraba sangrado por la columna del número). En El tramo y en la sección Novedades del
+inicio, el pedido fue más allá: **el nombre del bloque es el título**, sin eyebrow ni bajada, y coincide con la barra
+de anclas. En el resto del sitio los títulos no se tocaron.
+
+**Lección durable: apagar con opacidad transparenta lo que hay detrás.** Los formularios sin canal se apagaban con
+`opacity: 0.6` en el `fieldset` y en el botón. Sobre fondo liso eso se lee como «gris»; sobre la **grilla cinética**
+(`fondo-2`), los campos dejaban ver las líneas y el cliente lo describió exacto: «se ve transparente y mal». Un
+estado apagado se marca con **colores opacos de los tokens** (borde punteado, etiquetas en `texto-2`, botón en
+`superficie-2` con `texto-2`, par ya verificado en `scripts/lib/pares.ts`), nunca bajando la opacidad de un
+contenedor. Lo guarda `tests/components/formulario.test.ts`. Ver [[Costura de datos]] y [[Home]].
+
+## Logos institucionales del pie (2026-09-25)
+
+**Se pintan como máscara, no se insertan.** Cada logo oficial es un archivo aparte en `src/assets/institucional/`
+que el pie usa como `mask-image` sobre un `background-color: currentColor`: el mismo archivo sale blanco en el tema
+oscuro, azul marino en el claro y del color de acento al pasar el mouse. La alternativa obvia —el SVG adentro del
+HTML— salía cara: los dos escudos pesan ~50 KB cada uno y se hubieran repetido en las 27 páginas. Como archivo, el
+navegador lo baja una vez. Tres cosas que hacen falta para que la máscara no falle: ancho y alto explícitos desde la
+proporción del archivo (`src/lib/institucional.ts` la lee del viewBox o de las medidas del PNG), `print-color-adjust:
+exact` (al imprimir los fondos se omiten y el logo saldría en blanco) y `forced-color-adjust: none` con `LinkText`
+para el alto contraste de Windows. Y el archivo tiene que ser **de un solo color, sin blancos ni opacidades**: la
+máscara toma la forma, no el color (lo guarda `tests/lib/institucional.test.ts`).
+
+**Trampa al sacar logos de un PDF: la precisión de svgo rompe las letras.** El texto de los logos sale como glifos
+definidos en unidades de «em» (entre 0 y 1) y reusados con `<use>`. Con `floatPrecision: 1` el escudo queda
+perfecto, pero las letras se deforman («Vialidad» salía con huecos), porque 0,1 em es una letra entera. Con 2 o 3
+decimales quedan bien, y el peso casi no cambia: lo pesado es el escudo, no el texto. **Segunda trampa**: los SVG
+arrastraban el sello de firma de la página del PDF («IF-2025-… · Página 9 de 22») como glifos lejos del logo —el
+borrado por zona de PyMuPDF no los tocó—; no se veían, pero eran el 20 % del peso. Se filtran los `<use>` cuya
+posición cae fuera del recorte (lo guarda `tests/lib/institucional.test.ts`). **Tercera**: Vite mete como `data:`
+adentro de la página todo asset de menos de 4 KB, también con `?url`; para que los cuatro logos sean archivos
+cacheables, el glob usa `?url&no-inline`. Y el hover no les cambia el color (el manual los admite solo en azul, negro o
+blanco): se aclaran un poco, solo el logo (aclarar el enlace entero dejaba sin contraste el nombre en texto de la
+alternativa).
+
+**Lección durable: el compilador de CSS reescribe los `@supports`.** La condición `(mask-image: none) or
+(-webkit-mask-image: none)` estaba bien en el fuente, pero lightningcss (sin lista de navegadores) la reducía a
+`(mask-image:none)`: los Chrome anteriores al 120 y Safari anteriores al 15.4, que solo tienen `-webkit-mask`, quedaban
+afuera. Con el prefijo **primero** sobrevive. Un test sobre el fuente no lo ve: `verificar.ts` lo mira en el CSS
+emitido. Regla general: lo que depende de cómo sale el CSS se verifica en `dist/`, no en el `.astro`.

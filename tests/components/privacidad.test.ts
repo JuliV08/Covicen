@@ -12,4 +12,25 @@ describe('/privacidad/', () => {
     expect(html).toContain('No se guarda en ningún lado');
     expect(html).toContain('permiso');
   });
+
+  // 01/10/2026: el formulario de reclamos de /contacto/ es el de Bitrix24, que guarda un identificador en el navegador
+  // y cuenta visitas. La política decía «no usa cookies de terceros ni herramientas de seguimiento» sin excepciones.
+  it('dice que el formulario de Contacto es de Bitrix24 y qué guarda, en vez de negar todo seguimiento', async () => {
+    const html = await (await AstroContainer.create()).renderToString(Privacidad, { request: new Request('https://covicen.test/privacidad/') });
+    // Con /proveedores/ publicada (19/10/2026) la política habla de los dos formularios de Bitrix24.
+    expect(html).toMatch(/<h2[^>]*>Formularios de Contacto y de Proveedores<\/h2>/);
+    expect(html, 'Proveedores está publicada desde el 19/10/2026 y la política la nombra').toContain('href="/proveedores/"');
+    expect(html).toContain('Bitrix24');
+    expect(html).toContain('identificador');
+    expect(html).toContain('href="/contacto/"');
+    expect(html).not.toContain('no usa cookies de terceros ni herramientas de seguimiento');
+  });
+
+  // 14/10/2026: «Bitrix24, el sistema de {formularios}» salía así, con las llaves, en la página publicada: la frase
+  // estaba entre comillas simples y no se reemplazaba.
+  it('no deja ninguna variable sin reemplazar en el texto', async () => {
+    const html = await (await AstroContainer.create()).renderToString(Privacidad, { request: new Request('https://covicen.test/privacidad/') });
+    expect(html).toContain('Bitrix24, el sistema de los formularios de Contacto y de Proveedores, tiene');
+    expect(html.match(/\{[a-zA-Záéíóúñ]+\}/g) ?? []).toEqual([]);
+  });
 });

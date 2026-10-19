@@ -1,16 +1,16 @@
 {
   "marca": "Covicen",
-  "razonSocial": null,
-  "cuit": null,
+  "razonSocial": "COVICEN S.A.",
+  "cuit": "30-71959948-2",
   "domicilioLegal": null,
   "domicilioComercial": null,
   "constanciaUrl": null,
-  "polizaRc": null,
-  "enFormacion": true,
+  "polizaRc": { "aseguradora": "Seguros Galicia S.A.", "numero": "000277475", "vigenciaDesde": "2026-10-05", "vigenciaHasta": "2027-10-05", "url": "/documentos/poliza-responsabilidad-civil.pdf" },
+  "enFormacion": false,
   "consorcio": [
-    { "nombre": "AFEMA S.A.", "descripcion": "Constructora vial con base en Córdoba." },
-    { "nombre": "Pablo Federico e Hijos S.A.", "descripcion": "Construcción y obras de hormigón." },
-    { "nombre": "Guido Mogetta S.A.", "descripcion": "Construcción, obra pública, transporte y minería." }
+    { "nombre": "AFEMA S.A.", "descripcion": "Constructora vial con base en Córdoba.", "url": "https://www.afema.com.ar/" },
+    { "nombre": "Pablo Federico e Hijos S.A.", "descripcion": "Construcción y obras de hormigón.", "url": "https://pablofederico.com.ar/" },
+    { "nombre": "Guido Mogetta S.A.", "descripcion": "Construcción, obra pública, transporte y minería.", "url": "https://www.guidomogetta.com.ar/" }
   ],
   "concesion": {
     "tramo": "Centro",
@@ -19,7 +19,7 @@
     "provincias": ["Córdoba", "Santa Fe"],
     "plazoAnios": 20,
     "prorrogaAnios": 10,
-    "inicioOperacion": "2026-10-05",
+    "inicioOperacion": "2026-10-07",
     "adjudicacion": {
       "fecha": "2026-08-24",
       "resolucion": "Resolución 1379/2026 del Ministerio de Economía",

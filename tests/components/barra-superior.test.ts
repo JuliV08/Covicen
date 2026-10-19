@@ -14,11 +14,34 @@ const cinta = async (avisos: unknown[], props: Record<string, unknown> = {}) => 
 };
 
 describe('BarraSuperior', () => {
-  it('accesos: TelePASE externo, Mi cuenta a Medios de pago mientras no haya oficina virtual, y el interruptor', async () => {
+  // 25/09/2026: la oficina virtual es la web de autogestión de Telepeaje Plus y el acceso se llama «Autogestión» (hasta
+  // el 24/09 fue «Mi cuenta»). Va directo a esa web, en otra pestaña.
+  it('accesos: TelePASE externo, Autogestión a Telepeaje Plus y el interruptor', async () => {
     const html = await render();
-    expect(html).toMatch(/href="https:\/\/www\.telepase\.com\.ar\/"[^>]*target="_blank"/);
-    expect(html).toContain('href="/medios-de-pago/#mi-cuenta"');
+    // Desde el 01/10/2026 van destacados (AccesosDestacados.astro): TelePASE lleno de verde y con el nombre escrito como
+    // lo escribe su marca, Autogestión con borde degradé.
+    // Desde el 08/10/2026 el botón va a la adhesión de Telepeaje Plus (contacto.enlaces.adhesionTelepase); los demás
+    // enlaces a TelePASE del sitio (Contacto, Medios de pago, el logo del pie) siguen yendo a telepase.com.ar.
+    const telepase = /<a href="https:\/\/www\.telepeajeplus\.com\/Adhierase"[^>]*>/.exec(html)?.[0] ?? '';
+    expect(telepase).toContain('target="_blank"');
+    expect(telepase).toContain('acceso-telepase');
+    expect(telepase).toContain('aria-label="TelePASE (se abre en otra pestaña)"');
+    expect(html).toContain('<span class="etiqueta"><span class="marca-tele">Tele</span><span class="marca-pase">PASE</span></span>');
+    const autogestion = /<a href="https:\/\/www\.telepeajeplus\.com\/Login"[^>]*>/.exec(html)?.[0] ?? '';
+    expect(autogestion).toContain('target="_blank"');
+    expect(autogestion).toContain('acceso-autogestion');
+    expect(html).toContain('<span class="etiqueta">Autogestión</span>');
+    expect(html).not.toContain('Mi cuenta');
     expect(html).toContain('data-tema-boton');
+    // Se cae en el ingreso de otra empresa: el nombre accesible lo dice, y empieza con la palabra visible (WCAG 2.5.3).
+    expect(html).toContain('aria-label="Autogestión de Telepeaje Plus (se abre en otra pestaña)"');
+  });
+  // Sin la dirección cargada no se promete nada: ni el acceso, ni un enlace a una sección que lo anuncie.
+  it('sin oficina virtual cargada, no hay acceso a Autogestión', async () => {
+    const base = await fuenteLocalJson.contacto();
+    const contacto = { ...base, enlaces: { ...base.enlaces, oficinaVirtual: null } };
+    const html = await (await AstroContainer.create()).renderToString(BarraSuperior, { props: { contacto } });
+    expect(html).not.toContain('Autogestión');
   });
   // Los avisos se fueron a la cinta el 15/09/2026: acá no queda nada que rote.
   it('ya no lleva anuncios rotando', async () => {
@@ -63,7 +86,7 @@ describe('Marquesina', () => {
     expect(html).toContain('data-reanudar="Reanudar los avisos"');
     const fuente = await import('node:fs').then((fs) => fs.readFileSync('src/components/Marquesina.astro', 'utf8'));
     expect(fuente).toMatch(/\.marquesina:hover[^{]*animation-play-state:\s*paused|:hover[\s\S]{0,200}animation-play-state:\s*paused/);
-    expect(fuente).toMatch(/focus-within/);
+    expect(fuente).toMatch(/\.marquesina:has\(:focus-visible\) \.marquesina-cinta/); // foco de teclado (05/10/2026)
     expect(fuente, 'con "menos movimiento" no desfila').toMatch(/prefers-reduced-motion[\s\S]{0,200}animation:\s*none/);
   });
 

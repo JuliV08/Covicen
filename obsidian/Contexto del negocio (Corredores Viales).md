@@ -31,7 +31,7 @@ Tecnología obligada, de incorporación progresiva: **TelePASE** y **Free Flow**
 
 | Tramo | Adjudicatario | Tarifa |
 |---|---|---|
-| **Centro** | AFEMA S.A. – Pablo Federico e Hijos S.A. – Guido Mogetta S.A. | **$1.399** (la más baja) |
+| **Centro** | AFEMA S.A. – Pablo Federico e Hijos S.A. – Guido Mogetta S.A. | **$1.399** |
 | Centro-Norte | José Cartellone Construcciones Civiles S.A. | $2.175 |
 | Mesopotámico | IEB Construcciones S.A. – Trading MRG S.A.U. | $3.564,99 |
 | Noroeste | Autovía Construcciones y Servicios S.A. – Vapeu S.R.L. – Guigivan S.R.L. | $2.285 |
@@ -44,7 +44,7 @@ Tecnología obligada, de incorporación progresiva: **TelePASE** y **Free Flow**
 
 **Covicen es la sociedad nueva adjudicataria del Tramo Centro.** La hipótesis del nombre (**CO**rredor **VI**al **CEN**tro) se confirmó. Palabras del cliente: *"es para la nueva empresa (aun no inscripta porque salió el lunes la adjudicación) ganadora del nuevo tramo centro de la Red Federal de Concesiones"*.
 
-**Tramo Centro:** **681 km** sobre **RN 9, RN 19 y RN 34**. Une Pilar (Córdoba) con Rosario y se extiende hacia San Francisco, Rafaela y la ciudad de Santa Fe. Provincias: **Córdoba y Santa Fe**. Consorcio adjudicatario: **AFEMA S.A. – Pablo Federico e Hijos S.A. – Guido Mogetta S.A.** Tarifa ofertada: **$1.399 + IVA — la más baja de los ocho tramos.**
+**Tramo Centro:** **681 km** sobre **RN 9, RN 19 y RN 34**. Une Pilar (Córdoba) con Rosario y se extiende hacia San Francisco, Rafaela y la ciudad de Santa Fe. Provincias: **Córdoba y Santa Fe**. Consorcio adjudicatario: **AFEMA S.A. – Pablo Federico e Hijos S.A. – Guido Mogetta S.A.** Tarifa ofertada: **$1.399 + IVA.** (No se publica en el sitio que sea «la más baja»: se sacó el 05/10/2026.)
 
 Ese último dato es material de marca, no un número suelto: en un régimen donde **se gana ofreciendo la tarifa más barata**, Covicen ganó siendo la más barata de las ocho. Es un diferencial legítimo y verificable para comunicar.
 
@@ -53,7 +53,7 @@ Ese último dato es material de marca, no un número suelto: en un régimen dond
 La adjudicación salió el lunes 2026-08-24 y la sociedad está **en formación**. Consecuencias reales:
 
 - **Sin CUIT todavía.** El pie de página no puede llevar CUIT, domicilio legal inscripto ni datos registrales hasta que existan. Dejar los slots y completarlos después.
-- **El dominio es EL riesgo de fecha.** NIC.ar exige identificarse con Clave Fiscal de AFIP (CUIT/CUIL/CDI) para registrar un `.ar`. **Una sociedad sin CUIT no puede registrar su propio dominio.** Hay que registrarlo a nombre de un tercero (alguna empresa del consorcio, o Juli) y transferirlo cuando salga la inscripción. Con el 5/10 encima, esto va primero.
+- **El dominio es EL riesgo de fecha.** NIC.ar exige identificarse con Clave Fiscal de AFIP (CUIT/CUIL/CDI) para registrar un `.ar`. **Una sociedad sin CUIT no puede registrar su propio dominio.** Hay que registrarlo a nombre de un tercero (alguna empresa del consorcio, o Juli) y transferirlo cuando salga la inscripción. Con el inicio encima, esto iba primero (el dominio ya está en producción desde el 24/09/2026).
 - **Cuidado con el copy.** Mientras esté en formación, redactar sobre lo que sí es cierto y verificable hoy: la adjudicación, el tramo, el plazo, el consorcio. No presuponer una sociedad ya inscripta.
 - **Falta la razón social exacta.** "Covicen" puede ser marca, denominación social, o ambas. Preguntar antes de maquetar el logo con un texto legal al lado.
 

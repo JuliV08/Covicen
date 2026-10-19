@@ -2,6 +2,7 @@
 import { ArrowRight } from '@lucide/astro';
 import Base from '@/layouts/Base.astro';
 import EstadoTraza from '@/components/EstadoTraza.astro';
+import FichasRutas from '@/components/FichasRutas.astro';
 import MapaInteractivo from '@/components/MapaInteractivo.astro';
 import Boton from '@/components/ui/Boton.astro';
 import Mojon from '@/components/ui/Mojon.astro';
@@ -11,11 +12,13 @@ import { datos } from '@/lib/datos';
 import { cabinaOperativa } from '@/lib/datos/esquemas';
 import { kmTexto, numero } from '@/lib/formato';
 import { ruta } from '@/lib/rutas';
-import { indices } from '@/lib/indices';
 import { publicado } from '@/lib/publicado';
 import { estadoCabina, serviciosDeCabina } from '@/lib/tramo';
 const [tramo, estado] = await Promise.all([datos.tramo(), datos.estadoRutas()]);
-const incidentes = estado.disponible ? estado.incidentes ?? [] : [];
+// El estado de la traza se esconde hasta tener información real (02/10/2026: «comentar hasta que tengamos info»):
+// sin el bloque, sin el cartel de «datos de ejemplo» y sin los marcadores del mapa. publicado.estadoDeLaTraza.
+const conEstado = estado.disponible && publicado.estadoDeLaTraza;
+const incidentes = conEstado ? estado.incidentes ?? [] : [];
 // El mapa pinta los incidentes como marcadores. Mientras el estado sea de muestra (estado.ejemplo), el cartel va ARRIBA
 // del mapa: un corte inventado que se lee como real es el peor error posible. Y EstadoTraza repite los mismos incidentes
 // en texto, que es la única forma de leerlos con teclado o con lector de pantalla.
@@ -29,14 +32,16 @@ const conServicios = tramo.cabinas.filter((c) => serviciosDeCabina(c).length > 0
 const hayServicios = conServicios.length > 0 && publicado.serviciosDeAreaDescanso;
 const bloques = ([['rutas', 'Rutas y longitudes'], ['estaciones', 'Estaciones de peaje'],
   ...(hayServicios ? [['servicios', 'Áreas de descanso y servicios'] as const] : [])] as const);
-const [nRutas, nEstaciones, nServicios] = indices([true, true, hayServicios]);
-// Los cuatro bloques son destino de la nav de anclas de abajo, que es sticky justo debajo del header fijo. Entre las dos
+// Los bloques son destino de la nav de anclas de abajo, que es sticky justo debajo del header fijo. Entre las dos
 // barras tapan los primeros ~165 px del viewport (112 px de --alto-header + ~53 px de la nav), así que sin scroll-margin
 // el encabezado de la sección aterriza escondido. 4,5rem cubre la nav con aire; el calc sigue a --alto-header si cambia.
 const anclaTapada = 'scroll-mt-[calc(var(--alto-header)+4.5rem)]';
 ---
 <Base titulo="El tramo" descripcion="El Tramo Centro de la Red Federal de Concesiones: 679,03 km sobre RN 9 (autopista Rosario–Córdoba), RN 19 y RN 34, en Córdoba y Santa Fe. Mapa interactivo, rutas, estaciones de peaje, tarifas y servicios." migas={[{ nombre: 'El tramo', href: '/el-tramo' }]}>
-  <Seccion nivel="h1" eyebrow="El tramo" titulo="679 kilómetros de centro." intro="Un corredor que une Rosario con Córdoba por la autopista y se abre hacia Santo Tomé, Franck y San Francisco por la RN 19. Tocá una estación en el mapa para ver su ficha." class="pt-10 pb-0" />
+  {/* Bajada elegida por Juli el 24/09/2026; los km, del dato. El título era «Rutas nacionales 9, 19 y 34.» y pasó a
+      «Nuestras rutas.» en la reunión con el gerente del 01/10/2026, en línea con el «Viajá por nuestras rutas» de la
+      portada. Los números de las rutas, que es lo que la gente busca, siguen en la bajada y en la descripción. */}
+  <Seccion nivel="h1" eyebrow="El tramo" titulo="Nuestras rutas" intro={`${numero(tramo.km)} km entre Santa Fe y Córdoba: la autopista Rosario–Córdoba, la RN 19 desde Santo Tomé y la RN 34 desde Rosario. Tocá una estación en el mapa para ver su ficha.`} class="pt-10 pb-0" />
 
   <nav aria-label="Secciones de El tramo" class="sticky top-[var(--alto-header)] z-30 border-b border-borde bg-fondo/85 backdrop-blur">
     <ul class="contenedor flex gap-1 overflow-x-auto py-2 text-sm">
@@ -49,23 +54,16 @@ const anclaTapada = 'scroll-mt-[calc(var(--alto-header)+4.5rem)]';
        "mapa-titulo": ese ya lo usa MapaTramo para la descripción del SVG y quedarían dos iguales en la misma página. -->
   <section id="mapa" class="contenedor py-12" aria-labelledby="titulo-seccion-mapa">
     <h2 id="titulo-seccion-mapa" class="sr-only">Mapa del tramo y estaciones de peaje</h2>
-    {estado.disponible && estado.ejemplo && <p class="revelar mb-4"><Senal variante="frio">Datos de ejemplo: el módulo se activa con la operación</Senal></p>}
-    <div class="revelar tarjeta tarjeta-panel"><MapaInteractivo {tramo} {incidentes} modo="scroll" disposicion="lado" /></div>
-    {estado.disponible && <div class="revelar mt-8"><EstadoTraza {estado} {rutas} nivel="h2" /></div>}
+    {conEstado && estado.ejemplo && <p class="revelar mb-4"><Senal variante="frio">Datos de ejemplo: el módulo se activa con la operación</Senal></p>}
+    <div class="revelar tarjeta tarjeta-panel xl:mx-[calc(50%-min(50vw-1.5rem,55rem))]"><MapaInteractivo {tramo} {incidentes} modo="scroll" /></div>
+    {conEstado && <div class="revelar mt-8"><EstadoTraza {estado} {rutas} nivel="h2" /></div>}
   </section>
 
-  <Seccion id="rutas" class={anclaTapada} indice={nRutas} eyebrow="Rutas y longitudes" titulo="Tres rutas nacionales bajo una misma concesión." intro={`${numero(tramo.km, 2)} km en total, según el contrato de concesión del Tramo Centro.`} fondo="fondo-2">
-    <section class="bloque-oscuro revelar overflow-x-auto rounded-md border border-borde" tabindex="0" aria-label="Rutas del tramo">
-      <table class="w-full border-collapse text-left">
-        <caption class="sr-only">Rutas del Tramo Centro con extremos, progresivas y longitud en kilómetros.</caption>
-        <thead class="bg-fondo text-sm uppercase tracking-wider text-texto-2"><tr><th scope="col" class="px-4 py-3">Ruta</th><th scope="col" class="px-4 py-3">Desde</th><th scope="col" class="px-4 py-3">Hasta</th><th scope="col" class="px-4 py-3 text-right">Progresivas</th><th scope="col" class="px-4 py-3 text-right">Longitud</th></tr></thead>
-        <tbody class="divide-y divide-borde">
-          {tramo.rutas.map((r) => (
-            <tr class="hover:bg-superficie"><th scope="row" class="px-4 py-4 font-semibold text-texto">{r.nombre}<span class="block text-sm font-normal text-texto-2">{r.descripcion}</span></th><td class="px-4 py-4 text-texto-2">{r.desde}</td><td class="px-4 py-4 text-texto-2">{r.hasta}</td><td class="px-4 py-4 text-right tabular-nums text-texto-2">{r.pkInicial !== undefined && r.pkFinal !== undefined ? `km ${numero(r.pkInicial, 2)} a ${numero(r.pkFinal, 2)}` : ''}</td><td class="px-4 py-4 text-right tabular-nums font-semibold text-texto">{r.km !== null ? `${numero(r.km, 2)} km` : ''}</td></tr>
-          ))}
-        </tbody>
-      </table>
-    </section>
+  {/* Pedido del 24/09/2026: el nombre de cada bloque es el título, sin bajada, y se pasa directo al contenido. Son
+      los mismos nombres de la barra de anclas de arriba, así que el que toca uno aterriza en un título que dice lo
+      mismo que tocó. */}
+  <Seccion id="rutas" class={anclaTapada} titulo="Rutas y longitudes" fondo="fondo-2">
+    <FichasRutas rutas={tramo.rutas} totalKm={tramo.km} />
     <div class="escalonar mt-10 grid gap-8 sm:grid-cols-3">
       <div style="--i: 0"><Mojon valor={Math.floor(tramo.km)} unidad="km" etiqueta="de rutas nacionales" animar /></div>
       <div style="--i: 1"><Mojon valor={tramo.provincias.length} unidad="provincias" etiqueta={tramo.provincias.join(' y ')} animar /></div>
@@ -73,7 +71,7 @@ const anclaTapada = 'scroll-mt-[calc(var(--alto-header)+4.5rem)]';
     </div>
   </Seccion>
 
-  <Seccion id="estaciones" class={anclaTapada} indice={nEstaciones} eyebrow="Estaciones de peaje" titulo="Dónde se paga." intro="Tres estaciones operativas y tres que cobran cuando Vialidad Nacional las habilite. La ficha de cada una está en el mapa de arriba y en su propia página.">
+  <Seccion id="estaciones" class={anclaTapada} titulo="Estaciones de peaje">
     <ul class="escalonar grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {tramo.cabinas.map((c, i) => { const e = estadoCabina(c); return (
         <li class="tarjeta p-5" style={`--i: ${i}`}>
@@ -81,14 +79,16 @@ const anclaTapada = 'scroll-mt-[calc(var(--alto-header)+4.5rem)]';
         </li>
       ); })}
     </ul>
-    <ul class="revelar mt-8 flex flex-col gap-2 text-sm text-texto-2">{tramo.avisos.map((a) => <li class="flex gap-2"><span aria-hidden="true">—</span>{a}</li>)}</ul>
+    {/* Las notas de abajo de las estaciones se vaciaron en el dato el 24/09/2026 («sacar esto»). Si alguien carga
+        una, vuelve a aparecer; si no hay, no queda una lista vacía. */}
+    {tramo.avisos.length > 0 && <ul class="revelar mt-8 flex flex-col gap-2 text-sm text-texto-2">{tramo.avisos.map((a) => <li class="flex gap-2"><span aria-hidden="true">—</span>{a}</li>)}</ul>}
     {/* El puente a Tarifas vivía en la sección de cuadros tarifarios que se sacó. Sin esto, El tramo se quedaba sin
         salida hacia el precio, que es lo que viene a buscar el que llega desde una cabina. */}
-    <div class="revelar mt-8"><Boton href="/tarifas">Ver el cuadro tarifario <ArrowRight size={18} aria-hidden="true" /></Boton></div>
+    <div class="revelar mt-8 flex justify-center"><Boton href="/tarifas">Ver el cuadro tarifario <ArrowRight size={18} aria-hidden="true" /></Boton></div>
   </Seccion>
 
   {hayServicios && (
-  <Seccion id="servicios" class={anclaTapada} indice={nServicios} eyebrow="Áreas de descanso y servicios" titulo="Qué encontrás en la ruta." intro="Servicios por estación según los datos cargados. El detalle de gratuitos y con costo está en Servicios.">
+  <Seccion id="servicios" class={anclaTapada} titulo="Áreas de descanso y servicios">
     <ul class="escalonar grid gap-4 md:grid-cols-3">
       {conServicios.map((c, i) => (
         <li class="tarjeta p-6" style={`--i: ${i}`}><h3 class="text-xl">{c.nombre}</h3><p class="mt-1 text-sm text-texto-2">{c.ruta}{c.km !== null && ` · km ${kmTexto(c.km)}`}</p><ul class="mt-3 flex flex-col gap-1 text-texto-2">{serviciosDeCabina(c).map((s) => <li class="flex gap-2"><span aria-hidden="true">—</span>{s.etiqueta}</li>)}</ul></li>
@@ -98,8 +98,9 @@ const anclaTapada = 'scroll-mt-[calc(var(--alto-header)+4.5rem)]';
   )}
 
   {/* La salida a /servicios/ NO depende de que haya datos por estación: esa página sí tiene contenido (grúa, 140,
-      TelePASE, sanitarios) y es adonde hay que mandar a quien pregunta qué cubre el peaje. */}
+      móviles, atención al usuario) y es adonde hay que mandar a quien pregunta qué cubre el peaje. «Y con costo», solo
+      si esa sección se muestra (publicado.serviciosConCosto, escondida el 01/10/2026). */}
   <section class="contenedor pb-24">
-    <p class="revelar"><a href={ruta('/servicios')} class="font-semibold">Servicios al usuario: gratuitos y con costo</a></p>
+    <p class="revelar text-center"><a href={ruta('/servicios')} class="font-semibold">{publicado.serviciosConCosto ? 'Servicios al usuario: gratuitos y con costo' : 'Servicios al usuario'}</a></p>
   </section>
 </Base>

@@ -13,7 +13,7 @@ const render = async (path: string, props: Record<string, unknown>) => {
 
 describe('Base', () => {
   it('título con patrón, canonical absoluta, noindex en demo, lang es-AR', async () => {
-    const html = await render('/tarifas/', { titulo: 'Tarifas', descripcion: 'Cuánto cuesta el peaje.' });
+    const html = await render('/tarifas/', { titulo: 'Tarifas', descripcion: 'Cuánto cuesta el peaje' });
     expect(html).toContain('<html lang="es-AR"');
     expect(html).toContain('<title>Tarifas | Covicen</title>');
     expect(html).toContain('<link rel="canonical" href="https://covicen.test/tarifas/"');
@@ -101,20 +101,26 @@ describe('Header', () => {
   // Call del 20/09/2026: Obras se esconde hasta que haya algo que contar, Trabajá con nosotros se elimina, y
   // Proveedores sube del pie al desplegable Nosotros. El menú de celular se arma con los MISMOS dos arreglos, así
   // que exigir que Proveedores aparezca dos veces es lo que impide que alguien los desdoble y deje el celular viejo.
-  it('el menú no ofrece Obras ni Trabajá con nosotros, y sí Proveedores', async () => {
+  // Proveedores volvió el 19/10/2026 (pedido de Sol): el portal del ERP ya está probado en DEV.
+  it('el menú no ofrece Obras ni Trabajá con nosotros, y sí Proveedores (de vuelta el 19/10/2026)', async () => {
     const c = await AstroContainer.create();
     const html = await c.renderToString(Header, { props: await props() });
     expect(html, 'Obras volvió al menú').not.toContain('href="/obras/"');
     expect(html, 'Trabajá con nosotros volvió al menú').not.toContain('href="/trabaja-con-nosotros/"');
-    expect(html.match(/href="\/proveedores\/"/g)?.length, 'Proveedores tiene que estar en escritorio y en celular').toBe(2);
+    expect(html, 'Proveedores se volvió a esconder').toContain('href="/proveedores/"');
   });
-  it('lleva la barra superior con los accesos y, en el menú mobile, TelePASE y Mi cuenta', async () => {
+  // «Autogestión» (la oficina virtual, 25/09/2026) va en escritorio y en el menú del celular, y solo si hay dirección.
+  it('lleva la barra superior con los accesos y, en el menú mobile, TelePASE y Autogestión', async () => {
     const c = await AstroContainer.create();
     const html = await c.renderToString(Header, { props: await props() });
     // Los avisos se fueron del header a la cinta (components/Marquesina.astro) el 15/09/2026.
     expect(html).not.toContain('data-anuncios');
-    expect(html.match(/>TelePASE</g)?.length).toBe(2);
-    expect(html.match(/>Mi cuenta</g)?.length).toBe(2);
+    expect(html.match(/aria-label="TelePASE \(se abre en otra pestaña\)"/g)?.length, 'TelePASE en escritorio y en celular').toBe(2);
+    expect(html.match(/href="https:\/\/www\.telepeajeplus\.com\/Login"[^>]*acceso-autogestion/g)?.length, 'Autogestión en escritorio y en celular').toBe(2);
+    expect(html).not.toContain('Mi cuenta');
     expect(html).not.toContain('Corredor Vial del Centro');
+    const base = await props();
+    const sinOficina = { ...base, contacto: { ...base.contacto, enlaces: { ...base.contacto.enlaces, oficinaVirtual: null } } };
+    expect(await c.renderToString(Header, { props: sinOficina }), 'sin dirección no se ofrece Autogestión').not.toContain('Autogestión');
   });
 });

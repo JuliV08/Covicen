@@ -6,6 +6,7 @@ import ElTramo from '@/components/home/ElTramo.astro';
 import Hero from '@/components/home/Hero.astro';
 import NovedadesRecientes from '@/components/home/NovedadesRecientes.astro';
 import Marquesina from '@/components/Marquesina.astro';
+import Divisor from '@/components/ui/Divisor.astro';
 import { datos } from '@/lib/datos';
 
 const [empresa, contacto, avisos, tramo, novedades] = await Promise.all([
@@ -21,6 +22,10 @@ const [empresa, contacto, avisos, tramo, novedades] = await Promise.all([
       del contenido. Por eso Base recibe `marquesinaEnHero` y acá va por el slot. */}
   <Hero {empresa}><Marquesina slot="marquesina" {avisos} enHero /></Hero>
   <AccesosRapidos {contacto} />
+  {/* El separador con el isotipo (de vuelta el 05/10/2026). Primero fue debajo de la cinta, pero ahí no tenía una línea
+      a la vista y quedaba «el logo suelto»; Juli lo pidió en «el div que está justo debajo de las 4 cards». Sin alto y
+      sin margen, su línea cae sobre la costura de arriba de «El tramo» y el medallón tapa la marquita del medio. */}
+  <Divisor />
   <ElTramo {tramo} />
   <NovedadesRecientes {novedades} />
   <ContactoCta {contacto} />

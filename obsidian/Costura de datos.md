@@ -59,9 +59,9 @@ Criterio desde sept. 2026: **esconder, no "a confirmar"**. Un dato `null` no se 
 | `razonSocial`, `cuit`, `domicilioLegal` (los tres juntos), `domicilioComercial`, `constanciaUrl` | `empresa.json` | Columna "Datos registrales" del footer y bloque en Transparencia; el responsable en Privacidad. Con `cuit` y `public/qr-afip.png`, el QR de Data Fiscal enlazando a la constancia. `enFormacion: false` saca "Sociedad en formación" y el párrafo de Quiénes somos. |
 | `polizaRc { aseguradora, numero, vigenciaHasta, url? }` | `empresa.json` | Ficha de la póliza en Transparencia (hoy dice que se publica con la toma de posesión). |
 | `lineaGratuita` (0800), `atencionUsuario` (correo), `whatsapp.numero`, `email.*` | `contacto.json` | Filas del footer; los formularios pasan de deshabilitados a "Enviar por WhatsApp" / "Enviar por correo"; Emergencias suma "También por WhatsApp"; el hueco del canal ético usa `email.etica`. |
-| `canales[].valor` de `correo`, `linea-0800`, `whatsapp` | `contacto.json` | El enlace en la tabla de canales, en vez de "Se habilita con la toma de posesión, el 5 de octubre de 2026". |
+| `canales[].valor` de `correo`, `linea-0800`, `whatsapp` | `contacto.json` | El enlace en la tabla de canales, en vez de "Se habilita con la toma de posesión, el 7 de octubre de 2026". |
 | `redes { instagram, facebook, linkedin, youtube, x }` | `contacto.json` | Fila de redes en el footer (por nombre hasta tener los logos oficiales). |
-| `enlaces.oficinaVirtual`, `enlaces.atencionDnv` | `contacto.json` | "Mi cuenta" (barra superior, menú y Medios de pago) pasa a abrir la oficina virtual; enlace a la atención al usuario de la DNV en la línea inferior del footer. |
+| `enlaces.oficinaVirtual`, `enlaces.atencionDnv` | `contacto.json` | **Cargada el 25/09/2026**: `https://www.telepeajeplus.com/Login`, la web de autogestión de Telepeaje Plus. Aparece como "Autogestión" (barra superior, menú y la sección de Medios de pago, que dice solo lo que Telepeaje Plus publica que se hace ahí) y abre en otra pestaña; sin la URL no se muestra nada (hasta el 24/09 se llamaba "Mi cuenta" y la web la prometía «con la toma de posesión»). La clave del contrato sigue siendo `oficinaVirtual`: el nombre visible cambió, el dato no. Enlace a la atención al usuario de la DNV en la línea inferior del footer. |
 | `cuentaRegularizacion` | `contacto.json` | Cómo pagar la deuda en "Pasaste sin pagar" (Medios de pago). |
 | `cabinas[].telefono`, `horarioAtencion`, `vias`, `sentido`, `servicios.*` (`detencionSegura`, `sanitarios`, `colocacionTelepase` en ninguna todavía) | `tramo.json` | Filas de la tarjeta de estación; la leyenda del mapa y "Dónde se coloca" el TelePASE listan solo lo que alguna estación tiene. |
 | `ejemplo: true` | `estado-ruta.json` | Mientras sea `true`, cartel "Datos de ejemplo" en el estado de la traza; con `false` (datos del centro de operaciones) desaparece. |
@@ -97,7 +97,19 @@ El mapa y las tarjetas no leen el JSON crudo: pasan por `src/lib/tramo.ts`.
 - `publico(sinIva, conIvaSistema, alicuota)`: el "con IVA" que manda el sistema si viene; si no, `conIva()` redondeado al peso. Es el número grande de la tabla; el sin IVA va como anotación.
 - `tarifaDestacada(t)`: la de `categoriaDestacada` o la primera (home). `cabinasDelCuadro(t, cabinas)`: las listadas en `tarifario.cabinas` o todas las operativas.
 - `iconoDeTarifa(f)`: `icono` explícito, o el mapa legado por categoría (`cat-1` → moto… del esquema anterior, por si la API manda tarifarios viejos), o `auto`.
-- Datos: `src/content/tarifario.json` es el cuadro heredado de la **Resolución 248/2026** (DNV, vigente desde el 26/02/2026), cinco categorías, sin IVA del anexo oficial (1.239,67 → $1.500 con IVA). `origen: 'heredado'`. La tarifa ofertada ($1.399 + IVA) queda en `empresa.concesion.tarifaOfertadaSinIva` como dato histórico, no como precio.
+- Datos: `src/content/tarifario.json` fue hasta el 10/10/2026 el cuadro heredado de la **Resolución 248/2026** (DNV, vigente desde el 26/02/2026; sin IVA del anexo oficial, 1.239,67 → $1.500 con IVA). **Desde el 11/10/2026 es el cuadro que comunicó Covicen** ($ 1.850,10 el auto): ver la sección que sigue. La tarifa ofertada ($1.399 + IVA) queda en `empresa.concesion.tarifaOfertadaSinIva` como dato histórico, no como precio.
+
+## Cuando cambia el cuadro tarifario (2026-10-10)
+
+El primer cambio de cuadro con el sitio en producción: llegó como una imagen (el comunicado de Covicen), con el precio al público de las cinco categorías, la fecha y hora de vigencia (00:00 del domingo 11/10/2026) y **nada más**: ni resolución, ni importes sin IVA. Lo que dejó:
+
+- **`montoConIva` va escrito, no calculado.** `conIva()` redondea al peso; con la Res. 248/2026 daba justo (1.239,67 × 1,21 = 1.500,0007) y por eso nadie lo notó. El cuadro nuevo trae centavos: sin `montoConIva` la tabla habría mostrado $ 1.850 en vez de $ 1.850,10. El contrato ya lo tenía previsto (campo opcional «lo calcula el sistema») y `moneda()` ya mostraba centavos solo cuando los hay.
+- **El sin IVA se derivó, y se puede**: para cada precio hay un único importe al centavo que con el 21 % lo da, y los cinco resultan múltiplos exactos del primero (1.529,01 × 1…5). `tests/lib/datos/local-json.test.ts` fija esa relación. Queda anotado en `docs/pendientes-de-confirmacion.md` como dato calculado, por si el área tiene otro.
+- **Sin resolución no se nombra ninguna ni se enlaza el Boletín.** `resolucion` es opcional y se quitó; `fuente` es obligatoria en el contrato y pasó a ser el propio comunicado. El enlace «Ver en el Boletín Oficial» (páginas de estación y `TarifaDestacada`) ahora exige `resolucion`: dejarlo habría mandado a la gente al aviso de la 248/2026, con $ 1.500. Cuando se cargue la resolución con su `fuente`, vuelve solo.
+- **El precio escrito a mano en otros lados es lo que se pudre.** `docs/pendientes-de-confirmacion.md` ya traía la lista desde el 24/09 (tres preguntas frecuentes y dos novedades) y sirvió tal cual. Lo que se sumó: un test (`tests/components/preguntas-frecuentes.test.ts`) que exige que todo importe en pesos de una pregunta frecuente sea un precio del cuadro vigente. Las novedades del cuadro anterior: la que era solo eso («Qué cuadro tarifario rige desde el 7 de octubre») se despublicó, y a la otra se le reescribió el apartado de la tarifa para que mande a Tarifas; sale una novedad nueva con los valores. (La primera idea fue dejarlas con una línea de «Actualización», como historia fechada; Juli pidió sacar la referencia a la resolución y eso las alcanzaba.)
+- **El barrido del sitio armado encontró lo que la lista no tenía**: el `resumen` de la novedad del 13/09 («se cobra el mismo cuadro que hasta ahora»), que es lo que se lee en la tarjeta de la portada y en la descripción para buscadores. Otra vez: buscar el dato en `dist/`, no solo en los archivos que uno cree que lo dicen.
+- **La cinta de avisos no lleva fechas**: `home.test.ts` prohíbe «de octubre» en la portada (pedido del 24/09: que se lea definitiva). El aviso del cuadro nuevo quedó sin fecha.
+- **Cómo se publicó**: el plan era `origin/main` (Pages) primero y `organizacion/main` (producción) a la hora de vigencia; al final Juli pidió producción dos horas antes y salió a los dos remotos juntos. Sirvió que el texto dijera la fecha **y la hora** de vigencia («desde las 00:00 del domingo 11 de octubre de 2026») en vez de un «hoy»: se puede publicar antes sin que mienta. Ver [[Como se publica la web]].
 
 ## Métodos nuevos de `FuenteDatos` (2026-09-13, Fases 1 y 4)
 
@@ -129,7 +141,7 @@ congelado de booleanos, uno por sección, con su comentario de por qué está ap
 |---|---|---|
 | Qué dice | «el sistema todavía no existe» | «el dato existe pero nadie lo certificó» |
 | Qué muestra | un hueco con una alternativa real («Próximamente» + a dónde ir mientras tanto) | **nada**: ni el rótulo, ni un guion, ni un «próximamente» |
-| Ejemplos | oficina virtual, ticketing de reclamos, portal de proveedores | descuentos por frecuencia, tarifa diferencial, recargos, obras |
+| Ejemplos | portal de proveedores, canal ético anónimo (la oficina virtual y el ticketing de reclamos dejaron de mostrarse el 24/09/2026: el cliente no quiere «Próximamente» de sistemas que no se sabe si van a existir) | descuentos por frecuencia, tarifa diferencial, recargos, obras, formulario de TelePASE |
 
 **Reglas que lo sostienen, y que tienen test:**
 
@@ -144,8 +156,8 @@ congelado de booleanos, uno por sección, con su comentario de por qué está ap
 4. **La contracara es obligatoria.** Cada `false` tiene su fila en `docs/pendientes-de-confirmacion.md`, con la
    pregunta redactada, a quién va, qué vuelve y dónde se carga. Esconder sin esa lista es perder el dato.
 
-Los números de sección no se escriben a mano: `src/lib/indices.ts` los corre solos a partir de qué se ve, así que
-apagar una sección no deja la numeración salteada ni obliga a renumerar a mano al volver a prenderla.
+Los números de sección («01», «02») **ya no existen** desde el 24/09/2026: el cliente los marcó dos veces y se sacaron
+de todo el sitio, con `src/lib/indices.ts`, que los corría solos. Esconder una sección ya no deja nada que renumerar.
 
 **Cómo se esconde una página entera**, que es distinto de esconder una sección: ver
 [[Arquitectura de informacion de la landing]]. Astro no deja quitar una ruta fija desde un hook, pero una ruta

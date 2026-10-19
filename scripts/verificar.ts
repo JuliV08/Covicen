@@ -9,13 +9,19 @@ import { archivosDe, existeDestino, hrefsConEsquemaProhibido, jsonLdDe, linksInt
 import { alcanzables } from './lib/solo-portada.ts';
 import { paresContraste } from './lib/pares.ts';
 import { publicado } from '../src/lib/publicado.ts';
+import { esIndexable, esProduccion } from '../src/lib/indexacion.ts';
+import { ID_GOOGLE_ANALYTICS, idAnalyticsActivo } from '../src/lib/analitica.ts';
 
 const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
 const base = `/${(env.PUBLIC_BASE_PATH || '/').replace(/^\/+|\/+$/g, '')}/`.replace('//', '/');
-// Default invertido, igual que en src/lib/config.ts: sin la variable lo que se publica es la portada sola.
-const sitioCompleto = env.PUBLIC_SITIO_COMPLETO === 'true';
-// Misma definición que src/lib/config.ts: una portada de «Próximamente» no es indexable aunque haya dominio.
-const indexable = env.PUBLIC_INDEXABLE === 'true' && sitioCompleto;
+// La misma regla que src/lib/config.ts y astro.config.mjs: sin la variable, el sitio entero (desde el 06/10/2026). Si
+// este control leyera distinto que el build, Amplify armaría una cosa, verificaría otra, fallaría y no publicaría nada.
+const sitioCompleto = (env.PUBLIC_SITIO_COMPLETO ?? '') === '' || env.PUBLIC_SITIO_COMPLETO === 'true';
+// La misma regla que src/lib/config.ts, del mismo módulo: el sitio entero en el dominio oficial (desde el 06/10/2026).
+const indexable = esIndexable({ sitioCompleto, sitio: env.PUBLIC_SITE_URL ?? '', noIndexar: env.PUBLIC_NO_INDEXAR });
+// Google Analytics: en toda página del build de producción, y en ninguna fuera de él (14/10/2026). Misma regla que el sitio.
+const enProduccion = esProduccion({ sitioCompleto, sitio: env.PUBLIC_SITE_URL ?? '' });
+const gaActivo = idAnalyticsActivo(ID_GOOGLE_ANALYTICS, enProduccion);
 // ¿Este build va a parar a un hosting, o es alguien compilando en su máquina? `CI` lo pone GitHub Actions;
 // `AWS_APP_ID`, el build de Amplify. Sirve para exigir cosas que en local serían molestas y afuera son errores.
 const hospedado = Boolean(process.env.CI || process.env.AWS_APP_ID);
@@ -23,16 +29,30 @@ const DIST = 'dist';
 const fallos: string[] = [];
 const fallo = (m: string) => fallos.push(m);
 
-const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/];
+// `efectivo` (01/10/2026): en la vía se cobra solo con medios electrónicos, en las terminales POS. La palabra sola, no
+// «efectiva» ni «efectivamente»: en este sitio «efectivo» siempre quiso decir plata en mano. Desde el 05/10/2026 se
+// permite SOLO negada («sin efectivo»): la pregunta frecuente de cómo se paga tiene que decir que ya no hay. Desde el
+// 06/10/2026 también como «no se acepta (más) (el pago) en efectivo», que es como lo escribió la gerencia en esa misma
+// respuesta. Cualquier otra forma sigue prohibida.
+const PROHIBIDOS = [/a confirmar/i, /corredor vial del centro/i, /\b681\b/, /(?<!\bsin |\bno se acepta (?:más )?(?:el pago )?en )\befectivo\b/i];
+// Plazos de respuesta (02/10/2026): el gerente pidió «bajarle el compromiso de los días de respuesta» y Juli eligió
+// sacarlos de todos lados. Se guardan las frases que PROMETEN un plazo, no «días hábiles» a secas: la disponibilidad de
+// los canales («se gestiona en días hábiles») se queda, y un trámite o una norma pueden tener su propio plazo («entra en
+// vigencia a los 10 días hábiles»). Se buscan en el HTML crudo y en el texto visible, como los datos sin certificar:
+// una frase partida por una etiqueta solo aparece entera en el segundo. Casos que tienen que caer y que no, en
+// tests/scripts/plazos.test.ts.
+const PLAZOS_DE_RESPUESTA = [/respuesta,? en \d+ d[ií]as/i, /\brespond\w*[^.]{0,40}\b\d+ d[ií]as/i, /acuse[^.]{0,40}\b\d+ horas/i, /dentro de las \d+ horas te confirm/i, /te confirma en el momento/i];
 // Citas del pliego en la cara del público. Pedido del gerente (call del 20/09/2026): «hace mención del pliego; esas
 // cosas que no aparezcan». Vale para las siglas Y para la palabra escrita con todas las letras: son la misma mención,
 // y había ocho lugares que la escribían larga («según el Pliego de Especificaciones Técnicas Particulares…»), que
 // ningún filtro de siglas habría agarrado.
-// EXCEPCIÓN: /transparencia/, donde la normativa ES el contenido y citarla es justamente lo institucional.
+// EXCEPCIÓN: /responsabilidad-civil/ (hasta el 06/10/2026, /transparencia/), donde la normativa ES el contenido y citarla es justamente lo institucional.
 // La `fuente` de cada dato NO se borra de src/content/ —es la trazabilidad de por qué la web dice lo que dice—:
 // deja de pintarse. Se apaga la UI, no se rompe el dato.
 const PROHIBIDOS_USUARIO = [/\bPET[GP]\b/, /\bpliego/i];
-const SIN_PLIEGO = (nombre: string) => !nombre.startsWith('transparencia');
+// La puerta del QR del folleto de TelePASE (14/10/2026): no se indexa nunca.
+const SIN_INDEXAR = ['telepase/index.html'];
+const SIN_PLIEGO = (nombre: string) => !nombre.startsWith('responsabilidad-civil');
 // Mientras el estado de la traza se publique con datos de muestra, ninguna página puede mostrar marcadores de incidente
 // sin el cartel que lo aclara (spec §10.1): un corte de ruta inventado que se lee como real es el error más caro del sitio.
 const estadoDeMuestra = (JSON.parse(readFileSync('src/content/estado-ruta.json', 'utf8')) as { ejemplo?: boolean }).ejemplo === true;
@@ -44,7 +64,10 @@ console.log(`Verificando ${paginas.length} páginas (base ${base}, indexable ${i
 // la raíz del repo. JSON no admite comentarios, así que lo que ahí se apaga o se afina se justifica acá:
 // - no-inline-style: Astro emite `style="--i: 0"` (escalonado) y las coordenadas del mapa; son variables, no presentación.
 // - no-trailing-whitespace: espacios al final de línea del HTML emitido; cosmético, el lector no lo ve.
-// - require-sri: no se cargan scripts ni hojas de terceros (la fuente es autoalojada); no hay nada que firmar.
+// - require-sri: el único script de terceros es el cargador del formulario de Bitrix24 en /contacto/ (01/10/2026), y
+//   no se puede firmar: Bitrix lo publica con versión propia y el propio código lo pide con un parámetro que cambia cada
+//   3 minutos. Lo que entra a la página está acotado por el esquema (lib/datos/esquemas: solo un cargador del CDN de
+//   Bitrix24). Fuera de eso no hay scripts ni hojas de terceros: la fuente es autoalojada.
 // - long-title 90 (por defecto 70): los títulos de las novedades llevan además el sufijo " · Covicen".
 // - tel-non-breaking con ignoreClasses ["tel-prosa"]: la regla exige &nbsp; en TODO espacio dentro de un <a href="tel:">.
 //   Vale para "Emergencias 140" o "Llamar al 140" (se usa &nbsp;), pero la tarjeta de accesos rápidos de la home es
@@ -79,6 +102,23 @@ const TEXTOS_SIN_CERTIFICAR: Array<[keyof typeof publicado, RegExp[]]> = [
   // `obras` tiene además dos candados propios —la ruta no se genera (11b) y no queda ningún enlace (chequeo 1)—,
   // así que acá va solo lo que esos no cubren: prometerle al usuario un plan o un avance de obra.
   ['obras', [/avance de (las )?obras/i, /plan de obras/i]],
+  // Reunión con el gerente del 01/10/2026. Que TelePASE es gratis estaba en Servicios, en Medios de pago (tres textos),
+  // en la home, en una pregunta frecuente y en Trámites (tres textos más; los encontró la revisión, no la búsqueda
+  // inicial). Se guardan las frases, no la palabra «gratis», que vale para el 140, la grúa y las exenciones.
+  // `/no tienen costo/` va sin más contexto a propósito: hoy solo lo decía TelePASE, y si mañana lo dice otra cosa,
+  // mejor que el build pregunte.
+  ['telepaseSinCosto', [/TelePASE sin costo/i, /TelePASE gratis/i, /dispositivo es gratis/i, /dispositivo,? sin cargo/i, /Gratis, y en todas las estaciones/i, /no tienen costo/i, /son gratuitos para el usuario/i, /es gratis: la adhesi/i, /Todos son gratuitos/i]],
+  ['sanitariosPublicos', [/sanitarios p[uú]blicos/i, /cambiador/i]],
+  // «falta solicitar». La fila de la tabla de canales y las dos frases que lo prometían.
+  ['canalWhatsapp', [/Se habilita a los 90 d[ií]as/i, /Abrir WhatsApp/i, /correo y WhatsApp/i, /0800 o WhatsApp/i]],
+  // Segunda tanda (02/10/2026). El estado de la traza con datos de ejemplo y el formulario de trámites.
+  ['estadoDeLaTraza', [/Datos de ejemplo/i, /Estado de la traza/i]],
+  ['formularioTramites', [/Inici[aá] tu tr[aá]mite/i, /id="formulario-tramites"/]],
+  // Tercera tanda (05/10/2026). El formulario de TelePASE, escondido otra vez: el único es el del CRM. Hasta el 04/10
+  // el candado era el contrario (exigía el formulario en /contacto/, PETG 61.5 b); el choque está en los pendientes.
+  ['formularioTelepase', [/id="formulario-telepase"/, /Consultas sobre tu TelePASE/i]],
+  // La tarjeta de la grúa en Emergencias. El servicio sigue en Servicios: el patrón es el título de la tarjeta.
+  ['gruaEnEmergencias', [/gratis y con tiempos comprometidos/i]],
   // `serviciosDeAreaDescanso` no tiene fila acá a propósito. Ese interruptor esconde la SECCIÓN de El tramo
   // que prometía decir qué hay adentro de cada área (agua, sanitarios), no la existencia del área: que una
   // estación TIENE un área de descanso es un dato cargado y confirmado, y el chip del mapa lo dice bien.
@@ -99,7 +139,7 @@ for (const ruta of paginas) {
   if ((head.match(/<title>/g) ?? []).length !== 1) fallo(`${nombre}: debe haber exactamente un <title> en <head>`);
   if (!/<meta name="description" content="[^"]{20,}"/.test(html)) fallo(`${nombre}: falta description (≥ 20 chars)`);
   if (!/<link rel="canonical" href="https?:\/\//.test(html)) fallo(`${nombre}: falta canonical absoluta`);
-  if (indexable && /<link rel="canonical" href="http:\/\/localhost/.test(html)) fallo(`${nombre}: canonical apunta a localhost con PUBLIC_INDEXABLE=true (falta PUBLIC_SITE_URL)`);
+  if (indexable && /<link rel="canonical" href="http:\/\/localhost/.test(html)) fallo(`${nombre}: canonical apunta a localhost en un build indexable (falta PUBLIC_SITE_URL)`);
   // Y en un build que va a un hosting, un canonical a localhost está mal SIEMPRE, con o sin indexación. No es
   // teórico: el build del 18/09/2026 que estuvo publicado en www.covicen.com.ar salió así, porque se compiló sin
   // PUBLIC_SITE_URL. El chequeo de arriba no lo agarró justamente porque ese build tampoco era indexable.
@@ -122,6 +162,12 @@ for (const ruta of paginas) {
   if (!/href="tel:140"/.test(html)) fallo(`${nombre}: falta el tel:140 de emergencias`);
   // 5. vigencia en tarifas
   if (nombre.startsWith('tarifas') && !html.includes('Vigencia')) fallo(`${nombre}: la tabla de tarifas debe mostrar la vigencia`);
+  // PETG 61.5 b (el formulario de consultas de TelePASE): el build lo exigía en /contacto/ desde el 25/09/2026. Se
+  // sacó el 05/10, cuando se escondió a pedido («el único que vamos a usar es el del CRM»); ahora lo cuida la fila
+  // de TEXTOS_SIN_CERTIFICAR, y el choque con el pliego está en docs/pendientes-de-confirmacion.md.
+  // PETG 61.5 a: el de reclamos, consultas y sugerencias. Desde el 01/10/2026 es el del CRM (Bitrix24) y, si el dato
+  // vuelve a null, el propio; las dos versiones llevan el mismo id, que es lo que el build exige.
+  if (nombre.startsWith('contacto') && !html.includes('id="reclamos"')) fallo(`${nombre}: falta el formulario de reclamos, consultas y sugerencias (PETG 61.5 a)`);
   // 10. textos prohibidos y datos oficiales (spec 2026-09-13 §2, §3, §12.1.2): criterio "esconder", marca y 679 km.
   // Los prohibidos se buscan en el HTML crudo (meta, alt, aria-label, JSON-LD incluidos); los obligatorios, en el texto visible.
   for (const p of PROHIBIDOS) if (p.test(html)) fallo(`${nombre}: contiene ${p}`);
@@ -136,6 +182,9 @@ for (const ruta of paginas) {
       if (p.test(html) || p.test(plano)) fallo(`${nombre}: publica ${p}, y publicado.${clave} está apagado`);
     }
   }
+  // Con el espacio duro pasado a espacio: «24&nbsp;horas» es la misma promesa.
+  const planoLlano = plano.replace(/&nbsp;|\u00a0/g, ' ');
+  for (const p of PLAZOS_DE_RESPUESTA) if (p.test(html) || p.test(plano) || p.test(planoLlano)) fallo(`${nombre}: promete un plazo de respuesta (${p})`);
   const visible = plano;
   if ((nombre === 'index.html' || nombre.startsWith('el-tramo')) && !/\b679\b/.test(visible)) fallo(`${nombre}: falta la longitud oficial (679 km)`);
   if (!visible.includes('Última actualización')) fallo(`${nombre}: falta "Última actualización" en el pie`);
@@ -144,10 +193,20 @@ for (const ruta of paginas) {
   const marcador = html.indexOf('data-severidad="');
   const cartel = html.indexOf('Datos de ejemplo');
   if (estadoDeMuestra && marcador >= 0 && (cartel < 0 || cartel > marcador)) fallo(`${nombre}: marcadores de incidente sin el cartel "Datos de ejemplo" arriba`);
-  // 7. indexabilidad
+  // 7. indexabilidad. /telepase/ es la excepción: la puerta del QR del folleto no se indexa nunca (14/10/2026).
   const tieneNoindex = html.includes('content="noindex, nofollow"');
-  if (indexable && tieneNoindex) fallo(`${nombre}: noindex presente con PUBLIC_INDEXABLE=true`);
-  if (!indexable && !tieneNoindex) fallo(`${nombre}: falta noindex con PUBLIC_INDEXABLE=false`);
+  const siempreNoindex = SIN_INDEXAR.includes(nombre);
+  if (indexable && tieneNoindex && !siempreNoindex) fallo(`${nombre}: noindex presente en un build indexable (sitio entero en el dominio oficial)`);
+  if ((!indexable || siempreNoindex) && !tieneNoindex) fallo(`${nombre}: falta noindex${siempreNoindex ? ' (esta página no se indexa nunca)' : ' en un build no indexable'}`);
+  // 7b. Google Analytics (14/10/2026): en producción, una vez en cada página (dos veces contaría doble); fuera de
+  // producción, en ninguna (Pages, la rama de revisión y la máquina de uno no cuentan, y la política no lo nombra).
+  const cargasGa = (html.match(/googletagmanager\.com\/gtag\/js/g) ?? []).length;
+  if (gaActivo && (cargasGa !== 1 || !html.includes(`gtag/js?id=${gaActivo}`))) fallo(`${nombre}: Google Analytics tiene que cargarse una vez, con ${gaActivo} (se carga ${cargasGa})`);
+  if (!gaActivo && /googletagmanager\.com|google-analytics\.com/.test(html)) fallo(`${nombre}: carga Google Analytics fuera del build de producción`);
+  // 7c. Nada de variables sin reemplazar en lo que se lee: «el sistema de {formularios}» estuvo publicado en la
+  // política de privacidad hasta el 14/10/2026 (la frase iba entre comillas simples).
+  // Con punto también: `{contacto.formulario}` es el mismo error.
+  for (const m of plano.matchAll(/\{[\w.áéíóúñ]+\}/g)) fallo(`${nombre}: muestra una variable sin reemplazar → ${m[0]}`);
   // 8. accesibilidad básica estática
   // `alt` vacío es válido (imagen decorativa); Astro lo puede emitir como `alt` a secas o `alt=""`.
   for (const m of html.matchAll(/<img\b(?![^>]*\balt(?:[\s=>/]))[^>]*>/g)) fallo(`${nombre}: <img> sin alt → ${m[0].slice(0, 60)}`);
@@ -176,10 +235,11 @@ for (const [tema, tokens] of Object.entries(temas)) {
 
 // 10b. textos prohibidos también en los json y xml emitidos (sitemap, datos): "ausentes en todo dist/".
 // No se miran js/css/svg: ahí \b681\b haría match en hashes de assets o valores numéricos (`.681;`), y ningún texto de
-// usuario vive en esos archivos.
+// usuario vive en esos archivos. Tampoco los PDF de documentos/ (05/10/2026): la póliza de responsabilidad civil es un
+// documento firmado de la aseguradora y va tal cual llegó, aunque diga «681,92 km» (anotado en los pendientes).
 for (const archivo of archivosDe(DIST).filter((a) => /\.(json|xml)$/.test(a))) {
   const contenido = readFileSync(archivo, 'utf8');
-  for (const p of PROHIBIDOS) if (p.test(contenido)) fallo(`${relative(DIST, archivo)}: contiene ${p}`);
+  for (const p of [...PROHIBIDOS, ...PLAZOS_DE_RESPUESTA]) if (p.test(contenido)) fallo(`${relative(DIST, archivo)}: contiene ${p}`);
 }
 
 // 11. páginas que tienen que existir (una por estación de peaje). Solo con el sitio entero: con la portada sola no
@@ -195,11 +255,16 @@ if (sitioCompleto) {
   // indexa igual. Esto mira el dist de verdad y el sitemap, no la intención del código: si mañana alguien vuelve a
   // poner src/pages/obras.astro como ruta fija, el interruptor deja de mandar y acá se cae.
   const sitemap = existsSync(join(DIST, 'sitemap-0.xml')) ? readFileSync(join(DIST, 'sitemap-0.xml'), 'utf8') : '';
-  for (const [ruta, prendida] of [['obras', publicado.obras]] as const) {
+  // Políticas y Transparencia, desde el 02/10/2026 (reunión con el gerente del 01/10).
+  for (const [ruta, prendida] of [['obras', publicado.obras], ['politicas', publicado.politicas], ['responsabilidad-civil', publicado.transparencia], ['proveedores', publicado.proveedores]] as const) {
     if (prendida) continue;
     if (existsSync(join(DIST, ruta, 'index.html'))) fallo(`/${ruta}/ está apagada en src/lib/publicado.ts y el build la generó igual`);
     if (sitemap.includes(`/${ruta}/`)) fallo(`/${ruta}/ está apagada y el sitemap la lista`);
   }
+
+  // La puerta del QR del folleto existe y no está en el sitemap (astro.config.mjs la filtra).
+  if (!existsSync(join(DIST, 'telepase', 'index.html'))) fallo('falta la página /telepase/, la del QR del folleto de TelePASE');
+  if (sitemap.includes('/telepase/')) fallo('/telepase/ es la puerta del QR del folleto y el sitemap la lista');
 
   // Y que no haya quedado ninguna página eliminada a propósito (§4.4 del prompt del 20/09: se elimina, no se oculta).
   for (const ruta of ['trabaja-con-nosotros']) {
@@ -244,11 +309,22 @@ if (sitioCompleto && /Próximamente/.test(readFileSync(join(DIST, 'index.html'),
 const css = readdirSync(join(DIST, '_astro')).filter((f) => f.endsWith('.css')).map((f) => readFileSync(join(DIST, '_astro', f), 'utf8')).join('\n');
 if (!css.includes('@media print')) fallo('el CSS emitido no tiene la hoja de impresión (@media print)');
 if (!css.includes('attr(data-fecha)') || !css.includes('attr(href)')) fallo('la hoja de impresión emitida perdió el encabezado o las URL de los enlaces');
+// 12b. Los logos del pie se pintan con una máscara dentro de un @supports que tiene que conservar la variante con
+// prefijo. Con la condición al revés, el compilador de CSS la reducía a `(mask-image:none)` y los Chrome anteriores al
+// 120 y los Safari anteriores al 15.4 mostraban el nombre en vez del logo. Se mira acá, en el CSS emitido, porque el
+// fuente estaba bien y el problema lo generaba el build. Solo si el pie está en el build (la portada sola no lo tiene).
+// (El compilador envuelve la condición en otro paréntesis: `@supports ((-webkit-mask-image:none) or (mask-image:none))`.)
+if (css.includes('logo-institucional') && !/@supports[^{]*-webkit-mask-image:\s*none/.test(css)) {
+  fallo('el CSS emitido perdió la variante -webkit- del @supports de los logos del pie');
+}
 
 // 9. presupuesto de JS enviado
 const archivosJs = readdirSync(join(DIST, '_astro')).filter((f) => f.endsWith('.js'));
 const totalJs = archivosJs.reduce((s, f) => s + gzipSync(readFileSync(join(DIST, '_astro', f))).length, 0);
 console.log(`JS total: ${archivosJs.length} archivos, ${(totalJs / 1024).toFixed(1)} KB gz`);
+// 7b, en los JS: Google Analytics cargado desde un script del sitio (y no desde el HTML de /telepase/) llegaría a
+// todas las páginas que usen ese script, y el control de cada página no lo vería (revisión del 14/10/2026).
+for (const f of archivosJs) if (/googletagmanager\.com|google-analytics\.com/.test(readFileSync(join(DIST, '_astro', f), 'utf8'))) fallo(`_astro/${f}: carga Google Analytics, que se carga solo desde el HTML (Base.astro y /telepase/)`);
 if (totalJs > 30 * 1024) fallo(`JS enviado ${(totalJs / 1024).toFixed(1)} KB gz > 30 KB`);
 // `existsSync` antes de medir: og.png sale de `node scripts/generar-og.ts` y está gitignoreado, así que en un
 // clone limpio puede no estar. Sin esta guarda el script moría con un ENOENT en vez de decir qué falta.

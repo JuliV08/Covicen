@@ -35,8 +35,9 @@ export const alcanzables = (semillas: string[], leer: (archivo: string) => strin
   return vistos;
 };
 
-/** Archivos de la raíz de dist que NO son páginas y se conservan siempre. */
-const RAIZ_QUE_QUEDA = new Set(['index.html', '404.html', 'robots.txt', 'sitemap-index.xml', 'favicon.svg', 'og.png', 'apple-touch-icon.png']);
+/** Archivos de la raíz de dist que NO son páginas y se conservan siempre. `documentos` (05/10/2026): la póliza de
+ *  responsabilidad civil en PDF; con la portada sola nada la enlaza, pero su dirección tiene que andar igual. */
+const RAIZ_QUE_QUEDA = new Set(['index.html', '404.html', 'robots.txt', 'sitemap-index.xml', 'favicon.svg', 'og.png', 'apple-touch-icon.png', 'documentos']);
 const esSitemap = (n: string) => /^sitemap-\d+\.xml$/.test(n);
 
 export const soloPortada = (activa: boolean): AstroIntegration => ({

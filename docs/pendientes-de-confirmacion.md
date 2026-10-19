@@ -1,6 +1,11 @@
 # Qué falta confirmar, y a quién preguntárselo
 
-**Fecha:** 20 de septiembre de 2026 · **Sale de:** la call con el gerente del 20/09.
+**Fecha:** 20 de septiembre de 2026, actualizado el 24/09, el 25/09, el 28/09 (el inicio de actividades pasó al 7 de
+octubre), el 01/10 (lo que hay que pedirle a PREVI por el formulario de Bitrix24) y el 02/10 (lo que se escondió en la
+reunión con el gerente del 01/10, en dos tandas), el 05/10 (la tercera tanda) y el 10/10 (el cuadro tarifario que
+rige desde el 11/10: primera sección) · **Sale de:** la call con el gerente del 20/09 y las correcciones del 24/09 (el 13 y la pregunta del precio
+del primer día). El formulario de TelePASE, que se
+agregó el 24/09, quedó resuelto el 25/09.
 
 En esa call quedó una regla: **lo que no está confirmado no se publica con salvedades, se esconde**. Este documento
 es la otra mitad de esa decisión — la lista de qué hay que ir a preguntar para que vuelva a aparecer.
@@ -11,6 +16,301 @@ nada de la web para hacerla.
 Cuando llegue una respuesta, el que carga el dato abre
 `C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`, **cambia un `false` por un `true`**, y la sección vuelve
 entera. No hay que tocar nada más.
+
+---
+
+## Google Analytics y el QR del folleto de TelePASE (14/10) · el OK del gerente, la cuenta y el QR anterior
+
+La página `/telepase/` cuenta la visita en Google Analytics y pasa a la adhesión de Telepeaje Plus. El mismo día Juli
+pidió que Analytics cuente **toda la web** (de dónde llega la gente y qué páginas mira), solo en el build de producción.
+El ID (`G-MSL9JZ23H0`, propiedad «covicen.com.ar», flujo «Web Covicen») está en `C:\Users\Villex\dev\Covicen\src\lib\analitica.ts`.
+
+- **Publicado el 14/10/2026 con el OK de Juli.** La política de privacidad dejó de decir que el sitio no usa
+  seguimiento y pasó a explicar que cuenta las visitas.
+
+- **Revisar tres cosas en la cuenta**, para que siga siendo cierto lo que dice la política de privacidad («no se usa
+  para publicidad»). Todo en Administrar:
+  - **Configuración de la cuenta › Configuración de uso compartido de datos**: todo destildado salvo «Asistencia técnica».
+  - **Vinculaciones de productos**: que no haya nada vinculado con Google Ads.
+  - **Recopilación de datos › Google Signals**: apagado. (La página igual le pide a Google que no lo use.)
+  - Y sumar a una segunda persona como administradora, para que la cuenta no dependa de una sola.
+- **No apagar «Cambios de página basados en eventos del historial del navegador»** (Flujos de datos › Web Covicen ›
+  Medición mejorada › Vistas de página). La web cambia de página sin recargar, y esa opción es la que cuenta cada
+  página: apagada, solo se contaría la primera de cada visita.
+- **Si se quiere guardar menos**: Recopilación y modificación de datos › Retención de datos › «Conservación de datos de
+  eventos» en 2 meses. Los totales se guardan igual; la política dice «como máximo 14 meses», que vale para las dos.
+- **Para el área legal, sin apuro**: la página no muestra un aviso de cookies, y los datos los guarda Google fuera del
+  país (Ley 25.326, art. 12). La política de privacidad lo explica, pero conviene que lo confirme quien lleve lo legal.
+- **El folleto**: ya está con el QR nuevo, en `C:\Users\Villex\dev\Covicen\docs\panfleto-telepase\folleto-telepase-qr-nuevo.jpg`
+  (se armó sobre la imagen de WhatsApp; si existe el archivo de diseño original, mejor cambiar el QR ahí).
+  Cómo imprimirlo: `C:\Users\Villex\dev\Covicen\docs\panfleto-telepase\LEEME.md`.
+- **¿Quién hizo el QR del folleto anterior?** Iba a `qrfy.io` (un QR «dinámico» de QRFY) y de ahí a Telepeaje Plus.
+  Preguntar si esa cuenta de QRFY es paga: si es de prueba, los folletos ya repartidos dejan de andar cuando venza. Y
+  quien la tenga puede apuntar ese QR a `https://www.covicen.com.ar/telepase/?utm_source=folleto-anterior&utm_medium=qr`
+  para que esos folletos también se cuenten.
+- **Dónde se leen los números**: en Analytics, Informes › Adquisición › Adquisición de tráfico, la fila
+  «folleto / qr» (arriba de la tabla, cambiar «Grupo de canales…» por «Fuente/medio de la sesión»). En el momento,
+  Informes › Tiempo real. **Es un mínimo**: no se cuentan quienes usan un bloqueador de publicidad, ni quienes pasan a
+  Telepeaje Plus antes de que Google confirme (con mala señal, la página no espera más de 1,8 segundos).
+
+## Cuadro tarifario del 11/10 · falta saber con qué resolución salió
+
+**Agregado el 10/10/2026.** Se cargó el cuadro que rige desde las 00:00 del domingo 11 de octubre, tal como vino en
+el comunicado de Covicen: $ 1.850,10 · $ 3.700,20 · $ 5.550,31 · $ 7.400,41 · $ 9.250,51, IVA incluido, igual con
+TelePASE que con pago electrónico en la vía, en Carcarañá, James Craik y Franck.
+
+El comunicado **no dice con qué resolución o acto de Vialidad Nacional se aprobó**. Por eso la web ya no nombra
+ninguna resolución al lado de las tablas (antes decía «Resolución 248/2026», que es la del cuadro anterior) y las
+páginas de cada estación perdieron el enlace «Ver en el Boletín Oficial»: el único aviso que había para enlazar es el
+del cuadro viejo, con $ 1.500. No es un choque nuevo con el pliego, pero el PETG 61.6 pide dar acceso a la normativa
+aplicable, y el cuadro tarifario es lo primero que alguien va a querer controlar.
+
+> «El cuadro tarifario que rige desde el 11 de octubre, ¿con qué resolución o nota de Vialidad Nacional quedó
+> aprobado? ¿Está publicado en el Boletín Oficial? Necesitamos el número y el enlace para ponerlos en la web al lado
+> de los precios. Y si tienen el cuadro con los importes sin IVA, también: los que publicamos los calculamos nosotros
+> a partir del precio final.»
+
+- **A quién:** el responsable del área de tarifas (o quien haya armado el comunicado).
+- **Qué vuelve cuando lo confirmen:** el nombre de la resolución al lado de la vigencia en cada tabla, el enlace al
+  Boletín Oficial en las páginas de estación y la resolución en la descripción de Tarifas para buscadores.
+- **Dónde se carga:** `C:\Users\Villex\dev\Covicen\src\content\tarifario.json`. Se agrega `"resolucion"` (por ejemplo
+  `"Resolución NNN/2026 de la Dirección Nacional de Vialidad"`) y se cambia `"fuente"` por el nombre y el enlace del
+  aviso del Boletín. Con eso solo, el enlace vuelve. De paso, que confirmen el campo `"origen"` (hoy quedó
+  `heredado`, como estaba; no se muestra en ningún lado).
+- **Sobre el sin IVA:** el comunicado trae solo el precio final. Lo que la web muestra en chico debajo de cada precio
+  ($ 1.529,01 · $ 3.058,02 · $ 4.587,03 · $ 6.116,04 · $ 7.645,05) es el único importe al centavo que, con el 21 %,
+  da cada precio del comunicado, y además son múltiplos exactos del primero. Si el área tiene otra cifra, se corrige
+  en el mismo archivo (`montoSinIva` y `montoManualSinIva`).
+
+**Cuando salga el próximo cuadro**, estos son todos los lugares que tienen el precio o la vigencia escritos a mano
+(un test avisa si las preguntas frecuentes quedan con un precio que no es el del cuadro; el resto, no):
+`src\content\tarifario.json` (precios, vigencia y bajada de Tarifas), las preguntas frecuentes
+`03-cuanto-cuesta-el-peaje.json` y `05-desde-cuando-se-cobra.json`, el aviso de la cinta en `src\content\avisos.json`
+(«Nuevo cuadro tarifario…») y una novedad nueva en `src\content\novedades\`; la novedad del cuadro anterior
+(«Nuevo cuadro tarifario desde el 11 de octubre», con los cinco valores) se baja a
+`src\content\novedades-despublicadas\` o se le saca el precio.
+
+---
+
+## Tercera tanda (05/10) · el 0800, la póliza y el formulario de TelePASE
+
+**Un choque más con el pliego, el séptimo.** Se escondió el formulario de consultas de TelePASE de Contacto
+(`formularioTelepase`): «el único que vamos a usar es el del CRM». El PETG, art. 61.5 b, pide ese formulario desde la
+toma de posesión. Hay una salida que cumple las dos cosas: que el formulario de Bitrix24 tome también las consultas de
+TelePASE.
+
+> «¿El formulario del CRM puede tener un tipo de consulta "TelePASE", con la patente y, si quieren, el número de TAG?
+> El contrato de concesión pide un formulario para las consultas de TelePASE, y la web ya no tiene el suyo.»
+
+- **A quién:** PREVI.
+- Si PREVI lo agrega, en la web no hay que tocar nada: el formulario de Bitrix24 se arma en el CRM.
+
+**Lo que se resolvió:**
+- **La línea 0800**: 0800 444 7777 (del 06/10 al 13/10 estuvo el de repuesto, el 0800 555 2224, porque este no
+  funcionaba; el 13/10 Covicen pidió volver y dar de baja el otro), en `contacto.json` (`lineaGratuita` y el `valor` del canal). Sale en
+  la barra de arriba, en el menú del celular, en el pie, en Contacto, en el mapa, en la tabla de canales y en la
+  portada de «Próximamente».
+- **La póliza de responsabilidad civil**, publicada: Transparencia volvió solo con la póliza (`transparencia` en
+  `true`, la normativa sigue escondida con su propio interruptor, `normativa`), y el pie la enlaza. El PDF va tal
+  cual llegó, en `C:\Users\Villex\dev\Covicen\public\documentos\poliza-responsabilidad-civil.pdf`. Cuando se
+  renueve (vence el 05/10/2027), se reemplaza ese archivo y se cambian las fechas en `empresa.json` (`polizaRc`).
+- **El CUIT de COVICEN S.A.** (30-71959948-2), que figura en la póliza. Va en el pie. Falta el domicilio legal para el
+  bloque «Datos registrales» (punto 6, más abajo).
+
+**Para revisar del PDF de la póliza**, que se publica entero: trae el premio y los importes que paga Covicen, y dice
+«Longitud total del corredor: 681,92 km», cuando la web usa en todos lados los 679,03 km oficiales. Si alguna de las
+dos cosas molesta, hay que pedirle a la aseguradora o al broker una versión para publicar.
+
+**Lo que se escondió sin que falte un dato:** la tarjeta de la grúa en Emergencias (`gruaEnEmergencias`). El
+servicio, con sus tiempos, sigue en Servicios, en la home y en la pregunta frecuente del desperfecto.
+
+---
+
+## Reunión con el gerente del 01/10 · lo que se escondió el 02/10
+
+Todo se vuelve a mostrar cambiando su `false` por `true` en
+`C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`. El contenido no se borró.
+
+**Antes que nada, dos choques con el pliego.** El PETG, art. 61.6, lista lo que el sitio **tiene** que publicar, y
+dos de los pedidos de esta reunión van contra eso:
+
+- **«Servicios que se cobran»** (`serviciosConCosto`): el 61.6 pide los servicios gratuitos **y los onerosos**. Con
+  la sección escondida, la web no informa ningún servicio con costo (mecánica general y remolque más allá del punto
+  gratuito, PETG 55).
+- **La tabla de canales sin acuse ni respuesta**: el 61.6 pide los canales **con sus características y plazos**. En
+  la segunda tanda los plazos salieron de todo el sitio (abajo). La tabla de Servicios, además, se escondió entera
+  (`canalesEnServicios`); sigue en Contacto y en Emergencias.
+
+**Segunda tanda (también del 02/10), cuatro choques más:**
+
+- **Los plazos de respuesta, fuera de todo el sitio.** El gerente pidió «bajarle el compromiso de los días de
+  respuesta» y Juli eligió sacarlos de todos lados: la pregunta frecuente, la tarjeta de Atención al usuario de
+  Servicios (también «el 0800 te confirma en el momento») y Contacto (los pasos, la línea al lado de los formularios y
+  la descripción para buscadores). El contrato los fija igual (PETG 58: acuse en 24 horas, respuesta en 5 días
+  hábiles) y el 61.6 pide publicarlos. Los valores siguen en `contacto.json`, y el build falla si vuelven a aparecer
+  escritos.
+- **Transparencia escondida entera** (`transparencia`): ahí estaban la normativa aplicable para descargar y la póliza
+  de responsabilidad civil, que el 61.6 pide publicar. **La póliza volvió el 05/10** (Transparencia muestra solo eso);
+  la normativa sigue escondida (`normativa`).
+- **El estado de la traza, escondido** (`estadoDeLaTraza`): el 61.6 pide un mapa interactivo con el estado de la
+  ruta (tránsito, obras, incidentes). Hoy solo había datos de ejemplo, así que en la práctica no cambia nada hasta que
+  Operaciones cargue información real.
+- **El formulario de la Guía de trámites, escondido** (`formularioTramites`): el PETG 61.5 pide tres formularios, y
+  el c) es el de trámites. En su lugar, la guía manda a Contacto (al CRM), que es lo que quiso el gerente: «resumí todo
+  en el contacto».
+
+> «En la reunión se pidió esconder los servicios con costo, los plazos de respuesta, la página de Transparencia
+> (normativa y póliza de responsabilidad civil), el estado de la traza y el formulario de trámites. El contrato de concesión (PETG 58, 61.5 y
+> 61.6) obliga a publicar todo eso. ¿Lo dejamos así igual, o volvemos a mostrar algo antes del 7 de octubre?»
+
+- **A quién:** el gerente.
+
+**Datos que quedaron «a confirmar» o «falta solicitar»** (se esconden en todas sus apariciones, no solo donde se
+marcaron):
+
+**1 · TelePASE sin costo** (`telepaseSinCosto`). Estaba en la tarjeta de Servicios, en Medios de pago (la bajada, el
+título de la sección y «retirás el dispositivo sin cargo»), en la home y en la pregunta frecuente «¿Puedo pagar con
+TelePASE? ¿Es obligatorio?», que espera entera.
+
+> «¿Se confirma que para el usuario no tienen costo la adhesión a TelePASE, el primer dispositivo por vehículo, su
+> colocación, la renovación, la cancelación y la reposición, como dice el contrato (PETG 50.5)?»
+
+- **A quién:** el responsable comercial o de TelePASE.
+
+**2 · Sanitarios públicos** (`sanitariosPublicos`). La tarjeta de Servicios: «donde existan, el ingreso es libre y
+gratuito, con cambiador y sanitario para niños».
+
+> «¿Hay sanitarios públicos en las estaciones del tramo? ¿En cuáles, y tienen cambiador y sanitario para niños?»
+
+- **A quién:** Operaciones.
+
+**3 · WhatsApp** (`canalWhatsapp`): «falta solicitar». Se escondió la fila de la tabla de canales y se sacó de los
+dos textos que lo nombraban (la tarjeta de Atención al usuario y el primer paso de cómo hacer un reclamo). El contrato
+lo pide a los 90 días de la toma de posesión. Cuando exista el número, además de prender el interruptor hay que
+cargarlo en `C:\Users\Villex\dev\Covicen\src\content\contacto.json` (`whatsapp.numero` y el `valor` del canal) y
+volver a nombrarlo en esos dos textos.
+
+> «¿Quién tramita el número de WhatsApp de atención al usuario, y para cuándo?»
+
+- **A quién:** el gerente o PREVI, si lo atienden ellos.
+
+**4 · Línea 0800**: resuelto el 05/10, es el 0800 444 7777 (ver la tercera tanda, arriba).
+
+**5 · El correo de atención al usuario.** Se pidió enlazar `atencionalusuario@covicen.com.ar` en la tabla de
+canales, y ya está. Lo que no se hizo es cargarlo como el correo de los formularios: hoy el de asistencia está apagado
+con el aviso de que se habilita con la toma de posesión (los de TelePASE y trámites, además, están escondidos), y con el correo cargado pasarían a
+mandarse por correo a esa casilla (también aparecería en el pie de página).
+
+> «¿La casilla atencionalusuario@covicen.com.ar ya recibe? ¿Los formularios de TelePASE, de trámites y de asistencia
+> pueden mandar ahí?»
+
+- **A quién:** el gerente o PREVI, si atienden esa casilla.
+- **Dónde se carga:** `atencionUsuario` en `C:\Users\Villex\dev\Covicen\src\content\contacto.json`.
+
+**6 · Los domicilios de COVICEN S.A.** Desde el 02/10 el pie dice «COVICEN S.A.» en lugar de «Sociedad en
+formación», y desde el 05/10 su CUIT (30-71959948-2, sale de la póliza). El bloque «Datos registrales» del pie aparece
+solo cuando están la razón social, el CUIT y el domicilio legal; con el CUIT, además, se puede cargar el QR de Data
+Fiscal de ARCA. La póliza trae una dirección de COVICEN S.A. (La Voz del Interior 8851, Córdoba), pero no dice si es el
+domicilio legal: no se cargó.
+
+> «¿Cuáles son los domicilios legal y comercial de COVICEN S.A.? ¿La Voz del Interior 8851, en Córdoba, es alguno de los
+> dos? ¿Nos pasan la constancia de inscripción de ARCA (para el QR de Data Fiscal)?»
+
+- **A quién:** administración.
+- **Dónde se carga:** `cuit`, `domicilioLegal`, `domicilioComercial` y `constanciaUrl` en
+  `C:\Users\Villex\dev\Covicen\src\content\empresa.json`; el QR, en `C:\Users\Villex\dev\Covicen\public\qr-afip.png`.
+
+**7 · Cosas que el gerente dijo en la reunión y quedaron en duda** (no se tocaron):
+- La novedad «Qué cambia el 7 de octubre» dice «Se suman Leones, San Francisco y Totoras… cobran cuando Vialidad
+  Nacional las habilite». El gerente: «no sé si se suman, habría que revisar».
+- El mapa de El tramo marca área de descanso en las tres estaciones operativas. El gerente: «descanso no hay en
+  ningún lado»; Fabi le dijo que en las operativas sí.
+
+> «¿Se confirma que Leones, San Francisco y Totoras se suman al tramo? ¿Hay áreas de descanso en Carcarañá, James Craik y
+> Franck?»
+
+- **A quién:** el gerente y Operaciones.
+
+**Lo que se escondió sin que falte un dato** (lo pidió el gerente, no hay nada que preguntar):
+«Qué asume Covicen» y «Quién nos controla» en Quiénes somos (`queAsumimos`, `quienNosControla`); la página de
+Políticas («no es para este momento»: hace falta una consultoría para escribirlas; `politicas`); y el estado de la
+traza de El tramo, que hoy son datos de ejemplo («comentar hasta que tengamos info»; `estadoDeLaTraza`).
+
+---
+
+## Para PREVI · el formulario de reclamos de Bitrix24 (01/10)
+
+Desde el 01/10 el formulario de reclamos, consultas y sugerencias de Contacto es el de Bitrix24, con el código que
+mandó PREVI. **Lo de adentro —los campos, la casilla de aceptación, el mensaje de «enviado»— se arma en el CRM, no en
+la web**: lo cambia PREVI y aparece solo, sin tocar nada de nuestro lado. Hoy tiene tres cosas que solo ellos pueden
+arreglar, y las dos primeras conviene resolverlas **antes** de que el sitio completo salga al público:
+
+**1 · No hay dónde escribir el reclamo.** El formulario pide Nombre, Apellido, E-mail y Teléfono, y nada más. El
+contrato de concesión exige un formulario de reclamos, consultas y sugerencias; el nuestro pedía además motivo, tema,
+ruta y kilómetro o estación, fecha del hecho, patente y el mensaje.
+
+> «¿Pueden sumar al formulario de Bitrix los campos Motivo (Reclamo / Consulta / Sugerencia) y Mensaje, obligatorios,
+> y como opcionales Ruta y kilómetro o estación, Fecha del hecho y Patente?»
+
+**2 · La casilla «Acepto los Términos de Uso» muestra el texto de ejemplo de Bitrix24, en inglés** («Our rules are
+straightforward…»: son las reglas de Bitrix para quien arma sitios con su sistema, no un consentimiento para el
+usuario), y **viene tildada de antemano**: un consentimiento lo tiene que dar el usuario, no venir puesto.
+
+> «¿Pueden reemplazar el texto de la casilla de aceptación por el de Covicen —"Acepto la política de privacidad", con
+> enlace a la política del sitio— y que venga sin tildar?»
+
+El enlace definitivo es `https://www.covicen.com.ar/privacidad/` cuando el sitio completo esté en el dominio; hasta
+entonces, `https://juliv08.github.io/Covicen/privacidad/`.
+
+**3 · El acuse con número de gestión.** La página de Contacto promete, como dice el contrato, que dentro de las 24
+horas el usuario recibe un acuse con un número para seguir el reclamo.
+
+> «Cuando entra un reclamo por el formulario, ¿el CRM le manda al usuario el acuse con número de gestión dentro de
+> las 24 horas? El e-mail hoy es opcional: si no lo carga, ¿por dónde le llega?»
+
+**4 · Proveedores** (02/10). El registro de proveedores también pasó a ser este formulario (el mismo código). El CRM
+recibe la dirección de la página desde la que se mandó, así que ya se pueden separar, pero el gerente pidió algo más
+claro: «ver con PREVI de agregar uno tipo "otros" o "proveedores", un tracker denominado proveedores».
+
+Ojo: mientras el formulario no tenga el campo del mensaje (punto 1), un proveedor tampoco puede decir su empresa, su
+rubro ni qué ofrece; el formulario propio pedía las tres cosas.
+
+> «¿Pueden sumar en Bitrix una forma de separar a los proveedores —un formulario propio o un tracker
+> "Proveedores"—, con campos para la empresa, el rubro y qué ofrecen? Si arman un formulario aparte, pásennos su código.»
+
+**5 · El teléfono arranca con +39 (Italia).** Se vio en la reunión: el campo del teléfono propone el código de otro país.
+
+> «¿Pueden configurar el campo Teléfono para Argentina (+54), con el formato de los celulares de acá?»
+
+**Para que sepan (no hay que preguntar nada):**
+- **Los colores los pone la web**, con los de Covicen en el tema claro y en el oscuro. Lo que se elija como colores
+  en el diseño del CRM no se va a ver. El que venía (botón celeste con letra blanca) no llegaba al contraste mínimo.
+- **El formulario de TelePASE de Contacto sigue siendo el nuestro** (el contrato lo pide aparte del de reclamos). Si
+  PREVI arma otro en Bitrix para eso, con su código se cambia igual que este.
+
+- **A quién:** PREVI, que administra el Bitrix24 de Covicen (`covicen.bitrix24.es`).
+- **Dónde se cambia en la web, si alguna vez hace falta:** `C:\Users\Villex\dev\Covicen\src\content\contacto.json`,
+  `formularioCrm`. Los dos valores salen tal cual del código que entrega Bitrix. Con `null` vuelve el formulario propio.
+  Si cambia el código (`inline/1/t2c138`), hay que actualizarlo también en dos tests que lo fijan a propósito:
+  `tests/components/formulario-crm.test.ts` y `tests/components/contacto.test.ts`.
+
+---
+
+## Resuelto el 25/09 · El formulario de TelePASE volvió
+
+El 24/09 el equipo pidió sacar el formulario de consultas de TelePASE de Contacto «hasta que definamos si va a haber o
+no oficina virtual». El 25/09 se definió: la oficina virtual es **Autogestión**, la web de autogestión de Telepeaje
+Plus (https://www.telepeajeplus.com/Login), y el formulario **volvió**.
+
+**Que no se vuelva a apagar sin saber esto:** el PETG, art. 61.5, dice que el concesionario «deberá disponer en su
+Sitio Web» de tres formularios, y el b) es:
+
+> «Un Formulario Web con el objeto de canalizar consultas especificas del servicio de TelePASE. El CONCESIONARIO
+> deberá buscar brindar respuesta en un plazo menor a este tipo de consultas…»
+
+O sea: haya o no oficina virtual, desde la toma de posesión la web tiene que tener ese formulario. El interruptor
+(`publicado.formularioTelepase`, en `C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`) sigue existiendo, pero
+apagarlo es incumplir el pliego.
 
 ---
 
@@ -33,7 +333,7 @@ entera. No hay que tocar nada más.
 
 **Qué falta:** si el beneficio existe desde el día uno, cuánto es, y dónde se tramita.
 
-> «¿La tarifa diferencial para vecinos, frentistas y docentes rige desde el 5 de octubre? ¿Cuál es el monto o el
+> «¿La tarifa diferencial para vecinos, frentistas y docentes rige desde el 7 de octubre? ¿Cuál es el monto o el
 > porcentaje? ¿Dónde se tramita: por Trámites a Distancia, en la estación, por la web? ¿Qué documentación piden
 > exactamente y cada cuánto hay que renovarlo?»
 
@@ -199,11 +499,78 @@ Covicen no lo dice (no se inventa).
 
 ---
 
+## 13 · Ficha de cada estación — ubicación, teléfono y atención
+
+**Agregado el 24/09/2026**, a pedido del equipo: para completar la ficha de cada estación hace falta que Covicen diga
+dónde está cada cosa. Va junto con el 8 (qué hay en cada área de descanso) y el 9 (ubicaciones exactas del mapa):
+conviene preguntarlo todo en la misma charla con Operaciones.
+
+> «Estación por estación (Carcarañá, James Craik y Franck, y las nuevas cuando se habiliten): ¿dónde está ubicada el
+> área de descanso (en qué kilómetro y de qué lado de la ruta)? ¿Qué número de teléfono de atención tiene cada
+> estación? ¿Hay atención al usuario en persona? Si la hay, ¿dónde está y en qué horario atiende?»
+
+- **A quién:** Operaciones.
+- **Qué vuelve:** en la ficha de cada estación (el mapa de El tramo y la página `/peajes/<estación>/`), el teléfono
+  y el horario de atención.
+- **Dónde se carga:** el teléfono y el horario ya tienen su lugar: `telefono` y `horarioAtencion` de cada estación en
+  `C:\Users\Villex\dev\Covicen\src\content\tramo.json` (`cabinas[]`), y aparecen solos. **La ubicación del área de
+  descanso y la del puesto de atención todavía no tienen campo**: cuando llegue el dato hay que sumarlo al contrato de
+  datos (un cambio chico, del lado del código).
+
+---
+
+## Para confirmar aunque esté publicado · los logos oficiales del pie
+
+**Agregado el 25/09/2026.** El pie muestra los logos de Presidencia de la Nación, Secretaría de Transporte y Vialidad
+Nacional (sacados del manual de identidad de Vialidad, oct. 2024) y el de TelePASE. Otras concesionarias de la red lo
+hacen así, pero el manual de Vialidad regula solo lo que publica el propio Estado y no dice nada de que los use un
+privado, y el pliego pide los enlaces, no los logos. Conviene tener el OK por escrito.
+
+> «En el pie de la web de Covicen pusimos los logos de Presidencia de la Nación, Secretaría de Transporte y Vialidad
+> Nacional, en un solo color y enlazando a sus sitios, como hacen otras concesionarias de la Red Federal. ¿Está bien
+> que los usemos así? ¿Hay alguna versión o regla que tengamos que respetar?»
+
+- **A quién:** el contacto de Covicen en Vialidad Nacional.
+- **Si dicen que no:** se borran los logos de `C:\Users\Villex\dev\Covicen\src\assets\institucional\` y el pie vuelve
+  a mostrar los nombres en texto (del lado del código, solo hay que ajustar el test que exige los logos).
+
+---
+
+## Resuelto el 10/10 · el precio del 7 de octubre
+
+**Cómo terminó:** del 7 al 10 de octubre se cobró el cuadro de la Resolución 248/2026 ($ 1.500 el auto) y desde las
+00:00 del 11/10 rige un cuadro nuevo ($ 1.850,10 el auto), que ya está cargado. Lo que quedó sin respuesta de la
+pregunta de abajo es **con qué resolución** salió: pasó a la primera sección de este documento. Lo que sigue se deja
+como estaba, de registro.
+
+**Agregado el 24/09/2026.** No es algo escondido: la web publica que desde la toma de posesión rige el cuadro de la
+Resolución 248/2026 ($ 1.500 el auto). Pero al releer el pliego para estas correcciones apareció el **PETG art. 82,
+inciso a)** («Tarifas a aplicar a la fecha de Toma de Posesión»): toma las últimas tarifas aplicadas antes de la toma
+y dice que **se ajustarán** multiplicando cada una, sin IVA, por el **coeficiente de variación de la tarifa (Cvt)**,
+que sale de índices del INDEC. El ajuste es obligatorio; lo que no se sabe es **cuánto da**, porque depende del mes que
+se tome como base. Si da distinto de 1, el 7/10 el precio no sería el de hoy. Conviene que el área lo confirme antes.
+
+> «El artículo 82 a) del pliego dice que el cuadro del día de la toma de posesión sale de ajustar las últimas tarifas
+> por el coeficiente de variación de la tarifa (Cvt). ¿Cuánto da ese coeficiente para el 7 de octubre? ¿Se sigue
+> cobrando el cuadro de la Resolución 248/2026 tal cual ($ 1.500 el auto), o va a salir un cuadro ajustado? Si sale
+> uno nuevo, ¿con qué resolución y desde qué fecha?»
+
+- **A quién:** el responsable del área de tarifas.
+- **Qué cambia si la respuesta es «sale uno nuevo»:** los montos, la resolución y la vigencia en
+  `C:\Users\Villex\dev\Covicen\src\content\tarifario.json` (de ahí salen las tablas y el precio de la descripción para
+  buscadores de Tarifas). Y además, porque tienen el precio o «el mismo cuadro» escrito a mano:
+  - las preguntas frecuentes `03-cuanto-cuesta-el-peaje.json`, `05-desde-cuando-se-cobra.json` y
+    `12-peajes-existentes.json`, en `C:\Users\Villex\dev\Covicen\src\content\faq\`;
+  - las novedades «Qué cuadro tarifario rige desde el 7 de octubre» (dice que ese día no cambia el precio) y «Qué
+    cambia el 7 de octubre…», en `C:\Users\Villex\dev\Covicen\src\content\novedades\`.
+
+---
+
 ## Además: lo que ya venía esperando desde antes
 
 Esta lista **no reemplaza** la que ya existía. Los datos de la empresa y de contacto que faltan desde septiembre
 —razón social, CUIT, domicilios, línea 0800, casilla de atención al usuario, WhatsApp, redes, póliza de
-responsabilidad civil, oficina virtual de TelePASE, organigrama— siguen pendientes y están detallados, con el
+responsabilidad civil, organigrama— siguen pendientes (la oficina virtual se cargó el 25/09) y están detallados, con el
 archivo y el efecto de cada uno, en:
 
 **`C:\Users\Villex\dev\Covicen\docs\guia-de-revision.md`**, sección «Qué está oculto hasta tener el dato» y

@@ -28,7 +28,9 @@
     border-radius: var(--radius-sm);
   }
   h1, h2, h3 { @apply font-extrabold text-texto; letter-spacing: var(--tracking-titulo); line-height: 1.05; text-wrap: balance; }
-  h1 { font-size: clamp(2.5rem, 2rem + 4vw, 6rem); }
+  /* `12vw` (05/10/2026): solo pesa por debajo de unos 380 px. A 320 px el título iba a 44,8 px y «concesionaria»
+     (Quiénes somos) medía 309 px en una columna de 280: corría la página de costado. Con 12vw va a 38,4 px y entra. */
+  h1 { font-size: min(clamp(2.5rem, 2rem + 4vw, 6rem), 12vw); }
   h2 { font-size: clamp(1.9rem, 1.4rem + 2.2vw, 3.25rem); }
   h3 { font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.75rem); }
   p { text-wrap: pretty; }
@@ -64,15 +66,13 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
       linear-gradient(to bottom, var(--color-plano) 1px, transparent 1px);
     background-size: 4rem 4rem;
   }
-  /* Sección con grilla cinética, fundida con las vecinas: el fondo va de `fondo` a `fondo-2` y vuelve, la grilla se
-     desvanece en los bordes, y una "costura" (hairline + marca vial centrada, como el divisor del hero) une los bloques. */
-  .seccion-cinetica {
+  /* Sección con tono, fundida con las vecinas: el fondo va de `fondo` a `fondo-2` y vuelve, y una "costura" (hairline
+     + marca vial centrada) une los bloques. Hasta el 05/10/2026 llevaba además la grilla animada que seguía al
+     puntero; se sacó a pedido («saquen el background grid animado que sigue al mouse») y en tema claro las líneas
+     pasaban por detrás de las bajadas. */
+  .seccion-tono {
     overflow: hidden;
     background: linear-gradient(180deg, var(--color-fondo) 0%, var(--color-fondo-2) 16%, var(--color-fondo-2) 84%, var(--color-fondo) 100%);
-  }
-  .seccion-cinetica > canvas {
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
-    mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
   }
   .costura { position: absolute; left: 0; right: 0; height: 1px; z-index: 5; pointer-events: none;
     background: linear-gradient(90deg, transparent, var(--color-borde-fuerte) 25%, color-mix(in srgb, var(--color-acento) 55%, transparent) 50%, var(--color-borde-fuerte) 75%, transparent); }
@@ -80,14 +80,46 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
   .costura-abajo { bottom: 0; }
   .costura::before { content: ""; position: absolute; left: 50%; top: 50%; width: 2.5rem; height: 3px; border-radius: 2px; transform: translate(-50%, -50%);
     background: var(--color-acento); box-shadow: 0 0 14px var(--color-glow), 0 0 2px var(--color-acento); }
-  /* resplandor que "derrama" la grilla hacia la sección vecina */
+  /* resplandor que "derrama" el tono hacia la sección vecina */
   .costura::after { content: ""; position: absolute; left: 20%; right: 20%; top: 50%; height: 120px; transform: translateY(-50%); pointer-events: none;
     background: radial-gradient(60% 100% at 50% 50%, var(--color-luz), transparent 70%); }
   /* Volanta. 12 px a propósito y declarada acá como anotación del pliego (61.7, spec §11): una volanta nunca es cuerpo
-     de texto, es el rótulo que encabeza otra cosa —el índice y la etiqueta de una sección, el título de columna del
-     footer, la ruta y el km de una estación—. Junto con .anotacion es la única excepción a los 14 px, y lo guarda
+     de texto, es el rótulo que encabeza otra cosa —la etiqueta de una sección, el título de columna del footer, la
+     ruta y el km de una estación—. Junto con .anotacion es la única excepción a los 14 px, y lo guarda
      tests/styles/legibilidad.test.ts: los 12 px escritos a mano fuera de .anotacion o .eyebrow hacen fallar. */
   .eyebrow { @apply font-medium uppercase text-texto-2; letter-spacing: var(--tracking-eyebrow); font-size: 0.75rem; }
+  /* Títulos con el degradé de Covicen (fase A, 05/10/2026). Del color del texto al azul de la marca y vuelta, recortado
+     a las letras. Sale solo de variables: cambia con el tema sin recargar y, adentro de una zona oscura del tema claro,
+     sigue al color de lo que tiene debajo. `texto` y `acento` ya están medidos en pares.ts, y los colores intermedios
+     caen entre los dos. Ancho del texto y no de la caja, para que un título corto muestre el degradé entero. */
+  .titulo {
+    --titulo-b: var(--color-acento);
+    width: fit-content;
+    /* Sin el diccionario de guiones, `fit-content` toma el ancho de la palabra más larga y el título corría la página de
+       costado a 320 px (revisión del 05/10/2026, «responsabilidad» en Transparencia). */
+    max-width: 100%;
+    background-image: linear-gradient(90deg, var(--color-texto) 0%, var(--titulo-b) 50%, var(--color-texto) 100%);
+    background-size: 200% 100%;
+    background-position: 0% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* Con el color transparente, lo seleccionado no se vería: se pinta como una selección común. */
+  .titulo::selection { color: var(--color-fondo); background-color: var(--color-acento); }
+  /* Sobre la foto (hero y portada) el azul no llega a 3:1 (medido el 05/10/2026: entre 1,65 y 2,7:1 en claro, 2,05:1 a
+     1023 px en oscuro). Ahí la franja va hacia MÁS contraste: blanco en oscuro, navy profundo en claro. */
+  .titulo-foto { --titulo-b: var(--color-titulo-brillo); }
+  /* Solo el título principal de la página se mueve (hay uno por página: lo controla verificar.ts). */
+  h1.titulo { animation: titulo-recorre 10s var(--ease-suave) infinite alternate; }
+  @keyframes titulo-recorre { to { background-position: 100% 50%; } }
+  /* Explícito: la regla global de «reducir movimiento» acorta la animación a 0,01 ms pero no la apaga. */
+  @media (prefers-reduced-motion: reduce) {
+    h1.titulo { animation: none; }
+  }
+  @media (forced-colors: active) {
+    .titulo { background: none; color: CanvasText; }
+  }
   /* texto largo (privacidad, novedades) */
   .prose-covicen h2 { margin-top: 2rem; font-size: 1.35rem; color: var(--color-texto); }
   .prose-covicen h3 { margin-top: 1.5rem; font-size: 1.15rem; color: var(--color-texto); }
@@ -115,6 +147,54 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
      temas) y el anillo desaparecía justo en el botón del 140. En oscuro vial-texto es el mismo amarillo: no se mueve. */
   .btn-vial:focus-visible { outline-color: var(--color-vial-texto); }
   @keyframes oscilar { 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+
+  /* Accesos destacados: TelePASE y Autogestión, en la barra de arriba (escritorio) y en el menú (celular). Pedido del
+     01/10/2026: «destacarlos muy bien, de forma creativa, premium y estética, TelePASE en verde». Píldoras con el
+     ícono en una ficha, un guiño a cada marca y una flecha que avisa que salen del sitio:
+     - TelePASE va lleno con el verde de su marca (--color-telepase) y el nombre escrito como lo escribe ella, «Tele»
+       liviano y «PASE» fuerte. El par sobre-telepase/telepase lo mide verificar.ts en los dos temas.
+     - Autogestión va sobre superficie con un borde degradé del acento: el mismo peso visual sin competir en color.
+     Al pasar el mouse suben 1 px, se encienden con su propio color y la flecha se corre hacia afuera. */
+  .acceso-destacado {
+    display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2rem; padding: 0.15rem 0.85rem 0.15rem 0.2rem;
+    border-radius: var(--radius-full); font-size: 0.875rem; font-weight: 600; line-height: 1.2; text-decoration: none;
+    transition: transform var(--dur-ui) var(--ease-salida), box-shadow var(--dur-ui) var(--ease-salida);
+  }
+  .acceso-destacado .ficha { display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: var(--radius-full); }
+  /* El texto se centra por la altura de las mayúsculas, no por la caja de la letra (02/10/2026: «ambos textos se ven
+     muy arriba»). A 1x el navegador redondea la línea base y el texto quedaba 2 px alto: 9 px de aire arriba contra 13
+     abajo, medido en una captura. Con text-box el navegador recorta la caja a mayúscula-línea base y el centrado del
+     flex cae justo. Donde no hay text-box (Firefox, por ahora), lo mismo a mano: un píxel hacia abajo. */
+  .acceso-destacado .etiqueta { text-box: trim-both cap alphabetic; }
+  @supports not (text-box: trim-both cap alphabetic) { .acceso-destacado .etiqueta { position: relative; top: 0.08em; } }
+  .acceso-destacado .flecha { margin-left: -0.15rem; transition: transform var(--dur-ui) var(--ease-salida); }
+  .acceso-destacado:hover { transform: translateY(-1px); }
+  .acceso-destacado:hover .flecha, .acceso-destacado:focus-visible .flecha { transform: translate(2px, -2px); }
+  .acceso-telepase {
+    background: var(--color-telepase); color: var(--color-sobre-telepase);
+    box-shadow: 0 6px 18px -10px var(--color-telepase);
+  }
+  .acceso-telepase .ficha { background: color-mix(in oklab, var(--color-sobre-telepase) 14%, transparent); }
+  .acceso-telepase .marca-tele { font-weight: 500; }
+  .acceso-telepase .marca-pase { font-weight: 800; letter-spacing: 0.02em; }
+  .acceso-telepase:hover {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-telepase) 30%, transparent), 0 10px 26px -10px var(--color-telepase);
+  }
+  .acceso-telepase:focus-visible { outline-color: var(--color-telepase); }
+  .acceso-autogestion {
+    color: var(--color-texto); border: 1px solid transparent;
+    background:
+      linear-gradient(var(--color-superficie), var(--color-superficie)) padding-box,
+      linear-gradient(120deg, var(--color-acento), var(--color-borde-fuerte) 70%) border-box;
+  }
+  .acceso-autogestion .ficha { background: color-mix(in oklab, var(--color-acento) 16%, transparent); color: var(--color-acento); }
+  .acceso-autogestion:hover { box-shadow: 0 0 0 3px var(--color-glow), 0 10px 26px -12px var(--color-glow); }
+  /* La línea 0800 (05/10/2026): llena con el azul de la marca, el del botón primario; el par sobre-marca/marca-700 lo
+     mide verificar.ts. Es de Covicen, no de un tercero: por eso el color propio y no el de TelePASE. */
+  .acceso-0800 { background: var(--color-marca-700); color: var(--color-sobre-marca); box-shadow: 0 6px 18px -10px var(--color-marca-700); }
+  .acceso-0800 .ficha { background: color-mix(in oklab, var(--color-sobre-marca) 16%, transparent); }
+  .acceso-0800 .numero { font-weight: 800; letter-spacing: 0.01em; }
+  .acceso-0800:hover { box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-marca-700) 30%, transparent), 0 10px 26px -10px var(--color-marca-700); }
 
   /* Velo del hero: es lo único que deja leer el texto encima de la foto, así que los porcentajes de acá son contrato
      con tests/styles/hero-foto.test.ts, que mide el contraste real del texto sobre cada foto en cada tamaño de
@@ -173,7 +253,10 @@ html[data-tema="claro"] .solo-oscuro, html:not([data-tema="claro"]) .solo-claro 
      tema oscuro se apoyan directo sobre el fondo de la página, y al volverse zona oscura dentro del tema claro se
      habrían quedado transparentes, con el texto claro sobre el gris de la página. Se pintan con el mismo fondo que
      tienen debajo en el tema oscuro. Un componente que ya tiene su propio fondo lo dice con --fondo-bloque, y así el
-     color le queda igual en los dos temas. */
+     color le queda igual en los dos temas.
+     En el tema oscuro también se pinta (01/10/2026): sobre una sección con la grilla cinética, la tabla de canales
+     dejaba ver las líneas de la grilla entre las filas y «se veía transparente». */
+  .bloque-oscuro,
   html[data-tema="claro"] .bloque-oscuro { background-color: var(--fondo-bloque, var(--color-fondo)); }
 
   /* El velo NO depende de que el JS lo baje. Va y vuelve en una sola animación de CSS: si el script se cuelga, si la

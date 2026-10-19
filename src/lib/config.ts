@@ -1,6 +1,8 @@
 // Único lugar que lee variables de entorno. El resto importa `config`.
 // Acceso ESTÁTICO (import.meta.env.NOMBRE): desde Astro 6 los valores se inlinean en build;
 // un acceso dinámico por clave no se reemplaza y queda undefined.
+import { esIndexable, esProduccion } from '@/lib/indexacion';
+
 const oDefecto = (valor: string | undefined, porDefecto: string): string =>
   valor === undefined || valor === '' ? porDefecto : valor;
 
@@ -13,23 +15,27 @@ if (fuente === 'api' && !apiUrl) {
   throw new Error('FUENTE_DATOS=api exige API_URL (ej. https://api.covicen.com.ar)');
 }
 
-// Se calcula antes del objeto porque `indexable` lo usa: una portada de «Próximamente» no se indexa nunca.
-const sitioCompleto = oDefecto(import.meta.env.PUBLIC_SITIO_COMPLETO, 'false') === 'true';
+// Se calculan antes del objeto porque `indexable` los usa: una portada de «Próximamente» no se indexa nunca.
+const sitioCompleto = oDefecto(import.meta.env.PUBLIC_SITIO_COMPLETO, 'true') === 'true';
+const sitio = oDefecto(import.meta.env.PUBLIC_SITE_URL, 'http://localhost:4321').replace(/\/+$/, '');
 
 export const config = {
   /** Origen del sitio, sin base ni barra final. */
-  sitio: oDefecto(import.meta.env.PUBLIC_SITE_URL, 'http://localhost:4321').replace(/\/+$/, ''),
+  sitio,
   /** Base path con barra inicial y final. */
   base: `/${oDefecto(import.meta.env.PUBLIC_BASE_PATH, '/').replace(/^\/+|\/+$/g, '')}/`.replace('//', '/'),
-  /** true = se puede indexar (hay dominio Y se publica el sitio entero). false = demo o portada: noindex.
-   *  Incluye `sitioCompleto` a propósito y en UN solo lugar: sin eso, el día que se prenda PUBLIC_INDEXABLE una
-   *  portada de «Próximamente» saldría sin `noindex`, y Google indexaría el cartel en vez del sitio. */
-  indexable: oDefecto(import.meta.env.PUBLIC_INDEXABLE, 'false') === 'true' && sitioCompleto,
+  /** true = Google puede indexar: el sitio entero, en el dominio oficial (lib/indexacion.ts, desde el 06/10/2026).
+   *  Fuera de eso, `noindex` y robots cerrado: la portada, Pages, la rama de revisión y la máquina de uno. */
+  indexable: esIndexable({ sitioCompleto, sitio, noIndexar: import.meta.env.PUBLIC_NO_INDEXAR }),
+  /** true = el sitio entero, publicado en el dominio oficial (lib/indexacion.ts). Es lo único que carga Google
+   *  Analytics (14/10/2026): en Pages, la rama de revisión y la máquina de uno no se cuenta nada. */
+  enProduccion: esProduccion({ sitioCompleto, sitio }),
   /** true = se publica el sitio entero. false = solo la portada de «Próximamente».
-   *  El default es `false` A PROPÓSITO, al revés que las otras variables. Hoy el sitio lo sube una persona que
-   *  clona el repo y corre `pnpm build` sin configurar nada (no hay ninguna cañería entre git y el hosting, ver
-   *  README «Cómo se publica hoy»): con el default al revés, ese build a ciegas publica la portada y no las 30
-   *  páginas. Olvidarse de la variable falla hacia el lado seguro. Para publicar el sitio real hay que pedirlo. */
+   *  Hasta el lanzamiento (06/10/2026) el default era `false`: olvidarse de la variable publicaba de menos, que antes
+   *  de salir era el lado seguro. Con el sitio ya publicado, el lado seguro se dio vuelta: un olvido no puede volver a
+   *  poner el cartel en lugar de la web. Ahora sin la variable sale el sitio entero, y la portada hay que pedirla con
+   *  PUBLIC_SITIO_COMPLETO=false. La misma regla está en astro.config.mjs y en scripts/verificar.ts (lo mira
+   *  tests/lib/config.test.ts). */
   sitioCompleto,
   fuenteDatos: fuente as 'local' | 'api',
   /** Origen de la API del sistema, sin barra final. Solo se usa con FUENTE_DATOS=api. */

@@ -11,13 +11,14 @@ export const jsonLdOrganizacion = (e: Empresa, c: Contacto, sitio: string, logoU
     logo: logoUrl,
     description: `Concesionaria del Tramo Centro de la Red Federal de Concesiones: ${e.concesion.rutas.join(', ')} en ${e.concesion.provincias.join(' y ')}.`,
     areaServed: e.concesion.provincias.map((p) => ({ '@type': 'AdministrativeArea', name: p })),
-    // Sin foundingDate: la sociedad está en formación; la adjudicación no es una fecha de fundación.
+    // Sin foundingDate: no hay fecha de constitución cargada, y la adjudicación no es una fecha de fundación.
   };
   if (e.razonSocial) o.legalName = e.razonSocial;
   if (e.cuit) o.taxID = e.cuit;
   // El 140 es obligatorio por pliego (PETG 59), así que siempre hay un punto de contacto de emergencia.
   o.contactPoint = [
     { '@type': 'ContactPoint', telephone: c.emergencias.telefono, contactType: 'emergency', areaServed: 'AR', availableLanguage: 'es' },
+    ...(c.lineaGratuita ? [{ '@type': 'ContactPoint', telephone: c.lineaGratuita, contactType: 'customer service', contactOption: 'TollFree', areaServed: 'AR', availableLanguage: 'es' }] : []),
   ];
   const sameAs = Object.values(c.redes).filter(Boolean);
   if (sameAs.length) o.sameAs = sameAs;

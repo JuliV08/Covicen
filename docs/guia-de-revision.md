@@ -1,6 +1,13 @@
 # Guía de revisión — web de Covicen
 
-**Al día al 20 de septiembre de 2026.** Empezá por «Lo que cambió el 20 de septiembre», que es la tanda más nueva; lo que sigue después es el estado de septiembre, con un aviso en cada pantalla que cambió.
+**Correcciones de contenido del 5 de octubre (rama `contenido-correcciones-2026-10-05`).** Qué mirar:
+- **Póliza:** la página ya no dice «Transparencia» (ni arriba del título, ni en la pestaña, ni en el menú y el pie, que ahora dicen «Póliza de responsabilidad civil»). El título no se corta con guion: en celulares angostos la letra baja de tamaño.
+- **Proveedores** volvió el 19/10/2026 (pedido de Sol): se genera y está en el menú, el pie, el sitemap y la privacidad. El botón «Ingresar al portal» aparece sólo en los builds con `PUBLIC_PORTAL_PROVEEDORES_URL` (hoy la rama `dev` de Amplify, hacia el ERP de DEV); sin ella la página muestra «Próximamente» y el formulario de registro. Se apaga de nuevo con `proveedores` en `src/lib/publicado.ts`.
+- **«La tarifa más baja»** no aparece en ningún texto público: salió de Quiénes somos, de la nota de adjudicación (también sus secciones «La tarifa más baja…» y «Qué sigue») y de las preguntas frecuentes (se borró «¿Por qué la tarifa de Covicen es la más baja?»). La nota «Cómo se fija la tarifa» está despublicada.
+- **Novedad «Qué cambia el 7 de octubre»:** «continúan operando»; sin «Se suman» (ni en el resumen ni en la lista), sin la oración de la tarifa ofertada y sin «No es obligatorio» en TelePASE. En «Qué cuadro rige» ya no está «Cuándo cambia». La pregunta «¿Qué tarifa se cobra desde el 7 de octubre?» perdió la misma oración, y «¿Cuánto cuesta el peaje?» perdió «Se actualiza por índices oficiales cada tres meses».
+- **Grúa** (Servicios): sin los dos renglones de tiempos. **Quiénes somos:** «las localidades».
+
+**Al día al 5 de octubre de 2026 (correcciones de contenido y fase A estética).** Empezá por las correcciones de arriba, «Fase A estética (5 de octubre)», «Lo que cambió el 5 de octubre», «Lo que cambió el 2 de octubre, segunda tanda», «Lo que cambió el 2 de octubre», «Lo que cambió el 1 de octubre», «Lo que cambió el 28 de septiembre», «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», que son las tandas más nuevas; después viene la del 20 y, más abajo, el estado de septiembre, con un aviso en cada pantalla que cambió.
 
 Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/superpowers/plans/2026-09-13-actualizacion-web.md`, más la **revisión final del 14 y 15 de septiembre**) se hizo **sin pruebas visuales**: esta guía es la lista de lo que hay que mirar a mano, pantalla por pantalla, más lo que quedó oculto a propósito y cómo cargarlo.
 
@@ -15,7 +22,479 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 
 ---
 
-## Lo que cambió el 20 de septiembre — mirá esto primero
+## Google Analytics en toda la web (14 de octubre, a la tarde) — mirá esto primero
+
+Desde ahora Analytics cuenta las visitas de todas las páginas, **solo en producción** (www.covicen.com.ar). El sitio de
+revisión no lo carga, para que las visitas del equipo no se mezclen con las del público.
+
+- **En producción**, con Analytics abierto en **Informes › Tiempo real**: entrá a la web desde el celular, pasá por dos
+  o tres páginas y fijate que aparezcan, cada una con su nombre. Tarda un minuto.
+- **Privacidad** (en producción): «Qué datos recibimos» dice que cuenta las visitas con Google Analytics, y hay una
+  sección nueva, «Estadísticas de visitas», con qué guarda, cuánto tiempo y cómo evitarlo. En el sitio de revisión esa
+  sección no aparece: ahí no se carga Analytics.
+- **Que nada se vea distinto**: Analytics no muestra nada en pantalla. Si algo cambió de lugar, es un error.
+
+## La página del QR del folleto de TelePASE (14 de octubre) — mirá esto primero
+
+`/telepase/` es la página a la que lleva el QR nuevo del folleto. Cuenta la visita en Google Analytics y pasa sola a la
+adhesión de TelePASE en Telepeaje Plus. No está en el menú, ni en el mapa del sitio, ni en los buscadores.
+
+- **Escaneá el QR** (`C:\Users\Villex\dev\Covicen\docs\panfleto-telepase\qr-telepase.png`, en la pantalla de la
+  compu) con el celular, **una vez que esté en producción**. Tiene que abrir una pantalla con el logo, «Te llevamos a
+  la adhesión de TelePASE», y en uno o dos segundos pasar sola a la adhesión de Telepeaje Plus. Antes de producción el
+  QR da error de página: apunta a www.covicen.com.ar.
+- **En el sitio de revisión** está en `/Covicen/telepase/`. Mientras no haya ID de Analytics pasa a Telepeaje Plus
+  en medio segundo, así que la pantalla casi no se ve: es lo esperado.
+- **Volvé atrás** desde Telepeaje Plus: tiene que volver a donde estabas antes de escanear, no a la pantalla de Covicen.
+- **Mientras no esté el ID de Google Analytics** (empieza con G-), la página lleva a la adhesión pero no cuenta, y la
+  política de privacidad no nombra a Google. Con el ID cargado, Privacidad suma «Página del folleto de TelePASE».
+- **Privacidad, aparte**: en «Canales de terceros» decía «Bitrix24, el sistema de {formularios}», con las llaves a la
+  vista. Ahora dice «el sistema del formulario de Contacto».
+
+## El 0800 vuelve a ser el 0800 444 7777 (13 de octubre) — mirá esto primero
+
+Covicen pidió volver al 0800 444 7777 y dar de baja con CVSA el de repuesto, que estuvo del 06/10 al 13/10.
+
+- **Llamá al 0800 444 7777 antes de dar de baja el otro.** El 06/10 no funcionaba y por eso se había cambiado. Eso
+  no se puede probar desde la computadora.
+- **En el celular**: abrí el menú (las tres rayitas) y tocá la píldora azul del 0800. Tiene que ofrecer llamar al
+  08004447777. Lo mismo el botón del bloque «¿Consultas, reclamos, propuestas?» de la home y la tarjeta «Atención al
+  usuario» de Contacto.
+- **El número escrito**: en la barra de arriba, en el pie, en Contacto (la tarjeta, el paso 1 y la tabla de canales),
+  en Servicios (tarjeta Atención al usuario), en la pregunta frecuente «¿Cómo hago un reclamo o una consulta?» y en la
+  novedad «Qué cambia el 7 de octubre».
+- **Google** puede seguir mostrando unos días el número anterior en el resultado de búsqueda: se actualiza solo.
+
+## El cuadro tarifario nuevo (10 de octubre) — mirá esto primero
+
+Se cargó el cuadro que rige desde las 00:00 del domingo 11 de octubre de 2026, tal como vino en el comunicado. Salió
+a producción y al sitio de revisión (https://juliv08.github.io/Covicen/) el sábado 10 a la noche, por pedido de Juli,
+un rato antes de la hora de vigencia: los textos dicen la fecha y la hora. Todo lo que más abajo en esta guía dice
+«$ 1.500» o «Resolución 248/2026» describe el cuadro anterior; **en el sitio publicado esa resolución ya no se nombra
+en ningún lado** (pedido de Juli del 10/10).
+
+Qué mirar, con el comunicado al lado:
+
+- **`/tarifas/`**: arriba, «Cuadro tarifario vigente desde las 00:00 del domingo 11 de octubre de 2026. Rige el mismo
+  cuadro tarifario para las estaciones Carcarañá, James Craik y Franck.» y la etiqueta «Desde el 11 de octubre de
+  2026». En las tres pestañas (Carcarañá, James Craik, Franck), las dos columnas iguales: **$ 1.850,10 · $ 3.700,20 ·
+  $ 5.550,31 · $ 7.400,41 · $ 9.250,51**. Debajo de cada precio, en chico, el sin IVA ($ 1.529,01 · $ 3.058,02 ·
+  $ 4.587,03 · $ 6.116,04 · $ 7.645,05): **ese dato no vino en el comunicado, está calculado** (ver
+  `docs/pendientes-de-confirmacion.md`, primera sección). Arriba de cada tabla dice solo «Vigencia: desde el 11 de
+  octubre de 2026.», sin nombrar ninguna resolución.
+- **En el celular**: los precios ahora llevan centavos y son más largos. Que los dos precios de cada categoría entren
+  lado a lado sin cortarse ni correr la página de costado.
+- **`/peajes/carcarana/`, `/peajes/james-craik/`, `/peajes/franck/`**: la misma tabla. Ya **no está** el enlace «Ver
+  en el Boletín Oficial» (llevaba a la resolución del cuadro viejo); vuelve cuando se sepa la resolución del nuevo.
+- **`/preguntas-frecuentes/`**: «¿Cuánto cuesta el peaje?» dice $1.850,10 desde el 11 de octubre; «¿Qué tarifa se
+  cobra desde el 7 de octubre?» pasó a ser **«¿Desde cuándo rige el cuadro tarifario actual?»**; «¿Qué pasa con los
+  peajes que ya existían?» ya no dice «el mismo cuadro tarifario que hasta ahora».
+- **Novedades, por el pedido de sacar la referencia a la resolución:**
+  - «Qué cuadro tarifario rige desde el 7 de octubre» **se bajó del sitio**: la nota entera era la Resolución 248/2026
+    y los $ 1.500. Está guardada, tal como se publicó, en `src/content/novedades-despublicadas/`.
+  - «Qué cambia el 7 de octubre…»: el apartado «La tarifa» ahora dice que desde el 11 de octubre rige un nuevo cuadro
+    y manda a Tarifas, sin resolución ni precio.
+- **Dos cosas que agregué sin que me las pidieran** (si alguna no va, se saca en un minuto):
+  - la **cinta de avisos** dice «Nuevo cuadro tarifario. Consultá los valores por estación de peaje.» (antes:
+    «Consultá el cuadro tarifario vigente por estación de peaje.»), sin fecha, porque la portada no lleva fechas;
+  - una **novedad nueva**, «Nuevo cuadro tarifario desde el 11 de octubre», con los cinco valores (`/novedades/`, y
+    primera en las novedades de la portada).
+- **Imprimir el cuadro** (botón en `/tarifas/`): que salgan las tres tablas con los precios nuevos.
+
+---
+
+## El mapa nuevo (fase C, 5 de octubre) — mirá esto primero
+
+En la home y en El tramo. El diseño está en
+`C:\Users\Villex\dev\Covicen-detalles\docs\superpowers\specs\2026-10-05-fase-c-mapa-design.md`.
+
+- **El dibujo**: el mapa ocupa todo el panel y se encuadra sobre las rutas. Cada ruta es una cinta (halo suave, banda y
+  línea azul) que dobla con curva en los pueblos; ya no hay grilla de fondo, marcas que fluyen ni luces dando vueltas.
+  Las estaciones son anillos: operativa con punto verde lleno, próxima con anillo amarillo y centro hueco. Los nombres
+  van sobre una placa.
+- **La ficha**: en una pantalla de 1280 px o más, flota arriba a la izquierda, entre Córdoba y San Francisco, sin tapar
+  ninguna ruta; es compacta (los servicios con su ícono, como en la leyenda; «Vías» y «Sentido» están en «Ficha
+  completa»). Entre 1024 y 1279 px, y en el celular, va completa debajo del mapa.
+- **El auto**: arranca estacionado antes de Carcarañá. Tocá Leones, después Franck y después James Craik: viaja por la
+  ruta (pasando por Rosario y el empalme cuando hace falta), dobla con las curvas, frena antes del peaje sin taparlo y el
+  halo de la estación late una vez. Para ir a Franck desde Leones tiene que volver: hace una U chica al costado y sale de
+  frente. Probá tocar otra estación en pleno viaje: termina el tramo y cambia de rumbo sin saltar.
+- **Con «reducir movimiento»**: el auto aparece directo en la estación, sin viajar ni latir.
+- **En el celular** el mapa queda chico (unos 300 px de ancho) y los nombres de ciudades y rutas se ven muy pequeños; ya
+  pasaba antes. La información está en la ficha de abajo. Si querés, lo vemos aparte.
+
+## Fase A estética (5 de octubre) — mirá esto primero
+
+Primera fase de la tanda estética, en la rama `web-detalles-2026-10-05` (el diseño está en
+`C:\Users\Villex\dev\Covicen-detalles\docs\superpowers\specs\2026-10-05-fase-a-encabezados-design.md`). Ningún texto
+cambió, salvo los dos arreglos que pediste aparte: la home dice «¿Consultas, reclamos?» y en Quiénes somos ya no está
+la frase de la licitación. Mirá todo en los dos temas, en la compu y en el celular.
+
+**Encabezados centrados**
+- En Tarifas, Servicios, El tramo, Contacto y cualquier página interna: las migas de pan, la etiqueta chica (ahora con
+  una línea a cada lado, «── TARIFAS ──»), el título y la bajada van al centro. Las tablas, las tarjetas y los textos
+  largos siguen alineados a la izquierda adentro de su bloque.
+- El hero de la home sigue a la izquierda, a propósito.
+- Los botones que quedaban solos al final de una sección van al centro: «Ver el tramo en detalle» en la home, «Ver el
+  cuadro tarifario» en El tramo, «Pedir asistencia» y «Consejos de seguridad vial» en Emergencias, la fila de botones del
+  final de Tarifas, «Entrar a Autogestión» en Medios de pago, los de Seguridad vial, «Todas las novedades» al pie de una
+  novedad, y el bloque «¿Tenés una consulta sobre un trámite?» en Trámites.
+- El bloque de Contacto del final de la home pasó de fila a columna: título, texto y botones, todo centrado.
+- La página 404 (entrá a cualquier dirección que no exista) y una novedad abierta, centradas.
+
+**Títulos con el degradé de Covicen**
+- Todos los títulos de página y de sección van del color del texto al azul de la marca. Los de las tarjetas no.
+- El título principal de cada página se mueve, lento, de ida y vuelta; los demás quedan quietos.
+- En el hero (y en la portada de «Próximamente») el título no lleva azul: lleva un brillo que pasa, blanco en tema
+  oscuro y navy profundo en claro. Medido, el azul no se leía bien sobre la foto.
+- Seleccioná un título con el mouse: lo seleccionado se tiene que leer.
+- Con «reducir movimiento» activado en Windows, el título principal queda quieto.
+- Cambiá de tema con la página abierta: el degradé cambia solo.
+
+**Sin la grilla que seguía al mouse**: las secciones con fondo alternado conservan el tono y las líneas finas que las
+separan, pero ya no hay líneas moviéndose detrás de las bajadas. En tema claro, comprobá que las bajadas se lean
+limpias.
+
+**El mapa** (home y El tramo): «RN 19» ahora va arriba del tramo entre San Francisco y el empalme, lejos de Franck;
+«Santa Fe» va debajo de su punto; «Rosario» también bajó, porque a la izquierda pisaba el halo de Carcarañá; «RN 9» y
+«RN 34» van en el medio de su tramo más largo.
+
+---
+
+## Lo que cambió el 5 de octubre — mirá esto primero
+
+Los 5 puntos de la tanda del 05/10, en la rama `web-ajustes-2026-10-05`. Leé antes la primera sección de
+`C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`: sacar el formulario de TelePASE choca con el
+contrato.
+
+**El 0800 444 7777** (puntos 1 y 4). Del 06/10 al 13/10 estuvo en su lugar el de repuesto, que terminaba en 2224,
+porque este no funcionaba; el 13/10 Covicen pidió volver a este y dar de baja el otro. Si en algún lado aparece el de
+repuesto, está mal. Dónde mirarlo:
+- **Arriba de todo, en la compu**: la barra fina de arriba lleva el 0800 a la izquierda, en una píldora azul, y
+  TelePASE y Autogestión a la derecha, como estaban. En la fila del logo y el menú no entraba: a 1024 px de ancho ya
+  quedaban 21 px libres. Mirá que la píldora del 0800 tenga la misma altura que las de la derecha y el texto centrado,
+  en los dos temas.
+- **En el celular**: abrí el menú (las tres rayitas). Primero va el 0800, a lo ancho, y abajo TelePASE y Autogestión.
+  Tocalo: tiene que ofrecer llamar al 08004447777.
+- **El mapa interactivo** (home y El tramo): tocá una estación. Abajo de la tarjeta, al lado del 140, está el 0800.
+  También en la página de cada estación.
+- **El pie**: en la columna Contacto, «Atención al usuario 0800 444 7777» en negrita, debajo de «Emergencias 140»
+  (solo el número es enlace: entero no entraba en la columna y la página se corría de costado entre 1024 y 1200 px de
+  ancho, lo encontró la revisión); y en la fila de logos, la píldora azul del 0800 al lado del botón rojo del 140.
+- **La home**: el bloque «¿Consultas, reclamos, propuestas?» suma «o llamanos gratis al 0800 444 7777» y un botón con el
+  número al lado de «Ir al formulario».
+- **Contacto**: en la columna izquierda, debajo de la tarjeta del 140, una tarjeta «Atención al usuario» con el
+  número grande. El paso 1 de «Cuatro pasos.» dice «Formulario, correo o la línea 0800 444 7777».
+- **La tabla de canales** (Contacto y Emergencias, lo que marcaste): la fila «Línea gratuita 0800» ya trae el número
+  para tocar, en vez de «Se habilita con la toma de posesión».
+- **Textos**: la pregunta frecuente «¿Cómo hago un reclamo o una consulta?», la tarjeta Atención al usuario de
+  Servicios, Privacidad (en «Tus derechos»), el final de la Guía de trámites («¿Tenés una consulta sobre un trámite?»),
+  el aviso que aparece si el formulario del CRM no carga, y la novedad «Qué cambia el 7 de octubre», que suma una
+  sección «Atención al usuario».
+- **La portada de «Próximamente»** (lo que estaba en producción hasta el 7/10): debajo del 140 aparece «Atención al
+  usuario: 0800 444 7777».
+- El número nunca se parte en dos renglones: va con espacios que no se cortan.
+
+**La póliza de responsabilidad civil** (punto 2). El PDF que mandaste se publica tal cual, en
+`/documentos/poliza-responsabilidad-civil.pdf`.
+- **Transparencia volvió**, solo con la póliza: el título de la página es «Póliza de responsabilidad civil.», con la
+  aseguradora (Seguros Galicia S.A.), el número (000277475), la vigencia (del 5 de octubre de 2026 al 5 de octubre de
+  2027) y el botón «Ver la póliza (PDF)», que la abre en otra pestaña. La normativa sigue escondida. Vuelve a estar en
+  el menú «Nosotros» y en la columna Empresa del pie.
+- **En producción, mientras siga la portada de «Próximamente»**, la póliza no se ve enlazada en ningún lado, pero su
+  dirección (`/documentos/poliza-responsabilidad-civil.pdf`) anda.
+- **En el pie**, en la línea de abajo de todo: «COVICEN S.A. · CUIT 30-71959948-2 · Adjudicación… Privacidad · Póliza
+  de responsabilidad civil · Boletín Oficial». El CUIT sale de la póliza.
+
+**Emergencias** (punto 3): ya no está la tarjeta «Grúa y remolque para despejar la calzada: gratis y con tiempos
+comprometidos». El servicio sigue en Servicios, en la home y en la pregunta frecuente del desperfecto, con los mismos
+tiempos: si querías sacarlo de todos lados, avisá.
+
+**Contacto sin el formulario de TelePASE** (punto 5): la sección «Consultas sobre tu TelePASE.» ya no está; el único
+formulario es el del CRM. Con ella se fue también «Las respuestas a TelePASE tienen prioridad».
+
+---
+
+## Lo que cambió el 2 de octubre, segunda tanda — mirá esto primero
+
+Los 12 puntos de la segunda tanda de la reunión con el gerente, en la rama `web-ajustes-2026-10-02b`. Leé antes la
+primera sección de `C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`: tres de estos pedidos chocan con
+el contrato (plazos de respuesta, Transparencia y el formulario de trámites).
+
+**Arriba de todo**
+- **El logo va en una píldora** (punto 1), como las opciones del menú: ya no se pierde cuando pasa algo oscuro por
+  detrás. Lo oscuro era la cinta de avisos: en tema claro, bajá apenas en cualquier página interna (Servicios,
+  Tarifas; los primeros centímetros de scroll, cuando el encabezado todavía es transparente) y mirá el logo mientras la
+  cinta pasa por atrás. En la home la cinta va abajo de la foto y no pasa por ahí.
+- **TelePASE y Autogestión con el texto centrado** (lo que marcaste hoy). A tamaño normal de pantalla el navegador
+  redondeaba la línea del texto y quedaba 2 píxeles alto; ahora se centra por la altura de las mayúsculas.
+
+**Pie de página**
+- Abajo dice **«COVICEN S.A. ·»** donde decía «Sociedad en formación» (punto 2). El bloque «Datos registrales» va a
+  aparecer solo cuando carguemos el CUIT y el domicilio (está en pendientes).
+- En la columna Empresa **ya no están Políticas ni Transparencia** (punto 6): lo que se esconde sale también del pie.
+  Tampoco están en el menú «Nosotros».
+
+**Páginas escondidas** (puntos 3 y 4): **Políticas** y **Transparencia** no se generan; si alguien entra por la
+dirección, ve la página de «no encontrada». En Transparencia se eliminó además la sección «Datos registrales» (punto
+5), para cuando vuelva. La novedad «Qué cuadro tarifario rige» ya no enlaza a Transparencia.
+
+**Plazos de respuesta** (punto 7, elegiste sacarlos en todos lados): ningún texto dice ya en cuánto tiempo se
+responde. Mirá la pregunta «¿Cómo hago un reclamo o una consulta?», la tarjeta Atención al usuario de Servicios (ya no
+dice «el 0800 te confirma en el momento») y Contacto: el paso 2 dice «Te confirmamos que lo recibimos, con un número
+para seguirlo» y el 3 «Con fundamento, por el mismo medio por el que nos escribiste». Debajo de los formularios ya no va
+la línea de los plazos, y el título de los pasos es «Cuatro pasos.».
+
+**Proveedores** (punto 8): el formulario es el de Bitrix, el mismo de Contacto. Como en Contacto, la página se carga
+entera aunque llegues desde el menú. Lo que hay que pedirle a PREVI para separar a los proveedores está en pendientes.
+
+**El tramo** (punto 9): sin el bloque «Estado de la traza», sin el cartel de datos de ejemplo y sin los marcadores de
+cortes en el mapa. Vuelve cuando haya información real.
+
+**El enlace «Servicios al usuario: gratuitos y con costo»** (punto 10) ya se había cambiado en la primera tanda: dice
+«Servicios al usuario».
+
+**Guía de trámites** (punto 11): sin «Iniciá tu trámite». Al final queda «¿Tenés una consulta sobre un trámite?» con
+un botón a Contacto.
+
+**Seguridad vial** (punto 12): la tarjeta Velocidad dice «Respetá las velocidades indicadas, y andá más despacio con
+lluvia, viento o niebla». Sin números.
+
+---
+
+## Lo que cambió el 2 de octubre
+
+Los 14 puntos de la revisión con el gerente del 1 de octubre, en la rama `web-ajustes-2026-10-02`. Lo escondido se
+vuelve a mostrar con un `true` en `C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`. Antes de mirar, leé la primera
+sección de `C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`: dos de los pedidos chocan con el pliego.
+
+**Quiénes somos**
+- **Texto de arriba nuevo** (punto 1), con Corresur de ejemplo: arranca por para qué sirve una ruta («una ruta es mucho
+  más que asfalto…»), sigue con las tres empresas y cierra con el compromiso con quien viaja y con los pueblos del
+  camino. Sin la resolución ni «la sociedad está en formación». No comparte frases con Corresur ni con CVSA (lo controla
+  `pnpm originalidad`: ninguna secuencia de 6 palabras en común). Fijate si el tono le gusta al gerente: es más cálido que
+  el resto del sitio, a propósito, como el de Corresur.
+- **No están** «Qué asume Covicen» ni «Quién nos controla» (puntos 2 y 3). Ojo: la captura del punto 2 era la misma
+  que la del 1; por el orden de las capturas tomé la sección que está entre las dos, «Qué asume Covicen». Si era otra,
+  es un cambio de una línea.
+- **Las tres tarjetas del consorcio** (punto 4) llevan a la web de cada empresa, en otra pestaña. Al pasar el mouse, la
+  flechita de la esquina se corre; abajo dice la dirección (afema.com.ar, pablofederico.com.ar, guidomogetta.com.ar).
+
+**Servicios**
+- **Bajada nueva** (punto 7): «Estos son los servicios que tenés a disposición cuando viajás por nuestras rutas.»
+- **Sin** «Servicios que se cobran» (punto 5), sin las tarjetas «Sanitarios públicos» y «TelePASE sin costo» (punto
+  6) y sin la tabla de canales (punto 9). «Móviles de seguridad vial» ya no dice el alcance (punto 6).
+- **«TelePASE sin costo» quedó «a confirmar»**, así que el «gratis» se fue de todos lados, no solo de Servicios:
+  Medios de pago (la bajada, el título de la sección TelePASE, que ahora es «En todas las estaciones.», y «retirás el
+  dispositivo sin cargo»), la home (la tarjeta de Medios de pago) y la pregunta frecuente «¿Puedo pagar con TelePASE?
+  ¿Es obligatorio?», que no aparece hasta que se confirme, y la Guía de trámites (el alta de TelePASE ya no dice «no
+  tienen costo» ni «sin cargo», y la bajada pasó de «Todos son gratuitos.» a «Las exenciones son gratuitas.»). En la
+  home, la tarjeta de Seguridad vial tampoco dice ya
+  «en RN 9 y RN 19» (era el mismo dato del alcance de los móviles).
+
+**La tabla de canales** (puntos 8 y 9): en Servicios se escondió, pero la misma tabla está en **Contacto** y en
+**Emergencias**, y ahí se ven los cambios del punto 8.
+- Sin las columnas Acuse y Respuesta, ni la nota de la prórroga de los plazos.
+- **Correo de atención al usuario** con la dirección `atencionalusuario@covicen.com.ar`, que abre el correo.
+- **Sin la fila de WhatsApp** («falta solicitar»); también se sacó de la tarjeta Atención al usuario y del primer paso de
+  cómo hacer un reclamo en Contacto.
+- El 0800 sigue diciendo que se habilita con la toma de posesión (falta el número).
+- En Emergencias el título pasó a «Canales de atención» y la tabla ahora muestra también la disponibilidad.
+- **En tema oscuro la tabla ya no es transparente**: tiene fondo propio (pasaba en todas las tablas sobre la grilla).
+
+**Tarifas**
+- Sin la línea «Resolución 248/2026 de la Dirección Nacional de Vialidad. Ver en el Boletín Oficial.» debajo de las
+  etiquetas (punto 11). La resolución sigue a la derecha de cada tabla.
+- Sin el recuadro «Estaciones sin habilitar» (punto 12).
+- **Quiénes no pagan** (punto 13): sin la bajada, sin «según el reglamento de Vialidad Nacional», y las dos tarjetas
+  (Malvinas y discapacidad) abajo de la lista, una al lado de la otra. Miralo en celular: ahí van una abajo de la otra.
+
+**El tramo**: el título es «Nuestras rutas.» (punto 14). Los números de las rutas siguen en el texto de abajo. El
+enlace del final dice «Servicios al usuario» (decía «…: gratuitos y con costo», y los que se cobran se escondieron).
+
+**TelePASE y Autogestión arriba de todo** (punto 10). Miralos en los dos temas y pasá el mouse:
+- **TelePASE**: píldora verde con el verde de la marca TelePASE (el claro en tema oscuro, el oscuro en tema claro), el
+  nombre escrito como lo escribe TelePASE («Tele» liviano, «PASE» fuerte), un ícono en una ficha y una flechita que
+  avisa que sale del sitio. Al pasar el mouse sube un poquito, se ilumina con su verde y la flecha se corre.
+- **Autogestión**: misma forma, sobre fondo de tarjeta con un borde degradé del celeste del sitio.
+- **En el celular** aparecen igual, uno al lado del otro, arriba de todo en el menú.
+- Si te parece que piden más (un brillo que cruza, otro ícono, más grandes), decime: es un solo lugar,
+  `C:\Users\Villex\dev\Covicen\src\styles\global.css`, «Accesos destacados».
+
+---
+
+## Lo que cambió el 1 de octubre
+
+Tres pedidos del equipo, en la rama `web-ajustes-2026-10-01`. Todo se ve en el sitio de revisión
+(https://juliv08.github.io/Covicen/) **recién cuando se publique** (ver el punto 3). Ya verificado por la máquina:
+`astro check` sin errores (189 archivos), **588 tests**, `verificar` 27 páginas sin fallos (JS 7,5 KB gz) y la portada
+de producción sin fallos; y dos pasadas de revisión aparte. Lo que sigue es lo que hay que mirar con los ojos.
+
+**1 · El formulario de reclamos de Contacto es el de Bitrix24 (PREVI).** En `/contacto/`:
+- A la derecha, donde estaba nuestro formulario, aparece el de Bitrix. Hoy viene **en dos pasos** (Página 1: Nombre y
+  Apellido; Página 2: E-mail, Teléfono y la casilla de aceptación): **así lo armó PREVI**, no es un error de la web
+  (ver abajo qué pedirles).
+- Miralo en **tema claro y en oscuro**: tiene que tomar los colores y la letra del sitio (fondo de la página, campos
+  como los nuestros, botón con el azul de Covicen), no quedar como un recuadro blanco pegado. Si algo se ve fuera de
+  lugar, mandame una captura: es lo único de esta tanda que no se pudo controlar sin mirarlo.
+- Tocá el enlace de la casilla de aceptación: se abre una ventana con el texto. También tiene que verse con los
+  colores del sitio. Y después de enviar, el cartel de «enviado» (o el de error) tiene que ir sobre el fondo de las
+  tarjetas, no sobre un verde o un blanco que encandile en el tema oscuro.
+- **Entrá a Contacto desde otra página, andá a Tarifas y volvé con el menú** (y también con el botón «atrás»): el
+  formulario tiene que estar siempre. A Contacto se entra con la página entera a propósito, porque el formulario de
+  Bitrix no se vuelve a armar si se llega sin recargar; vas a notar que esa página carga como una página nueva.
+- Debajo del formulario: los plazos (acuse en 24 horas, respuesta en 5 días hábiles) y el aviso de que los datos van
+  al sistema de atención de Covicen (Bitrix24), con enlace a Privacidad.
+- **Si mandás uno de prueba, avisale a PREVI**: llega al CRM de verdad.
+- **Con un bloqueador de anuncios** (uBlock y parecidos) puede que no cargue: a los 4 segundos aparece un recuadro
+  punteado que lo explica y da el 140. Sin bloqueador, ese recuadro no se tiene que ver nunca.
+- El de **TelePASE**, más abajo en la misma página, **sigue siendo el nuestro**, apagado con su aviso.
+- **Privacidad** tiene una sección nueva, «Formulario de Contacto»: cuenta que es Bitrix24 y qué anota en el
+  navegador (la página, desde dónde llegaste, un identificador, y tu nombre, apellido, e-mail y teléfono para
+  completarlos la próxima vez). Antes decía que el sitio no usaba nada de seguimiento, y con el formulario de Bitrix
+  eso dejó de ser cierto en esa página.
+- **La home**: el bloque «¿Consultas, reclamos, propuestas?» decía «Escribinos por WhatsApp: completá el formulario…
+  y el motivo». Ahora: «Dejanos tu consulta, reclamo o sugerencia en el formulario de Contacto…».
+- **El aviso de los formularios apagados** (TelePASE, Trámites, Proveedores) pasó de «Los formularios se habilitan…» a
+  «Este formulario se habilita…»: en Contacto quedaba debajo de uno que ya anda.
+- **Lo que hay que pedirle a PREVI** (falta el campo para escribir el reclamo, la casilla de aceptación muestra un
+  texto de ejemplo de Bitrix en inglés y viene tildada, y el acuse con número de gestión), con las preguntas
+  redactadas: `C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`, primera sección.
+
+**2 · En la vía se paga solo con medios electrónicos, con POS.**
+- **Medios de pago**: la tercera tarjeta ahora es «Pago electrónico en la vía — Solo con medios electrónicos, en las
+  terminales POS de las vías habilitadas…». Decía «Contado en la vía — Efectivo o medios electrónicos».
+- **Tarifas** y la página de cada **estación**: la columna de la derecha de la tabla se llama «Pago electrónico en la
+  vía» (decía «Pago electrónico o manual»).
+- La palabra «efectivo» no está en ninguna página, y el build ahora falla si alguien la vuelve a escribir.
+
+**3 · El 5 de octubre que seguía apareciendo.** En el código no quedaba ninguno: se había cambiado el 28/09 y
+**producción ya dice 7** (www.covicen.com.ar: «Operación desde el 7 de octubre de 2026»). Lo que el equipo ve con el
+5 es **el sitio de revisión de GitHub Pages, que nunca recibió ese cambio**: se publicó en producción y no en Pages.
+Se arregla publicando esta rama en Pages. Lo único que quedaba con el 5 eran datos de prueba internos y tres
+renglones de esta guía, y se pasaron al 7.
+
+**De paso:** dos tests fallaban según la fecha. Uno prohibía «de octubre» en la home y el pie dice «Última
+actualización: 1 de octubre»: falló hoy. El otro, el de la portada de producción, prohibía «5 de octubre», y «15 de
+octubre» lo contiene: iba a fallar el 5, el 15 y el 25, y con él el build de producción, que corre los tests. Los dos
+miran ahora el contenido, no la fecha del pie.
+
+---
+
+## Lo que cambió el 28 de septiembre — mirá esto primero
+
+**El inicio de actividades es el 7 de octubre, no el 5.** Cambió el dato
+(`C:\Users\Villex\dev\Covicen\src\content\empresa.json`, `concesion.inicioOperacion`) y todo lo que tenía la fecha
+escrita a mano. Dónde mirarlo:
+- **La portada de «Próximamente»** (la que está en producción): «Operación desde el 7 de octubre de 2026».
+- **Quiénes somos** y **Transparencia** (la póliza «se publica con la toma de posesión, el 7 de octubre»): salen del dato.
+- **El aviso de los formularios apagados** (Contacto, Trámites, Proveedores) y **la tabla de canales** (Servicios,
+  Contacto, Emergencias): «Se habilita con la toma de posesión, el 7 de octubre de 2026».
+- **Preguntas frecuentes**: «¿Desde cuándo opera?» y «¿Qué tarifa se cobra desde el 7 de octubre?».
+- **Novedades**: las tres que nombraban la fecha. La de «Qué cambia el 7 de octubre…» cambió también de dirección
+  (`/novedades/2026-08-26-que-cambia-el-7-de-octubre/`).
+
+---
+
+## Lo que cambió el 25 de septiembre — mirá esto primero
+
+Dos cambios que pidió el equipo sobre la marcha, en la misma rama `web-ajustes-2026-09-24` (sin push).
+
+**1 · «Mi cuenta» pasó a llamarse «Autogestión»** y abre https://www.telepeajeplus.com/Login (la web de autogestión de
+Telepeaje Plus) en otra pestaña.
+- Arriba del sitio (escritorio): TelePASE · **Autogestión** · sol/luna. En el celular, lo mismo dentro del menú.
+- **Medios de pago**: vuelve la sección, ahora «Autogestión» («Tu cuenta, en línea.»), con el botón «Entrar a
+  Autogestión». El texto dice solo lo que Telepeaje Plus publica que se hace ahí (gestionar la cuenta y cambiar la forma
+  de pago); ya no promete pasadas, facturas, deuda ni comprobantes. Tocá el botón y fijate que abra el ingreso de
+  Telepeaje Plus.
+- **Vuelve el formulario de consultas de TelePASE en Contacto**: la condición para esconderlo era «hasta que definamos
+  si va a haber oficina virtual», y ya se definió. Sigue apagado, como todos, hasta que haya WhatsApp o correo cargado.
+
+**2 · Logos oficiales en el pie**, en lugar de los nombres. La fila de abajo del pie quedó: **Presidencia de la
+Nación · Secretaría de Transporte · Vialidad Nacional · TelePASE** y el botón amarillo del 140. De dónde sale cada logo:
+`C:\Users\Villex\dev\Covicen\src\assets\institucional\README.md`.
+- Mirá el pie en los **dos temas**: los logos tienen que verse blancos en el oscuro y azul marino en el claro, nítidos
+  (sin bordes serruchados), con rayitas finas entre uno y otro en la compu, y reaccionar al pasar el
+  mouse (se aclaran un poco; no cambian de color, porque el manual oficial los admite solo en azul, negro o blanco).
+  Tocá cada uno: abren su sitio en otra pestaña.
+- En el **celular** la fila se parte en renglones y no lleva rayitas. Fijate que no quede ningún logo cortado.
+- **Transporte** dice «Secretaría de Transporte · Ministerio de Economía», no «Transporte · República Argentina» como
+  el ejemplo: es la versión del manual oficial. La del ejemplo no aparece en ninguna fuente oficial.
+- **Red Federal de Concesiones** no tiene logo oficial, así que salió de la fila y quedó como enlace en el texto de
+  arriba del pie: «Concesionaria del Tramo Centro de la *Red Federal de Concesiones*».
+- **Data Fiscal** no está: el QR lo genera ARCA con el CUIT, y la sociedad todavía no lo tiene. Cuando exista, se carga
+  en `C:\Users\Villex\dev\Covicen\public\qr-afip.png` y aparece solo en esta fila, después de TelePASE.
+- **Imprimí cualquier página** (Ctrl+P): en la vista previa, los logos del pie tienen que salir en negro, no como huecos.
+
+---
+
+## Lo que cambió el 24 de septiembre — mirá esto primero
+
+Son las 14 correcciones que mandó el equipo. Están en la rama `web-ajustes-2026-09-24`, **sin push**, un commit por
+tanda: para verlo, `git switch web-ajustes-2026-09-24` y `pnpm dev`. El formulario de TelePASE se sacó ese día y
+**volvió el 25/09** (ver arriba): el pliego lo exige desde la toma de posesión, el 7/10.
+
+**En todo el sitio: sin números de sección.** El «01», «02» que iba a la izquierda de cada título se fue de las nueve
+páginas que lo tenían. Mirá que los títulos queden alineados con el contenido de abajo (antes entraban corridos hacia
+la derecha) y que no haya quedado un número suelto en ningún lado.
+
+**Portada `/`**
+- Título: «Viajá por nuestras rutas en el centro del país.» Debajo, el párrafo con los **679 km** y sin la fecha de
+  inicio. Tampoco está la pastilla de la cuenta regresiva, ni el aviso de la cinta de abajo del hero que anunciaba
+  desde cuándo opera Covicen el Tramo Centro: las tres cosas anunciaban la misma fecha sobre la foto. En la
+  cinta quedan los avisos del 140 y del cuadro tarifario.
+- Mirá el título en **celular**: es más corto que el anterior, así que el hero puede verse con más aire. Revisá que
+  se lea bien sobre la foto en los dos temas (de día y de noche).
+- «Novedades.» es ahora el título de esa sección, sin «02» ni «Lo último». La tercera tarjeta dice «…por las rutas
+  9, 19 y 34».
+- El cierre de contacto: «Escribinos por WhatsApp: completá el formulario con tus datos y el motivo del contacto.»
+
+**Tarifas `/tarifas/`**
+- La bajada es el texto exacto del equipo. **No está el recuadro grande del $1.500.**
+- Donde estaba el recuadro, la vigencia y la resolución ocupan todo el ancho, con «Imprimir el cuadro» a la derecha.
+  Mirá cómo queda en escritorio y en celular (en celular, el botón va abajo). Debajo, «Exenciones» pasó a llevar la
+  grilla de fondo: con las secciones escondidas desde el 20/09 quedaban dos fondos lisos seguidos. Ahora el fondo se
+  alterna solo según qué se ve, acá, en Medios de pago y en Contacto.
+- La frase de las estaciones está **una sola vez**, en la bajada: no se repite en el bloque de vigencia y resolución.
+- Debajo de cada tabla **no hay nada**: ni las tres notas ni «Publicado el… Fuente…». El enlace al Boletín Oficial
+  sigue arriba.
+- Probá **Imprimir**: que el cuadro salga bien sin el recuadro.
+- **Páginas de estación** (`/peajes/carcarana/`, por ejemplo): como debajo de la tabla ya no va nada, el enlace a la
+  resolución en el Boletín Oficial pasó **arriba de la tabla**, al final de la línea de vigencia. Tocalo y fijate que
+  abra el Boletín Oficial.
+
+**El tramo `/el-tramo/`**
+- Título «Rutas nacionales 9, 19 y 34.», con una bajada que ahora nombra las tres rutas (la anterior no nombraba la
+  RN 34).
+- «Rutas y longitudes.» y «Estaciones de peaje.» son los títulos de los dos bloques, sin bajada y sin la palabrita de
+  arriba. Tocá las dos anclas de la barra pegada: el título tiene que quedar visible, no tapado por el header.
+- Debajo de las tarjetas de estaciones ya no están las tres notas (tampoco la de San Vicente, que sigue en la novedad
+  «Qué cambia el 7 de octubre…» y en las preguntas frecuentes).
+
+**Servicios `/servicios/`**: ya no está la sección «Más adelante» (Oficina virtual y Seguimiento de reclamos).
+
+**Contacto `/contacto/`**
+- **No está el formulario de TelePASE** (lo esconde `publicado.formularioTelepase`; **volvió el 25/09**). Tampoco la tarjeta «Seguimiento
+  de reclamos · Próximamente». «Cómo hacer un reclamo» pasó a llevar la grilla de fondo, para que las secciones sigan
+  alternando.
+- **El formulario de reclamos ya no se ve transparente.** Sigue apagado (no hay WhatsApp ni correo cargado), pero
+  ahora con los campos sólidos, borde punteado y etiquetas en gris; el botón «Enviar», gris sólido. Mirá esto en los
+  **dos temas**, y también en Guía de trámites y Proveedores, que usan el mismo formulario.
+
+**«Mi cuenta» (la oficina virtual) no aparece en ningún lado** mientras no se cargue su dirección (**el 25/09 se cargó y pasó a llamarse «Autogestión»**): ni arriba del sitio
+(escritorio), ni en el menú del celular, ni en Medios de pago. Antes llevaba a una sección que la prometía «con la
+toma de posesión».
+
+**Novedades `/novedades/`**: debajo del título está la bajada nueva («Conocé las principales novedades, avances y
+acciones…»).
+
+**Lo que no se tocó a propósito:** las otras menciones a la fecha de inicio (el aviso de los formularios apagados, la tabla
+de canales, las preguntas frecuentes y las novedades), porque siguen siendo ciertas; y los otros «Próximamente»
+(Proveedores y Políticas), que nadie marcó y tienen información útil.
+
+---
+
+## Lo que cambió el 20 de septiembre
 
 Es la tanda que salió de la call con el gerente. Está en la rama `web-ajustes-2026-09-20`, **sin push**: para verlo,
 `git switch web-ajustes-2026-09-20` y `pnpm dev`.
@@ -51,7 +530,7 @@ Nada más.
 - El texto de la sección El tramo pasó a ser el mismo que el gerente dio por perfecto en la página El tramo.
 - **El título y el párrafo grandes** de la portada son nuevos: «679 kilómetros de rutas nacionales, bajo una
   misma responsabilidad», con el párrafo institucional debajo. Los elegiste vos con tu equipo sobre tres
-  opciones. Los 679 km y la fecha del 5 de octubre salen del dato, no escritos a mano.
+  opciones. Los 679 km y la fecha de inicio salen del dato, no escritos a mano.
 
 ### 3 · Obras: escondida, no borrada
 
@@ -139,7 +618,7 @@ Centro.» · «Qué te da el peaje, y qué se cobra aparte.» → «Servicios al
 ### Cómo volver a mostrar algo que está escondido
 
 Abrís **`C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`**, buscás la línea de la sección y cambiás su `false` por
-`true`. Nada más: la sección vuelve entera y los números de sección se reacomodan solos. Cuál es cuál y qué dato hace
+`true`. Nada más: la sección vuelve entera (desde el 24/09 las secciones no llevan número, así que no hay nada que reacomodar; el fondo liso o con grilla se alterna solo). Cuál es cuál y qué dato hace
 falta antes está en `C:\Users\Villex\dev\Covicen\docs\pendientes-de-confirmacion.md`.
 
 ## La portada de «Próximamente» (19 de septiembre) — mirá esto primero
@@ -212,13 +691,13 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 ## Todas las páginas
 
 **Cinta de avisos** (reemplaza a los anuncios que rotaban arriba del navbar)
-- Los avisos de `src/content/avisos.json` (hoy tres: el de la toma de posesión, que **vence el 5 de octubre** y desaparece solo en el build de ese día; emergencias 140; tarifas) **desfilan en una sola línea continua**, con la etiqueta amarilla "AVISOS" fija a la izquierda. Cada aviso es un link a su página.
+- Los avisos de `src/content/avisos.json` (hoy dos: emergencias 140 y tarifas; el de la toma de posesión se sacó el 24/09) **desfilan en una sola línea continua**, con la etiqueta amarilla "AVISOS" fija a la izquierda. Cada aviso es un link a su página.
 - **Dónde está**: en la home, apoyada en el borde de abajo del hero (como en la referencia de Corresur que me pasaste). En el resto de las páginas, arriba del contenido, abajo del header.
 - **Cómo se frena**: con el mouse encima, con el foco adentro (si vas con Tab) y con el botón de pausa de la derecha, que es el que manda: una vez pausado **no rearranca solo**.
 - El contenido sale del mismo archivo de siempre, así que el día que exista el backoffice se edita desde ahí sin tocar la web.
 
 **Barra superior (40 px, solo en escritorio)**
-- Quedó con **TelePASE** (abre telepase.com.ar en otra pestaña), **Mi cuenta** (hoy lleva a Medios de pago › Mi cuenta; cuando exista la URL de la oficina virtual, la abre en otra pestaña) y el **sol/luna**.
+- Quedó con **TelePASE** (abre telepase.com.ar en otra pestaña), **Autogestión** (desde el 25/09; abre la web de autogestión de Telepeaje Plus en otra pestaña) y el **sol/luna**.
 - **En el celular ya no existe**: esos tres accesos viven en el menú y, sin los avisos, la barra quedaba vacía comiendo 40 px de pantalla. El header pasa a medir 72 px en vez de 112.
 
 **Header (72 px)**
@@ -239,8 +718,8 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 - Columna marca: isotipo + COVICEN, texto "Concesionaria del Tramo Centro… RN 9 · RN 19 · RN 34 · Córdoba y Santa Fe". La fila de redes **no aparece** (no hay cuentas cargadas).
 - Usuarios (Tarifas, Medios de pago, Emergencias, Asistencia en ruta, Guía de trámites, Seguridad vial, Preguntas frecuentes) y Empresa (Quiénes somos, Novedades, Políticas, Transparencia). Los links del footer no van subrayados hasta el hover (son menú). **Desde el 20/09** la columna Empresa perdió Obras y Trabajá con nosotros; Proveedores sigue en la columna de Contacto y además subió al menú de arriba.
 - Contacto: "Emergencias 140" (llama), Formulario de contacto, Proveedores. **Ocultos** hasta tener el dato: 0800, correo de atención al usuario, WhatsApp.
-- **Datos registrales: no aparecen** (razón social, CUIT y domicilio son `null`). Cuando existan los tres, aparece la columna y, si además está `public/qr-afip.png`, el QR de Data Fiscal enlazando a la constancia.
-- **Fila institucional**: Vialidad Nacional · Secretaría de Transporte · Presidencia de la Nación · Red Federal de Concesiones · TelePASE, hoy como rótulos de texto (cuando tengas los SVG oficiales monocromos en `src/assets/institucional/<id>.svg` se reemplazan solos), más el botón amarillo 140. Todos abren en otra pestaña.
+- **Datos registrales: no aparecen** (razón social, CUIT y domicilio son `null`). Cuando existan los tres, aparece la columna. El QR de Data Fiscal, desde el 25/09, va en la fila de logos institucionales (no en esta columna) y aparece con el CUIT cargado más el archivo `public/qr-afip.png`, enlazando a la constancia.
+- **Fila institucional** (desde el 25/09, con logos oficiales): Presidencia de la Nación · Secretaría de Transporte · Vialidad Nacional · TelePASE, más el botón amarillo 140. Todos abren en otra pestaña. La Red Federal de Concesiones, que no tiene logo, quedó como enlace en el texto del pie.
 - Línea inferior: "Sociedad en formación · Adjudicación: Resolución 1379/2026 del Ministerio de Economía. Privacidad · Boletín Oficial" y **"Última actualización: <fecha y hora>"**. Es la fecha y hora **del build**, en hora argentina, no la de la visita: en local es el momento en que corriste `pnpm dev`/`build`; en Pages, el último deploy (el workflow reconstruye a diario a las 03:00, así que nunca tiene más de un día).
 
 **Formularios (todos los del sitio)**
@@ -259,9 +738,9 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Home `/`
 
-> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió la portada: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. Las tandas del 20/09 y del 24/09 cambiaron la portada: leé primero «Lo que cambió el 24 de septiembre» y «Lo que cambió el 20 de septiembre», arriba de todo.
 
-- **Hero fijo** (cambió el 15/09/2026, pedido tuyo): volanta, el título "Las rutas del centro del país tienen quien responda", el párrafo con "679,03 km sobre RN 9, RN 19, RN 34", los botones Ver tarifas / Conocer el tramo y la cuenta regresiva al 5 de octubre. **No rota nada**: el carrusel que alternaba esto con las novedades destacadas se sacó. Las destacadas siguen en la home, en la sección Novedades. **No hay popup** de bienvenida a propósito.
+- **Hero fijo** (cambió el 15/09/2026, pedido tuyo): volanta, el título "Las rutas del centro del país tienen quien responda", el párrafo con "679,03 km sobre RN 9, RN 19, RN 34", los botones Ver tarifas / Conocer el tramo y la cuenta regresiva a la fecha de inicio. **No rota nada**: el carrusel que alternaba esto con las novedades destacadas se sacó. Las destacadas siguen en la home, en la sección Novedades. **No hay popup** de bienvenida a propósito.
 - Lo que hay que mirar es justamente que **no se mueva**: quedate medio minuto en la home y lo único que se tiene que mover es la foto (avance lento) y la cuenta regresiva.
 - Abajo del todo del hero, pegada al borde, está la **cinta de avisos**. Fijate que no le tape nada al texto ni a la cuenta regresiva, ni en la compu ni en el celular.
 - **Foto del hero, una por tema** (nueva, 15/09/2026): la nocturna en tema oscuro y la diurna en tema claro, mismo encuadre. Parallax 2.5D en desktop (movete con el mouse); en el celular, la foto con un zoom lento.
@@ -283,7 +762,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Tarifas `/tarifas/`
 
-> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió tarifas: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. Las tandas del 20/09 y del 24/09 cambiaron tarifas: leé primero «Lo que cambió el 24 de septiembre» y «Lo que cambió el 20 de septiembre», arriba de todo.
 
 - Cabecera: ícono de auto, "Categoría 1 · …", **$ 1.500 al público, con IVA**, "$ 1.239,67 sin IVA · igual con TelePASE que con pago en la vía". Chips "Cuadro vigente" (verde) y "Desde el 26 de febrero de 2026". "Resolución 248/2026 de la Dirección Nacional de Vialidad. Ver en el Boletín Oficial." "Rige el mismo cuadro en Carcarañá, James Craik, Franck." Botón **Imprimir el cuadro**.
 - **Imprimir**: tocá el botón (o Ctrl+P). En la vista previa: papel blanco, sin header ni barras, el encabezado "Covicen · <sitio> · impreso el <hoy>", las **tres tablas completas** (sin scroll horizontal, con todas las filas), los enlaces externos con la URL entre paréntesis, sin botones. Cerrá sin imprimir.
@@ -299,7 +778,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## El tramo `/el-tramo/`
 
-> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió el tramo: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. Las tandas del 20/09 y del 24/09 cambiaron el tramo: leé primero «Lo que cambió el 24 de septiembre» y «Lo que cambió el 20 de septiembre», arriba de todo.
 
 - Título "679 kilómetros de centro." y, debajo, la **sub-navegación pegada** bajo el header (Rutas y longitudes · Estaciones de peaje · Cuadros tarifarios · Áreas de descanso y servicios); en el celular se desliza de costado.
 - **Cartel gris arriba del mapa: "DATOS DE EJEMPLO: EL MÓDULO SE ACTIVA CON LA OPERACIÓN".** Es lo más importante de esta pantalla: abajo hay un marcador rojo sobre la RN 34 que anuncia un **corte total por vuelco de camión** y ese corte **es inventado**. Mientras el cartel esté, nadie lo puede leer como real; cuando Covicen cargue el estado de verdad (`ejemplo: false`), el cartel se va solo.
@@ -315,7 +794,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Páginas de estación `/peajes/<slug>/`
 
-> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió las páginas de estación: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. Las tandas del 20/09 y del 24/09 cambiaron las páginas de estación: leé primero «Lo que cambió el 24 de septiembre» y «Lo que cambió el 20 de septiembre», arriba de todo.
 
 - **`/peajes/carcarana/`** (operativa): título "Peaje Carcarañá", eyebrow "RN 9 · km 340", intro "Carcarañá, Santa Fe. Operativa."; a la izquierda la tarjeta completa (10 vías, ambos sentidos, servicios, "Pedir asistencia", 140); a la derecha **su tabla de tarifas y el botón Imprimir**; abajo "Cómo pagar" y "Emergencias 140" (amarillo). Migas: Inicio › El tramo › Peaje Carcarañá. El título de la pestaña lleva la ubicación ("Peaje Carcarañá — RN 9 km 340 | Covicen").
 - **`/peajes/totoras/`** (próxima): chip amarillo "Próxima · Free Flow"; en vez de la tabla, el texto "Esta estación todavía no cobra: la habilita Vialidad Nacional cuando esté construida. Va a operar con Free Flow… con el mismo cuadro tarifario que Carcarañá"; sin botón Imprimir; la tarjeta dice "Cobra cuando Vialidad Nacional la habilite".
@@ -323,12 +802,12 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Servicios `/servicios/`
 
-> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió servicios: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. Las tandas del 20/09 y del 24/09 cambiaron servicios: leé primero «Lo que cambió el 24 de septiembre» y «Lo que cambió el 20 de septiembre», arriba de todo.
 
 - **Sin costo (01)**: seis tarjetas con chip verde "Gratis": Emergencias 140; Grúa y remolque para despejar la calzada (30 min livianos / 60 pesados); Móviles de seguridad vial; TelePASE sin costo; Atención al usuario; Sanitarios públicos. Cada una con alcance y tiempos. **Desde el 20/09 sin la anotación "Fuente: PETG art. …"**.
 - **Con costo (02)**: Mecánica general; Remolque más allá del punto gratuito (chip "Con costo").
-- **Canales y plazos (03)**: tabla completa Canal · Disponibilidad · Acuse · Respuesta, seis filas: Emergencias 140 (inmediato), Botón de asistencia en ruta, Formulario web (acuse 24 h, respuesta 5 días hábiles), Correo, Línea 0800, WhatsApp. Los tres últimos **no muestran un dato inventado**: dicen "Se habilita con la toma de posesión, el 5 de octubre de 2026".
-- **Más adelante (04)**: huecos "Oficina virtual" y "Seguimiento de reclamos" (Próximamente + alternativa real).
+- **Canales y plazos (03)**: tabla completa Canal · Disponibilidad · Acuse · Respuesta, seis filas: Emergencias 140 (inmediato), Botón de asistencia en ruta, Formulario web (acuse 24 h, respuesta 5 días hábiles), Correo, Línea 0800, WhatsApp. Los tres últimos **no muestran un dato inventado**: dicen "Se habilita con la toma de posesión, el 7 de octubre de 2026".
+- ~~Más adelante (04)~~: **se sacó el 24/09** por pedido del gerente.
 
 ## Emergencias `/emergencias/`
 
@@ -344,17 +823,17 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 - **Cómo probarlo en el celular**: hace falta HTTPS. Por `http://<IP>:4321` el celular no entrega la ubicación (regla de los navegadores): probá en la URL de Pages después de un deploy, o en la compu en `localhost` (Chrome/Edge piden permiso y dan la ubicación aproximada).
 - **Contanos qué pasó** — **este es el cambio grande de la pantalla y hay que mirarlo sí o sí**. Los campos **ahora se escriben** (antes estaban grises y bloqueados, o sea que la página pedía datos que no dejaba cargar). Probá: cargá **Qué pasó**, **Vehículo**, cuántas personas y un teléfono, apretá **"Obtener mi ubicación"** (en el celular, con el sitio en https) y después **"Armar el texto para copiar"**. Abajo tiene que aparecer un recuadro con el mensaje completo — asunto, cada campo, y las coordenadas con el link a Google Maps — y un cartelito que diga **"Texto copiado. Pegalo donde quieras o dictáselo al operador del 140."**. Pegalo en WhatsApp o en las notas para ver que salga bien.
 - Si el navegador **no deja copiar solo** (pasa en algunos Android viejos, o si la página no está en https), el cartel dice "No se pudo copiar solo: seleccioná el texto de acá abajo y copialo a mano". **El texto igual queda a la vista: eso es lo importante.**
-- **Ya no aparece "Respuesta inmediata"** al lado del botón: mientras no haya WhatsApp ni correo cargados nadie recibe el mensaje, así que prometer un plazo sería mentira. Cuando el 5 de octubre se cargue el número, vuelve solo junto con el botón de enviar por WhatsApp.
+- **Ya no aparece "Respuesta inmediata"** al lado del botón: mientras no haya WhatsApp ni correo cargados nadie recibe el mensaje, así que prometer un plazo sería mentira. Cuando se cargue el número, vuelve solo junto con el botón de enviar por WhatsApp.
 - Con el WhatsApp cargado, el botón pasa a "Pedir asistencia por WhatsApp" y abre `wa.me` con el mensaje armado (qué pasó, vehículo, personas, ubicación, referencia, teléfono).
 
 ## Medios de pago `/medios-de-pago/`
 
-> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió medios de pago: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. Las tandas del 20/09, del 24/09 y del 25/09 cambiaron medios de pago: leé primero «Lo que cambió el 25 de septiembre», «Lo que cambió el 24 de septiembre» y «Lo que cambió el 20 de septiembre», arriba de todo.
 
-- Tres modalidades del pliego con fuente: Prepago con TelePASE · Pospago con TelePASE · Contado en la vía (Carcarañá, James Craik, Franck).
+- Tres modalidades del pliego con fuente: Prepago con TelePASE · Pospago con TelePASE · Pago electrónico en la vía, con terminales POS (Carcarañá, James Craik, Franck). Desde el 01/10/2026 no menciona efectivo.
 - **TelePASE (01)**: "Gratis, y en todas las estaciones" (adhesión, dispositivo, colocación, renovación sin costo, PETG 50.5); "Cómo adherirte" con botón a TelePASE; "Dónde se coloca" con texto genérico hasta que Covicen defina los sectores (`servicios.colocacionTelepase` por estación).
 - **Free Flow (02)**: Leones, San Francisco, Totoras: pórticos sin barreras; cobran cuando Vialidad las habilite.
-- **Mi cuenta (03)**: chip "Se habilita con la toma de posesión" + "El acceso se publica acá y en la barra superior…". Con `contacto.enlaces.oficinaVirtual` cargado pasa a ser el botón "Entrar a Mi cuenta".
+- **Autogestión** (hasta el 24/09, «Mi cuenta»): aparece porque desde el 25/09 está cargada `contacto.enlaces.oficinaVirtual` (la web de Telepeaje Plus), con el botón "Entrar a Autogestión". Sin esa URL no se muestra (antes decía "Se habilita con la toma de posesión").
 - **Pasaste sin pagar (04)**: las dos tarjetas de recargo y "El medio para pagar la deuda se publica acá cuando esté habilitado" (la cuenta bancaria es `null`).
 
 ## Guía de trámites `/tramites/`
@@ -366,6 +845,8 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 ## Contacto `/contacto/`
 
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. Las tandas del 24/09 y del 25/09 cambiaron contacto: leé primero «Lo que cambió el 25 de septiembre» y «Lo que cambió el 24 de septiembre», arriba de todo.
+
 - Izquierda: tarjeta amarilla con el 140; **tabla de canales compacta** (Canal · Acuse · Respuesta); hueco "Seguimiento de reclamos en línea". Derecha: **formulario de reclamos, consultas y sugerencias** (motivo, tema, ruta y km o estación, fecha, patente, nombre, apellido, DNI, correo, teléfono, mensaje), hoy deshabilitado con el aviso; con canal, "Enviar por WhatsApp" o "Enviar por correo" y los plazos "Acuse en 24 horas · Respuesta en 5 días hábiles" al lado del botón.
 - **TelePASE (01)**: texto con link al sitio de TelePASE y un **segundo formulario** (tipo de consulta, patente, TAG, estación, fecha, correo, qué pasó). Las respuestas a TelePASE tienen prioridad (PETG 61.5 b).
 - **Cómo hacer un reclamo (02)**: cuatro pasos con plazos (número de gestión en 24 h; respuesta en 5 días hábiles; prórroga una sola vez; escalar a Vialidad Nacional).
@@ -375,7 +856,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 
 > **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 20/09 cambió quiénes somos: leé primero «Lo que cambió el 20 de septiembre», arriba de todo.
 
-- Texto **original** (se chequeó con `pnpm originalidad` contra otras concesionarias): "Nacimos de tres empresas… ganaron ofreciendo el peaje más bajo de los 8 tramos…"; párrafo "La sociedad está en formación. Cuando se complete la inscripción, publicamos acá y en el pie de página la razón social, el CUIT y los domicilios." **Ya no dice "+10 prorrogables"**: era un dato de prensa sin artículo del pliego que lo respalde. Decisión: ver al final.
+- Texto **original** (se chequeó con `pnpm originalidad` contra otras concesionarias): "Nacimos de tres empresas…" (la frase del peaje más bajo se sacó el 05/10/2026); párrafo "La sociedad está en formación. Cuando se complete la inscripción, publicamos acá y en el pie de página la razón social, el CUIT y los domicilios." **Ya no dice "+10 prorrogables"**: era un dato de prensa sin artículo del pliego que lo respalde. Decisión: ver al final.
 - Mojones 20 años · 6 peajes. **Ocho compromisos** exigibles (conservar los 679 km, losas de hormigón, banquinas Rosario–Carcarañá, puente sobre el Carcarañá, rehabilitación asfáltica, auxilio gratis 30/60 min, 140 con personas, cobrar solo lo habilitado), todos con base en el pliego.
 - Quién nos controla: ficha (régimen, tramo, plazo, adjudicación con link al BO, control) y misión/visión.
 - El consorcio: foto 21:9 (`consorcio.jpg`) y tres tarjetas. **Organigrama**: la sección aparece solo si existe `src/assets/institucional/organigrama.png`.
@@ -383,7 +864,7 @@ Después de cerrar las seis fases se revisó todo de punta a punta, sección por
 ## Transparencia `/transparencia/`
 
 - **Normativa aplicable**: cinco tarjetas. Res. 1379/2026, Res. 248/2026, Ley 27.742 y Decreto 97/2025 con "Ver o descargar" al Boletín Oficial; "Pliegos de la concesión" dice "Sin versión definitiva publicada todavía" (hasta tener los firmados).
-- **Póliza de responsabilidad civil (01)**: "Se publica con la toma de posesión, el 5 de octubre de 2026" (con `empresa.polizaRc` cargado aparece la ficha: aseguradora, número, vigencia, documento).
+- **Póliza de responsabilidad civil (01)**: "Se publica con la toma de posesión, el 7 de octubre de 2026" (con `empresa.polizaRc` cargado aparece la ficha: aseguradora, número, vigencia, documento).
 - **Datos registrales (02)**: "La sociedad está en formación…" hasta tener razón social, CUIT y domicilio.
 
 ## Obras `/obras/` — **no existe desde el 20/09/2026**
@@ -409,7 +890,9 @@ Qué hay que preguntar antes: punto 6 de `C:\Users\Villex\dev\Covicen\docs\pendi
 
 ## Novedades `/novedades/` y detalle
 
-- Listado de **cinco** con fecha y etiquetas (12 px, anotación). La más nueva (13/9) explica qué cuadro tarifario rige desde el 5 de octubre. Las marcadas como destacadas ya no suben al hero (que dejó de rotar): se ven acá y en la sección Novedades de la home.
+> **Ojo:** lo de abajo describe cómo quedó en septiembre. La tanda del 24/09 cambió novedades: leé primero «Lo que cambió el 24 de septiembre», arriba de todo.
+
+- Listado de **cinco** con fecha y etiquetas (12 px, anotación). La más nueva (13/9) explica qué cuadro tarifario rige desde el 7 de octubre. Las marcadas como destacadas ya no suben al hero (que dejó de rotar): se ven acá y en la sección Novedades de la home.
 - Detalle: prosa con **más aire entre párrafos** (1,5 veces el interlineado, como pide el pliego), links subrayados, botón volver.
 
 ## Políticas, Privacidad, Proveedores
@@ -434,11 +917,11 @@ Nada de esto dice "a confirmar" ni "próximamente" en el sitio: directamente no 
 - Razón social, CUIT, domicilio legal y comercial, constancia de inscripción y QR de Data Fiscal (footer, Transparencia, Privacidad).
 - Número 0800, correo de atención al usuario, WhatsApp (footer, canales, formularios habilitados, "También por WhatsApp" en Emergencias).
 - Redes sociales (footer).
-- URL de la oficina virtual (Mi cuenta en barra superior, menú y Medios de pago) y de la atención al usuario de la DNV (footer).
+- ~~URL de la oficina virtual~~: **cargada el 25/09** (Autogestión, Telepeaje Plus). Sigue faltando la URL de la atención al usuario de la DNV (footer).
 - Cuenta para regularizar deuda (Medios de pago).
 - Póliza de responsabilidad civil (Transparencia).
 - Teléfono, horario de atención, sectores de detención segura, sanitarios y colocación de TelePASE por estación (tarjetas y leyenda del mapa).
-- Organigrama (Quiénes somos), logos institucionales en SVG (footer), foto del hero de día (tema claro).
+- Organigrama (Quiénes somos). (Los logos institucionales del pie ya están desde el 25/09, y la foto del hero de día, desde el 15/09.)
 - Monto de la tarifa diferencial (Tarifas, Trámites): se dice que se informa al tramitar.
 - **Cuántos pasajeros lleva la grúa** (PETG 54.3): el pliego obliga a publicarlo junto con los tiempos, y hoy la tarjeta "Grúa y remolque" de `/servicios/` (y la de `/emergencias/`) no lo dice porque **Covicen todavía no pasó el dato**. No hay campo propio en el contrato: se carga como texto (ver la tabla de abajo).
 - Ubicación y horario de los **sectores de detención segura** (`cabinas[].servicios.detencionSegura` en `tramo.json`): hoy ninguna estación lo tiene cargado, así que ni la tarjeta ni la leyenda del mapa lo nombran.
@@ -454,15 +937,15 @@ Nada de esto dice "a confirmar" ni "próximamente" en el sitio: directamente no 
 |---|---|---|
 | `razonSocial`, `cuit`, `domicilioLegal` (los tres) | `src/content/empresa.json` | Columna "Datos registrales" del footer y bloque en Transparencia; responsable en Privacidad. |
 | `domicilioComercial` | `src/content/empresa.json` | Fila extra en los datos registrales. |
-| `constanciaUrl` + archivo `public/qr-afip.png` | `src/content/empresa.json` / `public/` | QR de Data Fiscal en el footer, enlazando a la constancia (aparece solo con `cuit` cargado). |
+| `constanciaUrl` + archivo `public/qr-afip.png` | `src/content/empresa.json` / `public/` | QR de Data Fiscal en la fila de logos del footer, enlazando a la constancia (aparece solo con `cuit` cargado). A 64 px: cuando llegue el real, confirmar que se pueda escanear con el celular. |
 | `enFormacion: false` | `src/content/empresa.json` | Saca "Sociedad en formación" del footer y el párrafo de Quiénes somos. |
 | `polizaRc { aseguradora, numero, vigenciaHasta, url? }` | `src/content/empresa.json` | Ficha de la póliza en Transparencia. |
 | `lineaGratuita` (0800) | `src/content/contacto.json` | Fila "Atención al usuario 0800…" en el footer. También `canales[].valor` del canal `linea-0800` para la tabla. |
-| `atencionUsuario` (correo) | `src/content/contacto.json` | Correo en el footer; los formularios pasan a "Enviar por correo" si no hay WhatsApp. También `canales[].valor` del canal `correo`. Solo cuando la casilla funcione. |
+| `atencionUsuario` (correo) | `src/content/contacto.json` | Correo en el footer; los formularios pasan a "Enviar por correo" si no hay WhatsApp. Solo cuando la casilla funcione. **Desde el 02/10/2026 la dirección ya está en `canales[].valor` del canal `correo`** (pedido del gerente: enlazarla en la tabla de canales), pero este slot sigue vacío: la pregunta está en pendientes. |
 | `whatsapp.numero` | `src/content/contacto.json` | WhatsApp en el footer, "También por WhatsApp" en Emergencias, formularios habilitados con "Enviar por WhatsApp". También `canales[].valor` del canal `whatsapp`. |
 | `email.rrhh`, `email.proveedores`, `email.etica`, `email.general` | `src/content/contacto.json` | Destinos alternativos de Trabajá, Proveedores, canal ético y formularios. |
 | `redes { instagram, facebook, linkedin, youtube, x }` | `src/content/contacto.json` | Fila de redes en el footer (por nombre; logos oficiales después). |
-| `enlaces.oficinaVirtual` | `src/content/contacto.json` | "Mi cuenta" abre la oficina virtual (barra superior, menú, Medios de pago). |
+| `enlaces.oficinaVirtual` | `src/content/contacto.json` | Cargada el 25/09 (Telepeaje Plus): aparece "Autogestión" (barra superior, menú y la sección de Medios de pago), que abre la oficina virtual. Sin la URL, no se muestra nada. |
 | `enlaces.atencionDnv` | `src/content/contacto.json` | Link "Atención al usuario de Vialidad Nacional" en el footer. |
 | `cuentaRegularizacion` | `src/content/contacto.json` | Cómo pagar la deuda en "Pasaste sin pagar". |
 | Cuántos pasajeros lleva la grúa (PETG 54.3) | `src/content/servicios.json`, servicio `grua-y-remolque` | **No tiene campo propio**: va como **un ítem más del array `tiempos`** (queda como un renglón más abajo de los tiempos de respuesta, que es donde el pliego lo pide) o, si preferís que se lea como parte del alcance, sumado al texto de `alcance`. Aparece en la tarjeta de `/servicios/` y en la de `/emergencias/`. Ejemplo: `"Llevamos hasta N acompañantes del vehículo remolcado."` |
@@ -487,7 +970,7 @@ El paso a paso completo está en `README.md` ("Migración al dominio propio"). E
 
 ## Qué NO está (por diseño)
 
-Backoffice y sistemas (repo aparte), estado de rutas en vivo (datos de ejemplo hasta que exista el centro de operaciones), oficina virtual, seguimiento de reclamos, portal de proveedores, canal ético anónimo, popup de novedades, pagos en línea, calculadora de tarifa, chatbot, página por ruta, franjas horarias.
+Backoffice y sistemas (repo aparte), estado de rutas en vivo (datos de ejemplo hasta que exista el centro de operaciones), oficina virtual propia (la Autogestión es la de Telepeaje Plus, enlazada), seguimiento de reclamos, portal de proveedores, canal ético anónimo, popup de novedades, pagos en línea, calculadora de tarifa, chatbot, página por ruta, franjas horarias.
 
 ## Decisiones tomadas en la ejecución que quedan a tu criterio
 

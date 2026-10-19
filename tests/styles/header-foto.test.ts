@@ -8,8 +8,9 @@ import { bloqueClaro, bloqueRoot, bloqueTheme, declaracionesDe } from '../../scr
 // era al final de la animación sino en el medio (scroll ~24 px), con el fondo del header casi transparente y la foto
 // ya pasando por detrás de las letras. Subir la opacidad final no lo arregla (2,22 -> 2,29): el arreglo es que cada
 // ítem del menú lleve su propia superficie opaca (la pill), así deja de depender de lo que pase por atrás.
-// El logotipo y la hamburguesa NO llevan pill y hoy pasan con 4,95:1: entran igual, porque 0,45 de margen es poco y
-// este proyecto ya perdió ese margen dos veces al cambiar la foto del hero.
+// El logotipo y la hamburguesa también llevan pill desde el 02/10/2026: el gerente vio el logotipo ilegible con algo
+// oscuro pasando por detrás, que este modelo no veía porque mide solo la foto del hero (sobre ella daba 4,95:1).
+// Es la misma lección del 19/09: el test existía y modelaba una sola cosa de las que pasan por detrás.
 //
 // Dos cosas que el modelo NO incluye, y por qué no lo hacen mentir:
 // - `backdrop-filter: blur(12px)` del header: un desenfoque promedia píxeles vecinos, no aclara una zona oscura,
@@ -46,6 +47,12 @@ const aColor = (valor: string): { rgb: number[]; alfa: number } => {
 /** El token de fondo de la pill del menú, leído de la regla `.nav-item` de Header.astro. `null` = no hay pill. */
 const tokenPill = (): string | null => {
   const regla = /\.nav-item\s*\{([\s\S]*?)\}/.exec(css.header)?.[1] ?? '';
+  return /background:\s*var\(--color-([\w-]+)\)/.exec(regla)?.[1] ?? null;
+};
+
+/** El token de fondo de la pill del logotipo, leído de la regla `.logo-pill` de Header.astro. */
+const tokenPillLogo = (): string | null => {
+  const regla = /\.logo-pill\)\s*\{([\s\S]*?)\}/.exec(css.header)?.[1] ?? '';
   return /background:\s*var\(--color-([\w-]+)\)/.exec(regla)?.[1] ?? null;
 };
 
@@ -86,6 +93,12 @@ describe('contraste del header sobre la foto del hero (pliego 61.7)', () => {
   // Esto mira la REGLA. La otra mitad —que el marcado de cada ítem lleve la clase— se verifica sobre el HTML
   // renderizado en tests/components/layout.test.ts: si alguien sacara `nav-item` de los <a>, la regla seguiría
   // acá y este test quedaría verde con el texto otra vez apoyado en la foto.
+  it('la pill del logotipo existe, el logotipo la usa y la hamburguesa también tiene fondo', () => {
+    expect(tokenPillLogo(), 'el logotipo no declara fondo: vuelve a apoyarse en lo que pase por detrás').toBe('superficie');
+    expect(css.header).toContain('<Logotipo class="logo-pill" />');
+    expect(css.header).toMatch(/aria-label="Abrir menú"/);
+    expect(/<button[^>]*bg-superficie[^>]*popovertarget="menu-mobile" aria-label="Abrir menú"/.test(css.header), 'la hamburguesa perdió su fondo').toBe(true);
+  });
   it('la pill del menú existe y su fondo es un token opaco', () => {
     const token = tokenPill();
     expect(token, 'los ítems del menú no declaran fondo: siguen apoyados en la foto').not.toBeNull();
@@ -111,7 +124,7 @@ describe('contraste del header sobre la foto del hero (pliego 61.7)', () => {
       // Cada pieza del header con su color de texto y sobre qué se apoya de verdad.
       const piezas = [
         { cual: 'menú', texto: aColor(tema.tokens['color-texto-2']!).rgb, pill },
-        { cual: 'logotipo y hamburguesa', texto: aColor(tema.tokens['color-texto']!).rgb, pill: null },
+        { cual: 'logotipo y hamburguesa', texto: aColor(tema.tokens['color-texto']!).rgb, pill: aColor(tema.tokens[`color-${tokenPillLogo()}`] ?? '#000000') },
       ];
       const flojos: string[] = [];
 

@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 import Formulario from '@/components/Formulario.astro';
@@ -48,7 +49,7 @@ describe('Formulario', () => {
   it('sin canales: lo dice con la fecha y el 140, y el botón queda deshabilitado sin prometer envío', async () => {
     const html = await render({ whatsapp: null, email: null });
     expect(html).toContain('data-canal="a-confirmar"');
-    expect(html).toContain('Los formularios se habilitan con la toma de posesión, el 5 de octubre de 2026. Mientras, el');
+    expect(html).toContain('Este formulario se habilita con la toma de posesión, el 7 de octubre de 2026. Mientras, el');
     expect(html).toMatch(/<a href="tel:140"[^>]*>140<\/a> atiende emergencias las 24 horas\./);
     // El botón de envío existe (WCAG H32: todo <form> tiene uno) pero está deshabilitado y no nombra ningún canal.
     expect(html).toMatch(/<button type="submit" disabled/);
@@ -64,7 +65,7 @@ describe('Formulario', () => {
     expect(html).toContain('Armar el texto para copiar');
     expect(html).toContain('data-copia');
     expect(html).toContain('data-copiar-texto');
-    expect(html).not.toContain('Los formularios se habilitan');
+    expect(html).not.toContain('Este formulario se habilita');
     // sin canal no hay a quién le llegue: no se prometen plazos de respuesta
     expect(html).not.toContain('Respuesta inmediata');
   });
@@ -73,6 +74,16 @@ describe('Formulario', () => {
     expect(html).toContain('data-modo="enviar"');
     expect(html).toMatch(/<fieldset[^>]*\sdisabled[\s>]/);
     expect(html).not.toContain('data-copiar-texto');
+  });
+  // 24/09/2026: el formulario apagado se veía «transparente y mal». Era la opacidad al 60 % del fieldset y del botón:
+  // sobre la grilla del fondo, los campos la dejaban ver. Apagado sí, pero opaco: lo marcan el borde punteado y el gris.
+  it('apagado sin transparencia: ni el fieldset ni el botón bajan la opacidad', async () => {
+    const html = await render({ whatsapp: null, email: null });
+    expect(/<fieldset[^>]*>/.exec(html)?.[0], 'el fieldset apagado volvió a ser translúcido').not.toMatch(/opacity/);
+    expect(/<button type="submit"[^>]*>/.exec(html)?.[0], 'el botón apagado volvió a ser translúcido').not.toMatch(/opacity/);
+    const estilo = /<style>([\s\S]*)<\/style>/.exec(readFileSync('src/components/Formulario.astro', 'utf8'))?.[1] ?? '';
+    expect(estilo).toMatch(/fieldset:disabled \.campo\s*\{[^}]*border-style:\s*dashed/);
+    expect(estilo).not.toMatch(/opacity/);
   });
   it('campo de solo lectura: input readonly con su label (entra al mensaje)', async () => {
     const html = await render({ whatsapp: '5493510000000', email: null, campos: [{ nombre: 'ubicacion', etiqueta: 'Ubicación', tipo: 'readonly', valor: '' }] });
