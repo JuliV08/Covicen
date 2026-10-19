@@ -41,7 +41,7 @@ describe('Políticas escondida; Transparencia de vuelta, solo con la póliza', (
     const html = await (await AstroContainer.create()).renderToString(Header as never, { props });
     expect(html).not.toContain('href="/politicas/"');
     expect(html).toContain('href="/responsabilidad-civil/"');
-    expect(html, 'Proveedores está escondida desde el 05/10/2026').not.toContain('href="/proveedores/"');
+    expect(html, 'Proveedores volvió el 19/10/2026').toContain('href="/proveedores/"');
   });
 });
 
@@ -51,6 +51,8 @@ describe('Proveedores por el CRM', () => {
     expect(html).toContain('data-b24-form="inline/1/t2c138"');
     expect(html).not.toMatch(/<form[^>]*data-formulario/);
     expect(html).toContain('Portal de proveedores');
+    expect(html, 'sin PUBLIC_PORTAL_PROVEEDORES_URL queda «Próximamente», sin botón').toContain('Próximamente');
+    expect(html).not.toContain('Ingresar al portal');
     expect(recargaCompleta('/proveedores/', '/')).toBe(true);
     expect(recargaCompleta('/Covicen/proveedores/', '/Covicen/')).toBe(true);
   });

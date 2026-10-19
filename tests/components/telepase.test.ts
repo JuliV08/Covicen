@@ -113,7 +113,7 @@ describe('Google Analytics en toda la web', () => {
   it('la política de privacidad dice lo que hace Google Analytics, y cómo evitarlo', async () => {
     caso.id = 'G-TEST12345';
     const politica = await privacidad();
-    expect(politica).toContain('Cuenta las visitas con Google Analytics y, fuera de eso y del formulario de Contacto (abajo), no usa cookies ni herramientas de seguimiento.');
+    expect(politica).toContain('Cuenta las visitas con Google Analytics y, fuera de eso y de los formularios de Contacto y de Proveedores (abajo), no usa cookies ni herramientas de seguimiento.');
     expect(politica).toMatch(/<h2[^>]*>Estadísticas de visitas<\/h2>/);
     // Lo que GA4 hace de verdad (revisión del 14/10/2026): dos cookies (_ga y _ga_<ID>) de dos años, no «una cookie».
     expect(politica).toContain('dos cookies con un número al azar, que duran dos años');

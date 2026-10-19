@@ -101,12 +101,13 @@ describe('Header', () => {
   // Call del 20/09/2026: Obras se esconde hasta que haya algo que contar, Trabajá con nosotros se elimina, y
   // Proveedores sube del pie al desplegable Nosotros. El menú de celular se arma con los MISMOS dos arreglos, así
   // que exigir que Proveedores aparezca dos veces es lo que impide que alguien los desdoble y deje el celular viejo.
-  it('el menú no ofrece Obras ni Trabajá con nosotros, ni Proveedores (escondida el 05/10/2026)', async () => {
+  // Proveedores volvió el 19/10/2026 (pedido de Sol): el portal del ERP ya está probado en DEV.
+  it('el menú no ofrece Obras ni Trabajá con nosotros, y sí Proveedores (de vuelta el 19/10/2026)', async () => {
     const c = await AstroContainer.create();
     const html = await c.renderToString(Header, { props: await props() });
     expect(html, 'Obras volvió al menú').not.toContain('href="/obras/"');
     expect(html, 'Trabajá con nosotros volvió al menú').not.toContain('href="/trabaja-con-nosotros/"');
-    expect(html, 'Proveedores volvió al menú').not.toContain('href="/proveedores/"');
+    expect(html, 'Proveedores se volvió a esconder').toContain('href="/proveedores/"');
   });
   // «Autogestión» (la oficina virtual, 25/09/2026) va en escritorio y en el menú del celular, y solo si hay dirección.
   it('lleva la barra superior con los accesos y, en el menú mobile, TelePASE y Autogestión', async () => {

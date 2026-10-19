@@ -8,8 +8,12 @@ import FormularioCrm from '@/components/FormularioCrm.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
 import { publicado } from '@/lib/publicado';
-// Escondida el 05/10/2026 (pedido de Juli). Ruta rest con un solo destino, igual que /politicas/: con el interruptor
-// apagado getStaticPaths devuelve [] y Astro no genera nada. El menú y el pie la sacan solos (lib/paginas.ts).
+// Escondida el 05/10/2026 (pedido de Juli) y de vuelta el 19/10/2026 (pedido de Sol, con el portal probado en DEV). Ruta
+// rest con un solo destino, igual que /politicas/: con el interruptor apagado getStaticPaths devuelve [] y Astro no genera
+// nada. El menú y el pie la sacan solos (lib/paginas.ts).
+// El portal vigente del ERP (contrato del 05/10/2026, probado en DEV el 18 y 19/10): el proveedor crea su cuenta desde la
+// invitación a cotizar de Compras y entra con CUIT y contraseña a Mi empresa, Ofertas, Órdenes de compra, Remitos,
+// Facturas y Pagos y retenciones. Acá sólo se enlaza: la web no recibe contraseñas, documentos ni datos bancarios.
 export const getStaticPaths = () => (publicado.proveedores ? [{ params: { resto: undefined } }] : []);
 const contacto = await datos.contacto();
 const portal = destinoPortalProveedores();
@@ -19,12 +23,12 @@ const portal = destinoPortalProveedores();
 // `contacto.formularioCrm` en null vuelve el formulario propio.
 ---
 <Base titulo="Proveedores" descripcion="Proveedores y licitaciones de Covicen para el Tramo Centro: registrate y recibí las convocatorias." migas={[{ nombre: 'Proveedores', href: '/proveedores' }]}>
-  <Seccion nivel="h1" eyebrow="Proveedores" titulo="Registro de proveedores" intro={portal ? "Ingresá para cotizar, completar los datos de tu empresa, presentar facturas y consultar pagos y retenciones. Si todavía no sos proveedor, registrá tu interés en el formulario." : "Insumos viales, señalización, tecnología de cobro, servicios de auxilio y obra civil. El portal de proveedores se habilita junto con los sistemas; hasta entonces, el registro se hace por este formulario."} class="pt-10">
+  <Seccion nivel="h1" eyebrow="Proveedores" titulo="Registro de proveedores" intro={portal ? "Si Compras te invitó a cotizar, con esa invitación creás tu cuenta y después entrás con el CUIT de tu empresa y tu contraseña. Si todavía no sos proveedor, registrá tu interés en el formulario." : "Insumos viales, señalización, tecnología de cobro, servicios de auxilio y obra civil. El portal de proveedores se habilita junto con los sistemas; hasta entonces, el registro se hace por este formulario."} class="pt-10">
     <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.2fr]">
       {portal ? <div class="tarjeta p-6" data-capacidad="portalProveedores">
         <h2>Portal de proveedores</h2>
-        <p class="mt-3 text-texto-2">Ingresá con el CUIT de tu empresa y tu contraseña. La invitación a cotizar te permite crear tu cuenta y confirmar tu correo.</p>
-        <p class="mt-3 text-texto-2">Al cotizar, revisá los datos que ya tenemos, completá lo pendiente y confirmalos en carácter de declaración jurada.</p>
+        <p class="mt-3 text-texto-2">Ingresá con el CUIT de tu empresa y tu contraseña. La primera vez, creá tu cuenta desde la invitación a cotizar que te mandó Compras: con el enlace del correo o con «Crear mi cuenta», tu CUIT y el correo al que te invitaron. Te llega un código a ese correo y con él activás la cuenta.</p>
+        <p class="mt-3 text-texto-2">Adentro tenés Mi empresa (datos, documentación y cuenta bancaria), Ofertas, Órdenes de compra, Remitos, Facturas y Pagos y retenciones.</p>
         <div class="mt-5"><Boton href={portal}>Ingresar al portal</Boton></div>
       </div> : <HuecoCapacidad capacidad="portalProveedores" nivel="h2" titulo="Portal de proveedores y licitaciones" descripcion="Alta de proveedor, carga de comprobantes, estado de pagos y convocatorias abiertas." />}
       {contacto.formularioCrm ? <FormularioCrm id="registro" crm={contacto.formularioCrm} /> : <Formulario asunto="Alta de proveedor" whatsapp={contacto.whatsapp.numero} email={contacto.email.proveedores ?? contacto.email.general} textoBoton="Registrarme por WhatsApp" campos={[
