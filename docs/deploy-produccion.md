@@ -61,6 +61,10 @@ Las mismas cuatro, con `PUBLIC_SITE_URL` apuntando a la URL de dev, **más**:
 | Variable | Valor |
 |---|---|
 | `PUBLIC_SITIO_COMPLETO` | `true` |
+| `PUBLIC_PORTAL_PROVEEDORES_URL` | `https://<dominio del ERP de DEV>/proveedores/acceso` (desde el 19/10/2026: el botón «Ingresar al portal» de `/proveedores/`; sin ella la página muestra «Próximamente») |
+
+En `main`, `PUBLIC_PORTAL_PROVEEDORES_URL` se carga recién cuando el portal de proveedores esté encendido en el ERP de
+Producción, con la dirección de ese ERP. Mientras tanto `/proveedores/` publica el registro con «Próximamente».
 
 Y en la consola de Amplify, para esa rama: **activar la protección con usuario y contraseña** (*Access control* →
 *Manage access*). Sin eso, la URL de dev es pública y cualquiera puede ver una versión sin aprobar.

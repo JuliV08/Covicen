@@ -70,9 +70,11 @@ export const publicado = Object.freeze({
    *  «el endpoint sigue diciendo /transparencia/, cuando debe decir responsabilidad civil»). Escondida el 02/10/2026 y de
    *  vuelta el 05/10, cuando llegó la póliza («agregarla donde estaba originalmente la de ejemplo»). */
   transparencia: true,
-  /** Página /proveedores/ (registro de proveedores). Escondida el 05/10/2026 por pedido de Juli. No se genera, y sale
-   *  del menú, del pie y de la política de privacidad. */
-  proveedores: false,
+  /** Página /proveedores/ (acceso al portal de proveedores del ERP y registro). Escondida el 05/10/2026 por pedido de
+   *  Juli, mientras el portal no existía; de vuelta el 19/10/2026 por pedido de Sol (el portal permanente ya se probó en
+   *  DEV): se genera, y vuelve al menú, al pie y a la política de privacidad. El botón de acceso aparece sólo donde el
+   *  build tiene PUBLIC_PORTAL_PROVEEDORES_URL (src/lib/datos/portal-proveedores.ts); sin ella queda «Próximamente». */
+  proveedores: true,
   /** Transparencia · la normativa aplicable para descargar. Sigue escondida desde el 02/10/2026: el 05/10 volvió la
    *  página por la póliza, no la normativa. OJO: el PETG 61.6 pide publicarla; ver docs/pendientes-de-confirmacion.md. */
   normativa: false,

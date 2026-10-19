@@ -102,10 +102,11 @@ describe('Footer', () => {
 });
 
 describe('Footer, columna Empresa (20/09/2026)', () => {
-  it('ya no enlaza Obras ni Trabajá con nosotros, y no enlaza Proveedores (escondida el 05/10/2026)', async () => {
+  // Proveedores volvió el 19/10/2026 (pedido de Sol): el portal del ERP ya está probado en DEV.
+  it('ya no enlaza Obras ni Trabajá con nosotros, y sí Proveedores (de vuelta el 19/10/2026)', async () => {
     const html = await render(await fuenteLocalJson.empresa(), await fuenteLocalJson.contacto());
     expect(html, 'Obras volvió al pie').not.toContain('href="/obras/"');
     expect(html, 'Trabajá con nosotros volvió al pie').not.toContain('href="/trabaja-con-nosotros/"');
-    expect(html).not.toContain('href="/proveedores/"');
+    expect(html).toContain('href="/proveedores/"');
   });
 });

@@ -95,3 +95,7 @@ Casilla `atencionalusuario@covicen.com.ar` (PETG 61.5): se publica en `src/conte
 - Spec y plan de la actualización de septiembre de 2026: `docs/superpowers/specs/2026-09-13-actualizacion-web-design.md` y `docs/superpowers/plans/2026-09-13-actualizacion-web.md`. Los de la landing original (agosto de 2026) están en las mismas carpetas.
 - Vault del proyecto (Obsidian, viaja con el repo): `obsidian/Home.md`.
 - Manual de marca: `docs/marca/`.
+
+## Acceso al portal de proveedores
+
+La página `/proveedores/` está publicada desde el 19/10/2026 (pedido de Sol; había estado escondida desde el 05/10 mientras el portal no existía). `PUBLIC_PORTAL_PROVEEDORES_URL` configura el destino HTTPS del botón «Ingresar al portal»: la dirección del acceso permanente del ERP de ese ambiente (`https://<dominio del ERP>/proveedores/acceso`), cargada en la consola de Amplify por rama (ver `docs/deploy-produccion.md`). Sin la variable, la página muestra «Próximamente» y el formulario de registro; con ella, el botón más el formulario para empresas nuevas. El portal del ERP es el vigente desde el 05/10/2026: el proveedor crea su cuenta desde la invitación a cotizar de Compras y entra con CUIT y contraseña a Mi empresa, Ofertas, Órdenes de compra, Remitos, Facturas y Pagos y retenciones. La web sólo enlaza: no recibe contraseñas, documentos, datos bancarios ni DDJJ, y no necesita migración de base. En `main` la variable se carga recién cuando el portal esté encendido en Producción.
