@@ -14,7 +14,7 @@ El 7 de octubre de 2026 Covicen toma la operación del Tramo Centro. Esto es lo 
 
 ## La tarifa
 
-Desde el primer día rige el **cuadro vigente** en estas estaciones, el de la Resolución 248/2026 de Vialidad Nacional: $1.500 por auto con IVA, igual con TelePASE que en la vía.
+Desde el 11 de octubre de 2026 rige un nuevo cuadro tarifario en estas estaciones. Los valores vigentes, por estación y categoría, están en [Tarifas](../../tarifas/).
 
 ## TelePASE
 
@@ -26,4 +26,4 @@ El **140**, gratis desde cualquier celular y visible en cada página de este sit
 
 ## Atención al usuario
 
-Para consultas y reclamos, la línea gratuita **0800 555 2224**, el formulario de Contacto o el correo atencionalusuario@covicen.com.ar.
+Para consultas y reclamos, la línea gratuita **0800 444 7777**, el formulario de Contacto o el correo atencionalusuario@covicen.com.ar.

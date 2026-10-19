@@ -2,7 +2,8 @@
 
 **Fecha:** 20 de septiembre de 2026, actualizado el 24/09, el 25/09, el 28/09 (el inicio de actividades pasó al 7 de
 octubre), el 01/10 (lo que hay que pedirle a PREVI por el formulario de Bitrix24) y el 02/10 (lo que se escondió en la
-reunión con el gerente del 01/10, en dos tandas) y el 05/10 (la tercera tanda: primera sección) · **Sale de:** la call con el gerente del 20/09 y las correcciones del 24/09 (el 13 y la pregunta del precio
+reunión con el gerente del 01/10, en dos tandas), el 05/10 (la tercera tanda) y el 10/10 (el cuadro tarifario que
+rige desde el 11/10: primera sección) · **Sale de:** la call con el gerente del 20/09 y las correcciones del 24/09 (el 13 y la pregunta del precio
 del primer día). El formulario de TelePASE, que se
 agregó el 24/09, quedó resuelto el 25/09.
 
@@ -15,6 +16,79 @@ nada de la web para hacerla.
 Cuando llegue una respuesta, el que carga el dato abre
 `C:\Users\Villex\dev\Covicen\src\lib\publicado.ts`, **cambia un `false` por un `true`**, y la sección vuelve
 entera. No hay que tocar nada más.
+
+---
+
+## Google Analytics y el QR del folleto de TelePASE (14/10) · el OK del gerente, la cuenta y el QR anterior
+
+La página `/telepase/` cuenta la visita en Google Analytics y pasa a la adhesión de Telepeaje Plus. El mismo día Juli
+pidió que Analytics cuente **toda la web** (de dónde llega la gente y qué páginas mira), solo en el build de producción.
+El ID (`G-MSL9JZ23H0`, propiedad «covicen.com.ar», flujo «Web Covicen») está en `C:\Users\Villex\dev\Covicen\src\lib\analitica.ts`.
+
+- **Publicado el 14/10/2026 con el OK de Juli.** La política de privacidad dejó de decir que el sitio no usa
+  seguimiento y pasó a explicar que cuenta las visitas.
+
+- **Revisar tres cosas en la cuenta**, para que siga siendo cierto lo que dice la política de privacidad («no se usa
+  para publicidad»). Todo en Administrar:
+  - **Configuración de la cuenta › Configuración de uso compartido de datos**: todo destildado salvo «Asistencia técnica».
+  - **Vinculaciones de productos**: que no haya nada vinculado con Google Ads.
+  - **Recopilación de datos › Google Signals**: apagado. (La página igual le pide a Google que no lo use.)
+  - Y sumar a una segunda persona como administradora, para que la cuenta no dependa de una sola.
+- **No apagar «Cambios de página basados en eventos del historial del navegador»** (Flujos de datos › Web Covicen ›
+  Medición mejorada › Vistas de página). La web cambia de página sin recargar, y esa opción es la que cuenta cada
+  página: apagada, solo se contaría la primera de cada visita.
+- **Si se quiere guardar menos**: Recopilación y modificación de datos › Retención de datos › «Conservación de datos de
+  eventos» en 2 meses. Los totales se guardan igual; la política dice «como máximo 14 meses», que vale para las dos.
+- **Para el área legal, sin apuro**: la página no muestra un aviso de cookies, y los datos los guarda Google fuera del
+  país (Ley 25.326, art. 12). La política de privacidad lo explica, pero conviene que lo confirme quien lleve lo legal.
+- **El folleto**: ya está con el QR nuevo, en `C:\Users\Villex\dev\Covicen\docs\panfleto-telepase\folleto-telepase-qr-nuevo.jpg`
+  (se armó sobre la imagen de WhatsApp; si existe el archivo de diseño original, mejor cambiar el QR ahí).
+  Cómo imprimirlo: `C:\Users\Villex\dev\Covicen\docs\panfleto-telepase\LEEME.md`.
+- **¿Quién hizo el QR del folleto anterior?** Iba a `qrfy.io` (un QR «dinámico» de QRFY) y de ahí a Telepeaje Plus.
+  Preguntar si esa cuenta de QRFY es paga: si es de prueba, los folletos ya repartidos dejan de andar cuando venza. Y
+  quien la tenga puede apuntar ese QR a `https://www.covicen.com.ar/telepase/?utm_source=folleto-anterior&utm_medium=qr`
+  para que esos folletos también se cuenten.
+- **Dónde se leen los números**: en Analytics, Informes › Adquisición › Adquisición de tráfico, la fila
+  «folleto / qr» (arriba de la tabla, cambiar «Grupo de canales…» por «Fuente/medio de la sesión»). En el momento,
+  Informes › Tiempo real. **Es un mínimo**: no se cuentan quienes usan un bloqueador de publicidad, ni quienes pasan a
+  Telepeaje Plus antes de que Google confirme (con mala señal, la página no espera más de 1,8 segundos).
+
+## Cuadro tarifario del 11/10 · falta saber con qué resolución salió
+
+**Agregado el 10/10/2026.** Se cargó el cuadro que rige desde las 00:00 del domingo 11 de octubre, tal como vino en
+el comunicado de Covicen: $ 1.850,10 · $ 3.700,20 · $ 5.550,31 · $ 7.400,41 · $ 9.250,51, IVA incluido, igual con
+TelePASE que con pago electrónico en la vía, en Carcarañá, James Craik y Franck.
+
+El comunicado **no dice con qué resolución o acto de Vialidad Nacional se aprobó**. Por eso la web ya no nombra
+ninguna resolución al lado de las tablas (antes decía «Resolución 248/2026», que es la del cuadro anterior) y las
+páginas de cada estación perdieron el enlace «Ver en el Boletín Oficial»: el único aviso que había para enlazar es el
+del cuadro viejo, con $ 1.500. No es un choque nuevo con el pliego, pero el PETG 61.6 pide dar acceso a la normativa
+aplicable, y el cuadro tarifario es lo primero que alguien va a querer controlar.
+
+> «El cuadro tarifario que rige desde el 11 de octubre, ¿con qué resolución o nota de Vialidad Nacional quedó
+> aprobado? ¿Está publicado en el Boletín Oficial? Necesitamos el número y el enlace para ponerlos en la web al lado
+> de los precios. Y si tienen el cuadro con los importes sin IVA, también: los que publicamos los calculamos nosotros
+> a partir del precio final.»
+
+- **A quién:** el responsable del área de tarifas (o quien haya armado el comunicado).
+- **Qué vuelve cuando lo confirmen:** el nombre de la resolución al lado de la vigencia en cada tabla, el enlace al
+  Boletín Oficial en las páginas de estación y la resolución en la descripción de Tarifas para buscadores.
+- **Dónde se carga:** `C:\Users\Villex\dev\Covicen\src\content\tarifario.json`. Se agrega `"resolucion"` (por ejemplo
+  `"Resolución NNN/2026 de la Dirección Nacional de Vialidad"`) y se cambia `"fuente"` por el nombre y el enlace del
+  aviso del Boletín. Con eso solo, el enlace vuelve. De paso, que confirmen el campo `"origen"` (hoy quedó
+  `heredado`, como estaba; no se muestra en ningún lado).
+- **Sobre el sin IVA:** el comunicado trae solo el precio final. Lo que la web muestra en chico debajo de cada precio
+  ($ 1.529,01 · $ 3.058,02 · $ 4.587,03 · $ 6.116,04 · $ 7.645,05) es el único importe al centavo que, con el 21 %,
+  da cada precio del comunicado, y además son múltiplos exactos del primero. Si el área tiene otra cifra, se corrige
+  en el mismo archivo (`montoSinIva` y `montoManualSinIva`).
+
+**Cuando salga el próximo cuadro**, estos son todos los lugares que tienen el precio o la vigencia escritos a mano
+(un test avisa si las preguntas frecuentes quedan con un precio que no es el del cuadro; el resto, no):
+`src\content\tarifario.json` (precios, vigencia y bajada de Tarifas), las preguntas frecuentes
+`03-cuanto-cuesta-el-peaje.json` y `05-desde-cuando-se-cobra.json`, el aviso de la cinta en `src\content\avisos.json`
+(«Nuevo cuadro tarifario…») y una novedad nueva en `src\content\novedades\`; la novedad del cuadro anterior
+(«Nuevo cuadro tarifario desde el 11 de octubre», con los cinco valores) se baja a
+`src\content\novedades-despublicadas\` o se le saca el precio.
 
 ---
 
@@ -32,7 +106,8 @@ TelePASE.
 - Si PREVI lo agrega, en la web no hay que tocar nada: el formulario de Bitrix24 se arma en el CRM.
 
 **Lo que se resolvió:**
-- **La línea 0800**: 0800 444 7777, cargada en `contacto.json` (`lineaGratuita` y el `valor` del canal). Sale en
+- **La línea 0800**: 0800 444 7777 (del 06/10 al 13/10 estuvo el de repuesto, el 0800 555 2224, porque este no
+  funcionaba; el 13/10 Covicen pidió volver y dar de baja el otro), en `contacto.json` (`lineaGratuita` y el `valor` del canal). Sale en
   la barra de arriba, en el menú del celular, en el pie, en Contacto, en el mapa, en la tabla de canales y en la
   portada de «Próximamente».
 - **La póliza de responsabilidad civil**, publicada: Transparencia volvió solo con la póliza (`transparencia` en
@@ -461,7 +536,12 @@ privado, y el pliego pide los enlaces, no los logos. Conviene tener el OK por es
 
 ---
 
-## Para confirmar aunque esté publicado · el precio del 7 de octubre
+## Resuelto el 10/10 · el precio del 7 de octubre
+
+**Cómo terminó:** del 7 al 10 de octubre se cobró el cuadro de la Resolución 248/2026 ($ 1.500 el auto) y desde las
+00:00 del 11/10 rige un cuadro nuevo ($ 1.850,10 el auto), que ya está cargado. Lo que quedó sin respuesta de la
+pregunta de abajo es **con qué resolución** salió: pasó a la primera sección de este documento. Lo que sigue se deja
+como estaba, de registro.
 
 **Agregado el 24/09/2026.** No es algo escondido: la web publica que desde la toma de posesión rige el cuadro de la
 Resolución 248/2026 ($ 1.500 el auto). Pero al releer el pliego para estas correcciones apareció el **PETG art. 82,

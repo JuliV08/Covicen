@@ -23,10 +23,13 @@ describe('TablaTarifas', () => {
     expect(html).toContain('>TelePASE<');
     expect(html).toContain('>Pago electrónico en la vía<');
     expect(html.match(/<tr class="fila/g)?.length).toBe(5);
-    expect(html.match(/\$ 1\.500</g)?.length).toBe(2);
-    expect(html).toContain('$ 1.239,67 sin IVA');
-    expect(html).toContain('Vigencia: desde el 26 de febrero de 2026');
-    expect(html).toContain('Resolución 248/2026');
+    // Con centavos, como en el comunicado del cuadro del 11/10/2026: no se redondea al peso.
+    expect(html.match(/\$ 1\.850,10</g)?.length).toBe(2);
+    expect(html.match(/\$ 9\.250,51</g)?.length).toBe(2);
+    expect(html).toContain('$ 1.529,01 sin IVA');
+    expect(html).toContain('Vigencia: desde el 11 de octubre de 2026');
+    // Ese cuadro llegó sin número de resolución: la tabla no nombra ninguna (y menos la 248/2026, que ya no rige).
+    expect(html).not.toContain('Resolución');
     expect(html).not.toMatch(/a confirmar/i);
   });
   // Pedido del gerente (24/09/2026): «eso debajo de cada cuadro sacarlo». Las tres notas se vaciaron en el dato y el
@@ -80,9 +83,11 @@ describe('TablaTarifas con textos del sistema', () => {
   });
 
   // La URL de la fuente la va a mandar el backend: con `enlazarFuente` (páginas de estación) solo se enlaza si es http(s).
-  it('con enlazarFuente, solo enlaza la fuente si es http(s)', async () => {
+  // Y solo si el cuadro trae resolución (10/10/2026): el enlace dice «Ver en el Boletín Oficial», y un cuadro sin
+  // resolución —el del 11/10/2026— no tiene aviso en el Boletín al que mandar a nadie.
+  it('con enlazarFuente, solo enlaza la fuente si es http(s) y el cuadro trae resolución', async () => {
     const c = await AstroContainer.create();
-    const base = await fuenteLocalJson.tarifario();
+    const base = { ...(await fuenteLocalJson.tarifario()), resolucion: 'Resolución 1/2026' };
     for (const url of ['javascript:alert(1)', 'data:text/html,hola']) {
       const html = await c.renderToString(TablaTarifas, { props: { tarifario: { ...base, fuente: { nombre: 'Res. 1/2026', url } }, enlazarFuente: true } });
       expect([...parseHTML(html).document.querySelectorAll('a')].some((a) => a.getAttribute('href') === url), url).toBe(false);
@@ -91,6 +96,9 @@ describe('TablaTarifas con textos del sistema', () => {
     expect(parseHTML(ok).document.querySelector('a[href="https://boletinoficial.gob.ar/x"]')).not.toBeNull();
     const sin = await c.renderToString(TablaTarifas, { props: { tarifario: { ...base, fuente: { nombre: 'Res. 1/2026', url: 'https://boletinoficial.gob.ar/x' } } } });
     expect(parseHTML(sin).document.querySelector('a[href="https://boletinoficial.gob.ar/x"]'), 'sin enlazarFuente no va el enlace').toBeNull();
+    const sinResolucion = await c.renderToString(TablaTarifas, { props: { tarifario: { ...base, resolucion: undefined, fuente: { nombre: 'Comunicado', url: 'https://boletinoficial.gob.ar/x' } }, enlazarFuente: true } });
+    expect(sinResolucion, 'sin resolución no hay Boletín que enlazar').not.toContain('Boletín Oficial');
+    expect(parseHTML(sinResolucion).document.querySelector('a[href="https://boletinoficial.gob.ar/x"]')).toBeNull();
   });
 
   it('muestra el "con IVA" que manda el sistema cuando viene, y lo calcula si no', async () => {
@@ -119,10 +127,12 @@ describe('TablaTarifas con textos del sistema', () => {
 describe('TarifaDestacada', () => {
   const render = async (tarifario: unknown) => (await AstroContainer.create()).renderToString(TarifaDestacada, { props: { tarifario } });
 
-  it('enlaza la resolución cuando la fuente es http(s)', async () => {
+  it('enlaza la resolución cuando la hay y la fuente es http(s)', async () => {
     const base = await fuenteLocalJson.tarifario();
-    const html = await render({ ...base, fuente: { nombre: 'Res. 1/2026', url: 'https://boletinoficial.gob.ar/x' } });
+    const html = await render({ ...base, resolucion: 'Resolución 1/2026', fuente: { nombre: 'Res. 1/2026', url: 'https://boletinoficial.gob.ar/x' } });
     expect(parseHTML(html).document.querySelector('a[href="https://boletinoficial.gob.ar/x"]')).not.toBeNull();
+    const sinResolucion = await render({ ...base, resolucion: undefined, fuente: { nombre: 'Comunicado', url: 'https://boletinoficial.gob.ar/x' } });
+    expect(sinResolucion, 'sin resolución no hay Boletín que enlazar').not.toContain('Boletín Oficial');
   });
 
   it('con una URL que no es http(s) no emite el enlace', async () => {
@@ -150,8 +160,8 @@ describe('/tarifas/', () => {
   const render = async () => (await AstroContainer.create()).renderToString(Tarifas, { request: new Request('https://covicen.test/tarifas/') });
 
   // Lo que el gerente pidió mantener tal cual en la call del 20/09/2026: «hay tarifas, cuadro tarifario, y que esté
-  // para cada estación lo que cuesta, así como está». Sale de la Res. 248/2026, publicada en el Boletín Oficial:
-  // tiene fuente oficial, queda. Y las dos tarjetas de exención las marcó dos veces como «tiene que estar».
+  // para cada estación lo que cuesta, así como está». Salía de la Res. 248/2026; desde el 11/10/2026 es el cuadro
+  // que comunicó Covicen: queda. Y las dos tarjetas de exención las marcó dos veces como «tiene que estar».
   it('el cuadro por estación y las dos tarjetas de exención siguen estando', async () => {
     const html = await render();
     for (const e of ['Carcarañá', 'James Craik', 'Franck']) expect(html.includes(e), `falta ${e}`).toBe(true);
@@ -182,13 +192,14 @@ describe('/tarifas/', () => {
     }
   });
 
-  // Pedidos del 24/09/2026: la bajada con el texto exacto que mandó el cliente, fuera el recuadro grande del precio del
-  // auto (el precio está en la tabla de cada estación), y las estaciones dichas una sola vez.
-  it('la bajada es la del cliente, sin recuadro de precio y sin repetir las estaciones', async () => {
+  // Pedidos del 24/09/2026: fuera el recuadro grande del precio del auto (el precio está en la tabla de cada estación)
+  // y las estaciones dichas una sola vez. La primera oración de la bajada era el texto exacto del cliente sobre la
+  // Res. 248/2026; con el cuadro del 11/10/2026 pasó a decir la vigencia, con las palabras del comunicado.
+  it('la bajada dice la vigencia del cuadro, sin recuadro de precio y sin repetir las estaciones', async () => {
     // Los <caption> de las tablas (solo para lectores de pantalla) repiten la vigencia a propósito: no cuentan.
     const html = (await render()).replace(/<caption[\s\S]*?<\/caption>/g, '');
     const visible = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-    expect(visible).toContain('Cuadro tarifario aprobado por la Resolución 248/2026 de Vialidad Nacional, aplicado desde la toma de posesión. Rige el mismo cuadro tarifario para las estaciones Carcarañá, James Craik y Franck.');
+    expect(visible).toContain('Cuadro tarifario vigente desde las 00:00 del domingo 11 de octubre de 2026. Rige el mismo cuadro tarifario para las estaciones Carcarañá, James Craik y Franck.');
     expect(visible, 'volvió el recuadro grande del precio').not.toContain('al público, con IVA');
     expect(visible.match(/rige el mismo cuadro/gi)?.length, 'las estaciones se dicen dos veces').toBe(1);
     expect(visible).not.toContain('Corredores Viales S.A.');
@@ -196,15 +207,17 @@ describe('/tarifas/', () => {
 
   // Reunión con el gerente del 01/10/2026: sale la línea «Resolución 248/2026 de la Dirección Nacional de Vialidad.
   // Ver en el Boletín Oficial.» de debajo de las etiquetas, y el recuadro «Estaciones sin habilitar». La resolución
-  // sigue en la vigencia de cada estación. (El enlace al Boletín de las páginas de estación pasa por esHttp: lo
-  // prueba «con enlazarFuente, solo enlaza la fuente si es http(s)», más arriba, y el barrido de dist/ de
-  // verificar.ts es el otro candado.)
+  // iba en la vigencia de cada estación; el cuadro del 11/10/2026 no trae ninguna, y la 248/2026 ya no rige: no puede
+  // quedar en la página ni en su descripción para buscadores. (El enlace al Boletín de las páginas de estación pasa
+  // por esHttp: lo prueba «con enlazarFuente…», más arriba, y el barrido de dist/ de verificar.ts es el otro candado.)
   it('no lleva la línea de la resolución con el Boletín Oficial ni el recuadro de estaciones sin habilitar', async () => {
     const html = await render();
     expect(html).not.toContain('Ver en el Boletín Oficial');
     expect(html).not.toContain('Estaciones sin habilitar');
     expect(html).not.toContain('Hasta entonces, en esas estaciones no se paga');
-    expect(html).toContain('Resolución 248/2026');
+    expect(html).not.toContain('248/2026');
+    // La descripción para buscadores lleva el precio del auto del cuadro vigente, con centavos.
+    expect(html.replace(/[  ]/g, ' ')).toMatch(/<meta name="description" content="[^"]*\$ 1\.850,10 por auto\. /);
   });
 
   // Mismo pedido: la bajada de Exenciones y el «según el reglamento de Vialidad Nacional» se van, y las dos tarjetas

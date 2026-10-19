@@ -1,4 +1,4 @@
 [
   { "id": "emergencias-140", "texto": "Emergencias en la ruta: llamá al 140, las 24 horas.", "url": "/emergencias", "tono": "info" },
-  { "id": "tarifas", "texto": "Consultá el cuadro tarifario vigente por estación de peaje.", "url": "/tarifas", "tono": "info" }
+  { "id": "tarifas", "texto": "Nuevo cuadro tarifario. Consultá los valores por estación de peaje.", "url": "/tarifas", "tono": "info" }
 ]

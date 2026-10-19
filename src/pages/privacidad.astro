@@ -1,6 +1,8 @@
 ---
 import Base from '@/layouts/Base.astro';
 import Seccion from '@/components/ui/Seccion.astro';
+import { ID_GOOGLE_ANALYTICS, idAnalyticsActivo } from '@/lib/analitica';
+import { config } from '@/lib/config';
 import { datos } from '@/lib/datos';
 import { ruta } from '@/lib/rutas';
 import { conPunto } from '@/lib/texto';
@@ -22,8 +24,14 @@ const crm = contacto.formularioCrm !== null;
 // /proveedores/ se escondió el 05/10/2026: mientras no se publique, la política habla solo del formulario de Contacto.
 const prov = publicado.proveedores;
 const formularios = prov ? 'los formularios de Contacto y de Proveedores' : 'el formulario de Contacto';
+// Con la preposición pegada: «fuera del formulario», y no «fuera de el formulario» (estuvo publicado hasta el 14/10/2026).
+const deFormularios = prov ? 'de los formularios de Contacto y de Proveedores' : 'del formulario de Contacto';
 // WhatsApp se nombra solo si hay número: el canal se escondió el 01/10/2026 («falta solicitar»).
 const porCorreo = contacto.whatsapp.numero ? 'por WhatsApp o por correo' : 'por correo';
+// Google Analytics cuenta las visitas de toda la web desde el 14/10/2026 (antes, solo /telepase/, la del QR del folleto),
+// en el build de producción y con el ID cargado (lib/analitica.ts). Donde no se carga (Pages, la máquina de uno) la
+// política no lo nombra: diría algo que esa copia del sitio no hace.
+const analytics = idAnalyticsActivo(ID_GOOGLE_ANALYTICS, config.enProduccion) !== null;
 ---
 <Base titulo="Política de privacidad" descripcion="Cómo trata Covicen los datos personales que recibe por sus canales de contacto, según la Ley 25.326 de Protección de Datos Personales." migas={[{ nombre: 'Privacidad', href: '/privacidad' }]}>
   <Seccion nivel="h1" eyebrow="Privacidad" titulo="Qué datos recibimos y qué hacemos con ellos" class="pt-10">
@@ -32,14 +40,20 @@ const porCorreo = contacto.whatsapp.numero ? 'por WhatsApp o por correo' : 'por 
       <p>{conPunto(`${e.razonSocial ?? e.marca}${e.cuit ? `, CUIT ${e.cuit}` : ''}${!e.razonSocial && e.enFormacion ? ', sociedad en formación' : ''}`)} Los datos registrales del responsable se publican en el pie de página cuando estén completos.</p>
       <h2>Qué datos recibimos</h2>
       {crm ? (
-        <p>Este sitio no tiene cuentas de usuario y, fuera de {formularios} (abajo), no usa cookies ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos: por {formularios}, o {porCorreo} desde los demás. Nombre, contacto y el contenido de tu mensaje, y lo que {prov ? 'esos dos formularios anotan' : 'ese formulario anota'} en tu navegador, que se detalla abajo.</p>
+        <p>{analytics ? `Este sitio no tiene cuentas de usuario. Cuenta las visitas con Google Analytics y, fuera de eso y ${deFormularios} (abajo), no usa cookies ni herramientas de seguimiento.` : `Este sitio no tiene cuentas de usuario y, fuera ${deFormularios} (abajo), no usa cookies ni herramientas de seguimiento.`} Los únicos datos personales que recibimos son los que vos decidís enviarnos: por {formularios}, o {porCorreo} desde los demás. Nombre, contacto y el contenido de tu mensaje, y lo que {prov ? 'esos dos formularios anotan' : 'ese formulario anota'} en tu navegador, que se detalla abajo.</p>
       ) : (
-        <p>Este sitio no tiene cuentas de usuario, no usa cookies de terceros ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos {porCorreo} desde los formularios: nombre, contacto y el contenido de tu mensaje.</p>
+        <p>Este sitio no tiene cuentas de usuario{analytics ? ' y, fuera de Google Analytics (abajo),' : ','} no usa cookies de terceros ni herramientas de seguimiento. Los únicos datos personales que recibimos son los que vos decidís enviarnos {porCorreo} desde los formularios: nombre, contacto y el contenido de tu mensaje.</p>
       )}
       {crm && (
         <>
           <h2>{prov ? 'Formularios de Contacto y de Proveedores' : 'Formulario de Contacto'}</h2>
-          <p>El formulario de reclamos, consultas y sugerencias de <a href={ruta('/contacto')}>Contacto</a>{prov && <> y el de registro de <a href={ruta('/proveedores')}>Proveedores</a></>} {prov ? 'funcionan' : 'funciona'} sobre Bitrix24, el sistema de gestión con el que Covicen atiende los reclamos y los contactos. Lo que cargues ahí queda guardado en ese sistema. Además, al abrir {prov ? 'esas páginas' : 'esa página'} el formulario anota en tu navegador la página y, si llegaste desde otro sitio o desde un enlace de una campaña, esa dirección y sus etiquetas. Cuando lo enviás, eso viaja con tu consulta junto con si estás en un celular; te queda guardado un identificador que acompaña tus consultas siguientes, y el navegador recuerda tu nombre, apellido, e-mail y teléfono para completarlos la próxima vez. Todo eso queda guardado en tu navegador hasta que borres los datos de este sitio. El formulario también cuenta las visitas que recibe. Se carga solo en {prov ? 'esas dos páginas' : 'esa página'}: el resto del sitio no anota nada de esto.</p>
+          <p>El formulario de reclamos, consultas y sugerencias de <a href={ruta('/contacto')}>Contacto</a>{prov && <> y el de registro de <a href={ruta('/proveedores')}>Proveedores</a></>} {prov ? 'funcionan' : 'funciona'} sobre Bitrix24, el sistema de gestión con el que Covicen atiende los reclamos y los contactos. Lo que cargues ahí queda guardado en ese sistema. Además, al abrir {prov ? 'esas páginas' : 'esa página'} el formulario anota en tu navegador la página y, si llegaste desde otro sitio o desde un enlace de una campaña, esa dirección y sus etiquetas. Cuando lo enviás, eso viaja con tu consulta junto con si estás en un celular; te queda guardado un identificador que acompaña tus consultas siguientes, y el navegador recuerda tu nombre, apellido, e-mail y teléfono para completarlos la próxima vez. Todo eso queda guardado en tu navegador hasta que borres los datos de este sitio. El formulario también cuenta las visitas que recibe. Se carga solo en {prov ? 'esas dos páginas' : 'esa página'}, y en el resto del sitio no anota nada{analytics ? ' (las estadísticas de visitas, abajo, son aparte)' : ''}.</p>
+        </>
+      )}
+      {analytics && (
+        <>
+          <h2>Estadísticas de visitas</h2>
+          <p>Usamos Google Analytics para saber cuánta gente visita el sitio, qué páginas mira y desde dónde llega: un buscador, una red social, otro sitio o el código QR del folleto de TelePASE. Para eso guarda en tu navegador dos cookies con un número al azar, que duran dos años si no las borrás, y registra la página, el día y la hora, el tipo de dispositivo y de navegador, la ciudad aproximada y el sitio desde el que llegaste. Google conserva ese registro como máximo 14 meses. Covicen no ve tu nombre ni datos que te identifiquen, y no se usa para publicidad. Si no querés que se cuente tu visita, usá un bloqueador de rastreadores o, en la computadora, el <a href="https://tools.google.com/dlpage/gaoptout?hl=es" rel="noopener noreferrer" target="_blank" aria-label="Complemento de inhabilitación de Google Analytics (se abre en otra pestaña)">complemento de inhabilitación de Google Analytics</a>.</p>
         </>
       )}
       <h2>Ubicación</h2>
@@ -47,7 +61,9 @@ const porCorreo = contacto.whatsapp.numero ? 'por WhatsApp o por correo' : 'por 
       <h2>Para qué</h2>
       <p>Para responder consultas y reclamos{prov && ', y gestionar las altas de proveedores'}. No los usamos con otros fines ni los cedemos a terceros, salvo obligación legal.</p>
       <h2>Canales de terceros</h2>
-      <p>{contacto.whatsapp.numero && 'WhatsApp es un servicio de Meta Platforms, con sus propias condiciones y política de privacidad. '}{crm && 'Bitrix24, el sistema de {formularios}, tiene sus propias condiciones y política de privacidad. '}El correo electrónico viaja por el proveedor que uses.</p>
+      {/* Bitrix24 con comillas invertidas (14/10/2026): con comillas simples, la variable de los formularios salía tal
+          cual en la página publicada, con las llaves. */}
+      <p>{contacto.whatsapp.numero && 'WhatsApp es un servicio de Meta Platforms, con sus propias condiciones y política de privacidad. '}{crm && `Bitrix24, el sistema ${deFormularios}, tiene sus propias condiciones y política de privacidad. `}{analytics && 'Google Analytics es un servicio de Google, con sus propias condiciones y política de privacidad. '}El correo electrónico viaja por el proveedor que uses.</p>
       <h2>Tus derechos</h2>
       <p>Según la Ley 25.326 podés acceder, rectificar y suprimir tus datos. Escribinos por el canal de contacto{contacto.email.general ? ` o a ${contacto.email.general}` : ''}{contacto.lineaGratuita ? `, o llamá gratis al ${contacto.lineaGratuita}` : ''}. La Agencia de Acceso a la Información Pública, órgano de control de la ley, atiende denuncias por incumplimiento.</p>
       <h2>Conservación</h2>

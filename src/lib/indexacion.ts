@@ -10,12 +10,20 @@
 
 export const DOMINIOS_OFICIALES = ['covicen.com.ar', 'www.covicen.com.ar'] as const;
 
-export const esIndexable = ({ sitioCompleto, sitio, noIndexar }: { sitioCompleto: boolean; sitio: string; noIndexar?: string }): boolean => {
-  // Una portada de «Próximamente» no se indexa nunca, ni en el dominio oficial.
-  if (!sitioCompleto || noIndexar === 'true') return false;
+const enDominioOficial = (sitio: string): boolean => {
   try {
     return (DOMINIOS_OFICIALES as readonly string[]).includes(new URL(sitio).hostname);
   } catch {
     return false;
   }
 };
+
+/** El sitio entero, publicado en el dominio oficial. Desde el 14/10/2026 es lo que decide si se carga Google Analytics:
+ *  en Pages, la rama de revisión o la máquina de uno no se cuenta nada, para no mezclar las visitas del equipo con las
+ *  del público. PUBLIC_NO_INDEXAR no lo apaga: sacar la web de Google en una emergencia no tiene por qué dejar de contar. */
+export const esProduccion = ({ sitioCompleto, sitio }: { sitioCompleto: boolean; sitio: string }): boolean =>
+  sitioCompleto && enDominioOficial(sitio);
+
+export const esIndexable = ({ sitioCompleto, sitio, noIndexar }: { sitioCompleto: boolean; sitio: string; noIndexar?: string }): boolean =>
+  // Una portada de «Próximamente» no se indexa nunca, ni en el dominio oficial.
+  noIndexar !== 'true' && esProduccion({ sitioCompleto, sitio });

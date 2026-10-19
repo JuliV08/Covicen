@@ -32,7 +32,7 @@ const detalles = [
     reponerlo sin decirlo: tests/components/home.test.ts exige que la home tenga esas cinco secciones y ninguna más.
     El cuadro tarifario vive en /tarifas/, que es donde el gerente lo dio por bueno tal como está. */}
 {precio !== null && sinIva !== null && (
-<Seccion id="tarifa" eyebrow="Tarifa" titulo="El cuadro tarifario vigente" intro="El que fijó Vialidad Nacional para estas estaciones y que Covicen aplica desde la toma de posesión. Se actualiza por índices oficiales cada tres meses.">
+<Seccion id="tarifa" eyebrow="Tarifa" titulo="El cuadro tarifario vigente" intro="El que rige en las estaciones de peaje del Tramo Centro.">
   <div class="revelar mx-auto max-w-2xl">
     <div class="flip" data-flip tabindex="0" role="group" aria-label="Tarifa del peaje: pasá el mouse o tocá para ver el detalle">
       <div class="flip-caras">
@@ -72,7 +72,7 @@ const detalles = [
               Tarifario completo por categoría
               <span class="flip-cta-icono relative inline-flex"><ArrowRight size={16} aria-hidden="true" class="relative z-10 text-acento" /></span>
             </a>
-            {esHttp(tarifario.fuente.url) && <a href={tarifario.fuente.url} rel="noopener noreferrer" target="_blank" class="mt-3 inline-flex items-center gap-1 text-sm text-texto-2" aria-label="Ver la resolución en el Boletín Oficial (se abre en otra pestaña)">Resolución en el Boletín Oficial <ExternalLink size={12} aria-hidden="true" /></a>}
+            {tarifario.resolucion && esHttp(tarifario.fuente.url) && <a href={tarifario.fuente.url} rel="noopener noreferrer" target="_blank" class="mt-3 inline-flex items-center gap-1 text-sm text-texto-2" aria-label="Ver la resolución en el Boletín Oficial (se abre en otra pestaña)">Resolución en el Boletín Oficial <ExternalLink size={12} aria-hidden="true" /></a>}
             <p class="pista-toque mt-3 text-sm text-texto-2">Tocá de nuevo para volver.</p>
           </div>
         </div>
