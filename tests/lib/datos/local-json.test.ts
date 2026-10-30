@@ -26,7 +26,7 @@ describe('contenido del repo', () => {
     // El 0800 llegó el 05/10/2026.
     expect(c.lineaGratuita).toBe('0800 444 7777');
     expect(c.canales.find((k) => k.id === 'linea-0800')?.valor).toBe('0800 444 7777');
-    expect(c.atencionUsuario).toBeNull();
+    expect(c.atencionUsuario).toBe('atencionalusuario@covicen.com.ar');
     expect(c.enlaces.telepase).toMatch(/^https:\/\/www\.telepase\.com\.ar/);
     // La oficina virtual se definió el 25/09/2026: Autogestión, la web de Telepeaje Plus.
     expect(c.enlaces.oficinaVirtual).toBe('https://www.telepeajeplus.com/Login');

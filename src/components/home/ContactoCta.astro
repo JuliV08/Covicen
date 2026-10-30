@@ -1,13 +1,16 @@
 ---
-import { ArrowRight, MessageCircle, Phone } from '@lucide/astro';
+import { ArrowRight, Clock, Mail, MessageCircle, Phone } from '@lucide/astro';
 import Boton from '@/components/ui/Boton.astro';
+import Correo from '@/components/ui/Correo.astro';
 import Eyebrow from '@/components/ui/Eyebrow.astro';
 import type { Contacto } from '@/lib/datos/esquemas';
-import { sinCortes } from '@/lib/texto';
+import { horaSinCorte, sinCortes } from '@/lib/texto';
 import { enlaceWhatsapp } from '@/lib/whatsapp';
 interface Props { contacto: Contacto }
 const { contacto } = Astro.props;
 const linea = contacto.lineaGratuita;
+const horario = contacto.horarioAtencion;
+const correo = contacto.atencionUsuario;
 ---
 <section class="seccion-tono relative py-24">
   <span class="costura costura-arriba" aria-hidden="true"></span>
@@ -32,6 +35,14 @@ const linea = contacto.lineaGratuita;
         <Boton href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen, quiero hacer una consulta.')} variante="secundario" externo><MessageCircle size={18} aria-hidden="true" /> WhatsApp directo</Boton>
       )}
     </div>
+    {/* Horario y correo de atención al usuario (29/10/2026). El correo va como texto y no como botón: con sus 32 letras,
+        a 320 px no entra en uno. */}
+    {(horario || correo) && (
+      <ul class="flex max-w-full flex-col items-center gap-x-6 gap-y-2 text-sm text-texto-2 sm:flex-row sm:flex-wrap sm:justify-center" aria-label="Atención al usuario">
+        {horario && <li class="inline-flex items-center gap-2"><Clock size={16} aria-hidden="true" class="shrink-0 text-acento" /><span><span class="sr-only">Horario de atención: </span>{horaSinCorte(horario)}</span></li>}
+        {correo && <li class="inline-flex min-w-0 max-w-full items-center gap-2"><Mail size={16} aria-hidden="true" class="shrink-0 text-acento" /><a href={`mailto:${correo}`} class="min-w-0 [overflow-wrap:anywhere]"><Correo correo={correo} /></a></li>}
+      </ul>
+    )}
   </div>
   <span class="costura costura-abajo" aria-hidden="true"></span>
 </section>

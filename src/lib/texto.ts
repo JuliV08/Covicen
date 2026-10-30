@@ -6,3 +6,7 @@ export const conPunto = (texto: string): string => (texto.endsWith('.') ? texto 
 // partido en dos renglones, y html-validate (tel-non-breaking, en scripts/verificar.ts) exige &nbsp; en todo espacio
 // dentro de un <a href="tel:">.
 export const sinCortes = (texto: string): string => texto.replace(/ /g, '\u00a0');
+
+// Un horario no deja la unidad sola en el renglón de abajo: «18 h» va con espacio duro (29/10/2026). Solo ese espacio:
+// el resto del horario tiene que poder partirse, porque en la columna del pie no entra en un renglón.
+export const horaSinCorte = (texto: string): string => texto.replace(/(\d) h\b/g, '$1\u00a0h');
