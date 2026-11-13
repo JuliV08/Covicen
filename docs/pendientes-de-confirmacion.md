@@ -201,7 +201,7 @@ sigue como hoy: arma el texto para dictarlo al 140.
 **4 · Línea 0800**: resuelto el 05/10, es el 0800 444 7777 (ver la tercera tanda, arriba).
 
 **5 · El correo de atención al usuario.** *Actualización 29/10/2026: la casilla se publicó con su horario (lunes a
-viernes, de 8 a 18 h) en el pie, en Contacto y en la home. Sigue abierta la parte de los formularios; el de asistencia
+viernes, de 6 a 18 h, excepto feriados; el gerente lo cambió el 13/11/2026) en el pie, en Contacto y en la home. Sigue abierta la parte de los formularios; el de asistencia
 no manda ahí a propósito, porque un auxilio pedido fuera de horario quedaría sin leer hasta el día hábil siguiente.*
 Se pidió enlazar `atencionalusuario@covicen.com.ar` en la tabla de
 canales, y ya está. Lo que no se hizo es cargarlo como el correo de los formularios: hoy el de asistencia está apagado

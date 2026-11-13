@@ -72,7 +72,7 @@ export const esquemaContacto = z.object({
   /** atencionalusuario@covicen.com.ar (PETG 61.5). Publicado desde el 29/10/2026. Además de mostrarse, es adonde mandan
    *  los formularios propios de TelePASE y de trámites (hoy escondidos); el de asistencia no va por correo. */
   atencionUsuario: z.email().nullable(),
-  /** Horario de atención al usuario (0800 y correo), tal como se lee: «Lunes a viernes, de 8 a 18 h» (29/10/2026). */
+  /** Horario de atención al usuario (0800 y correo), tal como se lee: «Lunes a viernes, de 6 a 18 h, excepto feriados» (13/11/2026). */
   horarioAtencion: z.string().min(1).nullable(),
   /** E.164 sin '+', ej. 5493510000000 → wa.me/5493510000000 */
   whatsapp: z.object({ numero: z.string().regex(/^\d{10,15}$/).nullable() }),

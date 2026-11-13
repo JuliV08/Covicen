@@ -7,7 +7,7 @@ import { datos } from '@/lib/datos';
 const contacto = await datos.contacto();
 const tel = contacto.emergencias.telefono;
 // El pedido de asistencia no va por correo (29/10/2026): la casilla de atención al usuario se atiende de lunes a
-// viernes de 8 a 18, y un auxilio pedido un sábado a la noche quedaría sin leer hasta el lunes. Lo mismo pasaría con
+// viernes de 6 a 18 (y no los feriados), y un auxilio pedido un sábado a la noche quedaría sin leer hasta el lunes. Lo mismo pasaría con
 // cualquier otra casilla de oficina. Solo WhatsApp, y solo si ese número se atiende a toda hora: confirmarlo antes de
 // cargarlo (docs/pendientes-de-confirmacion.md). Sin canal, el formulario arma el texto para dictarlo al 140.
 const hayCanal = Boolean(contacto.whatsapp.numero);

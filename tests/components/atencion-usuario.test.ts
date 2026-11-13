@@ -9,9 +9,10 @@ import Contacto from '@/pages/contacto.astro';
 
 // 29/10/2026, pedido de Covicen: «Horario de atención: de Lunes a Viernes de 08 a 18 horas. Correo electrónico:
 // atencionalusuario@covicen.com.ar». Va en el pie, en Contacto y en la home, y la tabla de canales dice el mismo horario.
-const HORARIO = 'Lunes a viernes, de 8 a 18 h';
+// 13/11/2026: el gerente lo cambia a «lunes a viernes de 6 a 18 horas (excepto feriados)», para el público y el 0800.
+const HORARIO = 'Lunes a viernes, de 6 a 18 h, excepto feriados';
 // En pantalla, «18 h» con espacio duro: la «h» no queda sola en el renglón de abajo.
-const HORARIO_EN_PANTALLA = 'Lunes a viernes, de 8 a 18 h';
+const HORARIO_EN_PANTALLA = 'Lunes a viernes, de 6 a 18\u00a0h, excepto feriados';
 const CORREO = 'atencionalusuario@covicen.com.ar';
 // En pantalla, con un corte sugerido después de la «@».
 const CORREO_EN_PANTALLA = /atencionalusuario@<wbr\s*\/?>covicen\.com\.ar/;
@@ -27,7 +28,7 @@ describe('Atención al usuario: horario y correo', () => {
     const canal = (id: string) => c.canales.find((k) => k.id === id);
     expect(canal('correo')?.valor).toBe(CORREO);
     expect(canal('linea-0800')?.disponibilidad).toBe(HORARIO);
-    expect(canal('correo')?.disponibilidad).toContain('de lunes a viernes, de 8 a 18 h');
+    expect(canal('correo')?.disponibilidad).toContain('de lunes a viernes, de 6 a 18 h, excepto feriados');
   });
 
   it('horaSinCorte une solo la unidad: el resto del horario se puede partir', () => {
