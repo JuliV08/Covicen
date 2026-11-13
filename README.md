@@ -88,7 +88,7 @@ El pliego (PETG 61.7) pide el sitio bajo un dominio con `www` y redirección 301
 5. **Push a `main`** y comprobar: `https://covicen.com.ar/` responde 301 a `https://www.covicen.com.ar/`; `https://www.covicen.com.ar/robots.txt` permite indexar y apunta al sitemap; el pie de cualquier página dice la fecha del build.
 6. Si algún día el sitio se sirve desde un VPS en vez de Pages, la redirección la hace el servidor (en Caddy: `covicen.com.ar { redir https://www.covicen.com.ar{uri} permanent }`); las tres variables son las mismas.
 
-Casilla `atencionalusuario@covicen.com.ar` (PETG 61.5): se publica en `src/content/contacto.json` (`atencionUsuario` y el canal `correo`) solo cuando la casilla funcione; hasta entonces el sitio no la nombra.
+Casilla `atencionalusuario@covicen.com.ar` (PETG 61.5): publicada desde el 29/10/2026, con su horario, en `src/content/contacto.json` (`atencionUsuario`, `horarioAtencion` y la `disponibilidad` de los canales `correo` y `linea-0800`). Se ve en el pie, en Contacto y en la home. El formulario de asistencia no manda ahí: la casilla se atiende en horario de oficina.
 
 ## Documentación
 - Guía de revisión para Juli (qué mirar en cada pantalla, cómo probar el tema, el mapa, la ubicación y la impresión, qué está oculto y cómo cargarlo): `docs/guia-de-revision.md`.

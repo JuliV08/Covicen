@@ -2,13 +2,14 @@
 import { existsSync } from 'node:fs';
 import { ArrowRight, Phone } from '@lucide/astro';
 import Atencion0800 from '@/components/Atencion0800.astro';
+import Correo from '@/components/ui/Correo.astro';
 import Logotipo from '@/components/marca/Logotipo.astro';
 import type { Contacto, Empresa } from '@/lib/datos/esquemas';
 import { fechaHoraLarga } from '@/lib/formato';
 import { enlacesInstitucionales, logoInstitucional, redFederal } from '@/lib/institucional';
 import { paginaPublicada } from '@/lib/paginas';
 import { ruta } from '@/lib/rutas';
-import { sinCortes } from '@/lib/texto';
+import { horaSinCorte, sinCortes } from '@/lib/texto';
 import { enlaceWhatsapp } from '@/lib/whatsapp';
 
 interface Props { empresa: Empresa; contacto: Contacto }
@@ -69,9 +70,16 @@ const actualizado = fechaHoraLarga(ahora);
       <p class="text-sm text-texto-2">Reclamos, consultas y sugerencias.</p>
       {/* Enlace con flecha y no botón: entre 1024 y 1280 la tarjeta mide ~150 px de ancho y un botón no entraba. */}
       <a href={ruta('/contacto')} class="pie-cta mt-4 inline-flex items-center gap-2 self-start font-semibold no-underline">Formulario de contacto <ArrowRight size={16} aria-hidden="true" class="shrink-0" /></a>
-      {(contacto.atencionUsuario || contacto.whatsapp.numero || paginaPublicada('/proveedores')) && (
+      {/* Horario y correo de atención al usuario (29/10/2026), con los rótulos con que los mandó Covicen y el mismo formato
+          que «Datos registrales», más abajo. */}
+      {(contacto.horarioAtencion || contacto.atencionUsuario) && (
+        <dl class="mt-5 grid gap-y-3 text-sm text-texto-2">
+          {contacto.horarioAtencion && <div><dt class="font-semibold text-texto">Horario de atención</dt><dd>{horaSinCorte(contacto.horarioAtencion)}</dd></div>}
+          {contacto.atencionUsuario && <div><dt class="font-semibold text-texto">Correo electrónico</dt><dd><a href={`mailto:${contacto.atencionUsuario}`} class="[overflow-wrap:anywhere]"><Correo correo={contacto.atencionUsuario} /></a></dd></div>}
+        </dl>
+      )}
+      {(contacto.whatsapp.numero || paginaPublicada('/proveedores')) && (
         <ul class="mt-5 flex flex-col gap-1 text-texto-2">
-          {contacto.atencionUsuario && <li><a href={`mailto:${contacto.atencionUsuario}`} class="inline-block py-1 [overflow-wrap:anywhere] no-underline hover:underline">{contacto.atencionUsuario}</a></li>}
           {contacto.whatsapp.numero && <li><a href={enlaceWhatsapp(contacto.whatsapp.numero, 'Hola Covicen')} class="inline-block py-1 no-underline hover:underline" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>}
           {paginaPublicada('/proveedores') && <li><a href={ruta('/proveedores')} class="inline-block py-1 no-underline hover:underline">Proveedores</a></li>}
         </ul>

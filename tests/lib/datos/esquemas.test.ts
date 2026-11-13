@@ -75,7 +75,7 @@ describe('esquemaCabina', () => {
 
 describe('esquemaContacto', () => {
   const vacio = {
-    emergencias: { telefono: '140', etiqueta: 'Emergencias' }, lineaGratuita: null, atencionUsuario: null, whatsapp: { numero: null },
+    emergencias: { telefono: '140', etiqueta: 'Emergencias' }, lineaGratuita: null, atencionUsuario: null, horarioAtencion: null, whatsapp: { numero: null },
     email: { general: null, rrhh: null, proveedores: null, etica: null }, redes: {},
     enlaces: { telepase: 'https://www.telepase.com.ar/', oficinaVirtual: null, atencionDnv: null },
     canales: [{ id: 'emergencias-140', nombre: 'Emergencias 140', tipo: 'telefono', valor: '140', disponibilidad: '24 horas, los 365 días', acuse: 'Inmediato', respuesta: 'Inmediata', fuente: 'PETG art. 58 y 59' }],

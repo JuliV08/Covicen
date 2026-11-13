@@ -190,13 +190,20 @@ lo pide a los 90 días de la toma de posesión. Cuando exista el número, ademá
 cargarlo en `C:\Users\Villex\dev\Covicen\src\content\contacto.json` (`whatsapp.numero` y el `valor` del canal) y
 volver a nombrarlo en esos dos textos.
 
-> «¿Quién tramita el número de WhatsApp de atención al usuario, y para cuándo?»
+> «¿Quién tramita el número de WhatsApp de atención al usuario, y para cuándo? ¿Se va a atender las 24 horas?»
+
+Lo segundo importa para Asistencia en ruta: desde el 29/10/2026 ese formulario solo puede mandar por WhatsApp (no por
+correo, porque las casillas se atienden en horario de oficina). Si el WhatsApp tampoco es de 24 horas, Asistencia
+sigue como hoy: arma el texto para dictarlo al 140.
 
 - **A quién:** el gerente o PREVI, si lo atienden ellos.
 
 **4 · Línea 0800**: resuelto el 05/10, es el 0800 444 7777 (ver la tercera tanda, arriba).
 
-**5 · El correo de atención al usuario.** Se pidió enlazar `atencionalusuario@covicen.com.ar` en la tabla de
+**5 · El correo de atención al usuario.** *Actualización 29/10/2026: la casilla se publicó con su horario (lunes a
+viernes, de 6 a 18 h, excepto feriados; el gerente lo cambió el 13/11/2026) en el pie, en Contacto y en la home. Sigue abierta la parte de los formularios; el de asistencia
+no manda ahí a propósito, porque un auxilio pedido fuera de horario quedaría sin leer hasta el día hábil siguiente.*
+Se pidió enlazar `atencionalusuario@covicen.com.ar` en la tabla de
 canales, y ya está. Lo que no se hizo es cargarlo como el correo de los formularios: hoy el de asistencia está apagado
 con el aviso de que se habilita con la toma de posesión (los de TelePASE y trámites, además, están escondidos), y con el correo cargado pasarían a
 mandarse por correo a esa casilla (también aparecería en el pie de página).

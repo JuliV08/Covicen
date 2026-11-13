@@ -1,0 +1,9 @@
+---
+// Un correo con un corte sugerido después de la «@» (29/10/2026). En una columna angosta, como la del pie entre 1024 y
+// 1280 px, «atencionalusuario@covicen.com.ar» no entra en un renglón: así se parte en «atencionalusuario@» y
+// «covicen.com.ar», y no en cualquier letra. El <wbr> no viaja si alguien copia la dirección.
+interface Props { correo: string }
+const { correo } = Astro.props;
+const arroba = correo.indexOf('@');
+---
+{correo.slice(0, arroba + 1)}<wbr />{correo.slice(arroba + 1)}

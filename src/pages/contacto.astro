@@ -1,19 +1,24 @@
 ---
-import { Phone } from '@lucide/astro';
+import { Clock, Mail, Phone } from '@lucide/astro';
 import Base from '@/layouts/Base.astro';
 import Canales from '@/components/Canales.astro';
 import Formulario from '@/components/Formulario.astro';
 import FormularioCrm from '@/components/FormularioCrm.astro';
+import Correo from '@/components/ui/Correo.astro';
 import Seccion from '@/components/ui/Seccion.astro';
 import { datos } from '@/lib/datos';
 import { cabinaOperativa } from '@/lib/datos/esquemas';
 import { alternarFondos } from '@/lib/fondos';
 import { publicado } from '@/lib/publicado';
-import { sinCortes } from '@/lib/texto';
+import { horaSinCorte, sinCortes } from '@/lib/texto';
 const [contacto, tramo] = await Promise.all([datos.contacto(), datos.tramo()]);
 const tel = contacto.emergencias.telefono;
 const linea = contacto.lineaGratuita;
 const correo = contacto.atencionUsuario ?? contacto.email.general;
+// Horario y correo de atención al usuario (29/10/2026), en la tarjeta del 0800. No confundir con `correo`, que es
+// adonde mandan los formularios propios.
+const horario = contacto.horarioAtencion;
+const atencion = contacto.atencionUsuario;
 const estaciones = tramo.cabinas.filter(cabinaOperativa).map((c) => c.nombre);
 // Sin plazos de respuesta publicados (02/10/2026, reunión con el gerente: «bajarle el compromiso de los días de
 // respuesta»; Juli eligió sacarlos en todos lados). El contrato los fija igual (PETG 58) y pide publicarlos (61.6):
@@ -31,8 +36,16 @@ const pasosReclamo = [
     <div class="revelar grid gap-12 lg:grid-cols-[1fr_1.3fr]">
       <div class="flex flex-col gap-4">
         <div class="tarjeta tarjeta-vial p-5"><p class="eyebrow flex items-center gap-2"><Phone size={14} aria-hidden="true" /> Emergencias 24 h</p><a href={`tel:${tel.replace(/[^\d+]/g, '')}`} class="mt-2 block text-3xl font-extrabold tabular-nums text-vial-texto no-underline" aria-label={`Llamar a emergencias, ${tel}`}>{tel}</a></div>
-        {/* La línea 0800 (05/10/2026), en la misma columna que el 140: es el teléfono de las consultas y los reclamos. */}
-        {linea && <div class="tarjeta p-5"><p class="eyebrow flex items-center gap-2"><Phone size={14} aria-hidden="true" /> Atención al usuario</p><a href={`tel:${linea.replace(/[^\d+]/g, '')}`} class="mt-2 block text-3xl font-extrabold tabular-nums text-acento no-underline" aria-label={`Llamar a atención al usuario, ${linea}`}>{sinCortes(linea)}</a><p class="mt-1 text-sm text-texto-2">Línea gratuita para consultas y reclamos.</p></div>}
+        {/* La línea 0800 (05/10/2026), en la misma columna que el 140: es el teléfono de las consultas y los reclamos.
+            Desde el 29/10/2026 suma, debajo, el horario y el correo de atención al usuario. */}
+        {(linea || horario || atencion) && <div class="tarjeta p-5"><p class="eyebrow flex items-center gap-2"><Phone size={14} aria-hidden="true" /> Atención al usuario</p>{linea && <><a href={`tel:${linea.replace(/[^\d+]/g, '')}`} class="mt-2 block text-3xl font-extrabold tabular-nums text-acento no-underline" aria-label={`Llamar a atención al usuario, ${linea}`}>{sinCortes(linea)}</a><p class="mt-1 text-sm text-texto-2">Línea gratuita para consultas y reclamos.</p></>}
+          {(horario || atencion) && (
+            <dl class="mt-4 grid gap-y-3 border-t border-borde pt-4 text-sm text-texto-2">
+              {horario && <div><dt class="flex items-center gap-2 font-semibold text-texto"><Clock size={14} aria-hidden="true" /> Horario de atención</dt><dd class="mt-0.5">{horaSinCorte(horario)}</dd></div>}
+              {atencion && <div><dt class="flex items-center gap-2 font-semibold text-texto"><Mail size={14} aria-hidden="true" /> Correo electrónico</dt><dd class="mt-0.5"><a href={`mailto:${atencion}`} class="[overflow-wrap:anywhere]"><Correo correo={atencion} /></a></dd></div>}
+            </dl>
+          )}
+        </div>}
         <Canales canales={contacto.canales} compacto />
       </div>
       {/* Desde el 01/10/2026 el de reclamos es el formulario del CRM (Bitrix24, de PREVI): ver FormularioCrm.astro. El

@@ -69,8 +69,11 @@ export const esquemaContacto = z.object({
   emergencias: z.object({ telefono: z.string().regex(/^[0-9+\- ]{3,20}$/), etiqueta: z.string().min(1) }),
   /** Línea gratuita 0800 (PETG 61.1). */
   lineaGratuita: z.string().regex(/^[0-9+\- ]{6,20}$/).nullable(),
-  /** atencionalusuario@covicen.com.ar (PETG 61.5). Se publica cuando la casilla funcione. */
+  /** atencionalusuario@covicen.com.ar (PETG 61.5). Publicado desde el 29/10/2026. Además de mostrarse, es adonde mandan
+   *  los formularios propios de TelePASE y de trámites (hoy escondidos); el de asistencia no va por correo. */
   atencionUsuario: z.email().nullable(),
+  /** Horario de atención al usuario (0800 y correo), tal como se lee: «Lunes a viernes, de 6 a 18 h, excepto feriados» (13/11/2026). */
+  horarioAtencion: z.string().min(1).nullable(),
   /** E.164 sin '+', ej. 5493510000000 → wa.me/5493510000000 */
   whatsapp: z.object({ numero: z.string().regex(/^\d{10,15}$/).nullable() }),
   email: z.object({

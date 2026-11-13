@@ -22,6 +22,26 @@ Todo lo de la rama `web-actualizacion-2026-09` (Fases 0 a 6 del plan `docs/super
 
 ---
 
+## Horario y correo de atención al usuario (29 de octubre) — mirá esto primero
+
+Pedido de Covicen: «Horario de atención: de Lunes a Viernes de 08 a 18 horas. Correo electrónico:
+atencionalusuario@covicen.com.ar». **Desde el 13/11/2026 el gerente lo cambió: «lunes a viernes de 6 a 18 horas (excepto feriados)», para el público y el 0800.**
+En el sitio se lee «Lunes a viernes, de 6 a 18 h, excepto feriados», como el resto de los horarios. Qué mirar:
+- **El pie**, columna Contacto: debajo de «Formulario de contacto», «Horario de atención» y «Correo electrónico» con la
+  dirección, que abre el correo.
+- **Contacto**: la tarjeta «Atención al usuario» (debajo de la del 140) suma, bajo el 0800, el horario y el correo.
+- **La home**, sección «¿Consultas, reclamos?»: debajo de los botones, el horario (con un reloj) y el correo.
+- **Emergencias**, tabla «Canales de atención»: la línea 0800 dice «Lunes a viernes, de 6 a 18 h, excepto feriados» (antes, el mínimo del
+  pliego: «Al menos 8 horas en días hábiles, entre las 8 y las 20») y el correo, «Siempre disponible; se atiende de
+  lunes a viernes, de 6 a 18 h, excepto feriados».
+- **Asistencia en ruta**: el formulario sigue armando el texto para dictarlo al 140. No manda a la casilla a propósito:
+  un auxilio pedido un sábado a la noche quedaría sin leer hasta el lunes. El aviso de arriba del formulario ya no dice
+  que el envío «se habilita con la toma de posesión» (fue el 7/10): dice que todavía no está disponible.
+- **El correo se parte prolijo**: en una columna angosta corta después de la «@» («atencionalusuario@» /
+  «covicen.com.ar»), y «18 h» no se separa.
+- Dónde se cambia: `atencionUsuario` y `horarioAtencion` en `src/content/contacto.json`; el horario también está en la
+  `disponibilidad` de los canales `correo` y `linea-0800`, en el mismo archivo.
+
 ## Google Analytics en toda la web (14 de octubre, a la tarde) — mirá esto primero
 
 Desde ahora Analytics cuenta las visitas de todas las páginas, **solo en producción** (www.covicen.com.ar). El sitio de
@@ -941,7 +961,7 @@ Nada de esto dice "a confirmar" ni "próximamente" en el sitio: directamente no 
 | `enFormacion: false` | `src/content/empresa.json` | Saca "Sociedad en formación" del footer y el párrafo de Quiénes somos. |
 | `polizaRc { aseguradora, numero, vigenciaHasta, url? }` | `src/content/empresa.json` | Ficha de la póliza en Transparencia. |
 | `lineaGratuita` (0800) | `src/content/contacto.json` | Fila "Atención al usuario 0800…" en el footer. También `canales[].valor` del canal `linea-0800` para la tabla. |
-| `atencionUsuario` (correo) | `src/content/contacto.json` | Correo en el footer; los formularios pasan a "Enviar por correo" si no hay WhatsApp. Solo cuando la casilla funcione. **Desde el 02/10/2026 la dirección ya está en `canales[].valor` del canal `correo`** (pedido del gerente: enlazarla en la tabla de canales), pero este slot sigue vacío: la pregunta está en pendientes. |
+| `atencionUsuario` (correo) | `src/content/contacto.json` | Correo en el footer; los formularios pasan a "Enviar por correo" si no hay WhatsApp. Solo cuando la casilla funcione. **Desde el 02/10/2026 la dirección ya está en `canales[].valor` del canal `correo`** (pedido del gerente: enlazarla en la tabla de canales), y **desde el 29/10/2026 este slot está cargado**, junto con `horarioAtencion`: salen en el pie, en Contacto y en la home. El formulario de asistencia no manda por correo. |
 | `whatsapp.numero` | `src/content/contacto.json` | WhatsApp en el footer, "También por WhatsApp" en Emergencias, formularios habilitados con "Enviar por WhatsApp". También `canales[].valor` del canal `whatsapp`. |
 | `email.rrhh`, `email.proveedores`, `email.etica`, `email.general` | `src/content/contacto.json` | Destinos alternativos de Trabajá, Proveedores, canal ético y formularios. |
 | `redes { instagram, facebook, linkedin, youtube, x }` | `src/content/contacto.json` | Fila de redes en el footer (por nombre; logos oficiales después). |
