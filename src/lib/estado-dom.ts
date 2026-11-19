@@ -134,6 +134,13 @@ const rutasDe = (seccion: HTMLElement): NombreRuta[] => {
   }
 };
 
+const pintarActualizado = (seccion: HTMLElement, estado: EstadoRuta): void => {
+  const p = seccion.querySelector('[data-estado-actualizado]');
+  if (!p) return;
+  p.textContent = estado.actualizado ? `Última actualización: ${fechaHoraLarga(new Date(estado.actualizado))}` : '';
+  mostrar(p, Boolean(estado.actualizado));
+};
+
 /** Todo lo que se hace con una respuesta. Sin datos (`null` o `disponible: false`), el mensaje con el 140 y nada más:
  *  nunca «Sin avisos», que diría que la ruta está libre sin saberlo. */
 export function aplicarEstado(seccion: HTMLElement, capa: SVGGElement | null, estado: EstadoRuta | null, geo: GeometriaKm): void {
@@ -161,8 +168,23 @@ export function aplicarEstado(seccion: HTMLElement, capa: SVGGElement | null, es
   if (listaProgramados) pintarProgramados(listaProgramados, proximos, iconos);
   mostrar(programados, proximos.length > 0);
   if (capa) pintarMarcadores(capa, estado.incidentes ?? [], geo);
-  if (actualizado) {
-    actualizado.textContent = estado.actualizado ? `Última actualización: ${fechaHoraLarga(new Date(estado.actualizado))}` : '';
-    mostrar(actualizado, Boolean(estado.actualizado));
-  }
+  pintarActualizado(seccion, estado);
+}
+
+// Dos respuestas con la misma firma muestran lo mismo: `actualizado` es la hora en que el servidor calculó el estado
+// (spec §8.1) y cambia en cada consulta.
+const firmaDe = (estado: EstadoRuta | null): string => {
+  if (!estado) return 'null';
+  const { actualizado: _hora, ...resto } = estado;
+  return JSON.stringify(resto);
+};
+
+/** Lo que hace el script con cada respuesta. Si lo que se muestra no cambió, solo pone la hora nueva: la lista es una
+ *  región viva y repintarla haría que el lector de pantalla vuelva a leer todas las rutas cada 2 minutos. Devuelve la
+ *  firma, que el script guarda para la próxima. */
+export function aplicarSiCambio(seccion: HTMLElement, capa: SVGGElement | null, estado: EstadoRuta | null, geo: GeometriaKm, anterior?: string): string {
+  const firma = firmaDe(estado);
+  if (firma !== anterior) aplicarEstado(seccion, capa, estado, geo);
+  else if (estado) pintarActualizado(seccion, estado);
+  return firma;
 }

@@ -3,7 +3,7 @@ import { parseHTML } from 'linkedom';
 import { describe, expect, it } from 'vitest';
 import type { EstadoRuta } from '@/lib/datos/esquemas';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
-import { aplicarEstado } from '@/lib/estado-dom';
+import { aplicarEstado, aplicarSiCambio } from '@/lib/estado-dom';
 import { geometriaKm, puntoEnGeometria } from '@/lib/geometria-km';
 
 // El armazón que emite EstadoTraza.astro (tests/components/estado-traza.test.ts comprueba que el componente trae estos
@@ -143,6 +143,27 @@ describe('aplicarEstado', async () => {
     const actualizado = q('[data-estado-actualizado]');
     expect(actualizado.hasAttribute('hidden')).toBe(false);
     expect(actualizado.textContent).toContain('26 de noviembre de 2026');
+  });
+
+  it('la misma respuesta con otra hora no repinta la lista (región viva): solo cambia la hora', () => {
+    const { seccion, capa, q } = montar();
+    const primera = estado({ actualizado: '2026-11-26T10:00:00-03:00', incidentes: [aviso] });
+    const firma = aplicarSiCambio(seccion, capa, primera, geo);
+    const fila = q('li[data-ruta="RN 9"]');
+    const otraFirma = aplicarSiCambio(seccion, capa, { ...primera, actualizado: '2026-11-26T10:02:00-03:00' }, geo, firma);
+    expect(otraFirma).toBe(firma);
+    expect(q('li[data-ruta="RN 9"]')).toBe(fila);
+    expect(q('[data-estado-actualizado]').textContent).toContain('10:02');
+  });
+
+  it('si cambia un aviso, o se cae la consulta, se repinta', () => {
+    const { seccion, capa, q } = montar();
+    const firma = aplicarSiCambio(seccion, capa, estado({ incidentes: [aviso] }), geo);
+    const conCorte = aplicarSiCambio(seccion, capa, estado({ incidentes: [{ ...aviso, severidad: 'corte' }] }), geo, firma);
+    expect(conCorte).not.toBe(firma);
+    expect(q('li[data-ruta="RN 9"]').getAttribute('data-nivel')).toBe('corte');
+    aplicarSiCambio(seccion, capa, null, geo, conCorte);
+    expect(q('[data-estado-error]').hasAttribute('hidden')).toBe(false);
   });
 
   it('el código de cliente no usa innerHTML, outerHTML ni insertAdjacentHTML', () => {

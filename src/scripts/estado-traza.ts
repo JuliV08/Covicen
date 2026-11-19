@@ -2,7 +2,7 @@
 // página hay mapa, la capa vacía y la geometría de los km (MapaTramo.astro). Esto consulta la API al entrar, cada
 // 2 minutos con la pestaña a la vista y al volver a ella, y pinta lo que llega (lib/estado-dom.ts). Se engancha como
 // scripts/pestanas-tarifas.ts: lo que queda colgado se suelta en la carga siguiente (navegación del ClientRouter).
-import { aplicarEstado } from '@/lib/estado-dom';
+import { aplicarSiCambio } from '@/lib/estado-dom';
 import { consultarEstado, REFRESCO_MS } from '@/lib/estado-en-vivo';
 import type { GeometriaKm } from '@/lib/geometria-km';
 
@@ -26,18 +26,13 @@ const iniciar = () => {
   const geo = geometriaDe(document.querySelector('[data-geometria-km]'));
   let vigente = true;
   let enCurso = false;
-  // Si la respuesta es la misma que la anterior no se repinta: la lista es una región viva y el lector de pantalla
-  // volvería a leer todas las rutas cada 2 minutos.
   let anterior: string | undefined;
   const consultar = async () => {
     if (enCurso) return;
     enCurso = true;
     const estado = await consultarEstado(url);
     enCurso = false;
-    const firma = JSON.stringify(estado);
-    if (!vigente || firma === anterior) return;
-    anterior = firma;
-    aplicarEstado(seccion, capa, estado, geo);
+    if (vigente) anterior = aplicarSiCambio(seccion, capa, estado, geo, anterior);
   };
   const siSeVe = () => {
     if (document.visibilityState === 'visible') void consultar();
