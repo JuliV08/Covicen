@@ -254,25 +254,40 @@ export const esquemaPregunta = z.object({
 });
 export type Pregunta = z.infer<typeof esquemaPregunta>;
 
+/** Un aviso de la traza. `km` es el km de inicio (o el punto); `kmHasta`, el de fin si es un tramo. Lo carga el sistema
+ *  del estado de la traza: Obras (programados) y Operaciones (imprevistos). `desde`/`hasta` son los de la jornada de hoy;
+ *  un imprevisto abierto no trae `hasta`. `titulo` es el tipo en palabras («Corte de pasto»), para no traducir códigos. */
 export const esquemaIncidente = z.object({
   ruta: esquemaNombreRuta,
   km: z.number().nullable(),
+  kmHasta: z.number().nullable().optional(),
   descripcion: z.string(),
   severidad: z.enum(['info', 'precaucion', 'corte']),
-  tipo: z.enum(['transito', 'obra', 'incidente', 'clima']).default('incidente'),
+  tipo: z.enum(['transito', 'obra', 'incidente', 'clima', 'mantenimiento']).default('incidente'),
+  titulo: z.string().min(1).max(80).optional(),
   sentido: z.enum(['ambos', 'ascendente', 'descendente']).optional(),
   desde: z.iso.datetime({ offset: true }).optional(),
   hasta: z.iso.datetime({ offset: true }).optional(),
+  desvio: z.string().min(1).max(200).optional(),
 });
 export type Incidente = z.infer<typeof esquemaIncidente>;
+
+/** Una jornada de los próximos 7 días: va aparte, bajo «Programado», nunca mezclada con lo que está en curso. */
+export const esquemaProgramado = esquemaIncidente.extend({
+  fecha: fechaIso,
+  desde: z.iso.datetime({ offset: true }),
+  hasta: z.iso.datetime({ offset: true }),
+});
+export type Programado = z.infer<typeof esquemaProgramado>;
 
 export const esquemaEstadoRuta = z.object({
   disponible: z.boolean(),
   /** true = datos de muestra para ver el módulo funcionando; el componente lo dice con un cartel. */
   ejemplo: z.boolean().default(false),
-  /** ISO 8601 con zona (el backoffice manda hora argentina, -03:00). */
+  /** ISO 8601 con zona (hora argentina, -03:00). Es el instante en que el servidor calculó el estado. */
   actualizado: z.iso.datetime({ offset: true }).optional(),
   incidentes: z.array(esquemaIncidente).optional(),
+  programados: z.array(esquemaProgramado).optional(),
 });
 export type EstadoRuta = z.infer<typeof esquemaEstadoRuta>;
 

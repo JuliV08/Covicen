@@ -1,16 +1,17 @@
 // Exporta los esquemas Zod del front como JSON Schema. Los esquemas SON el contrato; esto es su
 // forma portable: el backend (repo privado) valida cada respuesta de su API contra estos archivos.
-//   pnpm contrato   → docs/contrato/{tramo,tarifario}.schema.json
+//   pnpm contrato   → docs/contrato/{tramo,tarifario,estado-ruta}.schema.json
 // `io: 'input'` describe lo que la API tiene que MANDAR (los `.default()` quedan opcionales).
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { z } from 'astro/zod';
-import { esquemaTarifario, esquemaTramo } from '../src/lib/datos/esquemas.ts';
+import { esquemaEstadoRuta, esquemaTarifario, esquemaTramo } from '../src/lib/datos/esquemas.ts';
 
 export function exportarContrato(): Record<string, unknown> {
   const opciones = { target: 'draft-2020-12', io: 'input', unrepresentable: 'any' } as const;
   return {
     tramo: z.toJSONSchema(esquemaTramo, opciones),
     tarifario: z.toJSONSchema(esquemaTarifario, opciones),
+    'estado-ruta': z.toJSONSchema(esquemaEstadoRuta, opciones),
   };
 }
 
