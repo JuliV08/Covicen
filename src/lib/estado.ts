@@ -4,7 +4,8 @@ import type { EstadoRuta, Incidente, NombreRuta } from '@/lib/datos/esquemas';
 export type Nivel = 'normal' | 'precaucion' | 'corte';
 export type FilaEstado = { ruta: NombreRuta; nivel: Nivel; etiqueta: string; incidentes: Incidente[] };
 const ORDEN: Record<Nivel, number> = { normal: 0, precaucion: 1, corte: 2 };
-const ETIQUETA: Record<Nivel, string> = { normal: 'Normal', precaucion: 'Precaución', corte: 'Corte' };
+// «Sin avisos», no «Normal»: la web muestra lo que informa Covicen, no puede asegurar que la ruta esté normal.
+const ETIQUETA: Record<Nivel, string> = { normal: 'Sin avisos', precaucion: 'Precaución', corte: 'Corte' };
 const nivelDe = (i: Incidente): Nivel => (i.severidad === 'corte' ? 'corte' : i.severidad === 'precaucion' ? 'precaucion' : 'normal');
 
 export const estadoPorRuta = (estado: EstadoRuta, rutas: NombreRuta[]): FilaEstado[] =>
