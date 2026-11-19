@@ -4,19 +4,14 @@
 import { Car, CloudFog, Construction, Tractor, TriangleAlert } from '@lucide/astro';
 import Senal from '@/components/ui/Senal.astro';
 import type { EstadoRuta, Incidente, NombreRuta } from '@/lib/datos/esquemas';
-import { fechaHoraLarga, hora, kmTexto } from '@/lib/formato';
-import { estadoPorRuta } from '@/lib/estado';
+import { fechaHoraLarga } from '@/lib/formato';
+import { estadoPorRuta, metaDeAviso } from '@/lib/estado';
 interface Props { estado: EstadoRuta; rutas: NombreRuta[]; nivel?: 'h2' | 'h3' }
 const { estado, rutas, nivel = 'h3' } = Astro.props;
 const Titulo = nivel;
 const filas = estadoPorRuta(estado, rutas);
 const iconos: Record<Incidente['tipo'], typeof Car> = { transito: Car, obra: Construction, incidente: TriangleAlert, clima: CloudFog, mantenimiento: Tractor };
-const sentidos = { ambos: 'ambos sentidos', ascendente: 'sentido ascendente', descendente: 'sentido descendente' } as const;
-// Spec §10.1: km, sentido y hora en una sola línea. `desde`/`hasta` son opcionales: sin ellos no se inventa ninguna hora.
-const franja = (i: Incidente): string | null =>
-  i.desde ? (i.hasta ? `de ${hora(new Date(i.desde))} a ${hora(new Date(i.hasta))}` : `desde las ${hora(new Date(i.desde))}`) : null;
-const meta = (i: Incidente): string =>
-  [i.km !== null ? `km ${kmTexto(i.km)}` : null, i.sentido ? sentidos[i.sentido] : null, franja(i)].filter(Boolean).join(' · ');
+const meta = metaDeAviso;
 ---
 <section class="estado-traza tarjeta p-6" aria-label="Estado de la traza">
   <div class="flex flex-wrap items-center justify-between gap-3">

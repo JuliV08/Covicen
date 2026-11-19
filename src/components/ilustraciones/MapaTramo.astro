@@ -9,7 +9,8 @@
 // la grilla, las marcas viales que fluían y la luz que recorría las rutas en loop; las estaciones son anillos nítidos y
 // sus nombres van sobre una placa. Lo único que se mueve es el auto.
 import { Bath, Coffee, ShieldCheck, Tag, Truck } from '@lucide/astro';
-import { cabinaOperativa, type EstadoRuta, type Incidente, type Tramo } from '@/lib/datos/esquemas';
+import { cabinaOperativa, type EstadoRuta, type Tramo } from '@/lib/datos/esquemas';
+import { FORMA, SEVERIDAD } from '@/lib/estado';
 import { kmTexto } from '@/lib/formato';
 import { estacionadoAntes, trazoRedondeado, type Red } from '@/lib/red';
 import { ruta } from '@/lib/rutas';
@@ -47,10 +48,7 @@ const autoEn = estacionadoAntes(inicial.mapa, rumboInicial);
 const titulo = `Mapa esquemático del Tramo Centro: ${tramo.rutas.map((r) => r.nombre).join(', ')} entre ${tramo.ciudades.filter((c) => c.principal).map((c) => c.nombre).join(', ')}, con ${tramo.cabinas.length} estaciones de peaje.`;
 const iconos: Record<ClaveServicio, typeof Coffee> = { areaDescanso: Coffee, detencionSegura: ShieldCheck, gruaGratuita: Truck, sanitarios: Bath, colocacionTelepase: Tag };
 const marcadores = incidentes.flatMap((inc) => { const p = inc.km === null ? null : puntoEnRuta(tramo, inc.ruta, inc.km); return p ? [{ ...inc, p }] : []; });
-// La severidad no se comunica solo por color (spec §7.1): cambia la FORMA del marcador (triángulo = corte, rombo =
-// precaución, círculo = info), se nombra en el <title> y la leyenda repite forma y nombre. El relleno es el refuerzo.
-const SEVERIDAD: Record<Incidente['severidad'], string> = { corte: 'Corte', precaucion: 'Precaución', info: 'Información' };
-const FORMA: Record<Incidente['severidad'], string> = { corte: 'M0 -10 L9 6 L-9 6 Z', precaucion: 'M0 -9 L9 0 L0 9 L-9 0 Z', info: 'M-8 0 A8 8 0 1 0 8 0 A8 8 0 1 0 -8 0 Z' };
+// Forma y nombre de cada severidad: lib/estado.ts (los comparte con el mapa que se pinta en el navegador).
 const severidades = (['corte', 'precaucion', 'info'] as const).filter((s) => marcadores.some((m) => m.severidad === s));
 const id = (nombre: string) => `${idTitulo}-${nombre}`;
 ---

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
+import { geometriaKm, puntoEnGeometria } from '@/lib/geometria-km';
 import { cajaCirculo, cajaTexto, chocan, encuadreDelMapa, estadoCabina, leyendaServicios, puntoEnRuta, rotulosDelMapa, serviciosDeCabina, TAM_ROTULO } from '@/lib/tramo';
 
 describe('estadoCabina', async () => {
@@ -98,3 +99,25 @@ describe('encuadre del mapa', async () => {
     expect(c.y + c.alto).toBeLessThanOrEqual(520);
   });
 });
+
+// El navegador ubica los avisos en vivo con puntoEnGeometria (sin traer el esquema ni tramo.json entero): tiene que dar
+// exactamente lo mismo que puntoEnRuta, que es lo que usa el build.
+describe('puntoEnGeometria', async () => {
+  const t = await fuenteLocalJson.tramo();
+  const geo = geometriaKm(t);
+  it('da lo mismo que puntoEnRuta en todo el tramo, de 10 en 10 km', () => {
+    for (const r of t.rutas) {
+      for (let km = (r.pkInicial ?? 0) - 10; km <= (r.pkFinal ?? 0) + 10; km += 10) {
+        expect(puntoEnGeometria(geo, r.nombre, km)).toEqual(puntoEnRuta(t, r.nombre, km));
+      }
+    }
+  });
+  it('una ruta sin km de inicio y de fin no tiene geometría', () => {
+    const sinKm = { ...t, rutas: t.rutas.map((r) => (r.nombre === 'RN 19' ? { ...r, pkInicial: undefined, pkFinal: undefined } : r)) };
+    const g = geometriaKm(sinKm);
+    expect(g['RN 19']).toBeUndefined();
+    expect(puntoEnGeometria(g, 'RN 19', 50)).toBeNull();
+    expect(puntoEnGeometria(g, 'RN 9', 400)).not.toBeNull();
+  });
+});
+
