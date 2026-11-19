@@ -10,6 +10,10 @@ const sinComentarios = (fuente: string) =>
 const gz = (p: string) => (existsSync(p) ? gzipSync(sinComentarios(readFileSync(p, 'utf8'))).length : 0);
 const animacion = ['src/scripts/revelar.ts', 'src/scripts/spotlight.ts', 'src/scripts/contador.ts', 'src/scripts/parallax-2d.ts', 'src/scripts/flip.ts'];
 const todos = [...animacion, 'src/scripts/menu.ts', 'src/scripts/formulario.ts', 'src/scripts/tema.ts', 'src/scripts/marquesina.ts', 'src/scripts/mapa.ts', 'src/lib/red.ts', 'src/scripts/imprimir.ts', 'src/scripts/asistencia.ts', 'src/lib/asistencia.ts', 'src/lib/formulario.ts', 'src/lib/disolvencia.ts', 'src/lib/puntero.ts', 'src/scripts/recarga.ts', 'src/lib/recarga.ts'];
+// El estado de la traza en vivo (19/11/2026), con lo que importa de lib/. Va con techo propio, decidido por Juli: solo
+// baja en /el-tramo/ y /obras/ y solo con el módulo prendido, así que sumarlo al de arriba lo dejaba sin sentido para
+// el resto de la web. Medido con esbuild, al navegador le llegan 3,5 KB gz.
+const estadoEnVivo = ['src/scripts/estado-traza.ts', 'src/lib/estado-dom.ts', 'src/lib/estado-en-vivo.ts', 'src/lib/geometria-km.ts', 'src/lib/estado.ts', 'src/lib/formato.ts'];
 
 describe('presupuesto', () => {
   // 6 → 9 KB al sumar la grilla cinética y el flip (pedidos de Juli, 2026-08-27). Sigue muy por debajo de los 30 KB del spec. La grilla se fue el 05/10/2026.
@@ -22,6 +26,9 @@ describe('presupuesto', () => {
   // El gate que le importa al usuario es el otro: el JS emitido, 30 KB en verificar.ts, hoy en 6,3.
   it('todos los scripts de cliente (código, sin comentarios) pesan menos de 14 KB gz en total', () => {
     expect(todos.reduce((s, p) => s + gz(p), 0)).toBeLessThan(14336);
+  });
+  it('el estado de la traza en vivo (código, sin comentarios) pesa menos de 7 KB gz', () => {
+    expect(estadoEnVivo.reduce((s, p) => s + gz(p), 0)).toBeLessThan(7168);
   });
   it('el isotipo SVG pesa menos de 12 KB', () => {
     expect(statSync('src/assets/marca/isotipo.svg').size).toBeLessThan(12 * 1024);

@@ -13,15 +13,14 @@ import { cabinaOperativa } from '@/lib/datos/esquemas';
 import { kmTexto, numero } from '@/lib/formato';
 import { ruta } from '@/lib/rutas';
 import { publicado } from '@/lib/publicado';
+import { urlEstadoEnVivo } from '@/lib/estado-publicado';
 import { estadoCabina, serviciosDeCabina } from '@/lib/tramo';
-const [tramo, estado] = await Promise.all([datos.tramo(), datos.estadoRutas()]);
-// El estado de la traza se esconde hasta tener información real (02/10/2026: «comentar hasta que tengamos info»):
-// sin el bloque, sin el cartel de «datos de ejemplo» y sin los marcadores del mapa. publicado.estadoDeLaTraza.
-const conEstado = estado.disponible && publicado.estadoDeLaTraza;
-const incidentes = conEstado ? estado.incidentes ?? [] : [];
-// El mapa pinta los incidentes como marcadores. Mientras el estado sea de muestra (estado.ejemplo), el cartel va ARRIBA
-// del mapa: un corte inventado que se lee como real es el peor error posible. Y EstadoTraza repite los mismos incidentes
-// en texto, que es la única forma de leerlos con teclado o con lector de pantalla.
+const tramo = await datos.tramo();
+// El estado de la traza en vivo (spec del sistema 3, §8.6), apagado hasta que la API del sistema esté en el aire.
+// Prendido, el bloque y la capa del mapa salen vacíos y los llena el navegador: los datos de muestra de
+// src/content/estado-ruta.json no llegan nunca a la página (un corte inventado que se lee como real es el peor error
+// posible). La lista repite en texto lo que el mapa marca: es la única forma de leerlo con teclado o lector de pantalla.
+const urlEstado = urlEstadoEnVivo();
 const rutas = tramo.rutas.map((r) => r.nombre);
 const conServicios = tramo.cabinas.filter((c) => serviciosDeCabina(c).length > 0);
 // Call del 20/09/2026: los cuadros tarifarios salen de acá («es reiterativo»: viven en /tarifas/, donde el gerente
@@ -54,9 +53,8 @@ const anclaTapada = 'scroll-mt-[calc(var(--alto-header)+4.5rem)]';
        "mapa-titulo": ese ya lo usa MapaTramo para la descripción del SVG y quedarían dos iguales en la misma página. -->
   <section id="mapa" class="contenedor py-12" aria-labelledby="titulo-seccion-mapa">
     <h2 id="titulo-seccion-mapa" class="sr-only">Mapa del tramo y estaciones de peaje</h2>
-    {conEstado && estado.ejemplo && <p class="revelar mb-4"><Senal variante="frio">Datos de ejemplo: el módulo se activa con la operación</Senal></p>}
-    <div class="revelar tarjeta tarjeta-panel xl:mx-[calc(50%-min(50vw-1.5rem,55rem))]"><MapaInteractivo {tramo} {incidentes} modo="scroll" /></div>
-    {conEstado && <div class="revelar mt-8"><EstadoTraza {estado} {rutas} nivel="h2" /></div>}
+    <div class="revelar tarjeta tarjeta-panel xl:mx-[calc(50%-min(50vw-1.5rem,55rem))]"><MapaInteractivo {tramo} conEstado={urlEstado !== null} modo="scroll" /></div>
+    {urlEstado && <div class="revelar mt-8"><EstadoTraza url={urlEstado} {rutas} nivel="h2" /></div>}
   </section>
 
   {/* Pedido del 24/09/2026: el nombre de cada bloque es el título, sin bajada, y se pasa directo al contenido. Son

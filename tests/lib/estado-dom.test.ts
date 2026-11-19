@@ -146,7 +146,7 @@ describe('aplicarEstado', async () => {
   });
 
   it('el código de cliente no usa innerHTML, outerHTML ni insertAdjacentHTML', () => {
-    for (const archivo of ['src/lib/estado-dom.ts', 'src/lib/estado-en-vivo.ts', 'src/lib/geometria-km.ts']) {
+    for (const archivo of ['src/lib/estado-dom.ts', 'src/lib/estado-en-vivo.ts', 'src/lib/geometria-km.ts', 'src/lib/estado.ts', 'src/scripts/estado-traza.ts']) {
       expect(readFileSync(archivo, 'utf8'), archivo).not.toMatch(/innerHTML|outerHTML|insertAdjacentHTML/);
     }
   });

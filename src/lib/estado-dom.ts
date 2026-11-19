@@ -5,8 +5,8 @@
 // El texto lo escribe Obras y la web no tiene CSP: todo dato entra como texto (createElement + textContent), nunca como
 // HTML. tests/lib/estado-dom.test.ts lo prueba con un <img onerror> y prohíbe en estos archivos las vías de HTML crudo.
 import type { EstadoRuta, Incidente, NombreRuta, Programado } from '@/lib/datos/esquemas';
-import { estadoPorRuta, FORMA, metaDeAviso, SEVERIDAD, type FilaEstado } from '@/lib/estado';
-import { fechaHoraLarga, fechaLarga, kmTexto } from '@/lib/formato';
+import { estadoPorRuta, FORMA, kmDeAviso, metaDeAviso, SEVERIDAD, type FilaEstado } from '@/lib/estado';
+import { fechaHoraLarga, fechaLarga } from '@/lib/formato';
 import { puntoEnGeometria, type GeometriaKm } from '@/lib/geometria-km';
 
 const SVG = 'http://www.w3.org/2000/svg';
@@ -93,9 +93,6 @@ export function pintarProgramados(lista: HTMLElement, programados: Programado[],
   for (const p of programados) lista.append(itemAviso(doc, p, iconos, `${p.ruta} · ${fechaLarga(p.fecha)}`));
 }
 
-const kmDelTitulo = (i: Incidente): string =>
-  i.km === null ? '' : i.kmHasta != null && i.kmHasta !== i.km ? ` km ${kmTexto(i.km)} a ${kmTexto(i.kmHasta)}` : ` km ${kmTexto(i.km)}`;
-
 /** Vacía la capa y pone un marcador por aviso ubicable: en su km, o en el punto medio si es un tramo. La severidad va en
  *  la forma y en el <title>, no solo en el color. Un aviso sin km, o de una ruta sin geometría, no va al mapa. */
 export function pintarMarcadores(capa: SVGGElement, incidentes: Incidente[], geo: GeometriaKm): void {
@@ -112,14 +109,18 @@ export function pintarMarcadores(capa: SVGGElement, incidentes: Incidente[], geo
     g.setAttribute('data-severidad', i.severidad);
     g.setAttribute('transform', `translate(${p.x} ${p.y})`);
     const titulo = doc.createElementNS(SVG, 'title');
-    titulo.textContent = `${SEVERIDAD[i.severidad]} — ${i.ruta}${kmDelTitulo(i)}: ${i.descripcion}`;
+    titulo.textContent = `${SEVERIDAD[i.severidad]} — ${i.ruta} ${kmDeAviso(i)}: ${i.descripcion}`;
     const forma = doc.createElementNS(SVG, 'path');
     forma.setAttribute('d', FORMA[i.severidad]);
     forma.setAttribute('class', 'incidente-forma');
     forma.setAttribute('stroke', 'var(--color-fondo)');
     forma.setAttribute('stroke-width', '1.5');
     forma.setAttribute('stroke-linejoin', 'round');
-    g.append(titulo, forma);
+    const punto = doc.createElementNS(SVG, 'circle');
+    punto.setAttribute('cy', '1');
+    punto.setAttribute('r', '1.4');
+    punto.setAttribute('fill', 'var(--color-fondo)');
+    g.append(titulo, forma, punto);
     capa.append(g);
   }
 }

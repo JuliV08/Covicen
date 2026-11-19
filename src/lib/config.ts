@@ -40,4 +40,8 @@ export const config = {
   fuenteDatos: fuente as 'local' | 'api',
   /** Origen de la API del sistema, sin barra final. Solo se usa con FUENTE_DATOS=api. */
   apiUrl,
+  /** Origen de la API pública que consulta el NAVEGADOR (el estado de la traza en vivo), sin barra final. Va aparte de
+   *  API_URL porque esa la usa el build y puede ser una dirección interna que el navegador no alcanza (spec del
+   *  sistema 3, §8.6). Vacía con el estado prendido, frena el build (lib/estado-publicado.ts). */
+  apiPublicaUrl: oDefecto(import.meta.env.PUBLIC_API_URL, '').replace(/\/+$/, ''),
 } as const;

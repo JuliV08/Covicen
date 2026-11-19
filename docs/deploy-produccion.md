@@ -167,6 +167,32 @@ el Action avisa **antes** de mergear, y Amplify frena **en el momento de publica
 
 ---
 
+## Prender el estado de la traza
+
+El bloque «Estado de la traza» de `/el-tramo/` y `/obras/`, y los avisos del mapa, se arman en el navegador de cada
+visitante: la página le pregunta al sistema de Covicen qué obras, cortes e imprevistos hay, al entrar y cada 2 minutos.
+Está **apagado** hasta que ese sistema esté en el aire con una dirección pública. Para prenderlo:
+
+1. **Comprobar que la API responde**, desde cualquier máquina:
+   `curl -i <dirección de la API>/api/v1/estado-ruta/` tiene que dar `200`, `Content-Type: application/json`,
+   `Access-Control-Allow-Origin: *` y un cuerpo que empieza con `{"disponible": true`.
+2. **Cargar `PUBLIC_API_URL`** en la consola de Amplify, en las dos ramas (`main` y `dev`), con el origen de la API y
+   sin barra final (por ejemplo `https://api.covicen.com.ar`). Es otra variable que `API_URL`: esa la usa el armado y
+   puede ser una dirección interna; esta la usa el navegador de la gente y tiene que ser pública.
+3. **Prender los dos interruptores** en una rama que sale de `organizacion/main`: `estadoRutasEnVivo: true` en
+   `src/lib/datos/capacidades.ts` y `estadoDeLaTraza: true` en `src/lib/publicado.ts`. PR a `main` y el mismo cambio a
+   `dev`.
+4. **Si falta la variable, el armado se frena** con «El estado de la traza en vivo necesita PUBLIC_API_URL». Es a
+   propósito: publicar un bloque que nunca carga se ve como una falla.
+5. **Comprobarlo** en `https://www.covicen.com.ar/el-tramo/`: el bloque pasa de «Consultando el estado de la ruta…» a
+   una fila por ruta. Si la API no contesta en 8 segundos se ve «No pudimos consultar el estado de la ruta ahora…» con
+   el 140, nunca «Normal».
+
+Los datos de muestra de `src/content/estado-ruta.json` no llegan nunca a la web: `pnpm verificar` (chequeo 16d) frena el
+armado si alguna página trae uno de esos avisos o el cartel «Datos de ejemplo».
+
+---
+
 ## Lo que falta configurar (checklist)
 
 - [ ] Que llegue la invitación al repositorio de la organización (al 21/09 todavía no llegó).

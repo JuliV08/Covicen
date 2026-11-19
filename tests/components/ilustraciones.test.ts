@@ -1,9 +1,11 @@
 import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
+import { parseHTML } from 'linkedom';
 import { describe, expect, it } from 'vitest';
 import MapaTramo from '@/components/ilustraciones/MapaTramo.astro';
 import IconoVehiculo from '@/components/ilustraciones/IconoVehiculo.astro';
 import { fuenteLocalJson } from '@/lib/datos/fuentes/local-json';
+import { geometriaKm } from '@/lib/geometria-km';
 
 describe('MapaTramo', () => {
   const render = async (props: Record<string, unknown> = {}) => (await AstroContainer.create()).renderToString(MapaTramo, { props: { tramo: await fuenteLocalJson.tramo(), modo: 'scroll', ...props } });
@@ -60,26 +62,29 @@ describe('MapaTramo', () => {
     expect(html).toContain('Área de descanso');
     expect(html).not.toContain('Sector de detención segura');
   });
-  it('ubica incidentes sobre el trazo y los suma a la leyenda', async () => {
-    const html = await render({ incidentes: [{ ruta: 'RN 9', km: 400, descripcion: 'Bacheo', severidad: 'precaucion' }] });
-    expect(html).toContain('data-severidad="precaucion"');
-    expect(html).toContain('Precaución'); // la leyenda nombra la severidad que hay
-    expect(html).not.toContain('Corte'); // y solo esa
+  // Desde el 19/11/2026 los avisos llegan en vivo (spec del sistema 3, §8.6): el build deja la capa vacía y la geometría
+  // de los km, y el navegador pone los marcadores (lib/estado-dom.ts, en tests/lib/estado-dom.test.ts). Spec §7.1: nada
+  // se comunica solo por color, así que la leyenda trae las tres formas con su nombre.
+  it('con el estado de la traza: capa de marcadores vacía, geometría de los km y las tres severidades en la leyenda', async () => {
+    const tramo = await fuenteLocalJson.tramo();
+    const { document } = parseHTML(await render({ conEstado: true }));
+    expect(document.querySelector('svg g[data-marcadores-estado]')!.children).toHaveLength(0);
+    expect(JSON.parse(document.querySelector('svg[data-geometria-km]')!.getAttribute('data-geometria-km')!)).toEqual(geometriaKm(tramo));
+    const leyenda = document.querySelector('[aria-label="Leyenda"]')!;
+    for (const s of ['Corte', 'Precaución', 'Información']) expect(leyenda.textContent).toContain(s);
+    const formas = [...leyenda.querySelectorAll('svg.incidente path')].map((p) => p.getAttribute('d'));
+    expect(new Set(formas).size).toBe(3);
   });
-  // Spec §7.1: en este mapa nada se comunica solo por color. La severidad va en el <title> y cambia la FORMA del marcador.
-  it('nombra la severidad en el título y le da una forma distinta a cada una', async () => {
-    const html = await render({ incidentes: [
-      { ruta: 'RN 9', km: 400, descripcion: 'Bacheo', severidad: 'precaucion' },
-      { ruta: 'RN 34', km: 118, descripcion: 'Vuelco de camión', severidad: 'corte' },
-      { ruta: 'RN 19', km: 61, descripcion: 'Demoras', severidad: 'info' },
-    ] });
-    expect(html).toContain('<title>Corte — RN 34 km 118: Vuelco de camión</title>');
-    expect(html).toContain('<title>Precaución — RN 9 km 400: Bacheo</title>');
-    expect(html).toContain('<title>Información — RN 19 km 61: Demoras</title>');
-    const forma = (sev: string) => new RegExp(`data-severidad="${sev}"[\\s\\S]*?<path d="([^"]+)"`).exec(html)?.[1];
-    expect(new Set([forma('corte'), forma('precaucion'), forma('info')]).size).toBe(3);
-    expect(html.match(/class="incidente-forma"/g)?.length).toBe(6); // 3 marcadores + 3 entradas de leyenda
-    expect(html).toContain('role="img"'); // cada marcador se anuncia con su título
+  it('sin el estado de la traza: ni capa, ni geometría, ni severidades en la leyenda', async () => {
+    const html = await render();
+    for (const t of ['data-marcadores-estado', 'data-geometria-km', 'incidente-forma', 'Precaución']) expect(html, t).not.toContain(t);
+  });
+  // Los marcadores los crea el navegador, sin el atributo con que Astro acota los estilos del componente: sin :global
+  // saldrían sin color.
+  it('los estilos de los marcadores alcanzan a los que crea el navegador', () => {
+    const estilo = readFileSync('src/components/ilustraciones/MapaTramo.astro', 'utf8');
+    expect(estilo).toMatch(/:global\(\.incidente-forma\)/);
+    expect(estilo).toMatch(/:global\(\.incidente\[data-severidad="corte"\] \.incidente-forma\)/);
   });
 });
 

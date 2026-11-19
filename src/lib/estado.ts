@@ -30,9 +30,10 @@ const SENTIDOS = { ambos: 'ambos sentidos', ascendente: 'sentido ascendente', de
 // `desde`/`hasta` son opcionales: sin ellos no se inventa ninguna hora. La hora es siempre la de Argentina (formato.ts).
 const franja = (i: Incidente): string | null =>
   i.desde ? (i.hasta ? `de ${hora(new Date(i.desde))} a ${hora(new Date(i.hasta))}` : `desde las ${hora(new Date(i.desde))}`) : null;
-const kms = (i: Incidente): string | null =>
+/** «km 340», o «km 340 a 352» si es un tramo; `null` sin km. */
+export const kmDeAviso = (i: Incidente): string | null =>
   i.km === null ? null : i.kmHasta != null && i.kmHasta !== i.km ? `km ${kmTexto(i.km)} a ${kmTexto(i.kmHasta)}` : `km ${kmTexto(i.km)}`;
 
 /** Spec §10.1: km (o tramo), sentido y hora en una sola línea. «km 340 a 352 · ambos sentidos · de 08:00 a 17:00». */
-export const metaDeAviso = (i: Incidente): string => [kms(i), i.sentido ? SENTIDOS[i.sentido] : null, franja(i)].filter(Boolean).join(' · ');
+export const metaDeAviso = (i: Incidente): string => [kmDeAviso(i), i.sentido ? SENTIDOS[i.sentido] : null, franja(i)].filter(Boolean).join(' · ');
 

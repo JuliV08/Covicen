@@ -8,13 +8,13 @@
 // columna en este orden: arriba, mapa, ficha, abajo.
 import MapaTramo from '@/components/ilustraciones/MapaTramo.astro';
 import TarjetaEstacion from '@/components/TarjetaEstacion.astro';
-import type { EstadoRuta, Tramo } from '@/lib/datos/esquemas';
-interface Props { tramo: Tramo; incidentes?: NonNullable<EstadoRuta['incidentes']>; modo?: 'scroll' | 'cargar' }
-const { tramo, incidentes = [], modo = 'scroll' } = Astro.props;
+import type { Tramo } from '@/lib/datos/esquemas';
+interface Props { tramo: Tramo; /** Con el estado de la traza en vivo (MapaTramo). */ conEstado?: boolean; modo?: 'scroll' | 'cargar' }
+const { tramo, conEstado = false, modo = 'scroll' } = Astro.props;
 ---
 <div class="mapa-interactivo grid grid-cols-1 gap-8 *:min-w-0 xl:grid-cols-[22rem_minmax(0,1fr)] xl:items-start xl:gap-x-10 xl:gap-y-6" data-mapa-interactivo>
   {Astro.slots.has('arriba') && <div class="order-1 xl:col-start-1 xl:row-start-1"><slot name="arriba" /></div>}
-  <div class="order-2 xl:col-start-2 xl:row-span-3 xl:row-start-1 xl:self-center"><MapaTramo {tramo} {incidentes} {modo} /></div>
+  <div class="order-2 xl:col-start-2 xl:row-span-3 xl:row-start-1 xl:self-center"><MapaTramo {tramo} {conEstado} {modo} /></div>
   <section class="order-3 grid gap-4 xl:col-start-1 xl:row-start-2" aria-live="polite" aria-label="Estación seleccionada">
     {tramo.cabinas.map((c) => <div data-tarjeta-estacion={c.slug}><TarjetaEstacion cabina={c} enMapa /></div>)}
   </section>

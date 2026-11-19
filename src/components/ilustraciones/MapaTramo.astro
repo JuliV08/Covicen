@@ -2,21 +2,22 @@
 // Mapa esquemático del Tramo Centro. Las coordenadas (`mapa` de tramo.json, lienzo de 820 × 520) son contrato con el
 // panel del backend y NO se cambian. Cada estación es un enlace con foco a su página; con JS (scripts/mapa.ts, desde
 // MapaInteractivo) el toque muestra su ficha y el auto viaja hasta ella. Verde y punto lleno = operativa; amarillo y
-// centro hueco = próxima (nada se comunica solo por color). Los incidentes del estado de la traza se ubican por km.
+// centro hueco = próxima (nada se comunica solo por color). Los avisos del estado de la traza los pone el navegador, ubicados por km (lib/estado-dom.ts).
 //
 // Fase C (05/10/2026), «premium y caro, nada de líneas cortadas o dibujos SVG "así nomás"»: el viewBox se encuadra sobre
 // lo dibujado; cada ruta es una cinta continua en tres capas (halo, cuerpo, filo) con curvas en los pueblos; se fueron
 // la grilla, las marcas viales que fluían y la luz que recorría las rutas en loop; las estaciones son anillos nítidos y
 // sus nombres van sobre una placa. Lo único que se mueve es el auto.
 import { Bath, Coffee, ShieldCheck, Tag, Truck } from '@lucide/astro';
-import { cabinaOperativa, type EstadoRuta, type Tramo } from '@/lib/datos/esquemas';
+import { cabinaOperativa, type Tramo } from '@/lib/datos/esquemas';
 import { FORMA, SEVERIDAD } from '@/lib/estado';
 import { kmTexto } from '@/lib/formato';
+import { geometriaKm } from '@/lib/geometria-km';
 import { estacionadoAntes, trazoRedondeado, type Red } from '@/lib/red';
 import { ruta } from '@/lib/rutas';
-import { cajaTexto, encuadreDelMapa, estadoCabina, leyendaServicios, puntoEnRuta, rotulosDelMapa, TAM_ROTULO, type ClaveServicio } from '@/lib/tramo';
-interface Props { tramo: Tramo; incidentes?: NonNullable<EstadoRuta['incidentes']>; modo?: 'scroll' | 'cargar'; class?: string; /** Distinto por mapa si hay más de uno en la página. */ idTitulo?: string }
-const { tramo, incidentes = [], modo = 'scroll', class: clase = '', idTitulo = 'mapa-titulo' } = Astro.props;
+import { cajaTexto, encuadreDelMapa, estadoCabina, leyendaServicios, rotulosDelMapa, TAM_ROTULO, type ClaveServicio } from '@/lib/tramo';
+interface Props { tramo: Tramo; /** Con el estado de la traza en vivo: la capa vacía para los avisos y la geometría de los km (scripts/estado-traza.ts). */ conEstado?: boolean; modo?: 'scroll' | 'cargar'; class?: string; /** Distinto por mapa si hay más de uno en la página. */ idTitulo?: string }
+const { tramo, conEstado = false, modo = 'scroll', class: clase = '', idTitulo = 'mapa-titulo' } = Astro.props;
 const porSlug = new Map(tramo.ciudades.map((c) => [c.slug, c]));
 const ciudad = (s: string) => {
   const c = porSlug.get(s);
@@ -47,14 +48,14 @@ const rumboInicial = Math.round((Math.atan2(vecino.y - inicial.mapa.y, vecino.x 
 const autoEn = estacionadoAntes(inicial.mapa, rumboInicial);
 const titulo = `Mapa esquemático del Tramo Centro: ${tramo.rutas.map((r) => r.nombre).join(', ')} entre ${tramo.ciudades.filter((c) => c.principal).map((c) => c.nombre).join(', ')}, con ${tramo.cabinas.length} estaciones de peaje.`;
 const iconos: Record<ClaveServicio, typeof Coffee> = { areaDescanso: Coffee, detencionSegura: ShieldCheck, gruaGratuita: Truck, sanitarios: Bath, colocacionTelepase: Tag };
-const marcadores = incidentes.flatMap((inc) => { const p = inc.km === null ? null : puntoEnRuta(tramo, inc.ruta, inc.km); return p ? [{ ...inc, p }] : []; });
 // Forma y nombre de cada severidad: lib/estado.ts (los comparte con el mapa que se pinta en el navegador).
-const severidades = (['corte', 'precaucion', 'info'] as const).filter((s) => marcadores.some((m) => m.severidad === s));
+// Los avisos llegan después, así que la leyenda trae las tres formas siempre que haya estado.
+const severidades = conEstado ? (['corte', 'precaucion', 'info'] as const) : [];
 const id = (nombre: string) => `${idTitulo}-${nombre}`;
 ---
 <figure class:list={['mapa', clase]}>
   <p id={idTitulo} class="sr-only">{titulo}</p>
-  <svg viewBox={`${encuadre.x} ${encuadre.y} ${encuadre.ancho} ${encuadre.alto}`} role="group" aria-labelledby={idTitulo} class="block h-auto w-full xl:max-h-[calc(100svh-13rem)]" data-red={JSON.stringify(red)}>
+  <svg viewBox={`${encuadre.x} ${encuadre.y} ${encuadre.ancho} ${encuadre.alto}`} role="group" aria-labelledby={idTitulo} class="block h-auto w-full xl:max-h-[calc(100svh-13rem)]" data-red={JSON.stringify(red)} data-geometria-km={conEstado ? JSON.stringify(geometriaKm(tramo)) : undefined}>
     <defs>
       {/* Los dos degradés del fondo llegan a cero justo en el borde del dibujo (r 50 %, centrados): con r 62–70 % todavía
           quedaba un 10–20 % de opacidad ahí y se veía el corte del rectángulo (Juli, 05/10/2026). */}
@@ -112,13 +113,7 @@ const id = (nombre: string) => `${idTitulo}-${nombre}`;
         )}
       </g>
     ))}
-    {marcadores.map((m) => (
-      <g class="incidente" role="img" data-severidad={m.severidad} transform={`translate(${m.p.x} ${m.p.y})`}>
-        <title>{`${SEVERIDAD[m.severidad]} — ${m.ruta}${m.km !== null ? ` km ${kmTexto(m.km)}` : ''}: ${m.descripcion}`}</title>
-        <path d={FORMA[m.severidad]} class="incidente-forma" stroke="var(--color-fondo)" stroke-width="1.5" stroke-linejoin="round"></path>
-        <circle cy="1" r="1.4" fill="var(--color-fondo)"></circle>
-      </g>
-    ))}
+    {conEstado && <g data-marcadores-estado></g>}
     {tramo.cabinas.map((cab, i) => {
       const e = estadoCabina(cab);
       const { x, y } = cab.mapa;
@@ -198,9 +193,10 @@ const id = (nombre: string) => `${idTitulo}-${nombre}`;
   .baliza:hover .cabina-rotulo, .baliza:focus-visible .cabina-rotulo, .baliza[aria-current="true"] .cabina-rotulo { opacity: 1; }
   .baliza-halo { transform-box: fill-box; transform-origin: center; transition: transform var(--dur-ui) var(--ease-salida), opacity var(--dur-ui); }
   .baliza:hover .baliza-halo, .baliza:focus-visible .baliza-halo { transform: scale(1.5); opacity: 0.4; }
-  .incidente-forma { fill: var(--color-acento); }
-  .incidente[data-severidad="precaucion"] .incidente-forma { fill: var(--color-vial-texto); }
-  .incidente[data-severidad="corte"] .incidente-forma { fill: var(--color-error); }
+  /* :global porque los marcadores los crea el navegador (lib/estado-dom.ts), sin el atributo con que Astro acota. */
+  :global(.incidente-forma) { fill: var(--color-acento); }
+  :global(.incidente[data-severidad="precaucion"] .incidente-forma) { fill: var(--color-vial-texto); }
+  :global(.incidente[data-severidad="corte"] .incidente-forma) { fill: var(--color-error); }
   .auto { pointer-events: none; }
   /* Las rutas se dibujan una vez al entrar en pantalla: scripts/mapa.ts pone data-dibujo="espera" al montar y "listo"
      cuando el mapa se ve. Sin JS o con «reducir movimiento» no pone nada y las rutas están dibujadas desde el principio.

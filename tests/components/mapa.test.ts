@@ -10,6 +10,12 @@ describe('MapaInteractivo', () => {
     expect(html.match(/data-tarjeta-estacion="/g)?.length).toBe(6);
     expect(html).not.toMatch(/data-tarjeta-estacion="[^"]+" hidden/);
     expect(html).toContain('aria-live="polite"');
+    expect(html).not.toContain('data-marcadores-estado');
+  });
+  it('con el estado de la traza, el mapa trae la capa donde el navegador pone los avisos', async () => {
+    const html = await (await AstroContainer.create()).renderToString(MapaInteractivo, { props: { tramo: await fuenteLocalJson.tramo(), conEstado: true } });
+    expect(html).toContain('data-marcadores-estado');
+    expect(html).toContain('data-geometria-km');
   });
   // Fase C (05/10/2026), segunda vuelta: «para ver el título tengo que subir, para ver los detalles tengo que bajar».
   // Desde 1280 px, columna y mapa: a la izquierda lo que se lee (título, números, ficha compacta, botón) y a la derecha
