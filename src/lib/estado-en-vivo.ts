@@ -8,7 +8,8 @@ import type { EstadoRuta, Incidente, Programado } from '@/lib/datos/esquemas';
 
 /** Tope de una consulta: pasado esto, se muestra el mensaje con el 140 (nunca «Sin avisos» ni «Normal»). */
 export const TIEMPO_MAXIMO_MS = 8000;
-/** Cada cuánto se vuelve a consultar con la pestaña visible. La API cachea 60 s. */
+/** Cada cuánto se vuelve a consultar con la pestaña visible. La API guarda la respuesta hasta 60 s (45 en el
+ *  navegador y 15 en el servidor). */
 export const REFRESCO_MS = 120_000;
 
 /** Las listas cerradas del contrato. Un test las compara con el JSON Schema exportado. */

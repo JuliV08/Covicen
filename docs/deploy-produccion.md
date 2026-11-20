@@ -175,7 +175,7 @@ Está **apagado** hasta que ese sistema esté en el aire con una dirección púb
 
 1. **Comprobar que la API responde**, desde cualquier máquina:
    `curl -i <dirección de la API>/api/v1/estado-ruta/` tiene que dar `200`, `Content-Type: application/json`,
-   `Access-Control-Allow-Origin: *` y un cuerpo que empieza con `{"disponible": true`.
+   `Access-Control-Allow-Origin: *` y un cuerpo que empieza con `{"disponible":true` (sin espacios: la API responde compacto).
 2. **Cargar `PUBLIC_API_URL`** en la consola de Amplify, en las dos ramas (`main` y `dev`), con el origen de la API y
    sin barra final (por ejemplo `https://api.covicen.com.ar`). Es otra variable que `API_URL`: esa la usa el armado y
    puede ser una dirección interna; esta la usa el navegador de la gente y tiene que ser pública.
