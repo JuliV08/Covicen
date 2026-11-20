@@ -21,6 +21,7 @@ describe('/el-tramo/', () => {
     expect(html).not.toContain('Datos de ejemplo');
     expect(html).not.toContain('aria-label="Estado de la traza"');
     expect(html).not.toContain('Corte total por vuelco de un camión');
+    for (const t of ['data-estado-en-vivo', 'data-marcadores-estado', 'data-geometria-km']) expect(html, t).not.toContain(t);
     expect(html.match(/<h1/g)?.length).toBe(1);
   });
 

@@ -1,6 +1,7 @@
 ---
 import Base from '@/layouts/Base.astro';
 import EstadoTraza from '@/components/EstadoTraza.astro';
+import { urlEstadoEnVivo } from '@/lib/estado-publicado';
 import HuecoCapacidad from '@/components/HuecoCapacidad.astro';
 import ImagenAtmosfera from '@/components/ilustraciones/ImagenAtmosfera.astro';
 import Seccion from '@/components/ui/Seccion.astro';
@@ -16,7 +17,9 @@ import { publicado } from '@/lib/publicado';
 // apaga y se prende con un booleano, que es lo que pide el criterio de la casa.
 export const getStaticPaths = () => (publicado.obras ? [{ params: { resto: undefined } }] : []);
 import { fechaLarga } from '@/lib/formato';
-const [obras, estado, tramo] = await Promise.all([datos.obras(), datos.estadoRutas(), datos.tramo()]);
+const [obras, tramo] = await Promise.all([datos.obras(), datos.tramo()]);
+// El estado de la traza en vivo (lib/estado-publicado.ts); apagado, el hueco de «Próximamente».
+const urlEstado = urlEstadoEnVivo();
 const rutas = tramo.rutas.map((r) => r.nombre);
 const estados = { planificada: 'Planificada', 'en-ejecucion': 'En ejecución', terminada: 'Terminada' } as const;
 ---
@@ -39,6 +42,6 @@ const estados = { planificada: 'Planificada', 'en-ejecucion': 'En ejecución', t
         </li>
       ))}
     </ol>
-    <div class="mt-12">{estado.disponible && publicado.estadoDeLaTraza ? <EstadoTraza {estado} {rutas} nivel="h2" /> : <HuecoCapacidad capacidad="estadoRutasEnVivo" titulo="Estado de las rutas en tiempo real" descripcion="Cortes, desvíos por obra y clima, por ruta y kilómetro." alternativaHref="/novedades" alternativaTexto="Ver novedades de obras" />}</div>
+    <div class="mt-12">{urlEstado ? <EstadoTraza url={urlEstado} {rutas} nivel="h2" /> : <HuecoCapacidad capacidad="estadoRutasEnVivo" titulo="Estado de las rutas en tiempo real" descripcion="Cortes, desvíos por obra y clima, por ruta y kilómetro." alternativaHref="/novedades" alternativaTexto="Ver novedades de obras" />}</div>
   </Seccion>
 </Base>

@@ -51,4 +51,23 @@ describe('contrato exportado (docs/contrato)', () => {
     expect(tarifario.properties.tarifas.items.required).not.toContain('icono');
     expect(tarifario.properties.origen.enum).toEqual(['oferta', 'homologada', 'heredado']);
   });
+
+  it('el estado de la ruta: lo nuevo es opcional y el programado exige fecha y franja', () => {
+    const e = exportarContrato()['estado-ruta'] as {
+      required: string[];
+      properties: {
+        incidentes: { items: { required: string[]; properties: Record<string, { enum?: string[] }> } };
+        programados: { items: { required: string[] } };
+      };
+    };
+    expect(e.required).toEqual(['disponible']);
+    const inc = e.properties.incidentes.items;
+    expect(inc.required).toEqual(expect.arrayContaining(['ruta', 'km', 'descripcion', 'severidad']));
+    for (const c of ['kmHasta', 'titulo', 'desvio', 'tipo']) {
+      expect(inc.properties).toHaveProperty(c);
+      expect(inc.required).not.toContain(c);
+    }
+    expect(inc.properties.tipo!.enum).toContain('mantenimiento');
+    expect(e.properties.programados.items.required).toEqual(expect.arrayContaining(['fecha', 'desde', 'hasta']));
+  });
 });

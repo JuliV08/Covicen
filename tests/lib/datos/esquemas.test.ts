@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cabinaOperativa, esquemaCabina, esquemaCiudad, esquemaContacto, esquemaEmpresa, esquemaRuta, esquemaTarifario, url } from '@/lib/datos/esquemas';
+import { cabinaOperativa, esquemaCabina, esquemaCiudad, esquemaContacto, esquemaEmpresa, esquemaEstadoRuta, esquemaIncidente, esquemaProgramado, esquemaRuta, esquemaTarifario, url } from '@/lib/datos/esquemas';
 
 // El contrato es la única puerta de entrada de los datos del backend: si acá pasa un `javascript:`, después
 // hay que acordarse de filtrarlo en cada href. Se filtra una sola vez, acá.
@@ -132,3 +132,28 @@ describe('esquemaRuta y esquemaCiudad', () => {
     expect(esquemaCiudad.parse({ slug: 'rosario', nombre: 'Rosario', provincia: 'Santa Fe', mapa: { x: 1, y: 1 } }).tipo).toBe('ciudad');
   });
 });
+
+describe('esquemaIncidente y esquemaProgramado (estado de la traza)', () => {
+  const base = { ruta: 'RN 9', km: 340, descripcion: 'Corte de pasto en banquina.', severidad: 'precaucion' } as const;
+  it('acepta un tramo de km, el tipo mantenimiento, título y desvío', () => {
+    expect(() => esquemaIncidente.parse({ ...base, kmHasta: 352, tipo: 'mantenimiento', titulo: 'Corte de pasto', desvio: 'Por colectora.' })).not.toThrow();
+  });
+  it('kmHasta puede ser null y lo nuevo puede faltar', () => {
+    expect(esquemaIncidente.parse({ ...base, kmHasta: null }).tipo).toBe('incidente');
+  });
+  it('un título o un desvío vacíos no pasan', () => {
+    expect(esquemaIncidente.safeParse({ ...base, titulo: '' }).success).toBe(false);
+    expect(esquemaIncidente.safeParse({ ...base, desvio: '' }).success).toBe(false);
+  });
+  it('un programado exige fecha, desde y hasta', () => {
+    const franja = { desde: '2026-11-26T08:00:00-03:00', hasta: '2026-11-26T17:00:00-03:00' };
+    expect(esquemaProgramado.safeParse({ ...base, ...franja }).success).toBe(false);
+    expect(esquemaProgramado.safeParse({ ...base, fecha: '2026-11-26', desde: franja.desde }).success).toBe(false);
+    expect(esquemaProgramado.safeParse({ ...base, fecha: '2026-11-26', ...franja }).success).toBe(true);
+  });
+  it('el estado admite programados aparte', () => {
+    const e = esquemaEstadoRuta.parse({ disponible: true, programados: [{ ...base, fecha: '2026-11-30', desde: '2026-11-30T08:00:00-03:00', hasta: '2026-11-30T17:00:00-03:00' }] });
+    expect(e.programados).toHaveLength(1);
+  });
+});
+

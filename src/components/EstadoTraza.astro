@@ -1,48 +1,34 @@
 ---
-// Estado de la traza "tipo subte": una fila por ruta con su chip (Normal / Precaución / Corte) y los incidentes debajo.
-// Mientras los datos sean de muestra (estado.ejemplo), lo dice con un cartel inequívoco: nadie lee un corte inventado como real.
-import { Car, CloudFog, Construction, TriangleAlert } from '@lucide/astro';
-import Senal from '@/components/ui/Senal.astro';
-import type { EstadoRuta, Incidente, NombreRuta } from '@/lib/datos/esquemas';
-import { fechaHoraLarga, hora, kmTexto } from '@/lib/formato';
-import { estadoPorRuta } from '@/lib/estado';
-interface Props { estado: EstadoRuta; rutas: NombreRuta[]; nivel?: 'h2' | 'h3' }
-const { estado, rutas, nivel = 'h3' } = Astro.props;
+// Estado de la traza "tipo subte", en vivo (spec del sistema 3, §8.6). El build emite solo el armazón; el navegador
+// consulta la API y lo llena (scripts/estado-traza.ts → lib/estado-dom.ts): una fila por ruta con su chip (Sin avisos /
+// Precaución / Corte) y los avisos debajo, lo programado de los próximos 7 días aparte y la última actualización.
+// El estado nunca se decide en el build: una página estática que dijera «Sin avisos» lo seguiría diciendo horas
+// después de un corte. Sin datos, o sin JS, el mensaje con el 140, nunca «Normal».
+import { Car, CloudFog, Construction, Tractor, TriangleAlert } from '@lucide/astro';
+import type { Incidente, NombreRuta } from '@/lib/datos/esquemas';
+interface Props { /** Dirección completa de GET /api/v1/estado-ruta/ (lib/estado-publicado.ts). */ url: string; rutas: NombreRuta[]; nivel?: 'h2' | 'h3' }
+const { url, rutas, nivel = 'h3' } = Astro.props;
 const Titulo = nivel;
-const filas = estadoPorRuta(estado, rutas);
-const iconos: Record<Incidente['tipo'], typeof Car> = { transito: Car, obra: Construction, incidente: TriangleAlert, clima: CloudFog };
-const sentidos = { ambos: 'ambos sentidos', ascendente: 'sentido ascendente', descendente: 'sentido descendente' } as const;
-// Spec §10.1: km, sentido y hora en una sola línea. `desde`/`hasta` son opcionales: sin ellos no se inventa ninguna hora.
-const franja = (i: Incidente): string | null =>
-  i.desde ? (i.hasta ? `de ${hora(new Date(i.desde))} a ${hora(new Date(i.hasta))}` : `desde las ${hora(new Date(i.desde))}`) : null;
-const meta = (i: Incidente): string =>
-  [i.km !== null ? `km ${kmTexto(i.km)}` : null, i.sentido ? sentidos[i.sentido] : null, franja(i)].filter(Boolean).join(' · ');
+const Subtitulo = nivel === 'h2' ? 'h3' : 'h4';
+// Los íconos van como <template>: el navegador clona el de cada tipo y no hace falta copiar los dibujos de lucide al JS.
+const iconos: Record<Incidente['tipo'], typeof Car> = { transito: Car, obra: Construction, incidente: TriangleAlert, clima: CloudFog, mantenimiento: Tractor };
+const FALLA = 'No pudimos consultar el estado de la ruta ahora. Probá de nuevo en unos minutos. Ante una emergencia, llamá al 140.';
 ---
-<section class="estado-traza tarjeta p-6" aria-label="Estado de la traza">
-  <div class="flex flex-wrap items-center justify-between gap-3">
-    <Titulo class="text-xl">Estado de la traza</Titulo>
-    {estado.ejemplo && <Senal variante="frio">Datos de ejemplo: el módulo se activa con la operación</Senal>}
+<section class="estado-traza tarjeta p-6" aria-label="Estado de la traza" data-estado-en-vivo data-url={url} data-rutas={JSON.stringify(rutas)}>
+  <Titulo class="text-xl">Estado de la traza</Titulo>
+  <ul class="mt-4 divide-y divide-borde" data-estado-lista aria-live="polite"><li class="py-4 text-sm text-texto-2" data-estado-consultando>Consultando el estado de la ruta…</li></ul>
+  <p class="mt-4 text-sm font-semibold text-texto" data-estado-error hidden>{FALLA}</p>
+  <noscript><p class="mt-4 text-sm font-semibold text-texto">{FALLA}</p></noscript>
+  <div class="mt-6 border-t border-borde pt-5" data-estado-programados hidden>
+    <Subtitulo class="text-base">Programado</Subtitulo>
+    <ul class="mt-3 flex flex-col gap-3" data-estado-programados-lista></ul>
   </div>
-  <ul class="mt-4 divide-y divide-borde">
-    {filas.map((f) => (
-      <li class="py-4" data-ruta={f.ruta} data-nivel={f.nivel}>
-        <div class="flex items-center gap-3">
-          <span class:list={['chip h-3 w-3 shrink-0 rounded-full', f.nivel === 'corte' ? 'bg-error' : f.nivel === 'precaucion' ? 'bg-vial' : 'bg-ok']} aria-hidden="true"></span>
-          <span class="font-extrabold text-texto">{f.ruta}</span>
-          <span class="text-sm text-texto-2">{f.etiqueta}{f.incidentes.length > 0 && ` · ${f.incidentes.length} ${f.incidentes.length === 1 ? 'aviso' : 'avisos'}`}</span>
-        </div>
-        {f.incidentes.length > 0 && (
-          <ul class="mt-3 flex flex-col gap-3 pl-6">
-            {f.incidentes.map((i) => { const Icono = iconos[i.tipo]; const linea = meta(i); return (
-              <li class="flex gap-3 text-sm">
-                <Icono size={18} aria-hidden="true" class="mt-0.5 shrink-0 text-texto-2" />
-                <div>{linea && <p class="font-semibold text-texto">{linea}</p>}<p class="text-texto-2">{i.descripcion}</p></div>
-              </li>
-            ); })}
-          </ul>
-        )}
-      </li>
-    ))}
-  </ul>
-  {estado.actualizado && <p class="anotacion mt-4 text-xs text-texto-2">Última actualización: {fechaHoraLarga(new Date(estado.actualizado))}</p>}
+  <p class="mt-6 text-sm text-texto-2">Mostramos las obras, los cortes y los imprevistos que informa Covicen. Ante una emergencia, llamá al <a href="tel:140" class="font-semibold">140</a>.</p>
+  <p class="anotacion mt-2 text-xs text-texto-2" data-estado-actualizado hidden></p>
+  {Object.entries(iconos).map(([tipo, Icono]) => <template data-icono={tipo}><Icono size={18} aria-hidden="true" class="mt-0.5 shrink-0 text-texto-2" /></template>)}
 </section>
+<style>
+  /* Sin JS no hay consulta: «Consultando…» se va y queda solo el mensaje del <noscript>. */
+  @media (scripting: none) { [data-estado-consultando] { display: none; } }
+</style>
+<script src="../scripts/estado-traza.ts"></script>

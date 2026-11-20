@@ -55,7 +55,8 @@ const SIN_INDEXAR = ['telepase/index.html'];
 const SIN_PLIEGO = (nombre: string) => !nombre.startsWith('responsabilidad-civil');
 // Mientras el estado de la traza se publique con datos de muestra, ninguna página puede mostrar marcadores de incidente
 // sin el cartel que lo aclara (spec §10.1): un corte de ruta inventado que se lee como real es el error más caro del sitio.
-const estadoDeMuestra = (JSON.parse(readFileSync('src/content/estado-ruta.json', 'utf8')) as { ejemplo?: boolean }).ejemplo === true;
+// 16d (abajo). Los avisos de muestra del estado de la traza, que no pueden llegar a ninguna página.
+const avisosDeMuestra = ((JSON.parse(readFileSync('src/content/estado-ruta.json', 'utf8')) as { incidentes?: { descripcion: string }[] }).incidentes ?? []).map((i) => i.descripcion);
 const paginas = paginasDe(DIST).filter((p) => !p.includes('404'));
 console.log(`Verificando ${paginas.length} páginas (base ${base}, indexable ${indexable}, ${sitioCompleto ? 'sitio completo' : 'PORTADA SOLA'})…`);
 
@@ -188,11 +189,12 @@ for (const ruta of paginas) {
   const visible = plano;
   if ((nombre === 'index.html' || nombre.startsWith('el-tramo')) && !/\b679\b/.test(visible)) fallo(`${nombre}: falta la longitud oficial (679 km)`);
   if (!visible.includes('Última actualización')) fallo(`${nombre}: falta "Última actualización" en el pie`);
-  // El cartel tiene que ir ANTES del primer marcador: leerlo después del triángulo rojo llega tarde. (El selector del
-  // CSS emitido va sin comillas, `[data-severidad=corte]`; el marcador del HTML sí las lleva.)
-  const marcador = html.indexOf('data-severidad="');
-  const cartel = html.indexOf('Datos de ejemplo');
-  if (estadoDeMuestra && marcador >= 0 && (cartel < 0 || cartel > marcador)) fallo(`${nombre}: marcadores de incidente sin el cartel "Datos de ejemplo" arriba`);
+  // 16d. Estado de la traza (19/11/2026): se consulta en vivo y el build no arma ningún aviso. Ninguna página trae el
+  // cartel de muestra ni un aviso de src/content/estado-ruta.json (un corte inventado que se lee como real es el peor
+  // error posible), y todo bloque en vivo sabe a dónde preguntar.
+  if (html.includes('Datos de ejemplo')) fallo(`${nombre}: trae el cartel «Datos de ejemplo» del estado de la traza`);
+  for (const d of avisosDeMuestra) if (html.includes(d)) fallo(`${nombre}: publica un aviso de muestra del estado de la traza («${d.slice(0, 40)}…»)`);
+  for (const [s] of html.matchAll(/<section\b[^>]*\bdata-estado-en-vivo\b[^>]*>/g)) if (!/\bdata-url="[^"]+"/.test(s)) fallo(`${nombre}: bloque del estado de la traza sin data-url`);
   // 7. indexabilidad. /telepase/ es la excepción: la puerta del QR del folleto no se indexa nunca (14/10/2026).
   const tieneNoindex = html.includes('content="noindex, nofollow"');
   const siempreNoindex = SIN_INDEXAR.includes(nombre);
