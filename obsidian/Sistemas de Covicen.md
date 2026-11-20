@@ -4,6 +4,22 @@ Mapa objetivo de los sistemas de Covicen y el primer sistema decidido. Cerrado e
 
 > El análisis de los sistemas de referencia de Corredores Viales (CVSA) vive en el vault privado de Juli, no acá. Este documento solo contiene lo que es de Covicen.
 
+## Estado (2026-11-20): sistema 3, estado de la traza, construido
+
+Pedido del gerente del 19/11: empiezan obras y cortes de pasto en las rutas, y el pliego (61.6, mapa con estado) pide
+mostrarlos. Construido en el módulo `traza` del mismo repo del sistema 1 (rama `traza-2026-11-19`, sin push):
+- **Quién carga**: Obras, los trabajos programados (obra, corte de pasto, bacheo, señalización) con sus días y horario;
+  los cierra desde el celular el día del trabajo («Terminado», «Suspendido», «Extender»). Operaciones, los imprevistos
+  (accidente, clima, tránsito), que no se cierran solos: a las 6 h sin cambios preguntan «¿sigue?». Administración
+  puede ocultar un aviso con un motivo.
+- **Qué ve la gente**: la web pide `GET /api/v1/estado-ruta/` **en vivo**, desde el navegador, cada 2 minutos. Es lo
+  único de la web que no se arma en el build: una página estática que dijera «Sin avisos» lo seguiría diciendo horas
+  después de un corte. Si la API no contesta, la web dice que no pudo consultar y da el 140; nunca «Sin avisos».
+- **Para el órgano de control**: un historial en planilla (CSV para Excel) con cada aviso tal como se mostró en la web,
+  con su horario real y quién lo cargó y lo cerró.
+- **Se prende** cuando el sistema esté en el servidor: dos interruptores de la web y `PUBLIC_API_URL` (ver
+  [[Costura de datos]] y [[Obligaciones del pliego para la web]]).
+
 ## Estado (2026-09-06, noche): sistema 1 construido, demo local
 
 El tarifario + catálogo del tramo está construido de punta a punta en el repo privado `JuliV08/covicen-sistemas` (commits locales por tarea, sin push todavía). Qué hay:
@@ -43,7 +59,7 @@ Los sistemas se planifican como **continuos**, no como trimestres: el esfuerzo d
 |---|---|---|---|
 | 1 | Tarifario + catálogo del tramo | 2 a 3 sesiones | Cuadro homologado por Vialidad; VPS de Covicen |
 | 2 | Licitaciones y proveedores | 1 a 2 sesiones | Pliegos reales |
-| 3 | Obras y estado de rutas | 2 sesiones | Datos de obras del contrato |
+| 3 | Obras y estado de rutas | **Estado de la traza construido el 20/11/2026**; las obras del contrato van con el gestor de contenidos | VPS de Covicen; las cuentas de Obras y Operaciones |
 | 4 | Trámites y reclamos | 4 a 6 sesiones | Qué trámites existen y quién los atiende |
 | 5 | Intranet chica | 1 a 2 sesiones | Que haya empleados |
 | 6 | Operación de peaje | Depende del proveedor | Cabinas operando |

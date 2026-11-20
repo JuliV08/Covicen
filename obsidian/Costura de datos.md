@@ -129,6 +129,24 @@ Slots nuevos que se esconden hasta tener el dato: `empresa.polizaRc` (Transparen
 
 `src/content/estado-ruta.json` alimenta `datos.estadoRutas()` con **datos de ejemplo** (`ejemplo: true`): el componente `EstadoTraza` lo dice con un cartel inequívoco y el mapa de El tramo ubica los incidentes por km. Cuando exista el centro de operaciones, la misma forma (`disponible`, `ejemplo: false`, `actualizado` ISO con zona, `incidentes[] { ruta, km, tipo, severidad, sentido, descripcion, desde?, hasta? }`) la manda el sistema y una isla la pide en runtime (capacidad `estadoRutasEnVivo`). `src/lib/estado.ts` reduce a una fila por ruta con el peor nivel (normal / precaución / corte).
 
+### La isla en vivo (2026-11-20)
+
+Existe y está apagada. Es la única excepción a «la web se arma en el build»: el estado se decide en el navegador.
+- **Cuándo se prende**: `src/lib/estado-publicado.ts` devuelve la URL solo con `capacidades.estadoRutasEnVivo` **y**
+  `publicado.estadoDeLaTraza` en `true`; sin `PUBLIC_API_URL`, el build se frena a propósito. Apagada, `/el-tramo/` y
+  `/obras/` muestran el hueco de «Próximamente».
+- **Qué hace**: `EstadoTraza.astro` publica «Consultando el estado de la ruta…» y `src/scripts/estado-traza.ts` pide
+  `PUBLIC_API_URL + /api/v1/estado-ruta/` al cargar, cada 2 minutos (`REFRESCO_MS`) mientras la página se ve, con tope
+  de 8 s (`TIEMPO_MAXIMO_MS`, en `src/lib/estado-en-vivo.ts`). `src/lib/estado-dom.ts` pinta la lista y los marcadores
+  del mapa **siempre como texto** (nunca HTML de la API) y no repinta si solo cambió la hora. `src/lib/geometria-km.ts`
+  ubica cada km sobre el trazado; el panel del sistema usa el mismo cálculo.
+- **El contrato** suma a lo de arriba `programados[]` (los próximos 7 días, con `fecha`) y, en cada aviso, `kmHasta`,
+  `hasta` y `desvio` solo cuando hay dato. El sistema lo valida contra el JSON Schema que exporta la web.
+- **Si falla** (sin respuesta, 8 s, 429, 500, otra forma): «No pudimos consultar el estado de la ruta ahora…» con el
+  140. Nunca «Sin avisos»: diría que la ruta está libre sin saberlo.
+- **Cuánto tarda un cambio**: la API responde con `max-age=45` más 15 s de memoria en el servidor; quien entra o
+  recarga lo ve en a lo sumo un minuto.
+
 
 ## El interruptor de lo no confirmado (2026-09-20)
 
